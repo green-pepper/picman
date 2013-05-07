@@ -1,19 +1,22 @@
-/* GIMP - The GNU Image Manipulation Program
- * Copyright (C) 1995 Spencer Kimball and Peter Mattis
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* Picman - 4chan's /g/ - Technology board fork of Gimp (Gnu Image Manipulation Program)
+* Copyright (C) 2013 Anonymous (http://www.boards.4chan.org/g/)
+*
+* Originally by:
+* Copyright (C) 1995 Spencer Kimball and Peter Mattis
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "config.h"
 
@@ -65,8 +68,8 @@
 
 #ifdef G_OS_WIN32
 /* To get PROCESS_DEP_* defined we need _WIN32_WINNT at 0x0601. We still
- * use the API optionally only if present, though.
- */
+* use the API optionally only if present, though.
+*/
 #define _WIN32_WINNT 0x0601
 #include <windows.h>
 #include <conio.h>
@@ -76,68 +79,68 @@
 #include "gimp-intl.h"
 
 
-static gboolean  gimp_option_fatal_warnings   (const gchar  *option_name,
-                                               const gchar  *value,
-                                               gpointer      data,
-                                               GError      **error);
-static gboolean  gimp_option_stack_trace_mode (const gchar  *option_name,
-                                               const gchar  *value,
-                                               gpointer      data,
-                                               GError      **error);
-static gboolean  gimp_option_pdb_compat_mode  (const gchar  *option_name,
-                                               const gchar  *value,
-                                               gpointer      data,
-                                               GError      **error);
-static gboolean  gimp_option_dump_gimprc      (const gchar  *option_name,
-                                               const gchar  *value,
-                                               gpointer      data,
-                                               GError      **error);
-static gboolean  gimp_option_dump_pdb_procedures_deprecated
-                                              (const gchar  *option_name,
-                                               const gchar  *value,
-                                               gpointer      data,
-                                               GError      **error);
+static gboolean gimp_option_fatal_warnings (const gchar *option_name,
+                                               const gchar *value,
+                                               gpointer data,
+                                               GError **error);
+static gboolean gimp_option_stack_trace_mode (const gchar *option_name,
+                                               const gchar *value,
+                                               gpointer data,
+                                               GError **error);
+static gboolean gimp_option_pdb_compat_mode (const gchar *option_name,
+                                               const gchar *value,
+                                               gpointer data,
+                                               GError **error);
+static gboolean gimp_option_dump_gimprc (const gchar *option_name,
+                                               const gchar *value,
+                                               gpointer data,
+                                               GError **error);
+static gboolean gimp_option_dump_pdb_procedures_deprecated
+                                              (const gchar *option_name,
+                                               const gchar *value,
+                                               gpointer data,
+                                               GError **error);
 
-static void      gimp_show_version_and_exit   (void) G_GNUC_NORETURN;
-static void      gimp_show_license_and_exit   (void) G_GNUC_NORETURN;
+static void gimp_show_version_and_exit (void) G_GNUC_NORETURN;
+static void gimp_show_license_and_exit (void) G_GNUC_NORETURN;
 
-static void      gimp_init_i18n               (void);
-static void      gimp_init_malloc             (void);
+static void gimp_init_i18n (void);
+static void gimp_init_malloc (void);
 
 #if defined (G_OS_WIN32) && !defined (GIMP_CONSOLE_COMPILATION)
-static void      gimp_open_console_window     (void);
+static void gimp_open_console_window (void);
 #else
 #define gimp_open_console_window() /* as nothing */
 #endif
 
-static const gchar        *system_gimprc     = NULL;
-static const gchar        *user_gimprc       = NULL;
-static const gchar        *session_name      = NULL;
-static const gchar        *batch_interpreter = NULL;
-static const gchar       **batch_commands    = NULL;
-static const gchar       **filenames         = NULL;
-static gboolean            as_new            = FALSE;
-static gboolean            no_interface      = FALSE;
-static gboolean            no_data           = FALSE;
-static gboolean            no_fonts          = FALSE;
-static gboolean            no_splash         = FALSE;
-static gboolean            be_verbose        = FALSE;
-static gboolean            new_instance      = FALSE;
+static const gchar *system_gimprc = NULL;
+static const gchar *user_gimprc = NULL;
+static const gchar *session_name = NULL;
+static const gchar *batch_interpreter = NULL;
+static const gchar **batch_commands = NULL;
+static const gchar **filenames = NULL;
+static gboolean as_new = FALSE;
+static gboolean no_interface = FALSE;
+static gboolean no_data = FALSE;
+static gboolean no_fonts = FALSE;
+static gboolean no_splash = FALSE;
+static gboolean be_verbose = FALSE;
+static gboolean new_instance = FALSE;
 #if defined (USE_SYSV_SHM) || defined (USE_POSIX_SHM) || defined (G_OS_WIN32)
-static gboolean            use_shm           = TRUE;
+static gboolean use_shm = TRUE;
 #else
-static gboolean            use_shm           = FALSE;
+static gboolean use_shm = FALSE;
 #endif
-static gboolean            use_cpu_accel     = TRUE;
-static gboolean            console_messages  = FALSE;
-static gboolean            use_debug_handler = FALSE;
+static gboolean use_cpu_accel = TRUE;
+static gboolean console_messages = FALSE;
+static gboolean use_debug_handler = FALSE;
 
 #ifdef GIMP_UNSTABLE
-static GimpStackTraceMode  stack_trace_mode  = GIMP_STACK_TRACE_QUERY;
-static GimpPDBCompatMode   pdb_compat_mode   = GIMP_PDB_COMPAT_WARN;
+static GimpStackTraceMode stack_trace_mode = GIMP_STACK_TRACE_QUERY;
+static GimpPDBCompatMode pdb_compat_mode = GIMP_PDB_COMPAT_WARN;
 #else
-static GimpStackTraceMode  stack_trace_mode  = GIMP_STACK_TRACE_NEVER;
-static GimpPDBCompatMode   pdb_compat_mode   = GIMP_PDB_COMPAT_ON;
+static GimpStackTraceMode stack_trace_mode = GIMP_STACK_TRACE_NEVER;
+static GimpPDBCompatMode pdb_compat_mode = GIMP_PDB_COMPAT_ON;
 #endif
 
 
@@ -160,7 +163,7 @@ static const GOptionEntry main_entries[] =
   {
     "new-instance", 'n', 0,
     G_OPTION_ARG_NONE, &new_instance,
-    N_("Start a new GIMP instance"), NULL
+    N_("Start a new Picman instance"), NULL
   },
   {
     "as-new", 'a', 0,
@@ -190,7 +193,7 @@ static const GOptionEntry main_entries[] =
   {
     "no-shm", 0, G_OPTION_FLAG_REVERSE,
     G_OPTION_ARG_NONE, &use_shm,
-    N_("Do not use shared memory between GIMP and plugins"), NULL
+    N_("Do not use shared memory between picman and plugins"), NULL
   },
   {
     "no-cpu-accel", 0, G_OPTION_FLAG_REVERSE,
@@ -230,13 +233,13 @@ static const GOptionEntry main_entries[] =
   {
     "pdb-compat-mode", 0, 0,
     G_OPTION_ARG_CALLBACK, gimp_option_pdb_compat_mode,
-    /*  don't translate the mode names (off|on|warn)  */
+    /* don't translate the mode names (off|on|warn) */
     N_("PDB compatibility mode (off|on|warn)"), "<mode>"
   },
   {
     "stack-trace-mode", 0, 0,
     G_OPTION_ARG_CALLBACK, gimp_option_stack_trace_mode,
-    /*  don't translate the mode names (never|query|always)  */
+    /* don't translate the mode names (never|query|always) */
     N_("Debug in case of a crash (never|query|always)"), "<mode>"
   },
   {
@@ -279,21 +282,21 @@ static const GOptionEntry main_entries[] =
 };
 
 int
-main (int    argc,
+main (int argc,
       char **argv)
 {
   GOptionContext *context;
-  GError         *error = NULL;
-  const gchar    *abort_message;
-  gchar          *basename;
-  gint            i;
+  GError *error = NULL;
+  const gchar *abort_message;
+  gchar *basename;
+  gint i;
 
 #if defined (__GNUC__) && defined (_WIN64)
   /* mingw-w64, at least the unstable build from late July 2008,
-   * starts subsystem:windows programs in main(), but passes them
-   * bogus argc and argv. __argc and __argv are OK, though, so just
-   * use them.
-   */
+* starts subsystem:windows programs in main(), but passes them
+* bogus argc and argv. __argc and __argv are OK, though, so just
+* use them.
+*/
   argc = __argc;
   argv = __argv;
 #endif
@@ -305,7 +308,7 @@ main (int    argc,
     t_SetDllDirectoryA p_SetDllDirectoryA;
 
     p_SetDllDirectoryA = GetProcAddress (GetModuleHandle ("kernel32.dll"),
-					 "SetDllDirectoryA");
+"SetDllDirectoryA");
     if (p_SetDllDirectoryA)
       (*p_SetDllDirectoryA) ("");
   }
@@ -315,7 +318,7 @@ main (int    argc,
     t_SetProcessDEPPolicy p_SetProcessDEPPolicy;
 
     p_SetProcessDEPPolicy = GetProcAddress (GetModuleHandle ("kernel32.dll"),
-					    "SetProcessDEPPolicy");
+"SetProcessDEPPolicy");
     if (p_SetProcessDEPPolicy)
       (*p_SetProcessDEPPolicy) (PROCESS_DEP_ENABLE|PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION);
   }
@@ -402,7 +405,7 @@ main (int    argc,
       else
         {
           g_print ("%s\n",
-                   _("GIMP could not initialize the graphical user interface.\n"
+                   _("Picman could not initialize the graphical user interface.\n"
                      "Make sure a proper setup for your display environment "
                      "exists."));
         }
@@ -420,8 +423,8 @@ main (int    argc,
   if (! new_instance && gimp_unique_open (filenames, as_new))
     {
       if (be_verbose)
-	g_print ("%s\n",
-		 _("Another GIMP instance is already running."));
+g_print ("%s\n",
+_("Another Picman instance is already running."));
 
       gdk_notify_startup_complete ();
 
@@ -464,22 +467,22 @@ main (int    argc,
 #ifdef G_OS_WIN32
 
 /* Provide WinMain in case we build GIMP as a subsystem:windows
- * application. Well, we do. When built with mingw, though, user code
- * execution still starts in main() in that case. So WinMain() gets
- * used on MSVC builds only.
- */
+* application. Well, we do. When built with mingw, though, user code
+* execution still starts in main() in that case. So WinMain() gets
+* used on MSVC builds only.
+*/
 
 #ifdef __GNUC__
-#  ifndef _stdcall
-#    define _stdcall  __attribute__((stdcall))
-#  endif
+# ifndef _stdcall
+# define _stdcall __attribute__((stdcall))
+# endif
 #endif
 
 int _stdcall
 WinMain (struct HINSTANCE__ *hInstance,
          struct HINSTANCE__ *hPrevInstance,
-         char               *lpszCmdLine,
-         int                 nCmdShow)
+         char *lpszCmdLine,
+         int nCmdShow)
 {
   return main (__argc, __argv);
 }
@@ -491,7 +494,7 @@ wait_console_window (void)
 {
   FILE *console = fopen ("CONOUT$", "w");
 
-  SetConsoleTitleW (g_utf8_to_utf16 (_("GIMP output. Type any character to close this window."), -1, NULL, NULL, NULL));
+  SetConsoleTitleW (g_utf8_to_utf16 (_("Picman output. Type any character to close this window."), -1, NULL, NULL, NULL));
   fprintf (console, _("(Type any character to close this window)\n"));
   fflush (console);
   _getch ();
@@ -509,7 +512,7 @@ gimp_open_console_window (void)
       if ((HANDLE) _get_osfhandle (fileno (stderr)) == INVALID_HANDLE_VALUE)
         freopen ("CONOUT$", "w", stderr);
 
-      SetConsoleTitleW (g_utf8_to_utf16 (_("GIMP output. You can minimize this window, but don't close it."), -1, NULL, NULL, NULL));
+      SetConsoleTitleW (g_utf8_to_utf16 (_("Picman output. You can minimize this window, but don't close it."), -1, NULL, NULL, NULL));
 
       atexit (wait_console_window);
     }
@@ -520,10 +523,10 @@ gimp_open_console_window (void)
 
 
 static gboolean
-gimp_option_fatal_warnings (const gchar  *option_name,
-                            const gchar  *value,
-                            gpointer      data,
-                            GError      **error)
+gimp_option_fatal_warnings (const gchar *option_name,
+                            const gchar *value,
+                            gpointer data,
+                            GError **error)
 {
   GLogLevelFlags fatal_mask;
 
@@ -536,10 +539,10 @@ gimp_option_fatal_warnings (const gchar  *option_name,
 }
 
 static gboolean
-gimp_option_stack_trace_mode (const gchar  *option_name,
-                              const gchar  *value,
-                              gpointer      data,
-                              GError      **error)
+gimp_option_stack_trace_mode (const gchar *option_name,
+                              const gchar *value,
+                              gpointer data,
+                              GError **error)
 {
   if (strcmp (value, "never") == 0)
     stack_trace_mode = GIMP_STACK_TRACE_NEVER;
@@ -554,10 +557,10 @@ gimp_option_stack_trace_mode (const gchar  *option_name,
 }
 
 static gboolean
-gimp_option_pdb_compat_mode (const gchar  *option_name,
-                             const gchar  *value,
-                             gpointer      data,
-                             GError      **error)
+gimp_option_pdb_compat_mode (const gchar *option_name,
+                             const gchar *value,
+                             gpointer data,
+                             GError **error)
 {
   if (! strcmp (value, "off"))
     pdb_compat_mode = GIMP_PDB_COMPAT_OFF;
@@ -572,10 +575,10 @@ gimp_option_pdb_compat_mode (const gchar  *option_name,
 }
 
 static gboolean
-gimp_option_dump_gimprc (const gchar  *option_name,
-                         const gchar  *value,
-                         gpointer      data,
-                         GError      **error)
+gimp_option_dump_gimprc (const gchar *option_name,
+                         const gchar *value,
+                         gpointer data,
+                         GError **error)
 {
   GimpConfigDumpFormat format = GIMP_CONFIG_DUMP_NONE;
 
@@ -590,8 +593,8 @@ gimp_option_dump_gimprc (const gchar  *option_name,
 
   if (format)
     {
-      Gimp     *gimp;
-      gboolean  success;
+      Gimp *gimp;
+      gboolean success;
 
       gimp = g_object_new (GIMP_TYPE_GIMP, NULL);
 
@@ -609,20 +612,20 @@ gimp_option_dump_gimprc (const gchar  *option_name,
 }
 
 static gboolean
-gimp_option_dump_pdb_procedures_deprecated (const gchar  *option_name,
-                                            const gchar  *value,
-                                            gpointer      data,
-                                            GError      **error)
+gimp_option_dump_pdb_procedures_deprecated (const gchar *option_name,
+                                            const gchar *value,
+                                            gpointer data,
+                                            GError **error)
 {
-  Gimp  *gimp;
+  Gimp *gimp;
   GList *deprecated_procs;
   GList *iter;
 
   gimp = g_object_new (GIMP_TYPE_GIMP, NULL);
 
   /* Make sure to turn on compatibility mode so deprecated procedures
-   * are included
-   */
+* are included
+*/
   gimp->pdb_compat_mode = GIMP_PDB_COMPAT_ON;
 
   /* Initialize the list of procedures */
@@ -679,18 +682,18 @@ gimp_init_malloc (void)
 
 #ifdef __GLIBC__
   /* Tweak memory allocation so that memory allocated in chunks >= 4k
-   * (64x64 pixel 1bpp tile) gets returned to the system when free()'d.
-   *
-   * The default value for M_MMAP_THRESHOLD in glibc-2.3 is 128k.
-   * This is said to be an empirically derived value that works well
-   * in most systems. Lowering it to 4k is thus probably not the ideal
-   * solution.
-   *
-   * An alternative to tuning this parameter would be to use
-   * malloc_trim(), for example after releasing a large tile-manager.
-   */
+* (64x64 pixel 1bpp tile) gets returned to the system when free()'d.
+*
+* The default value for M_MMAP_THRESHOLD in glibc-2.3 is 128k.
+* This is said to be an empirically derived value that works well
+* in most systems. Lowering it to 4k is thus probably not the ideal
+* solution.
+*
+* An alternative to tuning this parameter would be to use
+* malloc_trim(), for example after releasing a large tile-manager.
+*/
 #if 0
-  mallopt (M_MMAP_THRESHOLD, TILE_WIDTH * TILE_HEIGHT);
+mallopt (M_MMAP_THRESHOLD, TILE_WIDTH * TILE_HEIGHT);
 #endif
 #endif
 }
@@ -698,11 +701,11 @@ gimp_init_malloc (void)
 static void
 gimp_init_i18n (void)
 {
-  /*  We may change the locale later if the user specifies a language
-   *  in the gimprc file. Here we are just initializing the locale
-   *  according to the environment variables and set up the paths to
-   *  the message catalogs.
-   */
+  /* We may change the locale later if the user specifies a language
+* in the gimprc file. Here we are just initializing the locale
+* according to the environment variables and set up the paths to
+* the message catalogs.
+*/
 
   setlocale (LC_ALL, "");
 
