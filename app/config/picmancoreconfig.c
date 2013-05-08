@@ -1,0 +1,927 @@
+/* PICMAN - The GNU Image Manipulation Program
+ * Copyright (C) 1995 Spencer Kimball and Peter Mattis
+ *
+ * PicmanCoreConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "config.h"
+
+#include <cairo.h>
+#include <gegl.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+
+#include "config-types.h"
+
+#include "core/core-types.h"
+#include "core/picman-utils.h"
+#include "core/picmangrid.h"
+#include "core/picmantemplate.h"
+
+#include "picmanrc-blurbs.h"
+#include "picmancoreconfig.h"
+
+#include "picman-intl.h"
+
+
+#define DEFAULT_BRUSH       "Round Fuzzy"
+#define DEFAULT_DYNAMICS    "Dynamics Off"
+#define DEFAULT_PATTERN     "Pine"
+#define DEFAULT_PALETTE     "Default"
+#define DEFAULT_GRADIENT    "FG to BG (RGB)"
+#define DEFAULT_TOOL_PRESET "Current Options"
+#define DEFAULT_FONT        "Sans"
+#define DEFAULT_COMMENT     "Created with PICMAN"
+
+
+enum
+{
+  PROP_0,
+  PROP_LANGUAGE,
+  PROP_INTERPOLATION_TYPE,
+  PROP_DEFAULT_THRESHOLD,
+  PROP_PLUG_IN_PATH,
+  PROP_MODULE_PATH,
+  PROP_INTERPRETER_PATH,
+  PROP_ENVIRON_PATH,
+  PROP_BRUSH_PATH,
+  PROP_BRUSH_PATH_WRITABLE,
+  PROP_DYNAMICS_PATH,
+  PROP_DYNAMICS_PATH_WRITABLE,
+  PROP_PATTERN_PATH,
+  PROP_PATTERN_PATH_WRITABLE,
+  PROP_PALETTE_PATH,
+  PROP_PALETTE_PATH_WRITABLE,
+  PROP_GRADIENT_PATH,
+  PROP_GRADIENT_PATH_WRITABLE,
+  PROP_TOOL_PRESET_PATH,
+  PROP_TOOL_PRESET_PATH_WRITABLE,
+  PROP_FONT_PATH,
+  PROP_FONT_PATH_WRITABLE,
+  PROP_DEFAULT_BRUSH,
+  PROP_DEFAULT_DYNAMICS,
+  PROP_DEFAULT_PATTERN,
+  PROP_DEFAULT_PALETTE,
+  PROP_DEFAULT_GRADIENT,
+  PROP_DEFAULT_TOOL_PRESET,
+  PROP_DEFAULT_FONT,
+  PROP_GLOBAL_BRUSH,
+  PROP_GLOBAL_DYNAMICS,
+  PROP_GLOBAL_PATTERN,
+  PROP_GLOBAL_PALETTE,
+  PROP_GLOBAL_GRADIENT,
+  PROP_GLOBAL_FONT,
+  PROP_DEFAULT_IMAGE,
+  PROP_DEFAULT_GRID,
+  PROP_UNDO_LEVELS,
+  PROP_UNDO_SIZE,
+  PROP_UNDO_PREVIEW_SIZE,
+  PROP_PLUG_IN_HISTORY_SIZE,
+  PROP_PLUGINRC_PATH,
+  PROP_LAYER_PREVIEWS,
+  PROP_LAYER_PREVIEW_SIZE,
+  PROP_THUMBNAIL_SIZE,
+  PROP_THUMBNAIL_FILESIZE_LIMIT,
+  PROP_COLOR_MANAGEMENT,
+  PROP_COLOR_PROFILE_POLICY,
+  PROP_SAVE_DOCUMENT_HISTORY,
+  PROP_QUICK_MASK_COLOR,
+
+  /* ignored, only for backward compatibility: */
+  PROP_INSTALL_COLORMAP,
+  PROP_MIN_COLORS
+};
+
+
+static void  picman_core_config_finalize               (GObject      *object);
+static void  picman_core_config_set_property           (GObject      *object,
+                                                      guint         property_id,
+                                                      const GValue *value,
+                                                      GParamSpec   *pspec);
+static void  picman_core_config_get_property           (GObject      *object,
+                                                      guint         property_id,
+                                                      GValue       *value,
+                                                      GParamSpec   *pspec);
+static void picman_core_config_default_image_notify    (GObject      *object,
+                                                      GParamSpec   *pspec,
+                                                      gpointer      data);
+static void picman_core_config_default_grid_notify     (GObject      *object,
+                                                      GParamSpec   *pspec,
+                                                      gpointer      data);
+static void picman_core_config_color_management_notify (GObject      *object,
+                                                      GParamSpec   *pspec,
+                                                      gpointer      data);
+
+
+G_DEFINE_TYPE (PicmanCoreConfig, picman_core_config, PICMAN_TYPE_GEGL_CONFIG)
+
+#define parent_class picman_core_config_parent_class
+
+
+static void
+picman_core_config_class_init (PicmanCoreConfigClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  gchar        *path;
+  PicmanRGB       red          = { 1.0, 0, 0, 0.5 };
+  guint64       undo_size;
+
+  object_class->finalize     = picman_core_config_finalize;
+  object_class->set_property = picman_core_config_set_property;
+  object_class->get_property = picman_core_config_get_property;
+
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_LANGUAGE,
+                                   "language", LANGUAGE_BLURB,
+                                   NULL,  /* take from environment */
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION_TYPE,
+                                 "interpolation-type",
+                                 INTERPOLATION_TYPE_BLURB,
+                                 PICMAN_TYPE_INTERPOLATION_TYPE,
+                                 PICMAN_INTERPOLATION_CUBIC,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_DEFAULT_THRESHOLD,
+                                "default-threshold", DEFAULT_THRESHOLD_BLURB,
+                                0, 255, 15,
+                                PICMAN_PARAM_STATIC_STRINGS);
+
+  path = picman_config_build_plug_in_path ("plug-ins");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PLUG_IN_PATH,
+                                 "plug-in-path", PLUG_IN_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_plug_in_path ("modules");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_MODULE_PATH,
+                                 "module-path", MODULE_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_plug_in_path ("interpreters");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_INTERPRETER_PATH,
+                                 "interpreter-path", INTERPRETER_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_plug_in_path ("environ");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_ENVIRON_PATH,
+                                 "environ-path", ENVIRON_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("brushes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH,
+                                 "brush-path", BRUSH_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("brushes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH_WRITABLE,
+                                 "brush-path-writable",
+                                 BRUSH_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("dynamics");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH,
+                                 "dynamics-path", DYNAMICS_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("dynamics");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH_WRITABLE,
+                                 "dynamics-path-writable",
+                                 DYNAMICS_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("patterns");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH,
+                                 "pattern-path", PATTERN_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("patterns");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH_WRITABLE,
+                                 "pattern-path-writable",
+                                 PATTERN_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("palettes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH,
+                                 "palette-path", PALETTE_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("palettes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH_WRITABLE,
+                                 "palette-path-writable",
+                                 PALETTE_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("gradients");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH,
+                                 "gradient-path", GRADIENT_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("gradients");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH_WRITABLE,
+                                 "gradient-path-writable",
+                                 GRADIENT_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("tool-presets");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH,
+                                 "tool-preset-path", TOOL_PRESET_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_writable_path ("tool-presets");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH_WRITABLE,
+                                 "tool-preset-path-writable",
+                                 TOOL_PRESET_PATH_WRITABLE_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  g_free (path);
+
+  path = picman_config_build_data_path ("fonts");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH,
+                                 "font-path", FONT_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_CONFIRM);
+  g_free (path);
+
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH_WRITABLE,
+                                 "font-path-writable", NULL,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_BRUSH,
+                                   "default-brush", DEFAULT_BRUSH_BLURB,
+                                   DEFAULT_BRUSH,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_DYNAMICS,
+                                   "default-dynamics", DEFAULT_DYNAMICS_BLURB,
+                                   DEFAULT_DYNAMICS,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PATTERN,
+                                   "default-pattern", DEFAULT_PATTERN_BLURB,
+                                   DEFAULT_PATTERN,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PALETTE,
+                                   "default-palette", DEFAULT_PALETTE_BLURB,
+                                   DEFAULT_PALETTE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_GRADIENT,
+                                   "default-gradient", DEFAULT_GRADIENT_BLURB,
+                                   DEFAULT_GRADIENT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_TOOL_PRESET,
+                                   "default-tool-preset", DEFAULT_TOOL_PRESET_BLURB,
+                                   DEFAULT_TOOL_PRESET,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_FONT,
+                                   "default-font", DEFAULT_FONT_BLURB,
+                                   DEFAULT_FONT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_BRUSH,
+                                    "global-brush", GLOBAL_BRUSH_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_DYNAMICS,
+                                    "global-dynamics", GLOBAL_DYNAMICS_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PATTERN,
+                                    "global-pattern", GLOBAL_PATTERN_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PALETTE,
+                                    "global-palette", GLOBAL_PALETTE_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_GRADIENT,
+                                    "global-gradient", GLOBAL_GRADIENT_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_FONT,
+                                    "global-font", GLOBAL_FONT_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_IMAGE,
+                                   "default-image", DEFAULT_IMAGE_BLURB,
+                                   PICMAN_TYPE_TEMPLATE,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_GRID,
+                                   "default-grid", DEFAULT_GRID_BLURB,
+                                   PICMAN_TYPE_GRID,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_UNDO_LEVELS,
+                                "undo-levels", UNDO_LEVELS_BLURB,
+                                0, 1 << 20, 5,
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_CONFIRM);
+
+  undo_size = picman_get_physical_memory_size ();
+
+  if (undo_size > 0)
+    undo_size = undo_size / 8; /* 1/8th of the memory */
+  else
+    undo_size = 1 << 26; /* 64GB */
+
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_UNDO_SIZE,
+                                    "undo-size", UNDO_SIZE_BLURB,
+                                    0, PICMAN_MAX_MEMSIZE, undo_size,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_CONFIRM);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_UNDO_PREVIEW_SIZE,
+                                 "undo-preview-size", UNDO_PREVIEW_SIZE_BLURB,
+                                 PICMAN_TYPE_VIEW_SIZE,
+                                 PICMAN_VIEW_SIZE_LARGE,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_PLUG_IN_HISTORY_SIZE,
+                                "plug-in-history-size",
+                                PLUG_IN_HISTORY_SIZE_BLURB,
+                                0, 256, 10,
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class,
+                                 PROP_PLUGINRC_PATH,
+                                 "pluginrc-path", PLUGINRC_PATH_BLURB,
+                                 PICMAN_CONFIG_PATH_FILE,
+                                 "${picman_dir}" G_DIR_SEPARATOR_S "pluginrc",
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_LAYER_PREVIEWS,
+                                    "layer-previews", LAYER_PREVIEWS_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_LAYER_PREVIEW_SIZE,
+                                 "layer-preview-size", LAYER_PREVIEW_SIZE_BLURB,
+                                 PICMAN_TYPE_VIEW_SIZE,
+                                 PICMAN_VIEW_SIZE_MEDIUM,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_THUMBNAIL_SIZE,
+                                 "thumbnail-size", THUMBNAIL_SIZE_BLURB,
+                                 PICMAN_TYPE_THUMBNAIL_SIZE,
+                                 PICMAN_THUMBNAIL_SIZE_NORMAL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_THUMBNAIL_FILESIZE_LIMIT,
+                                    "thumbnail-filesize-limit",
+                                    THUMBNAIL_FILESIZE_LIMIT_BLURB,
+                                    0, PICMAN_MAX_MEMSIZE, 1 << 22,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_COLOR_MANAGEMENT,
+                                   "color-management", COLOR_MANAGEMENT_BLURB,
+                                   PICMAN_TYPE_COLOR_CONFIG,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_COLOR_PROFILE_POLICY,
+                                 "color-profile-policy",
+                                 COLOR_PROFILE_POLICY_BLURB,
+                                 PICMAN_TYPE_COLOR_PROFILE_POLICY,
+                                 PICMAN_COLOR_PROFILE_POLICY_ASK,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_DOCUMENT_HISTORY,
+                                    "save-document-history",
+                                    SAVE_DOCUMENT_HISTORY_BLURB,
+                                    TRUE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_QUICK_MASK_COLOR,
+                                "quick-mask-color", QUICK_MASK_COLOR_BLURB,
+                                TRUE, &red,
+                                PICMAN_PARAM_STATIC_STRINGS);
+
+  /*  only for backward compatibility:  */
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
+                                    "install-colormap", NULL,
+                                    FALSE,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_MIN_COLORS,
+                                "min-colors", NULL,
+                                27, 256, 144,
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_IGNORE);
+}
+
+static void
+picman_core_config_init (PicmanCoreConfig *config)
+{
+  config->default_image = g_object_new (PICMAN_TYPE_TEMPLATE,
+                                        "name",    "Default Image",
+                                        "comment", DEFAULT_COMMENT,
+                                        NULL);
+  g_signal_connect (config->default_image, "notify",
+                    G_CALLBACK (picman_core_config_default_image_notify),
+                    config);
+
+  config->default_grid = g_object_new (PICMAN_TYPE_GRID,
+                                       "name", "Default Grid",
+                                       NULL);
+  g_signal_connect (config->default_grid, "notify",
+                    G_CALLBACK (picman_core_config_default_grid_notify),
+                    config);
+
+  config->color_management = g_object_new (PICMAN_TYPE_COLOR_CONFIG, NULL);
+  g_signal_connect (config->color_management, "notify",
+                    G_CALLBACK (picman_core_config_color_management_notify),
+                    config);
+}
+
+static void
+picman_core_config_finalize (GObject *object)
+{
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
+
+  g_free (core_config->language);
+  g_free (core_config->plug_in_path);
+  g_free (core_config->module_path);
+  g_free (core_config->interpreter_path);
+  g_free (core_config->environ_path);
+  g_free (core_config->brush_path);
+  g_free (core_config->brush_path_writable);
+  g_free (core_config->dynamics_path);
+  g_free (core_config->dynamics_path_writable);
+  g_free (core_config->pattern_path);
+  g_free (core_config->pattern_path_writable);
+  g_free (core_config->palette_path);
+  g_free (core_config->palette_path_writable);
+  g_free (core_config->gradient_path);
+  g_free (core_config->gradient_path_writable);
+  g_free (core_config->tool_preset_path);
+  g_free (core_config->tool_preset_path_writable);
+  g_free (core_config->font_path);
+  g_free (core_config->font_path_writable);
+  g_free (core_config->default_brush);
+  g_free (core_config->default_dynamics);
+  g_free (core_config->default_pattern);
+  g_free (core_config->default_palette);
+  g_free (core_config->default_gradient);
+  g_free (core_config->default_tool_preset);
+  g_free (core_config->default_font);
+  g_free (core_config->plug_in_rc_path);
+
+  if (core_config->default_image)
+    g_object_unref (core_config->default_image);
+
+  if (core_config->default_grid)
+    g_object_unref (core_config->default_grid);
+
+  if (core_config->color_management)
+    g_object_unref (core_config->color_management);
+
+  G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static void
+picman_core_config_set_property (GObject      *object,
+                               guint         property_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
+{
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
+
+  switch (property_id)
+    {
+    case PROP_LANGUAGE:
+      g_free (core_config->language);
+      core_config->language = g_value_dup_string (value);
+      break;
+    case PROP_INTERPOLATION_TYPE:
+      core_config->interpolation_type = g_value_get_enum (value);
+      break;
+    case PROP_DEFAULT_THRESHOLD:
+      core_config->default_threshold = g_value_get_int (value);
+      break;
+    case PROP_PLUG_IN_PATH:
+      g_free (core_config->plug_in_path);
+      core_config->plug_in_path = g_value_dup_string (value);
+      break;
+    case PROP_MODULE_PATH:
+      g_free (core_config->module_path);
+      core_config->module_path = g_value_dup_string (value);
+      break;
+    case PROP_INTERPRETER_PATH:
+      g_free (core_config->interpreter_path);
+      core_config->interpreter_path = g_value_dup_string (value);
+      break;
+    case PROP_ENVIRON_PATH:
+      g_free (core_config->environ_path);
+      core_config->environ_path = g_value_dup_string (value);
+      break;
+    case PROP_BRUSH_PATH:
+      g_free (core_config->brush_path);
+      core_config->brush_path = g_value_dup_string (value);
+      break;
+    case PROP_BRUSH_PATH_WRITABLE:
+      g_free (core_config->brush_path_writable);
+      core_config->brush_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_DYNAMICS_PATH:
+      g_free (core_config->dynamics_path);
+      core_config->dynamics_path = g_value_dup_string (value);
+      break;
+    case PROP_DYNAMICS_PATH_WRITABLE:
+      g_free (core_config->dynamics_path_writable);
+      core_config->dynamics_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_PATTERN_PATH:
+      g_free (core_config->pattern_path);
+      core_config->pattern_path = g_value_dup_string (value);
+      break;
+    case PROP_PATTERN_PATH_WRITABLE:
+      g_free (core_config->pattern_path_writable);
+      core_config->pattern_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_PALETTE_PATH:
+      g_free (core_config->palette_path);
+      core_config->palette_path = g_value_dup_string (value);
+      break;
+    case PROP_PALETTE_PATH_WRITABLE:
+      g_free (core_config->palette_path_writable);
+      core_config->palette_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_GRADIENT_PATH:
+      g_free (core_config->gradient_path);
+      core_config->gradient_path = g_value_dup_string (value);
+      break;
+    case PROP_GRADIENT_PATH_WRITABLE:
+      g_free (core_config->gradient_path_writable);
+      core_config->gradient_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_TOOL_PRESET_PATH:
+      g_free (core_config->tool_preset_path);
+      core_config->tool_preset_path = g_value_dup_string (value);
+      break;
+    case PROP_TOOL_PRESET_PATH_WRITABLE:
+      g_free (core_config->tool_preset_path_writable);
+      core_config->tool_preset_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_FONT_PATH:
+      g_free (core_config->font_path);
+      core_config->font_path = g_value_dup_string (value);
+      break;
+    case PROP_FONT_PATH_WRITABLE:
+      g_free (core_config->font_path_writable);
+      core_config->font_path_writable = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_BRUSH:
+      g_free (core_config->default_brush);
+      core_config->default_brush = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_DYNAMICS:
+      g_free (core_config->default_dynamics);
+      core_config->default_dynamics = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_PATTERN:
+      g_free (core_config->default_pattern);
+      core_config->default_pattern = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_PALETTE:
+      g_free (core_config->default_palette);
+      core_config->default_palette = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_GRADIENT:
+      g_free (core_config->default_gradient);
+      core_config->default_gradient = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_TOOL_PRESET:
+      g_free (core_config->default_tool_preset);
+      core_config->default_tool_preset = g_value_dup_string (value);
+      break;
+    case PROP_DEFAULT_FONT:
+      g_free (core_config->default_font);
+      core_config->default_font = g_value_dup_string (value);
+      break;
+    case PROP_GLOBAL_BRUSH:
+      core_config->global_brush = g_value_get_boolean (value);
+      break;
+    case PROP_GLOBAL_DYNAMICS:
+      core_config->global_dynamics = g_value_get_boolean (value);
+      break;
+    case PROP_GLOBAL_PATTERN:
+      core_config->global_pattern = g_value_get_boolean (value);
+      break;
+    case PROP_GLOBAL_PALETTE:
+      core_config->global_palette = g_value_get_boolean (value);
+      break;
+    case PROP_GLOBAL_GRADIENT:
+      core_config->global_gradient = g_value_get_boolean (value);
+      break;
+    case PROP_GLOBAL_FONT:
+      core_config->global_font = g_value_get_boolean (value);
+      break;
+    case PROP_DEFAULT_IMAGE:
+      if (g_value_get_object (value))
+        picman_config_sync (g_value_get_object (value) ,
+                          G_OBJECT (core_config->default_image), 0);
+      break;
+    case PROP_DEFAULT_GRID:
+      if (g_value_get_object (value))
+        picman_config_sync (g_value_get_object (value),
+                          G_OBJECT (core_config->default_grid), 0);
+      break;
+    case PROP_PLUG_IN_HISTORY_SIZE:
+      core_config->plug_in_history_size = g_value_get_int (value);
+      break;
+    case PROP_UNDO_LEVELS:
+      core_config->levels_of_undo = g_value_get_int (value);
+      break;
+    case PROP_UNDO_SIZE:
+      core_config->undo_size = g_value_get_uint64 (value);
+      break;
+    case PROP_UNDO_PREVIEW_SIZE:
+      core_config->undo_preview_size = g_value_get_enum (value);
+      break;
+    case PROP_PLUGINRC_PATH:
+      g_free (core_config->plug_in_rc_path);
+      core_config->plug_in_rc_path = g_value_dup_string (value);
+      break;
+    case PROP_LAYER_PREVIEWS:
+      core_config->layer_previews = g_value_get_boolean (value);
+      break;
+    case PROP_LAYER_PREVIEW_SIZE:
+      core_config->layer_preview_size = g_value_get_enum (value);
+      break;
+    case PROP_THUMBNAIL_SIZE:
+      core_config->thumbnail_size = g_value_get_enum (value);
+      break;
+    case PROP_THUMBNAIL_FILESIZE_LIMIT:
+      core_config->thumbnail_filesize_limit = g_value_get_uint64 (value);
+      break;
+    case PROP_COLOR_MANAGEMENT:
+      if (g_value_get_object (value))
+        picman_config_sync (g_value_get_object (value),
+                          G_OBJECT (core_config->color_management), 0);
+      break;
+    case PROP_COLOR_PROFILE_POLICY:
+      core_config->color_profile_policy = g_value_get_enum (value);
+      break;
+    case PROP_SAVE_DOCUMENT_HISTORY:
+      core_config->save_document_history = g_value_get_boolean (value);
+      break;
+    case PROP_QUICK_MASK_COLOR:
+      picman_value_get_rgb (value, &core_config->quick_mask_color);
+      break;
+
+    case PROP_INSTALL_COLORMAP:
+    case PROP_MIN_COLORS:
+      /*  ignored  */
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+picman_core_config_get_property (GObject    *object,
+                               guint       property_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
+{
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
+
+  switch (property_id)
+    {
+    case PROP_LANGUAGE:
+      g_value_set_string (value, core_config->language);
+      break;
+    case PROP_INTERPOLATION_TYPE:
+      g_value_set_enum (value, core_config->interpolation_type);
+      break;
+    case PROP_DEFAULT_THRESHOLD:
+      g_value_set_int (value, core_config->default_threshold);
+      break;
+    case PROP_PLUG_IN_PATH:
+      g_value_set_string (value, core_config->plug_in_path);
+      break;
+    case PROP_MODULE_PATH:
+      g_value_set_string (value, core_config->module_path);
+      break;
+    case PROP_INTERPRETER_PATH:
+      g_value_set_string (value, core_config->interpreter_path);
+      break;
+    case PROP_ENVIRON_PATH:
+      g_value_set_string (value, core_config->environ_path);
+      break;
+    case PROP_BRUSH_PATH:
+      g_value_set_string (value, core_config->brush_path);
+      break;
+    case PROP_BRUSH_PATH_WRITABLE:
+      g_value_set_string (value, core_config->brush_path_writable);
+      break;
+    case PROP_DYNAMICS_PATH:
+      g_value_set_string (value, core_config->dynamics_path);
+      break;
+    case PROP_DYNAMICS_PATH_WRITABLE:
+      g_value_set_string (value, core_config->dynamics_path_writable);
+      break;
+    case PROP_PATTERN_PATH:
+      g_value_set_string (value, core_config->pattern_path);
+      break;
+    case PROP_PATTERN_PATH_WRITABLE:
+      g_value_set_string (value, core_config->pattern_path_writable);
+      break;
+    case PROP_PALETTE_PATH:
+      g_value_set_string (value, core_config->palette_path);
+      break;
+    case PROP_PALETTE_PATH_WRITABLE:
+      g_value_set_string (value, core_config->palette_path_writable);
+      break;
+    case PROP_GRADIENT_PATH:
+      g_value_set_string (value, core_config->gradient_path);
+      break;
+    case PROP_GRADIENT_PATH_WRITABLE:
+      g_value_set_string (value, core_config->gradient_path_writable);
+      break;
+    case PROP_TOOL_PRESET_PATH:
+      g_value_set_string (value, core_config->tool_preset_path);
+      break;
+    case PROP_TOOL_PRESET_PATH_WRITABLE:
+      g_value_set_string (value, core_config->tool_preset_path_writable);
+      break;
+    case PROP_FONT_PATH:
+      g_value_set_string (value, core_config->font_path);
+      break;
+    case PROP_FONT_PATH_WRITABLE:
+      g_value_set_string (value, core_config->font_path_writable);
+      break;
+    case PROP_DEFAULT_BRUSH:
+      g_value_set_string (value, core_config->default_brush);
+      break;
+    case PROP_DEFAULT_DYNAMICS:
+      g_value_set_string (value, core_config->default_dynamics);
+      break;
+    case PROP_DEFAULT_PATTERN:
+      g_value_set_string (value, core_config->default_pattern);
+      break;
+    case PROP_DEFAULT_PALETTE:
+      g_value_set_string (value, core_config->default_palette);
+      break;
+    case PROP_DEFAULT_GRADIENT:
+      g_value_set_string (value, core_config->default_gradient);
+      break;
+    case PROP_DEFAULT_TOOL_PRESET:
+      g_value_set_string (value, core_config->default_tool_preset);
+      break;
+    case PROP_DEFAULT_FONT:
+      g_value_set_string (value, core_config->default_font);
+      break;
+    case PROP_GLOBAL_BRUSH:
+      g_value_set_boolean (value, core_config->global_brush);
+      break;
+    case PROP_GLOBAL_DYNAMICS:
+      g_value_set_boolean (value, core_config->global_dynamics);
+      break;
+    case PROP_GLOBAL_PATTERN:
+      g_value_set_boolean (value, core_config->global_pattern);
+      break;
+    case PROP_GLOBAL_PALETTE:
+      g_value_set_boolean (value, core_config->global_palette);
+      break;
+    case PROP_GLOBAL_GRADIENT:
+      g_value_set_boolean (value, core_config->global_gradient);
+      break;
+    case PROP_GLOBAL_FONT:
+      g_value_set_boolean (value, core_config->global_font);
+      break;
+    case PROP_DEFAULT_IMAGE:
+      g_value_set_object (value, core_config->default_image);
+      break;
+    case PROP_DEFAULT_GRID:
+      g_value_set_object (value, core_config->default_grid);
+      break;
+    case PROP_PLUG_IN_HISTORY_SIZE:
+      g_value_set_int (value, core_config->plug_in_history_size);
+      break;
+    case PROP_UNDO_LEVELS:
+      g_value_set_int (value, core_config->levels_of_undo);
+      break;
+    case PROP_UNDO_SIZE:
+      g_value_set_uint64 (value, core_config->undo_size);
+      break;
+    case PROP_UNDO_PREVIEW_SIZE:
+      g_value_set_enum (value, core_config->undo_preview_size);
+      break;
+    case PROP_PLUGINRC_PATH:
+      g_value_set_string (value, core_config->plug_in_rc_path);
+      break;
+    case PROP_LAYER_PREVIEWS:
+      g_value_set_boolean (value, core_config->layer_previews);
+      break;
+    case PROP_LAYER_PREVIEW_SIZE:
+      g_value_set_enum (value, core_config->layer_preview_size);
+      break;
+    case PROP_THUMBNAIL_SIZE:
+      g_value_set_enum (value, core_config->thumbnail_size);
+      break;
+    case PROP_THUMBNAIL_FILESIZE_LIMIT:
+      g_value_set_uint64 (value, core_config->thumbnail_filesize_limit);
+      break;
+    case PROP_COLOR_MANAGEMENT:
+      g_value_set_object (value, core_config->color_management);
+      break;
+    case PROP_COLOR_PROFILE_POLICY:
+      g_value_set_enum (value, core_config->color_profile_policy);
+      break;
+    case PROP_SAVE_DOCUMENT_HISTORY:
+      g_value_set_boolean (value, core_config->save_document_history);
+      break;
+    case PROP_QUICK_MASK_COLOR:
+      picman_value_set_rgb (value, &core_config->quick_mask_color);
+      break;
+
+    case PROP_INSTALL_COLORMAP:
+    case PROP_MIN_COLORS:
+      /*  ignored  */
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+picman_core_config_default_image_notify (GObject    *object,
+                                       GParamSpec *pspec,
+                                       gpointer    data)
+{
+  g_object_notify (G_OBJECT (data), "default-image");
+}
+
+static void
+picman_core_config_default_grid_notify (GObject    *object,
+                                      GParamSpec *pspec,
+                                      gpointer    data)
+{
+  g_object_notify (G_OBJECT (data), "default-grid");
+}
+
+static void
+picman_core_config_color_management_notify (GObject    *object,
+                                          GParamSpec *pspec,
+                                          gpointer    data)
+{
+  g_object_notify (G_OBJECT (data), "color-management");
+}

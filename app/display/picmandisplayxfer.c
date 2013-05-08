@@ -1,0 +1,266 @@
+/* PICMAN - The GNU Image Manipulation Program
+ * Copyright (C) 1995 Spencer Kimball and Peter Mattis
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "config.h"
+
+#include <gegl.h>
+#include <gtk/gtk.h>
+
+#include "display-types.h"
+
+#include "picmandisplayxfer.h"
+
+
+#define NUM_PAGES 2
+
+typedef struct _RTree     RTree;
+typedef struct _RTreeNode RTreeNode;
+
+struct _RTreeNode
+{
+  RTreeNode *children[2];
+  RTreeNode *next;
+  gint       x, y, w, h;
+};
+
+struct _RTree
+{
+  RTreeNode  root;
+  RTreeNode *available;
+};
+
+struct _PicmanDisplayXfer
+{
+  /* track subregions of render_surface for efficient uploads */
+  RTree            rtree;
+  cairo_surface_t *render_surface[NUM_PAGES];
+  gint             page;
+};
+
+
+static RTreeNode *
+rtree_node_create (RTree      *rtree,
+                   RTreeNode **prev,
+		   gint        x,
+                   gint        y,
+                   gint        w,
+                   gint        h)
+{
+  RTreeNode *node;
+
+  g_assert (x >= 0 && x+w <= rtree->root.w);
+  g_assert (y >= 0 && y+h <= rtree->root.h);
+
+  node = g_slice_alloc (sizeof (*node));
+  if (node == NULL)
+    return NULL;
+
+  node->children[0] = NULL;
+  node->children[1] = NULL;
+  node->x = x;
+  node->y = y;
+  node->w = w;
+  node->h = h;
+
+  node->next = *prev;
+  *prev = node;
+
+  return node;
+}
+
+static void
+rtree_node_destroy (RTree     *rtree,
+                    RTreeNode *node)
+{
+  gint i;
+
+  for (i = 0; i < 2; i++)
+    {
+      if (node->children[i])
+	rtree_node_destroy (rtree, node->children[i]);
+    }
+
+  g_slice_free (RTreeNode, node);
+}
+
+static RTreeNode *
+rtree_node_insert (RTree      *rtree,
+                   RTreeNode **prev,
+		   RTreeNode  *node,
+                   gint        w,
+                   gint        h)
+{
+  *prev = node->next;
+
+  if (((node->w - w) | (node->h - h)) > 1)
+    {
+      gint ww = node->w - w;
+      gint hh = node->h - h;
+
+      if (ww >= hh)
+	{
+	  node->children[0] = rtree_node_create (rtree, prev,
+						 node->x + w, node->y,
+						 ww, node->h);
+	  node->children[1] = rtree_node_create (rtree, prev,
+						 node->x, node->y + h,
+						 w, hh);
+	}
+      else
+	{
+	  node->children[0] = rtree_node_create (rtree, prev,
+						 node->x, node->y + h,
+						 node->w, hh);
+	  node->children[1] = rtree_node_create (rtree, prev,
+						 node->x + w, node->y,
+						 ww, h);
+	}
+    }
+
+  return node;
+}
+
+static RTreeNode *
+rtree_insert (RTree *rtree,
+              gint   w,
+              gint   h)
+{
+  RTreeNode *node, **prev;
+
+  for (prev = &rtree->available; (node = *prev); prev = &node->next)
+    if (node->w >= w && w < 2 * node->w && node->h >= h && h < 2 * node->h)
+      return rtree_node_insert (rtree, prev, node, w, h);
+
+  for (prev = &rtree->available; (node = *prev); prev = &node->next)
+    if (node->w >= w && node->h >= h)
+      return rtree_node_insert (rtree, prev, node, w, h);
+
+  return NULL;
+}
+
+static void
+rtree_init (RTree *rtree,
+            gint   w,
+            gint   h)
+{
+  rtree->root.x = 0;
+  rtree->root.y = 0;
+  rtree->root.w = w;
+  rtree->root.h = h;
+  rtree->root.children[0] = NULL;
+  rtree->root.children[1] = NULL;
+  rtree->root.next = NULL;
+  rtree->available = &rtree->root;
+}
+
+static void
+rtree_reset (RTree *rtree)
+{
+  gint i;
+
+  for (i = 0; i < 2; i++)
+    {
+      if (rtree->root.children[i] == NULL)
+	continue;
+
+      rtree_node_destroy (rtree, rtree->root.children[i]);
+      rtree->root.children[i] = NULL;
+    }
+
+  rtree->root.next = NULL;
+  rtree->available = &rtree->root;
+}
+
+static void
+xfer_destroy (void *data)
+{
+  PicmanDisplayXfer *xfer = data;
+  gint             i;
+
+  for (i = 0; i < NUM_PAGES; i++)
+    cairo_surface_destroy (xfer->render_surface[i]);
+
+  rtree_reset (&xfer->rtree);
+  g_free (xfer);
+}
+
+PicmanDisplayXfer *
+picman_display_xfer_realize (GtkWidget *widget)
+{
+  GdkScreen       *screen;
+  PicmanDisplayXfer *xfer;
+
+  screen = gtk_widget_get_screen (widget);
+  xfer = g_object_get_data (G_OBJECT (screen), "picman-display-xfer");
+
+  if (xfer == NULL)
+    {
+      cairo_t *cr;
+      gint     w = PICMAN_DISPLAY_RENDER_BUF_WIDTH  * PICMAN_DISPLAY_RENDER_MAX_SCALE;
+      gint     h = PICMAN_DISPLAY_RENDER_BUF_HEIGHT * PICMAN_DISPLAY_RENDER_MAX_SCALE;
+      int      n;
+
+      xfer = g_new (PicmanDisplayXfer, 1);
+      rtree_init (&xfer->rtree, w, h);
+
+      cr = gdk_cairo_create (gtk_widget_get_window (widget));
+      for (n = 0; n < NUM_PAGES; n++)
+        {
+          xfer->render_surface[n] =
+            cairo_surface_create_similar_image (cairo_get_target (cr),
+                                                CAIRO_FORMAT_ARGB32, w, h);
+          cairo_surface_mark_dirty (xfer->render_surface[n]);
+        }
+      cairo_destroy (cr);
+      xfer->page = 0;
+
+      g_object_set_data_full (G_OBJECT (screen),
+			      "picman-display-xfer",
+			      xfer, xfer_destroy);
+    }
+
+  return xfer;
+}
+
+cairo_surface_t *
+picman_display_xfer_get_surface (PicmanDisplayXfer *xfer,
+			       gint             w,
+                               gint             h,
+			       gint            *src_x,
+                               gint            *src_y)
+{
+  RTreeNode *node;
+
+  g_assert (w <= PICMAN_DISPLAY_RENDER_BUF_WIDTH * PICMAN_DISPLAY_RENDER_MAX_SCALE &&
+	    h <= PICMAN_DISPLAY_RENDER_BUF_HEIGHT * PICMAN_DISPLAY_RENDER_MAX_SCALE);
+
+  node = rtree_insert (&xfer->rtree, w, h);
+  if (node == NULL)
+    {
+      xfer->page = (xfer->page + 1) % NUM_PAGES;
+      cairo_surface_flush (xfer->render_surface[xfer->page]);
+      rtree_reset (&xfer->rtree);
+      cairo_surface_mark_dirty (xfer->render_surface[xfer->page]); /* XXX */
+      node = rtree_insert (&xfer->rtree, w, h);
+      g_assert (node != NULL);
+    }
+
+  *src_x = node->x;
+  *src_y = node->y;
+
+  return xfer->render_surface[xfer->page];
+}

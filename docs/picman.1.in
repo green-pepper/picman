@@ -1,0 +1,349 @@
+.TH PICMAN 1 "March 23 2008" "Version @PICMAN_VERSION@" "PICMAN Manual Pages"
+
+.SH NAME
+picman - an image manipulation and paint program.
+
+
+.SH SYNOPSIS
+.B picman
+[\-h] [\-\-help] [\-\-help-all] [\-\-help-gtk] [-v] [\-\-version]
+[\-\-license] [\-\-verbose] [\-n] [\-\-new\-instance] [\-a] [\-\-as\-new]
+[\-i] [\-\-no\-interface] [\-d] [\-\-no\-data] [\-f] [\-\-no\-fonts]
+[\-s] [\-\-no\-splash]  [\-\-no\-shm] [\-\-no\-cpu\-accel]
+[\-\-display \fIdisplay\fP] [\-\-session \fI<name>\fP]
+[\-g] [\-\-picmanrc \fI<picmanrc>\fP] [\-\-system\-picmanrc \fI<picmanrc>\fP]
+[\-\-dump\-picmanrc\fP] [\-\-console\-messages] [\-\-debug\-handlers]
+[\-\-stack\-trace\-mode \fI<mode>\fP] [\-\-pdb\-compat\-mode \fI<mode>\fP]
+[\-\-batch\-interpreter \fI<procedure>\fP] [\-b] [\-\-batch \fI<command>\fP]
+[\fIfilename\fP] ...
+
+
+.SH DESCRIPTION
+.PP
+PICMAN is the \fIGNU Image Manipulation Program\fP. It is used to edit
+and manipulate images. It can load and save a variety of image formats
+and can be used to convert between formats.
+.PP
+PICMAN can also be used as a paint program. It features a set of drawing
+and painting tools such as airbrush, clone, pencil, and paint
+brush. Painting and drawing tools can be applied to an image with a
+variety of paint modes.  It also offers an extensive array of
+selection tools like rectangle, ellipse, fuzzy select, bezier select,
+intelligent scissors, and select by color.
+.PP
+PICMAN offers a variety of plug-ins that perform a variety of image
+manipulations.  Examples include bumpmap, edge detect, gaussian blur,
+and many others. In addition, PICMAN has several scripting extension
+which allow for advanced non-interactive processing and creation of
+images.
+.PP
+PICMAN ships with a second binary called \fIpicman-console\fP. This binary
+is a console-only version and behaves as if \fIpicman\fP was called with
+the \-\-no\-interface command\-line option.
+.PP
+On platforms with the D-Bus message bus system, PICMAN will by default check
+if an instance is already running in this user session. If it detects that,
+it will pass all filenames given on the command-line to the already running
+PICMAN instance and quit. 
+
+
+.SH OPTIONS
+PICMAN accepts the following options:
+.TP 8
+.B  \-h, \-\-help
+Show PICMAN command\-line options.
+.TP 8
+.B  \-\-help\-all
+Show all command\-line options.
+.TP 8
+.B  \-\-help-gtk
+Show GTK+ command\-line options.
+.TP 8
+.B  \-\-help-gegl
+Show GEGL command\-line options.
+.TP 8
+.B \-v, \-\-version
+Output version information and exit. When combined with the \-\-verbose
+option, version information about libraries used by PICMAN is shown as well.
+.TP 8
+.B \-\-license
+Output license information and exit.
+.TP 8
+.B \-\-verbose
+Be verbose and create information on standard output.
+.TP 8
+.B \-n, \-\-new\-instance
+Do not attempt to reuse an already running PICMAN instance. Always start a
+new one.
+.TP 8
+.B \-a, \-\-as\-new
+Open filenames passed on the command-line as new images, don't set the
+filename on them.
+.TP 8
+.B \-i, \-\-no\-interface
+Run without a user interface.
+.TP 8
+.B \-d, \-\-no\-data
+Do not load patterns, gradients, palettes, or brushes. Often useful
+in non-interactive situations where startup time is to be minimized.
+.TP 8
+.B \-f, \-\-no\-fonts
+Do not load any fonts. No text functionality will be available if this
+option is used.
+.TP 8
+.B \-\-display \fIdisplay\fP
+Use the designated X display.
+.TP 8
+.B \-s, \-\-no\-splash
+Do not show the splash screen.
+.TP 8
+.B \-\-no\-shm
+Do not use shared memory between PICMAN and its plug-ins.
+Instead of using shared memory, PICMAN will send the data via pipe. This
+will result in slower performance than using shared memory.
+.TP 8
+.B \-\-no\-cpu\-accel
+Do not use CPU accelerations such as MMX or SSE even if PICMAN detects
+that your CPU provides this functionality.
+.TP 8
+.B \-\-session \fI<name>\fP
+Use a different sessionrc for this PICMAN session. The given session
+name is appended to the default sessionrc filename.
+.TP 8
+.B \-g, \-\-picmanrc \fI<picmanrc>\fP
+Use an alternative picmanrc instead of the default one. Useful in
+cases where plug-in paths or machine specs may be different.
+.TP 8
+.B \-\-system\-picmanrc \fI<picmanrc>\fP
+Use an alternate system picmanrc file.
+.TP 8
+.B \-\-dump\-picmanrc
+Output a picmanrc file with default settings.
+.TP 8
+.B \-\-debug\-handlers
+Enable debugging signal handlers.
+.TP 8
+.B \-c, \-\-console\-messages
+Do not popup dialog boxes on errors or warnings. Print the messages on
+the console instead.
+.TP 8
+.B \-\-stack\-trace\-mode \fI{never|query|always}\fP
+If a stack-trace should be generated in case of fatal signals.
+.TP 8
+.B \-\-pdb\-compat\-mode \fI{off|on|warn}\fP
+If the PDB should provide aliases for deprecated functions.
+.TP 8
+.B \-\-batch-interpreter \fI<procedure>\fP
+Specifies the procedure to use to process batch events. The default is
+to let Script-Fu evaluate the commands.
+.TP 8
+.B \-b, \-\-batch \fI<command>\fP
+Execute \fI<command>\fP non-interactively. This option may appear
+multiple times.  The \fI<command>\fP is passed to the batch
+interpreter. When \fI<command>\fP is \fB-\fP the commands are read
+from standard input.
+
+
+.SH ENVIRONMENT
+PICMAN respects a number of environment variables.
+.PP
+.TP 8
+.B DISPLAY
+to get the default host and display number.
+.TP 8
+.B PICMAN2_DIRECTORY
+to get the name of the personal PICMAN directory. If unset @picmandir@ is
+used.  If this is an absolute path, it is used as is.  If it is a
+relative path, it is taken to be a subdirectory of the home directory.
+.TP 8
+.B PICMAN2_DATADIR
+to get the base location for data files such as brushes and patterns.
+If unset @picmandatadir@ is used.
+.TP 8
+.B PICMAN2_LOCALEDIR
+to get the base location for translations. If unset @picmanlocaledir@
+is used.
+.TP 8
+.B PICMAN2_PLUGINDIR
+to get the base location for plug-ins and modules. If unset
+@picmanplugindir@ is used.
+.TP 8
+.B PICMAN2_SYSCONFDIR
+to get the location of configuration files. If unset @picmansysconfdir@
+is used.
+
+On Linux PICMAN can be compiled with support for binary relocatibility.
+This will cause data, plug-ins and configuration files to be searched
+relative to the location of the picman executable file unless overridden
+by the environment variables mentioned above.
+
+
+.SH FILES
+PICMAN's data files are stored in @picmandatadir@, where ${datarootdir}
+is set on install, but is typically /usr/share. PICMAN's system-wide
+configuration files are stored in @picmansysconfdir@, where ${prefix}
+is typically /usr.
+
+Most PICMAN configuration is read in from the user's init file,
+\fB$HOME\fP/@picmandir@/picmanrc. The system wide equivalent is in
+@sysconfdir@/picmanrc. The system wide file is parsed
+first and the user picmanrc can override the system settings.
+@sysconfdir@/picmanrc_user is the default picmanrc
+placed in users' home directories the first time PICMAN is run.
+
+\fB$HOME\fP/@picmandir@/devicerc - holds settings for input devices
+together with the tool, colors, brush, pattern and gradient
+associated to that device.
+
+\fB$HOME\fP/@picmandir@/gtkrc - users set of PICMAN-specific GTK+ config
+settings. Options such as widget color and fonts sizes can be set
+here.
+
+@picmansysconfdir@/gtkrc - system wide default set of PICMAN-specific GTK+
+config settings.
+
+\fB$HOME\fP/@picmandir@/menurc - user's set of keybindings.
+
+\fB$HOME\fP/@picmandir@/parasiterc - Stores all persistent PICMAN
+parasites. This file will be rewritten every time you quit PICMAN.
+
+\fB$HOME\fP/@picmandir@/sessionrc - This file takes session-specific
+info (that is info, you want to keep between two PICMAN sessions). You
+are not supposed to edit it manually, but of course you can do. This
+file will be entirely rewritten every time you quit PICMAN. If this
+file isn't found, defaults are used.
+
+\fB$HOME\fP/@picmandir@/templaterc - Image templates are kept in this
+file. New images can conveniently created from these templates. If
+this file isn't found, defaults are used.
+
+@picmansysconfdir@/unitrc - default user unit database. It contains the
+unit definitions for centimeters, meters, feet, yards, typographic
+points and typographic picas and is placed in users home directories
+the first time PICMAN is ran. If this file isn't found, defaults are
+used.
+
+\fB$HOME\fP/@picmandir@/unitrc - This file contains your user unit
+database. You can modify this list with the unit editor. You are not
+supposed to edit it manually, but of course you can do.  This file
+will be entirely rewritten every time you quit PICMAN.
+
+\fB$HOME\fP/@picmandir@/plug-ins - location of user installed plug-ins.
+
+\fB$HOME\fP/@picmandir@/pluginrc - plug-in initialization values are
+stored here. This file is parsed on startup and regenerated if need
+be.
+
+\fB$HOME\fP/@picmandir@/modules - location of user installed modules.
+
+\fB$HOME\fP/@picmandir@/tmp - default location that PICMAN uses as
+temporary space.
+
+@picmandatadir@/brushes - system wide brush files.
+
+\fB$HOME\fP/@picmandir@/brushes - user created and installed brush
+files. These files are in the .gbr, .gih or .vbr file formats.
+
+\fB$HOME\fP/@picmandir@/curves - Curve profiles and presets as saved from
+the Curves tool.
+
+\fB$HOME\fP/@picmandir@/picmanressionist - Presets and user created brushes
+and papers are stored here.
+
+\fB$HOME\fP/@picmandir@/levels - Level profiles and presets as saved from
+the Levels tool.
+
+@picmandatadir@/palettes - the system wide palette files.
+
+\fB$HOME\fP/@picmandir@/palettes - user created and modified palette
+files. This files are in the .gpl format.
+
+@picmandatadir@/patterns - basic set of patterns for use in PICMAN.
+
+\fB$HOME\fP/@picmandir@/patterns - user created and installed picman
+pattern files. This files are in the .pat format.
+
+@picmandatadir@/gradients - standard system wide set of gradient files.
+
+\fB$HOME\fP/@picmandir@/gradients - user created and installed gradient
+files.
+
+@picmandatadir@/scripts - system wide directory of scripts
+used in Script-Fu and other scripting extensions.
+
+\fB$HOME\fP/@picmandir@/scripts - user created and installed scripts.
+
+@picmandatadir@/gflares - system wide directory used by the gflare
+plug-in.
+
+\fB$HOME\fP/@picmandir@/gflares - user created and installed gflare
+files.
+
+@picmandatadir@/gfig - system wide directory used by the gfig plug-in.
+
+\fB$HOME\fP/@picmandir@/gfig - user created and installed gfig files.
+
+@picmandatadir@/images/picman\-splash.png - the default image used for the
+PICMAN splash screen.
+
+@picmandatadir@/images/picman\-logo.png - image used in the PICMAN about
+dialog.
+
+@picmandatadir@/tips/picman\-tips.xml - tips as displayed in the "Tip of
+the Day" dialog box.
+
+
+.SH SPLASH IMAGES
+PICMAN comes with a default image for the splash screen but it allows
+system administrators and users to customize the splash screen by
+providing other images. The image to be used with the splash screen is
+chosen as follows:
+
+.IP 1.
+PICMAN tries to load a random splash screen from the directory
+\fB$HOME\fP/@picmandir@/splashes.
+.IP 2.
+It then falls back to using \fB$HOME\fP/@picmandir@/picman\-splash.png.
+.IP 3.
+If the user didn't install any custom splash images, a random image is
+picked from @picmandatadir@/splashes.
+.IP 4.
+As a last resort, PICMAN uses the default splash image located at
+@picmandatadir@/images/picman\-splash.png.
+
+
+.SH SUGGESTIONS AND BUG REPORTS
+Any bugs found should be reported to the online bug-tracking system
+available on the web at http://bugzilla.gnome.org/. Before reporting
+bugs, please check to see if the bug has already been reported.
+
+When reporting PICMAN bugs, it is important to include a reliable way to
+reproduce the bug, version number of PICMAN (and probably GTK+), OS name
+and version, and any relevant hardware specs. If a bug is causing a
+crash, it is very useful if a stack trace can be provided. And of
+course, patches to rectify the bug are even better.
+
+
+.SH OTHER INFO
+The canonical place to find PICMAN info is at http://www.picman.org/.
+Here you can find links to just about many other PICMAN sites,
+tutorials, data sets, mailing list archives, and more.
+
+There is also a PICMAN User Manual available at http://docs.picman.org/
+that goes into much more detail about the interactive use of PICMAN.
+
+The latest versions of PICMAN and the GTK+ libs are always available at
+ftp://ftp.picman.org/.
+
+
+.SH AUTHORS
+Spencer Kimball, Peter Mattis and the PICMAN Development Team.
+
+With patches, fixes, plug-ins, extensions, scripts, translations,
+documentation and more from lots and lots of people all over the
+world.
+
+
+.SH "SEE ALSO"
+.BR picmanrc (5),
+.BR picmantool (1),

@@ -1,0 +1,4 @@
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <libpicmanthumb/picmanthumb.h>
+
+picman_thumbnail_get_type

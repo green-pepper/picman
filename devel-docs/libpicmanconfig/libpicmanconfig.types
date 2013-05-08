@@ -1,0 +1,5 @@
+#include <glib-object.h>
+#include <libpicmanconfig/picmanconfig.h>
+
+picman_config_interface_get_type
+picman_color_config_get_type
