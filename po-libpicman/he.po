@@ -1,0 +1,2213 @@
+# translation of picman-libpicman.HEAD.he.po to Hebrew
+# translation of picman-libpicman.HEAD.po to Hebrew
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+#
+# dovix <dovix2003@yahoo.com>, 2003.
+# Gil 'Dolfin' Osher <dolfin@rpg.org.il>, 2003.
+# Barak Itkin <lightningismyname@gmail.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-08-04 00:05+0300\n"
+"PO-Revision-Date: 2010-08-04 02:45+0300\n"
+"Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
+"Language-Team: Hebrew <he@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1057
+msgid "success"
+msgstr ""
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1061
+msgid "execution error"
+msgstr ""
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1065
+msgid "calling error"
+msgstr ""
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1069
+msgid "cancelled"
+msgstr ""
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "בחירת מברשת"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_עיין..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s אינו יכול לטפל בשכבות "
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "איחוד שכבות נראות"
+
+#: ../libpicman/picmanexport.c:252
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "%s לא יכול לטפל בהסטות, גודל או אטימות שכבה"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, fuzzy, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s יכול לטפל בשכבות רק כשלד הנפשה"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "שמירה כהנפשה"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "השטחת תמונה"
+
+#: ../libpicman/picmanexport.c:288
+#, fuzzy, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s לא יכול לטפל ברקע שקוף"
+
+#: ../libpicman/picmanexport.c:297
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s אינו יכול לטפל בשכבות "
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "החל מסכות שכבה"
+
+#: ../libpicman/picmanexport.c:306
+#, fuzzy, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s יכול לטפל רק בתמונות RGB"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "הסבה ל RGB"
+
+#: ../libpicman/picmanexport.c:315
+#, fuzzy, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s יכול לטפל רק בתמונות בגווני אפור"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "הסבה לגווני אפור"
+
+#: ../libpicman/picmanexport.c:324
+#, fuzzy, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s יכול לטפל רק בתמונות ממופתחות"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"הסבה למיפתוח תוך שימוש בברירות מחדל\n"
+"(יש באפשרותך לבצע זאת ידנית כדי לכוונן את התוצאה)"
+
+#: ../libpicman/picmanexport.c:334
+#, fuzzy, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "%s יכול לטפל רק בתמונות ממופתחות או RGB"
+
+#: ../libpicman/picmanexport.c:335
+#, fuzzy
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"הסבה למיפתוח תוך שימוש בברירות מחדל\n"
+"(יש באפשרותך לבצע זאת ידנית כדי לכוונן את התוצאה)"
+
+#: ../libpicman/picmanexport.c:344
+#, fuzzy, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s אינו יכול לטפל בתמונות בגווני אפור או RGB"
+
+#: ../libpicman/picmanexport.c:353
+#, fuzzy, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s יכול לטפל רק בתמונות ממופתחות או RGB"
+
+#: ../libpicman/picmanexport.c:363
+#, fuzzy, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "%s יכול לטפל רק בתמונות ממופתחות או בגווני אפור"
+
+#: ../libpicman/picmanexport.c:374
+#, fuzzy, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s צריך ערוץ אלפא"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "הוספת ערוץ אלפא"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "אישור שמירה"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "אישור"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "ייצוא קובץ"
+
+#: ../libpicman/picmanexport.c:516
+#, fuzzy
+msgid "_Ignore"
+msgstr "התעלם"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:989
+msgid "_Export"
+msgstr "_ייצא"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, fuzzy, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "יש לייצא את התמונה לפני שמירתה עקב הסיבות הבאות:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "הסבה לייצוא לא תשנה את התמונה המקורית שלך."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"מסיכת השכבה מועדת להישמר כ %s.\n"
+"השכבות הנראות לעין לא יישמרו."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"הערוץ (אזור נבחר שמור) מועד להישמר כ %s.\n"
+"השכבות הנראות לא יישמרו."
+
+#: ../libpicman/picmanexport.c:980
+msgid "Export Image as "
+msgstr ""
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "בחירת גופן"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+#, fuzzy
+msgid "Sans"
+msgstr "קני מידה"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "בחירת מדרג צבעים"
+
+#: ../libpicman/picmanmenu.c:459 ../libpicmanwidgets/picmanintstore.c:248
+msgid "(Empty)"
+msgstr ""
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+#, fuzzy
+msgid "Palette Selection"
+msgstr "בחירת דוגמה"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "בחירת דוגמה"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr ""
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:238
+#, fuzzy
+msgid "Author:"
+msgstr "עוגן"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr ""
+
+#: ../libpicman/picmanunitcache.c:56
+msgid "percent"
+msgstr "אחוז"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_לבן (אטימות מלאה)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_שחור (שקיפות מלאה)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "ערוץ ה_אלפא של השכבה"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "ערוץ ה_אלפא של השכבה"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "אזור _נבחר"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+#, fuzzy
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "העתק בגווני א_פור של השכבה"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+#, fuzzy
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "צבע קדמה לרקע (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+#, fuzzy
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "צבע קדמה לרקע (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+#, fuzzy
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "הפיכת צבע רקע לשקוף"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+#, fuzzy
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "מדרג צבעים מותאם אישית"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+#, fuzzy
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "מילוי בצבע רקע"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+#, fuzzy
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "מילוי בצבע קדמה"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+#, fuzzy
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "מילוי דוגמה"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+#, fuzzy
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "הוספה לאזור נבחר נוכחי"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+#, fuzzy
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "החסרה מאזור נבחר נוכחי"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+#, fuzzy
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "החלפת אזור נבחר נוכחי"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+#, fuzzy
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "החסרה מאזור נבחר נוכחי"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#, fuzzy
+msgctxt "channel-type"
+msgid "Red"
+msgstr "אדום"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+#, fuzzy
+msgctxt "channel-type"
+msgid "Green"
+msgstr "ירוק"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+#, fuzzy
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "כחול"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+#, fuzzy
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "אפור"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+#, fuzzy
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "ממופתח"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+#, fuzzy
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "אלפא"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+#, fuzzy
+msgctxt "check-size"
+msgid "Small"
+msgstr "קטן"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+#, fuzzy
+msgctxt "check-size"
+msgid "Medium"
+msgstr "בינוני"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+#, fuzzy
+msgctxt "check-size"
+msgid "Large"
+msgstr "גדול"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+#, fuzzy
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "בדיקות הארה"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+#, fuzzy
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "בדיקות גווני-ביניים"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+#, fuzzy
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "בדיקות כהות"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+#, fuzzy
+msgctxt "check-type"
+msgid "White only"
+msgstr "לבן בלבד"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+#, fuzzy
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "אפור בלבד"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+#, fuzzy
+msgctxt "check-type"
+msgid "Black only"
+msgstr "שחור בלבד"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+#, fuzzy
+msgctxt "clone-type"
+msgid "Image"
+msgstr "גודל תמונה"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+#, fuzzy
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "מילוי דוגמה"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+#, fuzzy
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "בדיקות הארה"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+#, fuzzy
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "הבהרה"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+#, fuzzy
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "בערה"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "קווי"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "דו-קווי"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "מוקדי"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "ריבוע"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "חרוטי (סימטרי)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "חרוטי (סימטרי)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "סלסול (בכיוון השעון)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+#, fuzzy
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "סלסול (בכיוון השעון)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+#, fuzzy
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "גודל תמונה"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+#, fuzzy
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "מילוי בצבע רקע"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+#, fuzzy
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "גווני אפור"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+#, fuzzy
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "ממופתח"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+#, fuzzy
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+#, fuzzy
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "גווני אפור"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+#, fuzzy
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "גווני אפור"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+#, fuzzy
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "ממופתח"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+#, fuzzy
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "ממופתח"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+#, fuzzy
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "כלום"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+#, fuzzy
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "קווי"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+#, fuzzy
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "קבוע"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+#, fuzzy
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "לוח צבעים"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+#, fuzzy
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "כלום"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+#, fuzzy
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "גל משונן"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+#, fuzzy
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "גל משולש"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+#, fuzzy
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "פיקסלים"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+#, fuzzy
+msgctxt "size-type"
+msgid "Points"
+msgstr "נקודות"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+#, fuzzy
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "צללים"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+#, fuzzy
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "גווני ביניים"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+#, fuzzy
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "הדגשות"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+#, fuzzy
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "כלום"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+#, fuzzy
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "הדגשות"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+#, fuzzy
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "בינוני"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr ""
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:182
+msgid "(invalid UTF-8 string)"
+msgstr "(מחרוזת יוניקוד לא-תקינה)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "Mode of operation for color management."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The color profile of your (primary) monitor."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:58
+msgid "The default RGB working space color profile."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "Sets how colors are mapped for your display."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:69
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:72
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+#, fuzzy
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "רוויה"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:105
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr ""
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:506
+#: ../libpicmanconfig/picmanscanner.c:587
+#: ../libpicmanwidgets/picmancolorprofilestore.c:664
+msgid "fatal parse error"
+msgstr "שגיאת ניתוח קלט סופנית"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, fuzzy, c-format
+msgid "Cannot expand ${%s}"
+msgstr "אין אפשרות לבטל פעולה %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:263
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "מחרוזת יוניקוד לא תקינה"
+
+#: ../libpicmanconfig/picmanscanner.c:614
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, fuzzy, c-format
+msgid "Module '%s' load error: %s"
+msgstr ""
+"שגיאת טעינה במודול '%s':\n"
+"%s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "שגיאת מודול"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "טעון"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "הטעינה נכשלה"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "לא טעון"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+#, fuzzy
+msgid "_Search:"
+msgstr "_חתיכה"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:133
+#, fuzzy
+msgid "_Foreground Color"
+msgstr "/צבע קדמה"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:137
+#, fuzzy
+msgid "_Background Color"
+msgstr "/צבע רקע"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:141
+#, fuzzy
+msgid "Blac_k"
+msgstr "/שחור"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:145
+#, fuzzy
+msgid "_White"
+msgstr "/לבן"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:152
+msgid "Select color profile from disk..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:288
+#, fuzzy
+msgctxt "profile"
+msgid "None"
+msgstr "כלום"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "קני מידה"
+
+#: ../libpicmanwidgets/picmancolorselection.c:217
+msgid "Current:"
+msgstr "נוכחי:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:226
+msgid "Old:"
+msgstr "ישן:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:311
+#, fuzzy
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr "סימון צבעים הקסאדצימלי כנהוג ב HTML"
+
+#: ../libpicmanwidgets/picmancolorselection.c:317
+msgid "HTML _notation:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:197
+msgid "Open a file selector to browse your folders"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:198
+msgid "Open a file selector to browse your files"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:358
+msgid "Select Folder"
+msgstr "בחירת תיקייה"
+
+#: ../libpicmanwidgets/picmanfileentry.c:360
+msgid "Select File"
+msgstr "בחירת קובץ"
+
+#: ../libpicmanwidgets/picmanhelpui.c:430
+msgid "Press F1 for more help"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:217
+#, fuzzy
+msgid "Kilobytes"
+msgstr "קילו בתים"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:218
+#, fuzzy
+msgid "Megabytes"
+msgstr "מגה בתים"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:219
+#, fuzzy
+msgid "Gigabytes"
+msgstr "גיגה בתים"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:278
+#: ../libpicmanwidgets/picmanpageselector.c:1176
+msgid "Nothing selected"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:296
+#, fuzzy
+msgid "Select _All"
+msgstr "בחירת קובץ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:316
+#, fuzzy
+msgid "Select _range:"
+msgstr "בחירת קובץ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:328
+msgid "Open _pages as"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:429
+msgid "Page 000"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:517
+#: ../libpicmanwidgets/picmanpageselector.c:754
+#, c-format
+msgid "Page %d"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:1181
+msgid "One page selected"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:1188
+#: ../libpicmanwidgets/picmanpageselector.c:1192
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicmanwidgets/picmanpatheditor.c:234
+#, fuzzy
+msgid "Writable"
+msgstr "משולש"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:243
+#, fuzzy
+msgid "Folder"
+msgstr "בחירת תיקייה"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:124
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"יש ללחוץ על הטפטפת, ואז ללחוץ על צבע במקום כלשהו על המסך כדי לבחור בצבע זה."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:287
+msgid "_Preview"
+msgstr "ת_צוגה מוקדמת"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1868
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "עוגן"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_שכפול"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "_עריכה"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "מקושר"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "הדבק כחדש"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "הדבק לתוך"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_אתחול"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "נראה"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "_ריווח אותיות"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "ריווח _שורות"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "שינוי _גודל"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:337
+msgid "_Scale"
+msgstr "שינוי _קנה מידה"
+
+#: ../libpicmanwidgets/picmanstock.c:312
+#, fuzzy
+msgid "Cr_op"
+msgstr "גזיזה"
+
+#: ../libpicmanwidgets/picmanstock.c:332
+msgid "_Transform"
+msgstr "_עיבוד"
+
+#: ../libpicmanwidgets/picmanstock.c:336
+msgid "_Rotate"
+msgstr "_סיבוב"
+
+#: ../libpicmanwidgets/picmanstock.c:338
+msgid "_Shear"
+msgstr "_חתיכה"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:288
+msgid "More..."
+msgstr "עוד..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:603
+msgid "Unit Selection"
+msgstr "בחירת יחידה"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:652
+msgid "Unit"
+msgstr "יחידה"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:656
+msgid "Factor"
+msgstr "יחס"
+
+#: ../libpicmanwidgets/picmanwidgets.c:521
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"השתמש בערך זה כזרע למחולל מספר אקראי - זה מאפשר לך לחזור על פעולה \"אקראית\" "
+"נתונה"
+
+#: ../libpicmanwidgets/picmanwidgets.c:525
+msgid "_New Seed"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:538
+msgid "Seed random number generator with a generated random number"
+msgstr "זרע למחולל מספרים אקראיים עם מספר אקראי מחולל"
+
+#: ../libpicmanwidgets/picmanwidgets.c:542
+#, fuzzy
+msgid "_Randomize"
+msgstr "א_קראי"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+#, fuzzy
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "נראה"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+#, fuzzy
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "ירוק"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+#, fuzzy
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "ריבוע"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+#, fuzzy
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "ניגוד"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "גוון"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "רוויה"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "ערך"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "אדום"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "ירוק"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "כחול"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+#, fuzzy
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "אלפא"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+#, fuzzy
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "מקור תמונה"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+#, fuzzy
+msgid "CMYK color selector (using color profile)"
+msgstr "בחירת צבע CMYK"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "תכלת"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "ורוד"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "צהוב"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "שחור"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "בחירת צבע CMYK"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr ""
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "בחירת צבע סגנון צבע מים"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "צבע מים"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "לחץ"
+
+#: ../modules/color-selector-wheel.c:74
+msgid "HSV color wheel"
+msgstr ""
+
+#: ../modules/color-selector-wheel.c:105
+msgid "Wheel"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:419
+#, c-format
+msgid "Button %d"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:422
+#, c-format
+msgid "Button %d Press"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:425
+#, c-format
+msgid "Button %d Release"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:442
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:445
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:451
+msgid "Y Move Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:454
+msgid "Y Move Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:460
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:463
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:469
+msgid "X Axis Tilt Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:472
+msgid "X Axis Tilt Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:478
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:481
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:487
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:490
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:501
+#, c-format
+msgid "Slider %d Increase"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:504
+#, c-format
+msgid "Slider %d Decrease"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:514
+#, c-format
+msgid "POV %d X View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:517
+#, c-format
+msgid "POV %d Y View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:520
+#, c-format
+msgid "POV %d Return"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1082
+msgid "DirectInput Events"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1093
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1118
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr ""
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr ""
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr ""
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr ""
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr ""
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr ""
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr ""
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr ""
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr ""
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr ""
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr ""
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr ""
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:66
+#, fuzzy
+msgid "Protanopia (insensitivity to red)"
+msgstr "פרוטנופיה (חוסר רגישות רשתית לאדום)"
+
+#: ../modules/display-filter-color-blind.c:68
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "דוטראנופיה (חוסר רגישות רשתית לירוק)"
+
+#: ../modules/display-filter-color-blind.c:70
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "טריטנופיה (חוסר רגישות  רשתית לכחול)"
+
+#: ../modules/display-filter-color-blind.c:197
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "מסנן הדמיית ליקוי צבע (אלגוריתם Brettel-Vienot-Mollon)"
+
+#: ../modules/display-filter-color-blind.c:260
+msgid "Color Deficient Vision"
+msgstr "ליקוי ראיית צבעים"
+
+#: ../modules/display-filter-color-blind.c:482
+#, fuzzy
+msgid "Color _deficiency type:"
+msgstr "סוג ליקוי צבע:"
+
+#: ../modules/display-filter-gamma.c:89
+msgid "Gamma color display filter"
+msgstr "מסנן גאמה למסך צבעוני"
+
+#: ../modules/display-filter-gamma.c:128
+msgid "Gamma"
+msgstr "גאמה"
+
+#: ../modules/display-filter-gamma.c:231
+#, fuzzy
+msgid "_Gamma:"
+msgstr "גאמה:"
+
+#: ../modules/display-filter-high-contrast.c:89
+msgid "High Contrast color display filter"
+msgstr "מסנן ניגוד גבוה למסך צבעוני"
+
+#: ../modules/display-filter-high-contrast.c:128
+msgid "Contrast"
+msgstr "ניגוד"
+
+#: ../modules/display-filter-high-contrast.c:231
+#, fuzzy
+msgid "Contrast c_ycles:"
+msgstr "מחזורי ניגוד"
+
+#: ../modules/display-filter-lcms.c:101
+msgid "Color management display filter using ICC color profiles"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:133
+msgid "Color Management"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:190
+msgid "None"
+msgstr "כלום"
+
+#: ../modules/display-filter-lcms.c:211
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:225
+msgid "Mode of operation:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:232
+#, fuzzy
+msgid "Image profile:"
+msgstr "גודל תמונה"
+
+#: ../modules/display-filter-lcms.c:240
+msgid "Monitor profile:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:248
+msgid "Print simulation profile:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:96
+msgid "Color proof filter using ICC color profile"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:144
+msgid "Color Proof"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:310
+msgid "Choose an ICC Color Profile"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:337
+msgid "All files (*.*)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:342
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:400
+msgid "_Profile:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:406
+msgid "_Intent:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:411
+msgid "_Black Point Compensation"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Pattern source"
+#~ msgstr "מקור דוגמה"
+
+#~ msgid "None (Fastest)"
+#~ msgstr "כלום (הכי מהיר)"
+
+#, fuzzy
+#~ msgid "Lanczos (Best)"
+#~ msgstr "מעוקב (הכי טוב)"
+
+#, fuzzy
+#~ msgid "Forward (traditional)"
+#~ msgstr "קדימה (מסורתי)"
+
+#, fuzzy
+#~ msgid "Backward (corrective)"
+#~ msgstr "אחורה (תיקון)"
+
+#~ msgid "%d Bytes"
+#~ msgstr "%d בתים"
+
+#~ msgid "%.2f KB"
+#~ msgstr "%.2f ק\"ב"
+
+#~ msgid "%.1f KB"
+#~ msgstr "%.1f ק\"ב"
+
+#~ msgid "%d KB"
+#~ msgstr "%d ק\"ב"
+
+#~ msgid "%.2f MB"
+#~ msgstr "%.2f מ\"ב"
+
+#~ msgid "%.1f MB"
+#~ msgstr "%.1f מ\"ב"
+
+#, fuzzy
+#~ msgid "%d MB"
+#~ msgstr "%d ק\"ב"
+
+#, fuzzy
+#~ msgid "%.2f GB"
+#~ msgstr "%.2f מ\"ב"
+
+#, fuzzy
+#~ msgid "%.1f GB"
+#~ msgstr "%.1f מ\"ב"
+
+#, fuzzy
+#~ msgid "%d GB"
+#~ msgstr "%d ק\"ב"
+
+#~ msgid "Loading module: '%s'\n"
+#~ msgstr "טוען את המודול: '%s'\n"
+
+#~ msgid "Skipping module: '%s'\n"
+#~ msgstr "מדלג על מודול: '%s'\n"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "בוחר צבע משולש בסגנון המדפסת"
+
+#~ msgid "Triangle"
+#~ msgstr "משולש"

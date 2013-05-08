@@ -1,5 +1,5 @@
-# translation of gimp-plug-ins.HEAD.gu.po to Gujarati
-# translation of gimp-plug-ins.HEAD.po to Gujarati
+# translation of picman-plug-ins.HEAD.gu.po to Gujarati
+# translation of picman-plug-ins.HEAD.po to Gujarati
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Ankit Patel <ankit644@yahoo.com>, 2005.
@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-plug-ins.HEAD.gu\n"
+"Project-Id-Version: picman-plug-ins.HEAD.gu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-09-26 02:52+0200\n"
 "PO-Revision-Date: 2005-09-26 09:53+0530\n"
@@ -25,15 +25,15 @@ msgstr ""
 
 #: ../plug-ins/FractalExplorer/Dialogs.c:529
 #: ../plug-ins/gfig/gfig-dialog.c:282 ../plug-ins/gflare/gflare.c:887
-#: ../plug-ins/gimpressionist/utils.c:124
+#: ../plug-ins/picmanressionist/utils.c:124
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"કોઈ %s એ gimprc માં નથી:\n"
+"કોઈ %s એ picmanrc માં નથી:\n"
 "તમારે આના જે પ્રવેશ\n"
 "(%s \"%s\")\n"
 "તમારી %s ફાઈલમાં ઉમેરવાની જરૂર છે."
@@ -619,7 +619,7 @@ msgstr "પ્રકાશ તીવ્રતા"
 #: ../plug-ins/Lighting/lighting_ui.c:447
 #: ../plug-ins/MapObject/mapobject_ui.c:668
 #: ../plug-ins/MapObject/mapobject_ui.c:995
-#: ../plug-ins/print/gimp_main_window.c:475
+#: ../plug-ins/print/picman_main_window.c:475
 msgid "Position"
 msgstr "જગ્યા"
 
@@ -849,7 +849,7 @@ msgid "Lighting Effects"
 msgstr "પ્રકાશન અસરો"
 
 #: ../plug-ins/Lighting/lighting_ui.c:1026
-#: ../plug-ins/gimpressionist/preview.c:181
+#: ../plug-ins/picmanressionist/preview.c:181
 #: ../plug-ins/imagemap/imap_polygon.c:515
 msgid "_Update"
 msgstr "સુધારો (_U)"
@@ -1068,22 +1068,22 @@ msgid "Back:"
 msgstr "પાશ્વ:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1107
-#: ../plug-ins/print/gimp_main_window.c:534
+#: ../plug-ins/print/picman_main_window.c:534
 msgid "Top:"
 msgstr "ટોચ:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1107
-#: ../plug-ins/print/gimp_main_window.c:575
+#: ../plug-ins/print/picman_main_window.c:575
 msgid "Bottom:"
 msgstr "નીચે:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1108
-#: ../plug-ins/print/gimp_main_window.c:521
+#: ../plug-ins/print/picman_main_window.c:521
 msgid "Left:"
 msgstr "ડાબુ:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1108
-#: ../plug-ins/print/gimp_main_window.c:547
+#: ../plug-ins/print/picman_main_window.c:547
 msgid "Right:"
 msgstr "જમણુ:"
 
@@ -1121,7 +1121,7 @@ msgid "Images for the Cap Faces"
 msgstr "કેપ ચહેરાઓ માટે ચિત્રો"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1236
-#: ../plug-ins/print/gimp_main_window.c:1119
+#: ../plug-ins/print/picman_main_window.c:1119
 msgid "Size"
 msgstr "માપ"
 
@@ -1228,7 +1228,7 @@ msgstr "બિનઆધારભૂત અથવા અયોગ્ય બીટ
 #: ../plug-ins/common/tile.c:266 ../plug-ins/common/xbm.c:867
 #: ../plug-ins/faxg3/faxg3.c:465 ../plug-ins/fits/fits.c:509
 #: ../plug-ins/gfig/gfig-dialog.c:1290
-#: ../plug-ins/gimpressionist/general.c:121 ../plug-ins/jpeg/jpeg-load.c:239
+#: ../plug-ins/picmanressionist/general.c:121 ../plug-ins/jpeg/jpeg-load.c:239
 #: ../plug-ins/jpeg/jpeg-load.c:742 ../plug-ins/sgi/sgi.c:370
 #: ../plug-ins/twain/twain.c:574 ../plug-ins/winsnap/winsnap.c:1156
 msgid "Background"
@@ -1508,7 +1508,7 @@ msgid "Min (x-d, -), (0.5 < x)"
 msgstr "Min (x-d, -), (0.5 < x)"
 
 #: ../plug-ins/common/CML_explorer.c:200 ../plug-ins/common/sunras.c:1595
-#: ../plug-ins/print/gimp_main_window.c:1668
+#: ../plug-ins/print/picman_main_window.c:1668
 msgid "Standard"
 msgstr "પ્રમાણભૂત"
 
@@ -1590,8 +1590,8 @@ msgstr "રેન્ડમ સીડમાંથી (વહેંચાયેલ
 
 #: ../plug-ins/common/CML_explorer.c:300 ../plug-ins/common/CML_explorer.c:308
 #: ../plug-ins/common/decompose.c:152
-#: ../plug-ins/gimpressionist/orientation.c:162
-#: ../plug-ins/gimpressionist/size.c:165
+#: ../plug-ins/picmanressionist/orientation.c:162
+#: ../plug-ins/picmanressionist/size.c:165
 msgid "Hue"
 msgstr "વર્ણ"
 
@@ -1602,8 +1602,8 @@ msgstr "સંતુલન"
 
 #: ../plug-ins/common/CML_explorer.c:302 ../plug-ins/common/CML_explorer.c:310
 #: ../plug-ins/common/decompose.c:154
-#: ../plug-ins/gimpressionist/orientation.c:138
-#: ../plug-ins/gimpressionist/size.c:141 ../plug-ins/metadata/interface.c:142
+#: ../plug-ins/picmanressionist/orientation.c:138
+#: ../plug-ins/picmanressionist/size.c:141 ../plug-ins/metadata/interface.c:142
 msgid "Value"
 msgstr "કિંમત"
 
@@ -2366,7 +2366,7 @@ msgid "_Psychobilly"
 msgstr "માનસિકતા (_P)"
 
 #: ../plug-ins/common/checkerboard.c:417 ../plug-ins/common/papertile.c:293
-#: ../plug-ins/gimpressionist/sizemap.c:493
+#: ../plug-ins/picmanressionist/sizemap.c:493
 msgid "_Size:"
 msgstr "માપ (_S):"
 
@@ -2805,8 +2805,8 @@ msgstr "વળાંક વાળો"
 
 #. Preview area, top of column
 #: ../plug-ins/common/curve_bend.c:1274
-#: ../plug-ins/gimpressionist/orientmap.c:573
-#: ../plug-ins/gimpressionist/sizemap.c:443
+#: ../plug-ins/picmanressionist/orientmap.c:573
+#: ../plug-ins/picmanressionist/sizemap.c:443
 msgid "Preview"
 msgstr "પૂર્વદર્શન"
 
@@ -3352,7 +3352,7 @@ msgstr "ત્રિજ્યા ૨ (_a):"
 msgid "_Normalize"
 msgstr "સામાન્ય બનાવો (_N)"
 
-#: ../plug-ins/common/dog.c:345 ../plug-ins/gimpressionist/paper.c:149
+#: ../plug-ins/common/dog.c:345 ../plug-ins/picmanressionist/paper.c:149
 msgid "_Invert"
 msgstr "ઉલટુ કરો (_I)"
 
@@ -3636,15 +3636,15 @@ msgstr "ફ્લેર અસરનું કેન્દ્ર"
 msgid "_Show cursor"
 msgstr "કર્સર બતાવો (_S)"
 
-#: ../plug-ins/common/fp.c:230 ../plug-ins/print/gimp_color_window.c:307
+#: ../plug-ins/common/fp.c:230 ../plug-ins/print/picman_color_window.c:307
 msgid "Cyan:"
 msgstr "મોરપીંછ:"
 
-#: ../plug-ins/common/fp.c:231 ../plug-ins/print/gimp_color_window.c:345
+#: ../plug-ins/common/fp.c:231 ../plug-ins/print/picman_color_window.c:345
 msgid "Yellow:"
 msgstr "પીળો:"
 
-#: ../plug-ins/common/fp.c:232 ../plug-ins/print/gimp_color_window.c:326
+#: ../plug-ins/common/fp.c:232 ../plug-ins/print/picman_color_window.c:326
 msgid "Magenta:"
 msgstr "જાંબલી:"
 
@@ -3877,8 +3877,8 @@ msgid "_RLE"
 msgstr "_RLE"
 
 #: ../plug-ins/common/gbr.c:152 ../plug-ins/common/gbr.c:173
-msgid "GIMP brush"
-msgstr "GIMP બ્રશ"
+msgid "PICMAN brush"
+msgstr "PICMAN બ્રશ"
 
 #: ../plug-ins/common/gbr.c:389 ../plug-ins/common/gbr.c:401
 msgid "Unsupported brush format"
@@ -3886,8 +3886,8 @@ msgstr "બિનઆધારભૂત બ્રશ બંધારણ"
 
 #: ../plug-ins/common/gbr.c:412
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "GIMP બ્રશ ફાઈલ '%s' માં ભૂલ"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "PICMAN બ્રશ ફાઈલ '%s' માં ભૂલ"
 
 #: ../plug-ins/common/gbr.c:420
 #, c-format
@@ -3900,8 +3900,8 @@ msgid "Unnamed"
 msgstr "નામવીહિન"
 
 #: ../plug-ins/common/gbr.c:597
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP બ્રશો એ ક્યાં તો GRAYSCALE અથવા RGBA છે"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN બ્રશો એ ક્યાં તો GRAYSCALE અથવા RGBA છે"
 
 #: ../plug-ins/common/gbr.c:681
 msgid "Save as Brush"
@@ -3913,7 +3913,7 @@ msgid "Spacing:"
 msgstr "જગ્યા છોડી રહ્યા છીએ:"
 
 #: ../plug-ins/common/gbr.c:719 ../plug-ins/common/gih.c:911
-#: ../plug-ins/common/pat.c:546 ../plug-ins/gimpressionist/presets.c:651
+#: ../plug-ins/common/pat.c:546 ../plug-ins/picmanressionist/presets.c:651
 msgid "Description:"
 msgstr "વર્ણન:"
 
@@ -3922,8 +3922,8 @@ msgid "Gee Slime"
 msgstr "જી સ્લાઈમ"
 
 #: ../plug-ins/common/gee.c:168 ../plug-ins/common/gee_zoom.c:192
-msgid "Thank You for Choosing GIMP"
-msgstr "GIMP પસંદ કરવા બદલ તમારો આભાર"
+msgid "Thank You for Choosing PICMAN"
+msgstr "PICMAN પસંદ કરવા બદલ તમારો આભાર"
 
 #: ../plug-ins/common/gee.c:175
 #, c-format
@@ -4096,8 +4096,8 @@ msgstr ""
 "અથવા ફરી-સંગ્રહાશે નહિં."
 
 #: ../plug-ins/common/gih.c:207 ../plug-ins/common/gih.c:228
-msgid "GIMP brush (animated)"
-msgstr "GIMP બ્રશ (એનીમેટ થયેલ)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMAN બ્રશ (એનીમેટ થયેલ)"
 
 #: ../plug-ins/common/gih.c:321
 #, c-format
@@ -4105,12 +4105,12 @@ msgid "Layer %s doesn't have an alpha channel, skipped"
 msgstr "સ્તર %s ને આલ્ફા ચેનલ નથી, રદ થયેલ"
 
 #: ../plug-ins/common/gih.c:492
-msgid "Error in GIMP brush pipe file."
-msgstr "GIMP બ્રશ પાઈપ ફાઈલમાં ભૂલ."
+msgid "Error in PICMAN brush pipe file."
+msgstr "PICMAN બ્રશ પાઈપ ફાઈલમાં ભૂલ."
 
 #: ../plug-ins/common/gih.c:558
-msgid "GIMP brush file appears to be corrupted."
-msgstr "GIMP બ્રશ ફાઈલ બગડેલી હોય એમ દેખાય છે."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "PICMAN બ્રશ ફાઈલ બગડેલી હોય એમ દેખાય છે."
 
 #: ../plug-ins/common/gih.c:704
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -4247,8 +4247,8 @@ msgstr "છેદ"
 
 #. Width and Height
 #: ../plug-ins/common/grid.c:724 ../plug-ins/common/svg.c:781
-#: ../plug-ins/common/wmf.c:549 ../plug-ins/print/gimp_main_window.c:1009
-#: ../plug-ins/print/gimp_main_window.c:1216
+#: ../plug-ins/common/wmf.c:549 ../plug-ins/print/picman_main_window.c:1009
+#: ../plug-ins/print/picman_main_window.c:1216
 msgid "Width:"
 msgstr "પહોળાઈ:"
 
@@ -5411,8 +5411,8 @@ msgid "_Paper Tile..."
 msgstr "કાગળ તકતી (_P)..."
 
 #: ../plug-ins/common/pat.c:123 ../plug-ins/common/pat.c:146
-msgid "GIMP pattern"
-msgstr "GIMP ભાત"
+msgid "PICMAN pattern"
+msgstr "PICMAN ભાત"
 
 #: ../plug-ins/common/pat.c:363
 #, c-format
@@ -5801,7 +5801,7 @@ msgstr "ઘાટ આપી રહ્યા છીએ"
 
 #. Resolution
 #: ../plug-ins/common/postscript.c:3080 ../plug-ins/common/svg.c:902
-#: ../plug-ins/common/wmf.c:670 ../plug-ins/print/gimp_main_window.c:1104
+#: ../plug-ins/common/wmf.c:670 ../plug-ins/print/picman_main_window.c:1104
 msgid "Resolution:"
 msgstr "રીઝોલ્યુશન:"
 
@@ -5844,9 +5844,9 @@ msgid "Gray"
 msgstr "રાખોડી"
 
 #: ../plug-ins/common/postscript.c:3149 ../plug-ins/common/xpm.c:469
-#: ../plug-ins/gimpressionist/color.c:48
-#: ../plug-ins/gimpressionist/general.c:151
-#: ../plug-ins/print/gimp_main_window.c:1416
+#: ../plug-ins/picmanressionist/color.c:48
+#: ../plug-ins/picmanressionist/general.c:151
+#: ../plug-ins/print/picman_main_window.c:1416
 msgid "Color"
 msgstr "રંગ"
 
@@ -6763,7 +6763,7 @@ msgid "Use the background color"
 msgstr "પાશ્વ ભાગનો રંગ વાપરો"
 
 #: ../plug-ins/common/spheredesigner.c:291
-#: ../plug-ins/gimpressionist/general.c:147
+#: ../plug-ins/picmanressionist/general.c:147
 msgid "Solid"
 msgstr "ઘટ્ટ"
 
@@ -6853,7 +6853,7 @@ msgstr "રંગ પસંદગી સંવાદ"
 
 #. Scale
 #: ../plug-ins/common/spheredesigner.c:2727
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 #: ../plug-ins/ifscompose/ifscompose.c:555
 msgid "Scale:"
 msgstr "માપદંડ:"
@@ -7052,8 +7052,8 @@ msgid "Render Scalable Vector Graphics"
 msgstr "માપ બદલી શકાય તેવા અદિશ ગ્રાફિક્ટોને ઘાટ આપો"
 
 #: ../plug-ins/common/svg.c:787 ../plug-ins/common/wmf.c:555
-#: ../plug-ins/print/gimp_main_window.c:1026
-#: ../plug-ins/print/gimp_main_window.c:1229
+#: ../plug-ins/print/picman_main_window.c:1026
+#: ../plug-ins/print/picman_main_window.c:1229
 msgid "Height:"
 msgstr "ઊંચાઈ:"
 
@@ -7080,8 +7080,8 @@ msgid "Import _paths"
 msgstr "પાથો આયાત કરો (_p)"
 
 #: ../plug-ins/common/svg.c:934
-msgid "Import path elements of the SVG so they can be used with the GIMP path tool"
-msgstr "SVG ના પાથ ઘટકોની આયાત કરો કે જેથી તેઓ GIMP પાથ સાધન સાથે વાપરી શકાય"
+msgid "Import path elements of the SVG so they can be used with the PICMAN path tool"
+msgstr "SVG ના પાથ ઘટકોની આયાત કરો કે જેથી તેઓ PICMAN પાથ સાધન સાથે વાપરી શકાય"
 
 #: ../plug-ins/common/svg.c:947
 msgid "Merge imported paths"
@@ -7151,12 +7151,12 @@ msgstr "TIFF ચેનલ"
 #: ../plug-ins/common/tiff.c:914
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "ચેતવણી:\n"
-"તમે જે ચિત્ર લાવી રહ્યા છો તેને ચેનલ પ્રતિ ૧૬ બીટ છે. GIMP એ માત્ર ૮ બીટ જ સંભાળી શકે છે, "
+"તમે જે ચિત્ર લાવી રહ્યા છો તેને ચેનલ પ્રતિ ૧૬ બીટ છે. PICMAN એ માત્ર ૮ બીટ જ સંભાળી શકે છે, "
 "તેથી તે તમારા માટે રૂપાંતરિત થશે. જાણકારી ગુમ થઈ જશે રૂપાંતરણને કારણે."
 
 #: ../plug-ins/common/tiff.c:2087
@@ -7287,17 +7287,17 @@ msgstr "સંગ્રહાયેલ"
 
 #: ../plug-ins/common/uniteditor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
-msgstr "એકમ વ્યાખ્યા માત્ર GIMP બંધ થાય તે પહેલાં જ સંગ્રહાય છે જો આ સ્તંભ ચકાસાયેલ હોય."
+msgstr "એકમ વ્યાખ્યા માત્ર PICMAN બંધ થાય તે પહેલાં જ સંગ્રહાય છે જો આ સ્તંભ ચકાસાયેલ હોય."
 
 #: ../plug-ins/common/uniteditor.c:96
 msgid "ID"
 msgstr "ID"
 
 #: ../plug-ins/common/uniteditor.c:96
-msgid "This string will be used to identify a unit in GIMP's configuration files."
-msgstr "આ શબ્દમાળા GIMP ની રૂપરેખાંકન ફાઈલોમાં એકમને ઓળખાવવા માટે વપરાશે."
+msgid "This string will be used to identify a unit in PICMAN's configuration files."
+msgstr "આ શબ્દમાળા PICMAN ની રૂપરેખાંકન ફાઈલોમાં એકમને ઓળખાવવા માટે વપરાશે."
 
 #: ../plug-ins/common/uniteditor.c:98
 msgid "Factor"
@@ -7691,7 +7691,7 @@ msgstr "ચોક્કસ-દિશા-અદિશ નકશા પસંદ�
 
 #.
 #. if (display_diff_map) {
-#. gimp_display_new(new_image_id);
+#. picman_display_new(new_image_id);
 #. }
 #.
 #. make sure layer is visible
@@ -7853,7 +7853,7 @@ msgstr "બંને (_h)"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "ઊંચી કિંમતો ચિત્રના થોડા વિસ્તારોની અસર પર પ્રતિબંધ મૂકે છે"
 
-#: ../plug-ins/common/wind.c:1027 ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/common/wind.c:1027 ../plug-ins/picmanressionist/orientmap.c:675
 msgid "_Strength:"
 msgstr "મજબૂતાઈ (_S):"
 
@@ -7882,7 +7882,7 @@ msgstr "પ્રિન્ટર બીટમેપને આધાર આપત
 msgid "StartPage failed"
 msgstr "શરૂઆતપાનું નિષ્ફળ"
 
-#: ../plug-ins/common/winprint.c:427 ../plug-ins/print/print-image-gimp.c:320
+#: ../plug-ins/common/winprint.c:427 ../plug-ins/print/print-image-picman.c:320
 msgid "Printing..."
 msgstr "છાપે છે..."
 
@@ -7942,8 +7942,8 @@ msgid "X BitMap image"
 msgstr "X BitMap ચિત્ર"
 
 #: ../plug-ins/common/xbm.c:244
-msgid "Created with The GIMP"
-msgstr "GIMP સાથે બનેલ"
+msgid "Created with The PICMAN"
+msgstr "PICMAN સાથે બનેલ"
 
 #: ../plug-ins/common/xbm.c:804
 #, c-format
@@ -8198,8 +8198,8 @@ msgstr "રેન્ડમાઈઝ (_R)"
 msgid "Same"
 msgstr "સરખું"
 
-#: ../plug-ins/flame/flame.c:741 ../plug-ins/gimpressionist/orientation.c:146
-#: ../plug-ins/gimpressionist/size.c:149
+#: ../plug-ins/flame/flame.c:741 ../plug-ins/picmanressionist/orientation.c:146
+#: ../plug-ins/picmanressionist/size.c:149
 msgid "Random"
 msgstr "રેન્ડમ"
 
@@ -8470,7 +8470,7 @@ msgid "Max undo:"
 msgstr "રદ કરવામાં મહત્તમ:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1289
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Transparent"
 msgstr "પારદર્શક"
 
@@ -8564,8 +8564,8 @@ msgid "Left"
 msgstr "ડાબે"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1724
-#: ../plug-ins/gimpressionist/orientation.c:130
-#: ../plug-ins/print/gimp_main_window.c:511
+#: ../plug-ins/picmanressionist/orientation.c:130
+#: ../plug-ins/print/picman_main_window.c:511
 msgid "Orientation:"
 msgstr "દિશા:"
 
@@ -8802,7 +8802,7 @@ msgstr "કિરણ રંગકામ વિકલ્પોs"
 msgid "Second Flares Paint Options"
 msgstr "બીજા ફ્લેર્સ રંગકામ વિકલ્પો"
 
-#: ../plug-ins/gflare/gflare.c:3459 ../plug-ins/gimpressionist/general.c:115
+#: ../plug-ins/gflare/gflare.c:3459 ../plug-ins/picmanressionist/general.c:115
 msgid "_General"
 msgstr "સામાન્ય (_G)"
 
@@ -8910,285 +8910,285 @@ msgstr "GFLI 1.3 - ચોકઠાંસ્ટેક લાવો"
 msgid "GFLI 1.3 - Save framestack"
 msgstr "GFLI 1.3 - ચોકઠાંસ્ટેક સંગ્રહો"
 
-#: ../plug-ins/gimpressionist/brush.c:230
+#: ../plug-ins/picmanressionist/brush.c:230
 msgid "Can only save drawables!"
 msgstr "માત્ર દોરી શકાય તેવા જ સંગ્રહી શકે છે!"
 
-#: ../plug-ins/gimpressionist/brush.c:235
+#: ../plug-ins/picmanressionist/brush.c:235
 msgid "Save Brush"
 msgstr "બ્રશ સંગ્રહો"
 
-#: ../plug-ins/gimpressionist/brush.c:488
+#: ../plug-ins/picmanressionist/brush.c:488
 msgid "_Brush"
 msgstr "બ્રશ (_B)"
 
-#: ../plug-ins/gimpressionist/brush.c:525
-#: ../plug-ins/print/gimp_color_window.c:407
+#: ../plug-ins/picmanressionist/brush.c:525
+#: ../plug-ins/print/picman_color_window.c:407
 msgid "Gamma:"
 msgstr "ગામા:"
 
-#: ../plug-ins/gimpressionist/brush.c:543
+#: ../plug-ins/picmanressionist/brush.c:543
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "પસંદ કરેલ બ્રશની ગામા (તેજસ્વીતા) બદલે છે"
 
-#: ../plug-ins/gimpressionist/brush.c:551
+#: ../plug-ins/picmanressionist/brush.c:551
 msgid "Select:"
 msgstr "પસંદ કરો:"
 
-#: ../plug-ins/gimpressionist/brush.c:580
+#: ../plug-ins/picmanressionist/brush.c:580
 msgid "Aspect ratio:"
 msgstr "એસ્પેક્ટ રેશિયો:"
 
-#: ../plug-ins/gimpressionist/brush.c:584
+#: ../plug-ins/picmanressionist/brush.c:584
 msgid "Specifies the aspect ratio of the brush"
 msgstr "બ્રશનો એસ્પેક્ટ રેશિયો સ્પષ્ટ કરે છે"
 
-#: ../plug-ins/gimpressionist/brush.c:593
-#: ../plug-ins/gimpressionist/paper.c:188
+#: ../plug-ins/picmanressionist/brush.c:593
+#: ../plug-ins/picmanressionist/paper.c:188
 msgid "Relief:"
 msgstr "રાહત:"
 
-#: ../plug-ins/gimpressionist/brush.c:597
-#: ../plug-ins/gimpressionist/paper.c:192
+#: ../plug-ins/picmanressionist/brush.c:597
+#: ../plug-ins/picmanressionist/paper.c:192
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "ચિત્રને લાગુ પાડવા માટે ઉપસાવવાને જથ્થો સ્પષ્ટ કરે છે (ટકામાં)"
 
-#: ../plug-ins/gimpressionist/color.c:42
+#: ../plug-ins/picmanressionist/color.c:42
 msgid "Co_lor"
 msgstr "રંગ (_l)"
 
-#: ../plug-ins/gimpressionist/color.c:52
+#: ../plug-ins/picmanressionist/color.c:52
 msgid "A_verage under brush"
 msgstr "બ્રશ હેઠળ સરેરાશ (_v)"
 
-#: ../plug-ins/gimpressionist/color.c:54
+#: ../plug-ins/picmanressionist/color.c:54
 msgid "C_enter of brush"
 msgstr "બ્રશનું કેન્દ્ર (_e)"
 
-#: ../plug-ins/gimpressionist/color.c:61
+#: ../plug-ins/picmanressionist/color.c:61
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "રંગ એ બધા પિક્સેલોના સરેરાશમાંથી બ્રશ હેઠળ ગણતરી થાય છે"
 
-#: ../plug-ins/gimpressionist/color.c:65
+#: ../plug-ins/picmanressionist/color.c:65
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "બ્રશના કેન્દ્રમાં પિક્સેલમાંથી રંગનો નમૂનો આપે છે"
 
-#: ../plug-ins/gimpressionist/color.c:76
+#: ../plug-ins/picmanressionist/color.c:76
 msgid "Color _noise:"
 msgstr "રંગ ઘોંઘાટ (_n):"
 
-#: ../plug-ins/gimpressionist/color.c:80
+#: ../plug-ins/picmanressionist/color.c:80
 msgid "Adds random noise to the color"
 msgstr "રંગમાં રેન્ડમ ઘોંઘાટ ઉમેરે છે"
 
-#: ../plug-ins/gimpressionist/general.c:131
+#: ../plug-ins/picmanressionist/general.c:131
 msgid "Keep original"
 msgstr "મૂળ સાચવી રાખે છે"
 
-#: ../plug-ins/gimpressionist/general.c:132
+#: ../plug-ins/picmanressionist/general.c:132
 msgid "Preserve the original image as a background"
 msgstr "મૂળ ચિત્રને પાશ્વ ભાગ તરીકે સાચવી રાખે છે"
 
-#: ../plug-ins/gimpressionist/general.c:137
+#: ../plug-ins/picmanressionist/general.c:137
 msgid "From paper"
 msgstr "કાગળમાંથી"
 
-#: ../plug-ins/gimpressionist/general.c:138
+#: ../plug-ins/picmanressionist/general.c:138
 msgid "Copy the texture of the selected paper as a background"
 msgstr "પસંદ કરેલ કાગળના લખાણવાળા ભાગને પાશ્વ ભાગ તરીકે નકલ કરો"
 
-#: ../plug-ins/gimpressionist/general.c:148
+#: ../plug-ins/picmanressionist/general.c:148
 msgid "Solid colored background"
 msgstr "ઘાટો રંગીન પાશ્વ ભાગ"
 
-#: ../plug-ins/gimpressionist/general.c:167
+#: ../plug-ins/picmanressionist/general.c:167
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "પારદર્શક પાશ્વ ભાગ વાપરો; માત્ર રંગકામ થયેલ સ્ટ્રોક જ દૃશ્યમાન થશે"
 
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Paint edges"
 msgstr "બાજુઓ રંગો"
 
-#: ../plug-ins/gimpressionist/general.c:189
+#: ../plug-ins/picmanressionist/general.c:189
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "જો સ્ટ્રોકોને ચિત્રની બાજુઓની બહાર જ મૂકવાના હોય તો પસંદ કરે છે"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:194 ../plug-ins/maze/maze_face.c:317
+#: ../plug-ins/picmanressionist/general.c:194 ../plug-ins/maze/maze_face.c:317
 msgid "Tileable"
 msgstr "તકતી કરી શકાય તેવું"
 
-#: ../plug-ins/gimpressionist/general.c:198
+#: ../plug-ins/picmanressionist/general.c:198
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "જો પરિણામી ચિત્ર સંપૂર્ણપણે તકતી કરી શકાય તેવું કરવું જોઈએ તો આ પસંદ કરે છે"
 
-#: ../plug-ins/gimpressionist/general.c:203
+#: ../plug-ins/picmanressionist/general.c:203
 msgid "Drop shadow"
 msgstr "પડછાયો મૂકો"
 
-#: ../plug-ins/gimpressionist/general.c:208
+#: ../plug-ins/picmanressionist/general.c:208
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "દરેક બ્રશ સ્ટ્રોક પર પડછાયાની અસર ઉમેરે છે"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Edge darken:"
 msgstr "બાજુ ઘાટી કરેલી:"
 
-#: ../plug-ins/gimpressionist/general.c:225
+#: ../plug-ins/picmanressionist/general.c:225
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "દરેક બ્રશ સ્ટ્રોકની બાજુઓને કેટલી \"ઘાટી\" કરવી"
 
-#: ../plug-ins/gimpressionist/general.c:230
+#: ../plug-ins/picmanressionist/general.c:230
 msgid "Shadow darken:"
 msgstr "ઘાટો કરેલ પડછાયો:"
 
-#: ../plug-ins/gimpressionist/general.c:234
+#: ../plug-ins/picmanressionist/general.c:234
 msgid "How much to \"darken\" the drop shadow"
 msgstr "પડછાયો મૂકવાને કેટલો \"ઘાટો\" કરવો"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Shadow depth:"
 msgstr "પડછાયા ઊંડાઈ:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr "મૂકવાના પડછાયાની ઊંડાઈ, એટલે કે ઓબ્જેક્ટ સિવાય કેટલું દૂર હોવું જોઈએ"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow blur:"
 msgstr "પડછાયો ઝાંખો:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to blur the drop shadow"
 msgstr "મૂકવાનો પડછાયો કેટલો ઝાંખો કરવો"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Deviation threshold:"
 msgstr "ડેવીએશન થ્રેશોલ્ડ:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid "A bailout-value for adaptive selections"
 msgstr "અનૂકુલનીય પસંદગીઓ માટે બેઈલઆઉટ-કિંમત"
 
-#: ../plug-ins/gimpressionist/gimp.c:79
-msgid "_GIMPressionist..."
-msgstr "_GIMPressionist..."
+#: ../plug-ins/picmanressionist/picman.c:79
+msgid "_PICMANressionist..."
+msgstr "_PICMANressionist..."
 
-#: ../plug-ins/gimpressionist/gimp.c:350
+#: ../plug-ins/picmanressionist/picman.c:350
 msgid "Painting..."
 msgstr "રંગકામ..."
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:117
-msgid "The GIMPressionist"
-msgstr "GIMPressionist"
+#: ../plug-ins/picmanressionist/picmanressionist.c:117
+msgid "The PICMANressionist"
+msgstr "PICMANressionist"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:196
-msgid "Gimpressionist"
-msgstr "Gimpressionist"
+#: ../plug-ins/picmanressionist/picmanressionist.c:196
+msgid "Picmanressionist"
+msgstr "Picmanressionist"
 
-#: ../plug-ins/gimpressionist/orientation.c:74
+#: ../plug-ins/picmanressionist/orientation.c:74
 msgid "Or_ientation"
 msgstr "દિશા (_i)"
 
-#: ../plug-ins/gimpressionist/orientation.c:88
+#: ../plug-ins/picmanressionist/orientation.c:88
 msgid "Directions:"
 msgstr "દિશાઓ:"
 
-#: ../plug-ins/gimpressionist/orientation.c:92
+#: ../plug-ins/picmanressionist/orientation.c:92
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "વાપરવા માટેની દિશાઓની સંખ્યા (એટલે કે બ્રશો)"
 
-#: ../plug-ins/gimpressionist/orientation.c:100
+#: ../plug-ins/picmanressionist/orientation.c:100
 msgid "Start angle:"
 msgstr "શરૂઆતી કોણ:"
 
-#: ../plug-ins/gimpressionist/orientation.c:104
+#: ../plug-ins/picmanressionist/orientation.c:104
 msgid "The starting angle of the first brush to create"
 msgstr "બનાવવા માટેના પ્રથમ બ્રશનો શરૂઆતી કોણ"
 
-#: ../plug-ins/gimpressionist/orientation.c:112
+#: ../plug-ins/picmanressionist/orientation.c:112
 msgid "Angle span:"
 msgstr "કોણ વિસ્તરણ:"
 
-#: ../plug-ins/gimpressionist/orientation.c:116
+#: ../plug-ins/picmanressionist/orientation.c:116
 msgid "The angle span of the first brush to create"
 msgstr "બનાવવા માટેના પ્રથમ બ્રશનું કોણ વિસ્તરણ"
 
-#: ../plug-ins/gimpressionist/orientation.c:139
+#: ../plug-ins/picmanressionist/orientation.c:139
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "સ્ટ્રોકની દિશા નક્કી કરવા માટે વિસ્તારની કિંમત (તેજસ્વીતા) ને પરવાનગી આપો"
 
-#: ../plug-ins/gimpressionist/orientation.c:142
-#: ../plug-ins/gimpressionist/size.c:145
+#: ../plug-ins/picmanressionist/orientation.c:142
+#: ../plug-ins/picmanressionist/size.c:145
 msgid "Radius"
 msgstr "ત્રિજ્યા"
 
-#: ../plug-ins/gimpressionist/orientation.c:143
+#: ../plug-ins/picmanressionist/orientation.c:143
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "ચિત્રના કેન્દ્રથી અંતર સ્ટ્રોકની દિશા નક્કી કરે છે"
 
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Selects a random direction of each stroke"
 msgstr "દરેક સ્ટ્રોકની રેન્ડ દિશા પસંદ કરે છે"
 
-#: ../plug-ins/gimpressionist/orientation.c:150
-#: ../plug-ins/gimpressionist/size.c:153
+#: ../plug-ins/picmanressionist/orientation.c:150
+#: ../plug-ins/picmanressionist/size.c:153
 msgid "Radial"
 msgstr "ગોળીય"
 
-#: ../plug-ins/gimpressionist/orientation.c:151
+#: ../plug-ins/picmanressionist/orientation.c:151
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "સ્ટ્રોકની દિશા નક્કી કરવા માટે કેન્દ્રમાંથી દિશાને પરવાનગી આપો"
 
-#: ../plug-ins/gimpressionist/orientation.c:158
-#: ../plug-ins/gimpressionist/size.c:161
+#: ../plug-ins/picmanressionist/orientation.c:158
+#: ../plug-ins/picmanressionist/size.c:161
 msgid "Flowing"
 msgstr "વહેવું"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "સ્ટ્રોક \"વહેતો\" ભાતને અનુસરે છે"
 
-#: ../plug-ins/gimpressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/orientation.c:163
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "વિસ્તારની વર્ણ સ્ટ્રોકની દિશા નક્કી કરે છે"
 
-#: ../plug-ins/gimpressionist/orientation.c:166
-#: ../plug-ins/gimpressionist/size.c:169
+#: ../plug-ins/picmanressionist/orientation.c:166
+#: ../plug-ins/picmanressionist/size.c:169
 msgid "Adaptive"
 msgstr "અનૂકુલનાત્મક"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/orientation.c:167
 msgid "The direction that matches the original image the closest is selected"
 msgstr "દિશા કે જે મૂળ ચિત્રને બંધબેસે છે તે નજીક છે તે પસંદ થયેલ છે"
 
-#: ../plug-ins/gimpressionist/orientation.c:174
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:174
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Manual"
 msgstr "જાતે"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/orientation.c:175
 msgid "Manually specify the stroke orientation"
 msgstr "જાતે સ્ટ્રોકની દિશા સ્પષ્ટ કરો"
 
-#: ../plug-ins/gimpressionist/orientation.c:186
+#: ../plug-ins/picmanressionist/orientation.c:186
 msgid "Opens up the Orientation Map Editor"
 msgstr "દિશા નકશા સંપાદક ખોલે છે"
 
-#: ../plug-ins/gimpressionist/orientmap.c:508
+#: ../plug-ins/picmanressionist/orientmap.c:508
 msgid "Orientation Map Editor"
 msgstr "દિશા નકશા સંપાદક"
 
-#: ../plug-ins/gimpressionist/orientmap.c:536
+#: ../plug-ins/picmanressionist/orientmap.c:536
 msgid "Vectors"
 msgstr "અદિશો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:548
+#: ../plug-ins/picmanressionist/orientmap.c:548
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -9196,283 +9196,283 @@ msgstr ""
 "અદિશ-ક્ષેત્ર. ડાબું-ક્લિક પસંદ કરેલ અદિશને ખસેડવા માટે, જમણું-ક્લિક તેને માઉસ તરફ નિર્દેશ કરવા "
 "માટે, વચ્ચેનું-ક્લિક નવો અદિશ ઉમેરવા માટે."
 
-#: ../plug-ins/gimpressionist/orientmap.c:571
-#: ../plug-ins/gimpressionist/sizemap.c:441
+#: ../plug-ins/picmanressionist/orientmap.c:571
+#: ../plug-ins/picmanressionist/sizemap.c:441
 msgid "Adjust the preview's brightness"
 msgstr "પૂર્વદર્શનની તેજસ્વીતા સંતુલિત કરો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:593
+#: ../plug-ins/picmanressionist/orientmap.c:593
 msgid "Select previous vector"
 msgstr "પહેલાનો અદિશ પસંદ કરો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:599
+#: ../plug-ins/picmanressionist/orientmap.c:599
 msgid "Select next vector"
 msgstr "આગળનો અદિશ પસંદ કરો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:601
-#: ../plug-ins/gimpressionist/sizemap.c:472
+#: ../plug-ins/picmanressionist/orientmap.c:601
+#: ../plug-ins/picmanressionist/sizemap.c:472
 msgid "A_dd"
 msgstr "ઉમેરો (_d)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:605
+#: ../plug-ins/picmanressionist/orientmap.c:605
 msgid "Add new vector"
 msgstr "નવો અદિશ ઉમેરો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:607
-#: ../plug-ins/gimpressionist/sizemap.c:479
+#: ../plug-ins/picmanressionist/orientmap.c:607
+#: ../plug-ins/picmanressionist/sizemap.c:479
 msgid "_Kill"
 msgstr "મારી નાંખો (_K)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Delete selected vector"
 msgstr "પસંદ કરેલ અદિશ કાઢી નાંખો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:622
+#: ../plug-ins/picmanressionist/orientmap.c:622
 msgid "Type"
 msgstr "પ્રકાર"
 
-#: ../plug-ins/gimpressionist/orientmap.c:626
+#: ../plug-ins/picmanressionist/orientmap.c:626
 msgid "_Normal"
 msgstr "સામાન્ય (_N)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:627
+#: ../plug-ins/picmanressionist/orientmap.c:627
 msgid "Vorte_x"
 msgstr "Vorte_x"
 
-#: ../plug-ins/gimpressionist/orientmap.c:628
+#: ../plug-ins/picmanressionist/orientmap.c:628
 msgid "Vortex_2"
 msgstr "Vortex_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Vortex_3"
 msgstr "Vortex_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:635
-#: ../plug-ins/gimpressionist/sizemap.c:524
+#: ../plug-ins/picmanressionist/orientmap.c:635
+#: ../plug-ins/picmanressionist/sizemap.c:524
 msgid "_Voronoi"
 msgstr "વોરોનોઈ (_V)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:643
+#: ../plug-ins/picmanressionist/orientmap.c:643
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
 msgstr "વોરોનોઈ-સ્થિતિ અદિશને આપેલ બિંદુથી નજીકતમ જ બનાવે છે કે જેને ઈન્ફ્લુએન્ઝ હોય"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/orientmap.c:653
 msgid "A_ngle:"
 msgstr "કોણ (_n):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:657
+#: ../plug-ins/picmanressionist/orientmap.c:657
 msgid "Change the angle of the selected vector"
 msgstr "પસંદ કરેલ અદિશનો કોણ બદલો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:664
+#: ../plug-ins/picmanressionist/orientmap.c:664
 msgid "Ang_le offset:"
 msgstr "કોણ ઓફસેટ (_l):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:668
+#: ../plug-ins/picmanressionist/orientmap.c:668
 msgid "Offset all vectors with a given angle"
 msgstr "આપેલ કોણ સાથે બધા અદિશનો ઓફસેટ કરો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:679
+#: ../plug-ins/picmanressionist/orientmap.c:679
 msgid "Change the strength of the selected vector"
 msgstr "પસંદ કરેલ અદિશની મજબૂતાઈ બદલો"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "S_trength exp.:"
 msgstr "મજબૂતાઈ સમાપ્ત (_t):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:690
-#: ../plug-ins/gimpressionist/sizemap.c:519
+#: ../plug-ins/picmanressionist/orientmap.c:690
+#: ../plug-ins/picmanressionist/sizemap.c:519
 msgid "Change the exponent of the strength"
 msgstr "મજબૂતાઈનો ઘટક બદલો"
 
-#: ../plug-ins/gimpressionist/paper.c:120
+#: ../plug-ins/picmanressionist/paper.c:120
 msgid "P_aper"
 msgstr "કાગળ (_a)"
 
-#: ../plug-ins/gimpressionist/paper.c:155
+#: ../plug-ins/picmanressionist/paper.c:155
 msgid "Inverts the Papers texture"
 msgstr "કાગળોનું લખાણ વ્યસ્ત કરે છે"
 
-#: ../plug-ins/gimpressionist/paper.c:159
+#: ../plug-ins/picmanressionist/paper.c:159
 msgid "O_verlay"
 msgstr "ઓવરલે (_v)"
 
-#: ../plug-ins/gimpressionist/paper.c:164
+#: ../plug-ins/picmanressionist/paper.c:164
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "કાગળને જેમ હોય તેમ લાગુ કરે છે (તેને ઉપસાવ્યા સિવાય)"
 
-#: ../plug-ins/gimpressionist/paper.c:180
+#: ../plug-ins/picmanressionist/paper.c:180
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "લખાણનું માપદંડ સ્પષ્ટ ખરે છે (મૂળ ફાઈલના ટકામાં)"
 
-#: ../plug-ins/gimpressionist/placement.c:49
+#: ../plug-ins/picmanressionist/placement.c:49
 msgid "Pl_acement"
 msgstr "જગ્યા ગોઠવણી (_a)"
 
-#: ../plug-ins/gimpressionist/placement.c:55
+#: ../plug-ins/picmanressionist/placement.c:55
 msgid "Placement"
 msgstr "જગ્યા ગોઠવણી"
 
-#: ../plug-ins/gimpressionist/placement.c:59
+#: ../plug-ins/picmanressionist/placement.c:59
 msgid "Randomly"
 msgstr "રેન્ડમ રીતે"
 
-#: ../plug-ins/gimpressionist/placement.c:63
+#: ../plug-ins/picmanressionist/placement.c:63
 msgid "Evenly distributed"
 msgstr "સરખી રીતે વિતરીત થયેલ"
 
-#: ../plug-ins/gimpressionist/placement.c:71
+#: ../plug-ins/picmanressionist/placement.c:71
 msgid "Place strokes randomly around the image"
 msgstr "ચિત્રની ફરતે સ્ટ્રોક રેન્ડમ રીતે મૂકો"
 
-#: ../plug-ins/gimpressionist/placement.c:75
+#: ../plug-ins/picmanressionist/placement.c:75
 msgid "The strokes are evenly distributed across the image"
 msgstr "સ્ટ્રોક ચિત્રની ફરતે સરખી રીતે વિતરિત થયેલ છે"
 
-#: ../plug-ins/gimpressionist/placement.c:91
+#: ../plug-ins/picmanressionist/placement.c:91
 msgid "Stroke _density:"
 msgstr "સ્ટ્રોક ઘનતા (_d):"
 
-#: ../plug-ins/gimpressionist/placement.c:95
+#: ../plug-ins/picmanressionist/placement.c:95
 msgid "The relative density of the brush strokes"
 msgstr "બ્રશ સ્ટ્રોકની સંબંધિત ઘનતા"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centerize"
 msgstr "કેન્દ્રિયકરણ"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "ચિત્રના કેન્દ્રની ફરતે બ્રશ સ્ટ્રોકને ફોકસ કરો"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:632
+#: ../plug-ins/picmanressionist/ppmtool.c:632
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "PPM ફાઈલ '%s' સંગ્રહવામાં નિષ્ફલ: %s"
 
-#: ../plug-ins/gimpressionist/presets.c:625
+#: ../plug-ins/picmanressionist/presets.c:625
 msgid "Save Current"
 msgstr "વર્તમાન સંગ્રહો"
 
-#: ../plug-ins/gimpressionist/presets.c:874
-msgid "The Gimpressionist Defaults"
-msgstr "Gimpressionist મૂળભૂતો"
+#: ../plug-ins/picmanressionist/presets.c:874
+msgid "The Picmanressionist Defaults"
+msgstr "Picmanressionist મૂળભૂતો"
 
-#: ../plug-ins/gimpressionist/presets.c:990
+#: ../plug-ins/picmanressionist/presets.c:990
 msgid "_Presets"
 msgstr "પૂર્વસુયોજનો (_P)"
 
-#: ../plug-ins/gimpressionist/presets.c:1005
+#: ../plug-ins/picmanressionist/presets.c:1005
 msgid "Save Current..."
 msgstr "વર્તમાન સંગ્રહો..."
 
-#: ../plug-ins/gimpressionist/presets.c:1010
+#: ../plug-ins/picmanressionist/presets.c:1010
 msgid "Save the current settings to the specified file"
 msgstr "વર્તમાન સુયોજનો સ્પષ્ટ થયેલ ફાઈલમાં સંગ્રહો"
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Reads the selected Preset into memory"
 msgstr "પસંદ કરેલ પૂર્વસુયોજન મેમરીમાં વાંચે છે"
 
-#: ../plug-ins/gimpressionist/presets.c:1044
+#: ../plug-ins/picmanressionist/presets.c:1044
 msgid "Deletes the selected Preset"
 msgstr "પસંદ કરેલ પૂર્વસુયોજન કાઢી નાંખે છે"
 
-#: ../plug-ins/gimpressionist/presets.c:1050
+#: ../plug-ins/picmanressionist/presets.c:1050
 msgid "Reread the folder of Presets"
 msgstr "પૂર્વસુયોજનોના ફોલ્ડરને ફરી વાંચે છે"
 
-#: ../plug-ins/gimpressionist/preview.c:187
+#: ../plug-ins/picmanressionist/preview.c:187
 msgid "Refresh the Preview window"
 msgstr "પૂર્વદર્શન વિન્ડો ફરી તાજી કરો"
 
-#: ../plug-ins/gimpressionist/preview.c:195
+#: ../plug-ins/picmanressionist/preview.c:195
 msgid "Revert to the original image"
 msgstr "મૂળ ચિત્ર ઉલટાવો"
 
-#: ../plug-ins/gimpressionist/repaint.c:1160
+#: ../plug-ins/picmanressionist/repaint.c:1160
 msgid "Update"
 msgstr "ફેરફાર"
 
-#: ../plug-ins/gimpressionist/size.c:77
+#: ../plug-ins/picmanressionist/size.c:77
 msgid "_Size"
 msgstr "માપ (_S)"
 
-#: ../plug-ins/gimpressionist/size.c:91
+#: ../plug-ins/picmanressionist/size.c:91
 msgid "Sizes:"
 msgstr "માપો:"
 
-#: ../plug-ins/gimpressionist/size.c:95
+#: ../plug-ins/picmanressionist/size.c:95
 msgid "The number of sizes of brushes to use"
 msgstr "વાપરવા માટેના બ્રશોના માપની સંખ્યા"
 
-#: ../plug-ins/gimpressionist/size.c:103
+#: ../plug-ins/picmanressionist/size.c:103
 msgid "Minimum size:"
 msgstr "ન્યૂનતમ માપ:"
 
-#: ../plug-ins/gimpressionist/size.c:107
+#: ../plug-ins/picmanressionist/size.c:107
 msgid "The smallest brush to create"
 msgstr "બનાવવા માટેનું નાનામાંનાનું બ્રશ"
 
-#: ../plug-ins/gimpressionist/size.c:115
+#: ../plug-ins/picmanressionist/size.c:115
 msgid "Maximum size:"
 msgstr "મહત્તમ માપ:"
 
-#: ../plug-ins/gimpressionist/size.c:119
+#: ../plug-ins/picmanressionist/size.c:119
 msgid "The largest brush to create"
 msgstr "બનાવવા માટેનું મોટામાંમોટું બ્રશ"
 
-#: ../plug-ins/gimpressionist/size.c:133
+#: ../plug-ins/picmanressionist/size.c:133
 msgid "Size:"
 msgstr "માપ:"
 
-#: ../plug-ins/gimpressionist/size.c:142
+#: ../plug-ins/picmanressionist/size.c:142
 msgid "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "વિસ્તારની કિંમત (તેજસ્વીતા) ને સ્ટ્રોકનું માપ નક્કી કરવા દો"
 
-#: ../plug-ins/gimpressionist/size.c:146
+#: ../plug-ins/picmanressionist/size.c:146
 msgid "The distance from the center of the image determines the size of the stroke"
 msgstr "ચિત્રના કેન્દ્રથી અંતર સ્ટ્રોકનું માપ નક્કી કરે છે"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Selects a random size for each stroke"
 msgstr "દરેક સ્ટ્રોક માટે રેન્ડમ માપ પસંદ કરે છે"
 
-#: ../plug-ins/gimpressionist/size.c:154
+#: ../plug-ins/picmanressionist/size.c:154
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "કેન્દ્રથી અંતરને સ્ટ્રોકનું માપ નક્કી કરવા દો"
 
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "The hue of the region determines the size of the stroke"
 msgstr "વિસ્તારનું વર્ણ સ્ટ્રોકનું માપ નક્કી કરે છે"
 
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "બ્રશ-માપ કે જે મૂળ ચિત્ર સાથે બંધબેસે છે તે પસંદ થયેલની નજીકમ છે"
 
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "Manually specify the stroke size"
 msgstr "જાતે સ્ટ્રોક માપ સ્પષ્ટ કરો"
 
-#: ../plug-ins/gimpressionist/size.c:190
+#: ../plug-ins/picmanressionist/size.c:190
 msgid "Opens up the Size Map Editor"
 msgstr "માપ નકશા સંપાદક ખોલે છે"
 
-#: ../plug-ins/gimpressionist/sizemap.c:383
+#: ../plug-ins/picmanressionist/sizemap.c:383
 msgid "Size Map Editor"
 msgstr "માપ નકશા સંપાદક"
 
-#: ../plug-ins/gimpressionist/sizemap.c:411
+#: ../plug-ins/picmanressionist/sizemap.c:411
 msgid "Smvectors"
 msgstr "Smvectors"
 
-#: ../plug-ins/gimpressionist/sizemap.c:421
+#: ../plug-ins/picmanressionist/sizemap.c:421
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -9480,51 +9480,51 @@ msgstr ""
 "smvector-ક્ષેત્ર. ડાબું-ક્લિક પસંદ કરેલ smvector ને ખસેડવા માટે, જમણું-ક્લિક તેને માઉસને નીચે "
 "નિર્દેશિત કરવા માટે, વચ્ચેનું-ક્લિક નવો smvector ઉમેરવા માટે."
 
-#: ../plug-ins/gimpressionist/sizemap.c:463
+#: ../plug-ins/picmanressionist/sizemap.c:463
 msgid "Select previous smvector"
 msgstr "પહેલાનો smvector પસંદ કરો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:470
+#: ../plug-ins/picmanressionist/sizemap.c:470
 msgid "Select next smvector"
 msgstr "આગળનો smvector પસંદ કરો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:477
+#: ../plug-ins/picmanressionist/sizemap.c:477
 msgid "Add new smvector"
 msgstr "નવો smvector ઉમેરો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:484
+#: ../plug-ins/picmanressionist/sizemap.c:484
 msgid "Delete selected smvector"
 msgstr "પસંદ કરેલ smvector કાઢી નાંખો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:497
+#: ../plug-ins/picmanressionist/sizemap.c:497
 msgid "Change the angle of the selected smvector"
 msgstr "પસંદ કરેલ smvector નો કોણ બદલો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:504
+#: ../plug-ins/picmanressionist/sizemap.c:504
 msgid "S_trength:"
 msgstr "મજબૂતાઈ (_t):"
 
-#: ../plug-ins/gimpressionist/sizemap.c:508
+#: ../plug-ins/picmanressionist/sizemap.c:508
 msgid "Change the strength of the selected smvector"
 msgstr "પસંદ કરેલ smvector ની મજબૂતાઈ બદલો"
 
-#: ../plug-ins/gimpressionist/sizemap.c:515
+#: ../plug-ins/picmanressionist/sizemap.c:515
 msgid "St_rength exp.:"
 msgstr "મજબૂતાઈ સમાપ્ત (_r):"
 
-#: ../plug-ins/gimpressionist/sizemap.c:531
+#: ../plug-ins/picmanressionist/sizemap.c:531
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
 msgstr "વોરોનોઈ-સ્થિતિ માત્ર smvector ને આપેલ બિંદુની નજીકતમ બનાવે છે કે જેમને ઈન્ફ્લુએન્ઝ હોય"
 
 #: ../plug-ins/help/domain.c:177
-msgid "The GIMP help files are not installed."
-msgstr "GIMP મદદ ફાઈલો સ્થાપિત થયેલ નથી."
+msgid "The PICMAN help files are not installed."
+msgstr "PICMAN મદદ ફાઈલો સ્થાપિત થયેલ નથી."
 
 #: ../plug-ins/help/domain.c:179
-msgid "There is a problem with the GIMP help files."
-msgstr "GIMP મદદ ફાઈલો સાથે સમસ્યા નથી."
+msgid "There is a problem with the PICMAN help files."
+msgstr "PICMAN મદદ ફાઈલો સાથે સમસ્યા નથી."
 
 #: ../plug-ins/help/domain.c:184
 msgid "Please check your installation."
@@ -9545,8 +9545,8 @@ msgstr ""
 "%s"
 
 #: ../plug-ins/helpbrowser/dialog.c:190
-msgid "GIMP Help Browser"
-msgstr "GIMP મદદ બ્રાઉઝર"
+msgid "PICMAN Help Browser"
+msgstr "PICMAN મદદ બ્રાઉઝર"
 
 #: ../plug-ins/helpbrowser/dialog.c:254
 msgid "Drag and drop this icon to a web browser"
@@ -9565,8 +9565,8 @@ msgid "Go to the index page"
 msgstr "અનુક્રમણિકા પાનાં પર જાવ"
 
 #: ../plug-ins/helpbrowser/dialog.c:503
-msgid "Visit the GIMP documentation website"
-msgstr "GIMP દસ્તાવેજીકરણ વેબસાઈટની મુલાકાત લો"
+msgid "Visit the PICMAN documentation website"
+msgstr "PICMAN દસ્તાવેજીકરણ વેબસાઈટની મુલાકાત લો"
 
 #: ../plug-ins/helpbrowser/dialog.c:577
 msgid "Document not found"
@@ -9772,7 +9772,7 @@ msgid "Clear"
 msgstr "સાફ કરો"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:58
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:151
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:151
 msgid "Create"
 msgstr "બનાવો"
 
@@ -9794,41 +9794,41 @@ msgid "Edit Object"
 msgstr "ઓબ્જેક્ટમાં ફેરફાર કરો"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:117
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:147
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:251
-msgid "Use Gimp Guides"
-msgstr "Gimp માર્ગદર્શનો વાપરો"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:117
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:147
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:251
+msgid "Use Picman Guides"
+msgstr "Picman માર્ગદર્શનો વાપરો"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:160
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:160
 msgid "Al_ternate"
 msgstr "વારાફરતી (_t)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:165
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:165
 msgid "A_ll"
 msgstr "બધા (_l)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:169
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:169
 msgid "Add Additional Guides"
 msgstr "વધારાના માર્ગદર્શનો ઉમેરો"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:177
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:177
 msgid "L_eft border"
 msgstr "ડાબી કિનારી (_e)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:181
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:181
 msgid "_Right border"
 msgstr "જમણી કિનારી (_R)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:185
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:185
 msgid "_Upper border"
 msgstr "ઉપરની કિનારી (_U)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:189
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:189
 msgid "Lo_wer border"
 msgstr "નીચેની કિનારી (_w)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:197
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:197
 msgid "_Base URL:"
 msgstr "આધાર URL (_B):"
 
@@ -10344,8 +10344,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "EXIF માહિતી અનુસાર, આ ચિત્ર ફેરવાયેલ છે."
 
 #: ../plug-ins/jpeg/jpeg-exif.c:91
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "શું તમે GIMP ને પ્રમાણભૂત દિશામાં ફેરવવા માંગો છો?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "શું તમે PICMAN ને પ્રમાણભૂત દિશામાં ફેરવવા માંગો છો?"
 
 #: ../plug-ins/jpeg/jpeg-exif.c:93
 msgid "_Keep Orientation"
@@ -10734,15 +10734,15 @@ msgstr "વળાંક સ્તર"
 msgid "Page Curl..."
 msgstr "પાનાં વળાંક..."
 
-#: ../plug-ins/print/gimp_color_window.c:208
+#: ../plug-ins/print/picman_color_window.c:208
 msgid "Print Color Adjust"
 msgstr "છાપન રંગ સંતુલિત કરો"
 
-#: ../plug-ins/print/gimp_color_window.c:268
+#: ../plug-ins/print/picman_color_window.c:268
 msgid "Brightness:"
 msgstr "તેજસ્વીતા:"
 
-#: ../plug-ins/print/gimp_color_window.c:276
+#: ../plug-ins/print/picman_color_window.c:276
 msgid ""
 "Set the brightness of the print.\n"
 "0 is solid black, 2 is solid white"
@@ -10750,33 +10750,33 @@ msgstr ""
 "છાપનની તેજસ્વીતા સુયોજિત કરો.\n"
 "૦ એ ઘાટો કાળો છે, ૨ એ ઘાટો સફેદ છે"
 
-#: ../plug-ins/print/gimp_color_window.c:288
+#: ../plug-ins/print/picman_color_window.c:288
 msgid "Contrast:"
 msgstr "વિરોધાભાસ:"
 
-#: ../plug-ins/print/gimp_color_window.c:296
+#: ../plug-ins/print/picman_color_window.c:296
 msgid "Set the contrast of the print"
 msgstr "છાપનનો વિરોધાભાસ સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_color_window.c:315
+#: ../plug-ins/print/picman_color_window.c:315
 msgid "Adjust the cyan balance of the print"
 msgstr "છાપનની મોરપીંછ સંતુલન સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_color_window.c:334
+#: ../plug-ins/print/picman_color_window.c:334
 msgid "Adjust the magenta balance of the print"
 msgstr "છાપનની જાંબલી સંતુલન સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_color_window.c:353
+#: ../plug-ins/print/picman_color_window.c:353
 msgid "Adjust the yellow balance of the print"
 msgstr "છાપનની પીળુ સંતુલન સુયોજિત કરો"
 
 #. Gray: Circle: Spinbutton 2
-#: ../plug-ins/print/gimp_color_window.c:364 ../plug-ins/rcm/rcm_dialog.c:494
+#: ../plug-ins/print/picman_color_window.c:364 ../plug-ins/rcm/rcm_dialog.c:494
 #: ../plug-ins/rcm/rcm_dialog.c:556
 msgid "Saturation:"
 msgstr "સંતુલન:"
 
-#: ../plug-ins/print/gimp_color_window.c:372
+#: ../plug-ins/print/picman_color_window.c:372
 msgid ""
 "Adjust the saturation (color balance) of the print\n"
 "Use zero saturation to produce grayscale output using color and black inks"
@@ -10784,11 +10784,11 @@ msgstr ""
 "છાપનનું સંતૃપ્તિકરણ (રંગ સંતુલન) સંતુલિત કરો\n"
 "રંગ અને કાળી સહીઓની મદદથી ગ્રેસ્કેલ આઉટપુટ પેદા કરવા માટે શૂન્ય સંતૃપ્તીકરણ વાપરો"
 
-#: ../plug-ins/print/gimp_color_window.c:385
+#: ../plug-ins/print/picman_color_window.c:385
 msgid "Density:"
 msgstr "ઘનતા:"
 
-#: ../plug-ins/print/gimp_color_window.c:393
+#: ../plug-ins/print/picman_color_window.c:393
 msgid ""
 "Adjust the density (amount of ink) of the print. Reduce the density if the "
 "ink bleeds through the paper or smears; increase the density if black "
@@ -10797,7 +10797,7 @@ msgstr ""
 "છાપનની ઘનતા (સહીનો જથ્થો) સંતુલિત કરો. ઘનતા ઘટાડો જો સહી કાગળ માં વહી જાય અથવા "
 "ફેલાઈ જાય; ઘનતા વધારો જો કાળો વિસ્તાર ઘાટો નહિં હોય."
 
-#: ../plug-ins/print/gimp_color_window.c:415
+#: ../plug-ins/print/picman_color_window.c:415
 msgid ""
 "Adjust the gamma of the print. Larger values will produce a generally "
 "brighter print, while smaller values will produce a generally darker print. "
@@ -10807,11 +10807,11 @@ msgstr ""
 "કિંમતો સામાન્ય રીતે ઘાટું છાપન પેદા કરશે. કાળો અને સફેદ સરખો જ રહેશે, તેજસ્વીપણાના સંતુલન "
 "હોવા છતાં."
 
-#: ../plug-ins/print/gimp_color_window.c:432
+#: ../plug-ins/print/picman_color_window.c:432
 msgid "Dither algorithm:"
 msgstr "ડિથર અલગોરિધમ:"
 
-#: ../plug-ins/print/gimp_color_window.c:440
+#: ../plug-ins/print/picman_color_window.c:440
 msgid ""
 "Choose the dither algorithm to be used.\n"
 "Adaptive Hybrid usually produces the best all-around quality.\n"
@@ -10830,12 +10830,12 @@ msgstr ""
 #.
 #. * Create the main dialog
 #.
-#: ../plug-ins/print/gimp_main_window.c:360
+#: ../plug-ins/print/picman_main_window.c:360
 #, c-format
 msgid "%s -- Print v%s"
 msgstr "%s -- છાપો v%s"
 
-#: ../plug-ins/print/gimp_main_window.c:369
+#: ../plug-ins/print/picman_main_window.c:369
 msgid ""
 "Save\n"
 "Settings"
@@ -10843,7 +10843,7 @@ msgstr ""
 "સંગ્રહ\n"
 "સુયોજનો"
 
-#: ../plug-ins/print/gimp_main_window.c:370
+#: ../plug-ins/print/picman_main_window.c:370
 msgid ""
 "Print and\n"
 "Save Settings"
@@ -10851,7 +10851,7 @@ msgstr ""
 "છાપન અને સંગ્રહ\n"
 "સુયોજનો"
 
-#: ../plug-ins/print/gimp_main_window.c:449
+#: ../plug-ins/print/picman_main_window.c:449
 msgid ""
 "Position the image on the page.\n"
 "Click and drag with the primary button to position the image.\n"
@@ -10873,134 +10873,134 @@ msgstr ""
 "જ પરિમાણીત કરે છે.\n"
 "જો તમે માઉસ ખેંચતી વખતે જો અન્ય બટન પર ક્લિક કરો, તો ચિત્ર તેના મૂળ સ્થાનમાં પાછું આવશે."
 
-#: ../plug-ins/print/gimp_main_window.c:492
+#: ../plug-ins/print/picman_main_window.c:492
 msgid "Auto"
 msgstr "આપોઆપ"
 
-#: ../plug-ins/print/gimp_main_window.c:493
+#: ../plug-ins/print/picman_main_window.c:493
 msgid "Portrait"
 msgstr "છબી"
 
-#: ../plug-ins/print/gimp_main_window.c:494
+#: ../plug-ins/print/picman_main_window.c:494
 msgid "Landscape"
 msgstr "આડુ"
 
-#: ../plug-ins/print/gimp_main_window.c:495
+#: ../plug-ins/print/picman_main_window.c:495
 msgid "Upside down"
 msgstr "ઉપર નીચે"
 
-#: ../plug-ins/print/gimp_main_window.c:496
+#: ../plug-ins/print/picman_main_window.c:496
 msgid "Seascape"
 msgstr "તરંગિત"
 
-#: ../plug-ins/print/gimp_main_window.c:506
+#: ../plug-ins/print/picman_main_window.c:506
 msgid ""
 "Select the orientation: portrait, landscape, upside down, or seascape "
 "(upside down landscape)"
 msgstr "દિશા પસંદ કરો: છબી, આડું, ઉપર નીચે, અથવા તરંગિત (ઉપર નીચે આડું)"
 
-#: ../plug-ins/print/gimp_main_window.c:525
+#: ../plug-ins/print/picman_main_window.c:525
 msgid "Distance from the left of the paper to the image"
 msgstr "ચિત્રથી કાગળના ડાબેથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:538
+#: ../plug-ins/print/picman_main_window.c:538
 msgid "Distance from the top of the paper to the image"
 msgstr "ચિત્રથી કાગળના જમણેથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:551
+#: ../plug-ins/print/picman_main_window.c:551
 msgid "Distance from the left of the paper to the right of the image"
 msgstr "ચિત્રના જમણેથી કાગળના ડાબેથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:561
+#: ../plug-ins/print/picman_main_window.c:561
 msgid "Right border:"
 msgstr "જમણી કિનારી:"
 
-#: ../plug-ins/print/gimp_main_window.c:565
+#: ../plug-ins/print/picman_main_window.c:565
 msgid "Distance from the right of the paper to the image"
 msgstr "ચિત્રથી કાગળના જમણેથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:579
+#: ../plug-ins/print/picman_main_window.c:579
 msgid "Distance from the top of the paper to the bottom of the image"
 msgstr "ચિત્રના તળિયેથી કાગળની ટોચથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:589
+#: ../plug-ins/print/picman_main_window.c:589
 msgid "Bottom border:"
 msgstr "તળિયેની કિનારી:"
 
-#: ../plug-ins/print/gimp_main_window.c:593
+#: ../plug-ins/print/picman_main_window.c:593
 msgid "Distance from the bottom of the paper to the image"
 msgstr "ચિત્રથી કાગળના તળિયેથી અંતર"
 
-#: ../plug-ins/print/gimp_main_window.c:606
+#: ../plug-ins/print/picman_main_window.c:606
 msgid "Center:"
 msgstr "કેન્દ્ર:"
 
-#: ../plug-ins/print/gimp_main_window.c:610
+#: ../plug-ins/print/picman_main_window.c:610
 msgid "Vertically"
 msgstr "ઊભું"
 
-#: ../plug-ins/print/gimp_main_window.c:615
+#: ../plug-ins/print/picman_main_window.c:615
 msgid "Center the image vertically on the paper"
 msgstr "ચિત્રને કાગળ પર ઊભું કેન્દ્રિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:621
+#: ../plug-ins/print/picman_main_window.c:621
 msgid "Both"
 msgstr "બંને"
 
-#: ../plug-ins/print/gimp_main_window.c:626
+#: ../plug-ins/print/picman_main_window.c:626
 msgid "Center the image on the paper"
 msgstr "કાગળ પર ચિત્રને કેન્દ્રિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:633
+#: ../plug-ins/print/picman_main_window.c:633
 msgid "Horizontally"
 msgstr "આડું"
 
-#: ../plug-ins/print/gimp_main_window.c:638
+#: ../plug-ins/print/picman_main_window.c:638
 msgid "Center the image horizontally on the paper"
 msgstr "કાગળ પર ચિત્રને આડું કેન્દ્રિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:654
+#: ../plug-ins/print/picman_main_window.c:654
 msgid "Setup Printer"
 msgstr "પ્રિન્ટર સુયોજન"
 
 #.
 #. * Printer driver option menu.
 #.
-#: ../plug-ins/print/gimp_main_window.c:683
+#: ../plug-ins/print/picman_main_window.c:683
 msgid "Printer Model:"
 msgstr "પ્રિન્ટર મોડેલ:"
 
-#: ../plug-ins/print/gimp_main_window.c:695
+#: ../plug-ins/print/picman_main_window.c:695
 msgid "Select your printer model"
 msgstr "તમારું પ્રિન્ટર મોડેલ પસંદ કરો"
 
 #.
 #. * PPD file.
 #.
-#: ../plug-ins/print/gimp_main_window.c:734
+#: ../plug-ins/print/picman_main_window.c:734
 msgid "PPD File:"
 msgstr "PPD ફાઈલ:"
 
-#: ../plug-ins/print/gimp_main_window.c:750
+#: ../plug-ins/print/picman_main_window.c:750
 msgid "Enter the PPD filename for your printer"
 msgstr "તમારા પ્રિન્ટર માટે PPD ફાઈલનામ દાખલ કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:753
+#: ../plug-ins/print/picman_main_window.c:753
 msgid "Browse"
 msgstr "શોધો"
 
-#: ../plug-ins/print/gimp_main_window.c:759
+#: ../plug-ins/print/picman_main_window.c:759
 msgid "Choose the PPD file for your printer"
 msgstr "તમારા પ્રિન્ટર માટે PPD ફાઈલ પસંદ કરો"
 
 #.
 #. * Print command.
 #.
-#: ../plug-ins/print/gimp_main_window.c:769
+#: ../plug-ins/print/picman_main_window.c:769
 msgid "Command:"
 msgstr "આદેશ:"
 
-#: ../plug-ins/print/gimp_main_window.c:782
+#: ../plug-ins/print/picman_main_window.c:782
 msgid ""
 "Enter the command to print to your printer. Note: Please do not remove the `-"
 "l' or `-oraw' from the command string, or printing will probably fail!"
@@ -11008,39 +11008,39 @@ msgstr ""
 "તમારા પ્રિન્ટર પ્રતિ છાપવા માટે આદેશ દાખલ કરો. નોંધ: આદેશ શબ્દમાળામાંથી મહેરબાની કરીને "
 "`-l' અથવા `-oraw' દૂર કરશો નહિં, નહિંતર છાપન કદાચ નિષ્ફળ જશે!"
 
-#: ../plug-ins/print/gimp_main_window.c:792
+#: ../plug-ins/print/picman_main_window.c:792
 msgid "Choose PPD File"
 msgstr "PPD ફાઈલ પસંદ કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:819
+#: ../plug-ins/print/picman_main_window.c:819
 msgid "Define New Printer"
 msgstr "નવું પ્રિન્ટર વ્યાખ્યાયિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:842
-#: ../plug-ins/print/gimp_main_window.c:937
+#: ../plug-ins/print/picman_main_window.c:842
+#: ../plug-ins/print/picman_main_window.c:937
 msgid "Printer name:"
 msgstr "પ્રિન્ટર નામ:"
 
-#: ../plug-ins/print/gimp_main_window.c:846
+#: ../plug-ins/print/picman_main_window.c:846
 msgid "Enter the name you wish to give this logical printer"
 msgstr "આ લોજીકલ પ્રિન્ટરને તમે જે નામ આપવા માંગો તે દાખલ કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:859
-msgid "About Gimp-Print "
-msgstr "Gimp-Print વિશે "
+#: ../plug-ins/print/picman_main_window.c:859
+msgid "About Picman-Print "
+msgstr "Picman-Print વિશે "
 
-#: ../plug-ins/print/gimp_main_window.c:872
-msgid "Gimp-Print Version "
-msgstr "Gimp-Print આવૃત્તિ "
+#: ../plug-ins/print/picman_main_window.c:872
+msgid "Picman-Print Version "
+msgstr "Picman-Print આવૃત્તિ "
 
-#: ../plug-ins/print/gimp_main_window.c:872
+#: ../plug-ins/print/picman_main_window.c:872
 msgid ""
 "\n"
 "\n"
 "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-"and the rest of the Gimp-Print Development Team.\n"
+"and the rest of the Picman-Print Development Team.\n"
 "\n"
-"Please visit our web site at http://gimp-print.sourceforge.net.\n"
+"Please visit our web site at http://picman-print.sourceforge.net.\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -11059,9 +11059,9 @@ msgstr ""
 "\n"
 "\n"
 "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-"and the rest of the Gimp-Print Development Team.\n"
+"and the rest of the Picman-Print Development Team.\n"
 "\n"
-"Please visit our web site at http://gimp-print.sourceforge.net.\n"
+"Please visit our web site at http://picman-print.sourceforge.net.\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -11077,28 +11077,28 @@ msgstr ""
 "along with this program; if not, write to the Free Software\n"
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 
-#: ../plug-ins/print/gimp_main_window.c:920
+#: ../plug-ins/print/picman_main_window.c:920
 msgid "Printer Settings"
 msgstr "પ્રિન્ટર સુયોજનો"
 
-#: ../plug-ins/print/gimp_main_window.c:933
+#: ../plug-ins/print/picman_main_window.c:933
 msgid ""
 "Select the name of the printer (not the type, or model, of printer) that you "
 "wish to print to"
 msgstr "પ્રિન્ટરનું નામ પસંદ કરો (નહિં કે પ્રકાર, અથવા મોડેલ, પ્રિન્ટરનું) કે જેને તમે છાપવા માંગો છો"
 
-#: ../plug-ins/print/gimp_main_window.c:943
+#: ../plug-ins/print/picman_main_window.c:943
 msgid "Printer model:"
 msgstr "પ્રિન્ટર મોડેલ:"
 
 #.
 #. * Setup printer button
 #.
-#: ../plug-ins/print/gimp_main_window.c:954
+#: ../plug-ins/print/picman_main_window.c:954
 msgid "Setup Printer..."
 msgstr "પ્રિન્ટર સુયોજન..."
 
-#: ../plug-ins/print/gimp_main_window.c:956
+#: ../plug-ins/print/picman_main_window.c:956
 msgid ""
 "Choose the printer model, PPD file, and command that is used to print to "
 "this printer"
@@ -11107,11 +11107,11 @@ msgstr "પ્રિન્ટર મોડેલ, PPD ફાઈલ, અને �
 #.
 #. * New printer button
 #.
-#: ../plug-ins/print/gimp_main_window.c:971
+#: ../plug-ins/print/picman_main_window.c:971
 msgid "New Printer..."
 msgstr "નવું પ્રિન્ટર..."
 
-#: ../plug-ins/print/gimp_main_window.c:973
+#: ../plug-ins/print/picman_main_window.c:973
 msgid ""
 "Define a new logical printer. This can be used to name a collection of "
 "settings that you wish to remember for future use."
@@ -11119,67 +11119,67 @@ msgstr ""
 "નવું લોજીકલ પ્રિન્ટર વ્યાખ્યાયિત કરો. આ સુયોજનોના સંગ્રહને નામ આપવા માટે વાપરી શકાય છે કે "
 "જેને તમે ભવિષ્યના વપરાશ માટે યાદ રાખવા માંગો છો."
 
-#: ../plug-ins/print/gimp_main_window.c:994
+#: ../plug-ins/print/picman_main_window.c:994
 msgid "Size of paper that you wish to print to"
 msgstr "કાગળનું માપ કે જેને તમે છાપવા માંગો છો"
 
-#: ../plug-ins/print/gimp_main_window.c:997
+#: ../plug-ins/print/picman_main_window.c:997
 msgid "Media size:"
 msgstr "માધ્યમનું માપ:"
 
-#: ../plug-ins/print/gimp_main_window.c:1006
+#: ../plug-ins/print/picman_main_window.c:1006
 msgid "Dimensions:"
 msgstr "પરિમાણો:"
 
-#: ../plug-ins/print/gimp_main_window.c:1020
+#: ../plug-ins/print/picman_main_window.c:1020
 msgid "Width of the paper that you wish to print to"
 msgstr "કાગળની પહોળાઈ કે જેને તમે છાપવા માંગો છો"
 
-#: ../plug-ins/print/gimp_main_window.c:1037
+#: ../plug-ins/print/picman_main_window.c:1037
 msgid "Height of the paper that you wish to print to"
 msgstr "કાગળની ઊંચાઈ કે જેને તમે છાપવા માંગો છો"
 
-#: ../plug-ins/print/gimp_main_window.c:1053
+#: ../plug-ins/print/picman_main_window.c:1053
 msgid "Type of media you're printing to"
 msgstr "માધ્યમનો પ્રકાર કે જેને તમે છાપી રહ્યા છો"
 
-#: ../plug-ins/print/gimp_main_window.c:1056
+#: ../plug-ins/print/picman_main_window.c:1056
 msgid "Media type:"
 msgstr "માધ્યમ પ્રકાર:"
 
-#: ../plug-ins/print/gimp_main_window.c:1069
+#: ../plug-ins/print/picman_main_window.c:1069
 msgid "Source (input slot) of media you're printing to"
 msgstr "માધ્યમનો સ્રોત (ઈનપુટ સ્લોટ) કે જેના પ્રતિ તમે છાપી રહ્યા છો"
 
-#: ../plug-ins/print/gimp_main_window.c:1072
+#: ../plug-ins/print/picman_main_window.c:1072
 msgid "Media source:"
 msgstr "માધ્યમ સ્રોત:"
 
-#: ../plug-ins/print/gimp_main_window.c:1085
+#: ../plug-ins/print/picman_main_window.c:1085
 msgid "Type of ink in the printer"
 msgstr "પ્રિન્ટરમાંની સહીનો પ્રકાર"
 
-#: ../plug-ins/print/gimp_main_window.c:1088
+#: ../plug-ins/print/picman_main_window.c:1088
 msgid "Ink type:"
 msgstr "સહી પ્રકાર:"
 
-#: ../plug-ins/print/gimp_main_window.c:1101
+#: ../plug-ins/print/picman_main_window.c:1101
 msgid "Resolution and quality of the print"
 msgstr "છાપનનું રીઝોલ્યુશન અને ગુણવત્તા"
 
-#: ../plug-ins/print/gimp_main_window.c:1138
+#: ../plug-ins/print/picman_main_window.c:1138
 msgid "Scaling:"
 msgstr "ખેંચી રહ્યા છીએ:"
 
-#: ../plug-ins/print/gimp_main_window.c:1144
+#: ../plug-ins/print/picman_main_window.c:1144
 msgid "Set the scale (size) of the image"
 msgstr "ચિત્રનું માપદંડ (માપ) સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1169
+#: ../plug-ins/print/picman_main_window.c:1169
 msgid "Scale by:"
 msgstr "આના દ્વારા ખેંચો:"
 
-#: ../plug-ins/print/gimp_main_window.c:1174
+#: ../plug-ins/print/picman_main_window.c:1174
 msgid ""
 "Select whether scaling is measured as percent of available page size or "
 "number of output dots per inch"
@@ -11187,58 +11187,58 @@ msgstr ""
 "પસંદ કરો કે શું ખેંચવાનું એ ઉપલબ્ધ કાગળ માપ અથવા ઈંચ પ્રતિ આઉટપુટ ડોટની સંખ્યાના ટકા પર "
 "ગણાય છે"
 
-#: ../plug-ins/print/gimp_main_window.c:1179
+#: ../plug-ins/print/picman_main_window.c:1179
 msgid "Percent"
 msgstr "ટકા"
 
-#: ../plug-ins/print/gimp_main_window.c:1186
+#: ../plug-ins/print/picman_main_window.c:1186
 msgid "Scale the print to the size of the page"
 msgstr "છાપનને પાનાંના માપમાં ખેંચો"
 
-#: ../plug-ins/print/gimp_main_window.c:1192
+#: ../plug-ins/print/picman_main_window.c:1192
 msgid "PPI"
 msgstr "PPI"
 
-#: ../plug-ins/print/gimp_main_window.c:1198
+#: ../plug-ins/print/picman_main_window.c:1198
 msgid "Scale the print to the number of dots per inch"
 msgstr "છાપનને ઈંચ પ્રતિ ડોટની સંખ્યામાં ખેંચો"
 
-#: ../plug-ins/print/gimp_main_window.c:1220
+#: ../plug-ins/print/picman_main_window.c:1220
 msgid "Set the width of the print"
 msgstr "છાપનની પહોળાઈ સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1233
+#: ../plug-ins/print/picman_main_window.c:1233
 msgid "Set the height of the print"
 msgstr "છાપનની ઊંચાઈ સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1254
+#: ../plug-ins/print/picman_main_window.c:1254
 msgid "Units:"
 msgstr "એકમો:"
 
-#: ../plug-ins/print/gimp_main_window.c:1259
+#: ../plug-ins/print/picman_main_window.c:1259
 msgid "Select the base unit of measurement for printing"
 msgstr "છાપન માટે માપનનો આધાર એકમ પસંદ કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1262
+#: ../plug-ins/print/picman_main_window.c:1262
 msgid "Inch"
 msgstr "ઇંચ"
 
-#: ../plug-ins/print/gimp_main_window.c:1269
+#: ../plug-ins/print/picman_main_window.c:1269
 msgid "Set the base unit of measurement to inches"
 msgstr "માપનનો આધાર એકમ ઈંચોમાં સુયોજિત કરોત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1275
+#: ../plug-ins/print/picman_main_window.c:1275
 msgid "cm"
 msgstr "સેમી"
 
-#: ../plug-ins/print/gimp_main_window.c:1281
+#: ../plug-ins/print/picman_main_window.c:1281
 msgid "Set the base unit of measurement to centimetres"
 msgstr "માપનનો આધાર એકમ સેન્ટીમીટરોમાં સુયોજિત કરો"
 
 #.
 #. * The "image size" button
 #.
-#: ../plug-ins/print/gimp_main_window.c:1291
+#: ../plug-ins/print/picman_main_window.c:1291
 msgid ""
 "Use Original\n"
 "Image Size"
@@ -11246,88 +11246,88 @@ msgstr ""
 "મૂળ ચિત્ર માપ\n"
 "વાપરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1297
+#: ../plug-ins/print/picman_main_window.c:1297
 msgid "Set the print size to the size of the image"
 msgstr "છાપન માપને ચિત્રના માપમાં સુયોજિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1320
+#: ../plug-ins/print/picman_main_window.c:1320
 msgid "Image / Output Settings"
 msgstr "ચિત્ર / આઉટપુટ સુયોજનો"
 
-#: ../plug-ins/print/gimp_main_window.c:1334
+#: ../plug-ins/print/picman_main_window.c:1334
 msgid "Image type:"
 msgstr "ચિત્ર પ્રકાર:"
 
-#: ../plug-ins/print/gimp_main_window.c:1342
+#: ../plug-ins/print/picman_main_window.c:1342
 msgid "Optimize the output for the type of image being printed"
 msgstr "છપાવા જઈ રહેલા ચિત્રના પ્રકાર માટે આઉટપુટ શ્રેષ્ઠ બનાવો"
 
-#: ../plug-ins/print/gimp_main_window.c:1346
+#: ../plug-ins/print/picman_main_window.c:1346
 msgid "Line art"
 msgstr "લીટી કલા"
 
-#: ../plug-ins/print/gimp_main_window.c:1353
+#: ../plug-ins/print/picman_main_window.c:1353
 msgid "Fastest and brightest color for text and line art"
 msgstr "લખાણ અને લીટી કલા માટે ઝડપી અને તેજસ્વી રંગ"
 
-#: ../plug-ins/print/gimp_main_window.c:1360
+#: ../plug-ins/print/picman_main_window.c:1360
 msgid "Solid colors"
 msgstr "ઘાટા રંગો"
 
-#: ../plug-ins/print/gimp_main_window.c:1367
+#: ../plug-ins/print/picman_main_window.c:1367
 msgid "Best for images dominated by regions of solid color"
 msgstr "ઘાટા રંગના વિસ્તારો દ્વારા અદા થયેલ ચિત્રો માટે શ્રેષ્ઠ"
 
-#: ../plug-ins/print/gimp_main_window.c:1375
+#: ../plug-ins/print/picman_main_window.c:1375
 msgid "Photograph"
 msgstr "ફોટોગ્રાફ"
 
-#: ../plug-ins/print/gimp_main_window.c:1383
+#: ../plug-ins/print/picman_main_window.c:1383
 msgid ""
 "Slowest, but most accurate and smoothest color for continuous tone images "
 "and photographs"
 msgstr "સત્ત ટોન ચિત્રો અને ફોટાઓ માટે ધીમું, પરંતુ ખૂબ ચોક્કસ અને લીસો રંગ"
 
-#: ../plug-ins/print/gimp_main_window.c:1406
+#: ../plug-ins/print/picman_main_window.c:1406
 msgid "Output type:"
 msgstr "આઉટપુટ પ્રકાર:"
 
-#: ../plug-ins/print/gimp_main_window.c:1413
+#: ../plug-ins/print/picman_main_window.c:1413
 msgid "Select the desired output type"
 msgstr "જરૂરી આઉટપુટ પ્રકાર પસંદ કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1422
+#: ../plug-ins/print/picman_main_window.c:1422
 msgid "Color output"
 msgstr "રંગ આઉટપુટ"
 
-#: ../plug-ins/print/gimp_main_window.c:1427
+#: ../plug-ins/print/picman_main_window.c:1427
 msgid "Grayscale"
 msgstr "ગ્રેસ્કેલ"
 
-#: ../plug-ins/print/gimp_main_window.c:1434
+#: ../plug-ins/print/picman_main_window.c:1434
 msgid "Print in shades of gray using black ink"
 msgstr "કાળી સહીની મદદથી રાખોડીના પડછાયા છાપો"
 
-#: ../plug-ins/print/gimp_main_window.c:1441
+#: ../plug-ins/print/picman_main_window.c:1441
 msgid "Black and white"
 msgstr "કાળો અને સફેદ"
 
-#: ../plug-ins/print/gimp_main_window.c:1448
+#: ../plug-ins/print/picman_main_window.c:1448
 msgid "Print in black and white (no color, and no shades of gray)"
 msgstr "કાળા અને સફેદમાં છાપો (રાખોડીના કોઈ રંગ નહિં, અને કોઈ પડછાયા નહિં)"
 
 #.
 #. *  Color adjust button
 #.
-#: ../plug-ins/print/gimp_main_window.c:1459
+#: ../plug-ins/print/picman_main_window.c:1459
 msgid "Adjust Output..."
 msgstr "આઉટપુટ સંતુલિત કરો..."
 
-#: ../plug-ins/print/gimp_main_window.c:1466
+#: ../plug-ins/print/picman_main_window.c:1466
 msgid "Adjust color balance, brightness, contrast, saturation, and dither algorithm"
 msgstr "રંગ સંતુલન, તેજસ્વીતા, વિરોધાભાર, સંતૃપ્તીકરણ, અને ડિથર અલગોરિધમ સંતુલિત કરો"
 
-#: ../plug-ins/print/gimp_main_window.c:1500
+#: ../plug-ins/print/picman_main_window.c:1500
 msgid "Print to File"
 msgstr "ફાઈલમાં છાપો"
 
@@ -11642,8 +11642,8 @@ msgid "No data captured"
 msgstr "કોઈ માહિતી પકડાઈ નથી"
 
 #: ../plug-ins/xjt/xjt.c:479 ../plug-ins/xjt/xjt.c:497
-msgid "GIMP compressed XJT image"
-msgstr "GIMP સંકુચિત XJT ચિત્ર"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMAN સંકુચિત XJT ચિત્ર"
 
 #: ../plug-ins/xjt/xjt.c:718
 #, c-format

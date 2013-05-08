@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,71 +19,71 @@
 #define __TOOL_MANAGER_H__
 
 
-void       tool_manager_init                       (Gimp             *gimp);
-void       tool_manager_exit                       (Gimp             *gimp);
+void       tool_manager_init                       (Picman             *picman);
+void       tool_manager_exit                       (Picman             *picman);
 
-GimpTool * tool_manager_get_active                 (Gimp             *gimp);
+PicmanTool * tool_manager_get_active                 (Picman             *picman);
 
-void       tool_manager_select_tool                (Gimp             *gimp,
-                                                    GimpTool         *tool);
+void       tool_manager_select_tool                (Picman             *picman,
+                                                    PicmanTool         *tool);
 
-void       tool_manager_push_tool                  (Gimp             *gimp,
-                                                    GimpTool         *tool);
-void       tool_manager_pop_tool                   (Gimp             *gimp);
+void       tool_manager_push_tool                  (Picman             *picman,
+                                                    PicmanTool         *tool);
+void       tool_manager_pop_tool                   (Picman             *picman);
 
 
-gboolean   tool_manager_initialize_active          (Gimp             *gimp,
-                                                    GimpDisplay      *display);
-void       tool_manager_control_active             (Gimp             *gimp,
-                                                    GimpToolAction    action,
-                                                    GimpDisplay      *display);
-void       tool_manager_button_press_active        (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+gboolean   tool_manager_initialize_active          (Picman             *picman,
+                                                    PicmanDisplay      *display);
+void       tool_manager_control_active             (Picman             *picman,
+                                                    PicmanToolAction    action,
+                                                    PicmanDisplay      *display);
+void       tool_manager_button_press_active        (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     guint32           time,
                                                     GdkModifierType   state,
-                                                    GimpButtonPressType press_type,
-                                                    GimpDisplay      *display);
-void       tool_manager_button_release_active      (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+                                                    PicmanButtonPressType press_type,
+                                                    PicmanDisplay      *display);
+void       tool_manager_button_release_active      (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     guint32           time,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display);
-void       tool_manager_motion_active              (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+                                                    PicmanDisplay      *display);
+void       tool_manager_motion_active              (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     guint32           time,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display);
-gboolean   tool_manager_key_press_active           (Gimp             *gimp,
+                                                    PicmanDisplay      *display);
+gboolean   tool_manager_key_press_active           (Picman             *picman,
                                                     GdkEventKey      *kevent,
-                                                    GimpDisplay      *display);
-gboolean   tool_manager_key_release_active         (Gimp             *gimp,
+                                                    PicmanDisplay      *display);
+gboolean   tool_manager_key_release_active         (Picman             *picman,
                                                     GdkEventKey      *kevent,
-                                                    GimpDisplay      *display);
+                                                    PicmanDisplay      *display);
 
-void       tool_manager_focus_display_active       (Gimp             *gimp,
-                                                    GimpDisplay      *display);
-void       tool_manager_modifier_state_active      (Gimp             *gimp,
+void       tool_manager_focus_display_active       (Picman             *picman,
+                                                    PicmanDisplay      *display);
+void       tool_manager_modifier_state_active      (Picman             *picman,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display);
+                                                    PicmanDisplay      *display);
 
-void     tool_manager_active_modifier_state_active (Gimp             *gimp,
+void     tool_manager_active_modifier_state_active (Picman             *picman,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display);
+                                                    PicmanDisplay      *display);
 
-void       tool_manager_oper_update_active         (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+void       tool_manager_oper_update_active         (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     GdkModifierType   state,
                                                     gboolean          proximity,
-                                                    GimpDisplay      *display);
-void       tool_manager_cursor_update_active       (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+                                                    PicmanDisplay      *display);
+void       tool_manager_cursor_update_active       (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display);
+                                                    PicmanDisplay      *display);
 
-GimpUIManager * tool_manager_get_popup_active      (Gimp             *gimp,
-                                                    const GimpCoords *coords,
+PicmanUIManager * tool_manager_get_popup_active      (Picman             *picman,
+                                                    const PicmanCoords *coords,
                                                     GdkModifierType   state,
-                                                    GimpDisplay      *display,
+                                                    PicmanDisplay      *display,
                                                     const gchar     **ui_path);
 
 

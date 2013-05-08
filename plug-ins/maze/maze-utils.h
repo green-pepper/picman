@@ -17,10 +17,10 @@
 #define __MAZE_UTILS_H__
 
 
-void   get_colors (GimpDrawable *drawable,
+void   get_colors (PicmanDrawable *drawable,
                    guint8       *fg,
                    guint8       *bg);
-void   drawbox    (GimpPixelRgn *dest_rgn,
+void   drawbox    (PicmanPixelRgn *dest_rgn,
                    guint         x,
                    guint         y,
                    guint         w,

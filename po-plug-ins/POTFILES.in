@@ -1,4 +1,4 @@
-# Files from the Gimp distribution which have already been
+# Files from the Picman distribution which have already been
 # marked to allow runtime translation of messages
 
 [encoding: UTF-8]
@@ -151,7 +151,7 @@ plug-ins/file-bmp/bmp.c
 plug-ins/file-compressor/file-compressor.c
 plug-ins/file-faxg3/faxg3.c
 plug-ins/file-fits/fits.c
-plug-ins/file-fli/fli-gimp.c
+plug-ins/file-fli/fli-picman.c
 plug-ins/file-ico/ico-dialog.c
 plug-ins/file-ico/ico-load.c
 plug-ins/file-ico/ico-save.c
@@ -184,29 +184,29 @@ plug-ins/gfig/gfig-spiral.c
 plug-ins/gfig/gfig-star.c
 plug-ins/gfig/gfig-stock.c
 plug-ins/gfig/gfig.c
-plug-ins/gimpressionist/brush.c
-plug-ins/gimpressionist/color.c
-plug-ins/gimpressionist/general.c
-plug-ins/gimpressionist/gimp.c
-plug-ins/gimpressionist/gimpressionist.c
-plug-ins/gimpressionist/orientation.c
-plug-ins/gimpressionist/orientmap.c
-plug-ins/gimpressionist/paper.c
-plug-ins/gimpressionist/placement.c
-plug-ins/gimpressionist/ppmtool.c
-plug-ins/gimpressionist/presets.c
-plug-ins/gimpressionist/preview.c
-plug-ins/gimpressionist/repaint.c
-plug-ins/gimpressionist/size.c
-plug-ins/gimpressionist/sizemap.c
-plug-ins/gimpressionist/utils.c
+plug-ins/picmanressionist/brush.c
+plug-ins/picmanressionist/color.c
+plug-ins/picmanressionist/general.c
+plug-ins/picmanressionist/picman.c
+plug-ins/picmanressionist/picmanressionist.c
+plug-ins/picmanressionist/orientation.c
+plug-ins/picmanressionist/orientmap.c
+plug-ins/picmanressionist/paper.c
+plug-ins/picmanressionist/placement.c
+plug-ins/picmanressionist/ppmtool.c
+plug-ins/picmanressionist/presets.c
+plug-ins/picmanressionist/preview.c
+plug-ins/picmanressionist/repaint.c
+plug-ins/picmanressionist/size.c
+plug-ins/picmanressionist/sizemap.c
+plug-ins/picmanressionist/utils.c
 [type: gettext/glade]plug-ins/ui/plug-in-file-gif.ui
 [type: gettext/glade]plug-ins/ui/plug-in-file-png.ui
 plug-ins/gradient-flare/gradient-flare.c
 plug-ins/help-browser/dialog.c
 plug-ins/help-browser/help-browser.c
-plug-ins/help/gimphelpdomain.c
-plug-ins/help/gimphelplocale.c
+plug-ins/help/picmanhelpdomain.c
+plug-ins/help/picmanhelplocale.c
 plug-ins/ifs-compose/ifs-compose.c
 plug-ins/imagemap/imap_about.c
 plug-ins/imagemap/imap_circle.c
@@ -219,7 +219,7 @@ plug-ins/imagemap/imap_cmd_cut_object.c
 plug-ins/imagemap/imap_cmd_delete.c
 plug-ins/imagemap/imap_cmd_delete_point.c
 plug-ins/imagemap/imap_cmd_edit_object.c
-plug-ins/imagemap/imap_cmd_gimp_guides.c
+plug-ins/imagemap/imap_cmd_picman_guides.c
 plug-ins/imagemap/imap_cmd_guides.c
 plug-ins/imagemap/imap_cmd_insert_point.c
 plug-ins/imagemap/imap_cmd_move.c

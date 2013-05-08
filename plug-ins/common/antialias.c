@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Auntie Alias 0.92 --- image filter plug-in
  *
- * Copyright (C) 2005 Adam D. Moss (adam@gimp.org)
+ * Copyright (C) 2005 Adam D. Moss (adam@picman.org)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this plug-in (the "Software"), to deal in the Software without
@@ -34,10 +34,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*  Constants  */
@@ -50,15 +50,15 @@
 static void   query  (void);
 static void   run    (const gchar      *name,
                       gint              nparams,
-                      const GimpParam  *param,
+                      const PicmanParam  *param,
                       gint             *nreturn_vals,
-                      GimpParam       **return_vals);
-static void   render (GimpDrawable     *drawable);
+                      PicmanParam       **return_vals);
+static void   render (PicmanDrawable     *drawable);
 
 
 /*  Local variables  */
 
-GimpPlugInInfo PLUG_IN_INFO =
+PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -73,39 +73,39 @@ MAIN ()
 static void
 query (void)
 {
-  static GimpParamDef args[] =
+  static PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"               }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"               }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Antialias using the Scale3X edge-extrapolation "
                              "algorithm"),
                           "Help - write me",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "2005",
                           N_("_Antialias"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
 }
 
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
@@ -118,15 +118,15 @@ run (const gchar      *name,
     {
       switch (run_mode)
         {
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (n_params != 3)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           break;
 
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           break;
 
         default:
@@ -135,27 +135,27 @@ run (const gchar      *name,
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      GimpDrawable *drawable;
+      PicmanDrawable *drawable;
 
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
 
-      gimp_progress_init (_("Antialiasing..."));
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_progress_init (_("Antialiasing..."));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
       render (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -199,12 +199,12 @@ extrapolate9 (const int bytes,
 }
 
 static void
-render (GimpDrawable *drawable)
+render (PicmanDrawable *drawable)
 {
   gint          width, height, bytes;
   gint          x, y, w, h;
   gint          row, col, b;
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   guchar       *rowbefore;
   guchar       *rowthis;
   guchar       *rowafter;
@@ -214,17 +214,17 @@ render (GimpDrawable *drawable)
   guint         alpha;
 
   /* get bounds of working area */
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id, &x, &y, &w, &h))
+  if (! picman_drawable_mask_intersect (drawable->drawable_id, &x, &y, &w, &h))
     return;
 
   width     = drawable->width;
   height    = drawable->height;
   bytes     = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   alpha     = bytes - 1;
 
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
 
   rowbefore  = g_new (guchar, (width + 2) * bytes);
   rowthis    = g_new (guchar, (width + 2) * bytes);
@@ -232,7 +232,7 @@ render (GimpDrawable *drawable)
   dest       = g_new (guchar, (width + 2) * bytes);
   ninepix    = g_new (guchar, 9 * bytes);
 
-  gimp_pixel_rgn_get_row (&srcPR, &rowthis[bytes], 0, y, width);
+  picman_pixel_rgn_get_row (&srcPR, &rowthis[bytes], 0, y, width);
   memcpy (&rowthis[0], &rowthis[bytes], bytes);
   memcpy (&rowthis[(width+1)*bytes], &rowthis[(width)*bytes], bytes);
   memcpy (rowbefore, rowthis, (width+2)*bytes);
@@ -253,7 +253,7 @@ render (GimpDrawable *drawable)
       rowafter  = tmp;
 
       /* populate new after-row */
-      gimp_pixel_rgn_get_row (&srcPR, &rowafter[bytes], 0, srcrowafter, width);
+      picman_pixel_rgn_get_row (&srcPR, &rowafter[bytes], 0, srcrowafter, width);
       memcpy (&rowafter[0], &rowafter[bytes], bytes);
       memcpy (&rowafter[(width + 1) * bytes], &rowafter[width * bytes], bytes);
 
@@ -305,16 +305,16 @@ render (GimpDrawable *drawable)
 #undef USE_IF_ALPHA
 
       /* write result row to dest */
-      gimp_pixel_rgn_set_row (&destPR, &dest[x * bytes],
+      picman_pixel_rgn_set_row (&destPR, &dest[x * bytes],
                               x, row, w);
       if ((row & 31) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) h);
+        picman_progress_update ((gdouble) row / (gdouble) h);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x, y, w, h);
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x, y, w, h);
 
   g_free (rowbefore);
   g_free (rowthis);

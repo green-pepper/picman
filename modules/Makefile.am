@@ -1,16 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpmodule = $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanmodule = $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
 endif
 
-libdir = $(gimpplugindir)/modules
+libdir = $(picmanplugindir)/modules
 
 INCLUDES = \
         -I$(top_srcdir)	\
@@ -50,16 +50,16 @@ lib_LTLIBRARIES = \
 	$(controller_dx_dinput_module)
 
 
-modules_libadd = $(libgimpmodule) $(libgimpwidgets) $(GTK_LIBS)
+modules_libadd = $(libpicmanmodule) $(libpicmanwidgets) $(GTK_LIBS)
 
-color_selector_libadd = $(libgimpcolor) $(modules_libadd)
-display_filter_libadd = $(libgimpbase) $(libgimpconfig) $(libgimpcolor) $(modules_libadd)
+color_selector_libadd = $(libpicmancolor) $(modules_libadd)
+display_filter_libadd = $(libpicmanbase) $(libpicmanconfig) $(libpicmancolor) $(modules_libadd)
 controller_libadd = $(modules_libadd)
 
 if HAVE_LCMS
 libcolor_selector_cmyk_la_SOURCES = color-selector-cmyk-lcms.c
 libcolor_selector_cmyk_la_CFLAGS = $(LCMS_CFLAGS)
-libcolor_selector_cmyk_la_LIBADD = $(libgimpconfig) $(color_selector_libadd) $(LCMS_LIBS)
+libcolor_selector_cmyk_la_LIBADD = $(libpicmanconfig) $(color_selector_libadd) $(LCMS_LIBS)
 else
 libcolor_selector_cmyk_la_SOURCES = color-selector-cmyk.c
 libcolor_selector_cmyk_la_LIBADD = $(color_selector_libadd)
@@ -71,7 +71,7 @@ libcolor_selector_water_la_SOURCES = color-selector-water.c
 libcolor_selector_water_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libcolor_selector_water_la_LIBADD = $(color_selector_libadd)
 
-libcolor_selector_wheel_la_SOURCES = color-selector-wheel.c gimpcolorwheel.c gimpcolorwheel.h
+libcolor_selector_wheel_la_SOURCES = color-selector-wheel.c picmancolorwheel.c picmancolorwheel.h
 libcolor_selector_wheel_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libcolor_selector_wheel_la_LIBADD = $(color_selector_libadd)
 
@@ -102,8 +102,8 @@ libdisplay_filter_proof_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libdisplay_filter_proof_la_LIBADD = $(display_filter_libadd) $(LCMS_LIBS)
 
 libcontroller_linux_input_la_SOURCES = \
-	gimpinputdevicestore-gudev.c	\
-	gimpinputdevicestore.h		\
+	picmaninputdevicestore-gudev.c	\
+	picmaninputdevicestore.h		\
 	controller-linux-input.c
 libcontroller_linux_input_la_CFLAGS = $(GUDEV_CFLAGS)
 libcontroller_linux_input_la_LDFLAGS = -avoid-version -module $(no_undefined)
@@ -111,8 +111,8 @@ libcontroller_linux_input_la_LIBADD = \
 	$(controller_libadd) $(GUDEV_LIBS)
 
 libcontroller_dx_dinput_la_SOURCES = \
-	gimpinputdevicestore-dx.c	\
-	gimpinputdevicestore.h		\
+	picmaninputdevicestore-dx.c	\
+	picmaninputdevicestore.h		\
 	controller-dx-dinput.c
 # Use -Wl to avoid libtool lossage
 libcontroller_dx_dinput_la_LDFLAGS = -avoid-version -module $(no_undefined) -Wl,-ldinput8 -Wl,-ldxguid

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ typedef struct
   gchar                *name;
   gdouble               opacity;
   gint                  spacing;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
 } SFBrush;
 
 typedef struct
@@ -67,7 +67,7 @@ typedef union
   gint32         sfa_channel;
   gint32         sfa_vectors;
   gint32         sfa_display;
-  GimpRGB        sfa_color;
+  PicmanRGB        sfa_color;
   gint32         sfa_toggle;
   gchar         *sfa_value;
   SFAdjustment   sfa_adjustment;

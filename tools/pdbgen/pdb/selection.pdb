@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub selection_bounds {
     $blurb = 'Find the bounding box of the current selection.';
@@ -52,7 +52,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  non_empty = gimp_channel_bounds (gimp_image_get_mask (image),
+  non_empty = picman_channel_bounds (picman_image_get_mask (image),
                                    &x1, &y1, &x2, &y2);
 }
 CODE
@@ -88,7 +88,7 @@ HELP
 {
   gdouble val;
 
-  val= gimp_pickable_get_opacity_at (GIMP_PICKABLE (gimp_image_get_mask (image)),
+  val= picman_pickable_get_opacity_at (PICMAN_PICKABLE (picman_image_get_mask (image)),
                                      x, y);
 
   value = ROUND (CLAMP (val, 0.0, 1.0) * 255.0);
@@ -119,7 +119,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  is_empty = gimp_channel_is_empty (gimp_image_get_mask (image));
+  is_empty = picman_channel_is_empty (picman_image_get_mask (image));
 }
 CODE
     );
@@ -149,7 +149,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_translate (GIMP_ITEM (gimp_image_get_mask (image)),
+  picman_item_translate (PICMAN_ITEM (picman_image_get_mask (image)),
                        offx, offy, TRUE);
 }
 CODE
@@ -188,13 +188,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      layer = gimp_selection_float (GIMP_SELECTION (gimp_image_get_mask (image)),
+      layer = picman_selection_float (PICMAN_SELECTION (picman_image_get_mask (image)),
                                     drawable, context, TRUE, offx, offy,
                                     error);
       if (! layer)
@@ -225,7 +225,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_invert (gimp_image_get_mask (image), TRUE);
+  picman_channel_invert (picman_image_get_mask (image), TRUE);
 }
 CODE
     );
@@ -251,7 +251,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_sharpen (gimp_image_get_mask (image), TRUE);
+  picman_channel_sharpen (picman_image_get_mask (image), TRUE);
 }
 CODE
     );
@@ -275,7 +275,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_all (gimp_image_get_mask (image), TRUE);
+  picman_channel_all (picman_image_get_mask (image), TRUE);
 }
 CODE
     );
@@ -299,7 +299,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_clear (gimp_image_get_mask (image), NULL, TRUE);
+  picman_channel_clear (picman_image_get_mask (image), NULL, TRUE);
 }
 CODE
     );
@@ -325,7 +325,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_feather (gimp_image_get_mask (image),
+  picman_channel_feather (picman_image_get_mask (image),
                         radius, radius, TRUE);
 }
 CODE
@@ -354,7 +354,7 @@ HELP
 	code => <<'CODE'
 {
   /* FIXME: "feather" and "edge-lock" hardcoded to TRUE */
-  gimp_channel_border (gimp_image_get_mask (image),
+  picman_channel_border (picman_image_get_mask (image),
                        radius, radius, TRUE, TRUE, TRUE);
 }
 CODE
@@ -381,7 +381,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_grow (gimp_image_get_mask (image),
+  picman_channel_grow (picman_image_get_mask (image),
                      steps, steps, TRUE);
 }
 CODE
@@ -409,7 +409,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_shrink (gimp_image_get_mask (image),
+  picman_channel_shrink (picman_image_get_mask (image),
                        steps, steps, FALSE, TRUE);
 }
 CODE
@@ -417,7 +417,7 @@ CODE
 }
 
 sub selection_layer_alpha {
-    &std_pdb_deprecated ('gimp-image-select-item');
+    &std_pdb_deprecated ('picman-image-select-item');
 
     @inargs = (
 	{ name => 'layer', type => 'layer',
@@ -427,9 +427,9 @@ sub selection_layer_alpha {
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL, 0, error))
-    gimp_item_to_selection (GIMP_ITEM (layer),
-                            GIMP_CHANNEL_OP_REPLACE,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL, 0, error))
+    picman_item_to_selection (PICMAN_ITEM (layer),
+                            PICMAN_CHANNEL_OP_REPLACE,
                             TRUE, FALSE, 0.0, 0.0);
   else
     success = FALSE;
@@ -439,7 +439,7 @@ CODE
 }
 
 sub selection_load {
-    &std_pdb_deprecated ('gimp-image-select-item');
+    &std_pdb_deprecated ('picman-image-select-item');
 
     @inargs = (
 	{ name => 'channel', type => 'channel',
@@ -449,9 +449,9 @@ sub selection_load {
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (channel), NULL, 0, error))
-    gimp_item_to_selection (GIMP_ITEM (channel),
-                            GIMP_CHANNEL_OP_REPLACE,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (channel), NULL, 0, error))
+    picman_item_to_selection (PICMAN_ITEM (channel),
+                            PICMAN_CHANNEL_OP_REPLACE,
                             TRUE, FALSE, 0.0, 0.0);
   else
     success = FALSE;
@@ -461,20 +461,20 @@ CODE
 }
 
 sub selection_combine {
-    &std_pdb_deprecated ('gimp-image-select-item');
+    &std_pdb_deprecated ('picman-image-select-item');
 
     @inargs = (
 	{ name => 'channel', type => 'channel',
 	  desc => 'The channel' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (channel), NULL, 0, error))
-    gimp_item_to_selection (GIMP_ITEM (channel),
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (channel), NULL, 0, error))
+    picman_item_to_selection (PICMAN_ITEM (channel),
                             operation,
                             TRUE, FALSE, 0.0, 0.0);
   else
@@ -506,10 +506,10 @@ HELP
     );
 
     %invoke = (
-        headers => [qw("core/gimpselection.h") ],
+        headers => [qw("core/picmanselection.h") ],
 	code    => <<'CODE'
 {
-  channel = gimp_selection_save (GIMP_SELECTION (gimp_image_get_mask (image)));
+  channel = picman_selection_save (PICMAN_SELECTION (picman_image_get_mask (image)));
 
   if (! channel)
     success = FALSE;
@@ -518,10 +518,10 @@ CODE
     );
 }
 
-@headers = qw("libgimpmath/gimpmath.h"
-              "core/gimppickable.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+@headers = qw("libpicmanmath/picmanmath.h"
+              "core/picmanpickable.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(selection_bounds selection_value selection_is_empty
 	    selection_translate selection_float
@@ -533,7 +533,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Image mask';
-$doc_title = 'gimpselection';
+$doc_title = 'picmanselection';
 $doc_short_desc = 'Functions for manipulating selections.';
 $doc_long_desc = 'Functions for manipulating selections.';
 

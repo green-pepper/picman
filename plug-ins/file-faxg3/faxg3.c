@@ -1,4 +1,4 @@
-/* This is a plugin for GIMP.
+/* This is a plugin for PICMAN.
  *
  * Copyright (C) 1997 Jochen Friedrich
  * Parts Copyright (C) 1995 Gert Doering
@@ -41,11 +41,11 @@
 #define _O_BINARY 0
 #endif
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "g3.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC "file-faxg3-load"
@@ -57,21 +57,21 @@
 static void   query      (void);
 static void   run        (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 
 static gint32 load_image (const gchar      *filename,
                           GError          **error);
 
-static gint32 emitgimp   (gint              hcol,
+static gint32 emitpicman   (gint              hcol,
                           gint              row,
                           const gchar      *bitmap,
                           gint              bperrow,
                           const gchar      *filename);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -84,18 +84,18 @@ MAIN ()
 void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" },
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" },
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" },
+    { PICMAN_PDB_IMAGE, "image", "Output image" },
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "loads g3 fax files",
                           "This plug-in loads Fax G3 Image files.",
                           "Jochen Friedrich",
@@ -103,13 +103,13 @@ query (void)
                           VERSION,
                           N_("G3 fax image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/g3-fax");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/g3-fax");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "g3",
                                     "",
                                     "4,string,Research");
@@ -118,11 +118,11 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
+  static PicmanParam  values[2];
   gint32            image_ID;
   GError           *error = NULL;
 
@@ -132,8 +132,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -143,19 +143,19 @@ run (const gchar      *name,
         {
           *nreturn_vals = 2;
 
-          values[0].data.d_status = GIMP_PDB_SUCCESS;
-          values[1].type          = GIMP_PDB_IMAGE;
+          values[0].data.d_status = PICMAN_PDB_SUCCESS;
+          values[1].type          = PICMAN_PDB_IMAGE;
           values[1].data.d_image  = image_ID;
         }
       else
         {
-          values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+          values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
           if (error)
             {
               *nreturn_vals = 2;
 
-              values[1].type          = GIMP_PDB_STRING;
+              values[1].type          = PICMAN_PDB_STRING;
               values[1].data.d_string = error->message;
             }
         }
@@ -215,8 +215,8 @@ load_image (const gchar  *filename,
   gint            max_rows;              /* max. rows allocated */
   gint            col, hcol;             /* column, highest column ever used */
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /* initialize lookup trees */
   build_tree (&white, t_white);
@@ -232,7 +232,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -252,11 +252,11 @@ load_image (const gchar  *filename,
     {
       perror ("read");
       close (rs);
-      gimp_quit ();
+      picman_quit ();
     }
 
   rr += rs;
-  gimp_progress_update ((float) rr / rsize / 2.0);
+  picman_progress_update ((float) rr / rsize / 2.0);
 
                         /* skip GhostScript header */
   rp = (rs >= 64 && strcmp (rbuf + 1, "PC Research, Inc") == 0) ? 64 : 0;
@@ -289,7 +289,7 @@ load_image (const gchar  *filename,
                   break;
                 }
               rr += rs;
-              gimp_progress_update ((float) rr / rsize / 2.0);
+              picman_progress_update ((float) rr / rsize / 2.0);
               rp = 0;
               if (rs == 0)
                 goto do_write;
@@ -337,7 +337,7 @@ load_image (const gchar  *filename,
                         }
 
                       rr += rs;
-                      gimp_progress_update ((float) rr / rsize / 2.0);
+                      picman_progress_update ((float) rr / rsize / 2.0);
                       rp = 0;
                       if (rs == 0)
                         goto do_write;
@@ -393,7 +393,7 @@ load_image (const gchar  *filename,
                           break;
                         }
                       rr += rs;
-                      gimp_progress_update ((float) rr / rsize / 2.0);
+                      picman_progress_update ((float) rr / rsize / 2.0);
                       rp = 0;
                       if (rs == 0)
                         goto do_write;
@@ -482,7 +482,7 @@ load_image (const gchar  *filename,
   g_printerr ("consecutive EOLs: %d, max columns: %d\n", cons_eol, hcol);
 #endif
 
-  image_id = emitgimp (hcol, row, bitmap, bperrow, filename);
+  image_id = emitpicman (hcol, row, bitmap, bperrow, filename);
 
   g_free (bitmap);
 
@@ -496,7 +496,7 @@ load_image (const gchar  *filename,
  */
 
 static gint32
-emitgimp (gint         hcol,
+emitpicman (gint         hcol,
           gint         row,
           const gchar *bitmap,
           gint         bperrow,
@@ -516,21 +516,21 @@ emitgimp (gint         hcol,
   tmp = 0;
 
 #ifdef DEBUG
-  g_printerr ("emit gimp: %d x %d\n", hcol, row);
+  g_printerr ("emit picman: %d x %d\n", hcol, row);
 #endif
 
-  image_ID = gimp_image_new (hcol, row, GIMP_GRAY);
-  gimp_image_set_filename (image_ID, filename);
+  image_ID = picman_image_new (hcol, row, PICMAN_GRAY);
+  picman_image_set_filename (image_ID, filename);
 
-  layer_ID = gimp_layer_new (image_ID, _("Background"),
+  layer_ID = picman_layer_new (image_ID, _("Background"),
                              hcol,
                              row,
-                             GIMP_GRAY_IMAGE, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
+                             PICMAN_GRAY_IMAGE, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
 
-  buffer = gimp_drawable_get_buffer (layer_ID);
+  buffer = picman_drawable_get_buffer (layer_ID);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
 #ifdef DEBUG
   g_printerr ("tile height: %d\n", tile_height);
 #endif
@@ -559,7 +559,7 @@ emitgimp (gint         hcol,
           gegl_buffer_set (buffer, GEGL_RECTANGLE (0, yy, hcol, tile_height), 0,
                            NULL, buf, GEGL_AUTO_ROWSTRIDE);
 
-          gimp_progress_update (0.5 + (float) y / row / 2.0);
+          picman_progress_update (0.5 + (float) y / row / 2.0);
 
           xx = 0;
           yy += tile_height;
@@ -576,7 +576,7 @@ emitgimp (gint         hcol,
                        NULL, buf, GEGL_AUTO_ROWSTRIDE);
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (buf);
 

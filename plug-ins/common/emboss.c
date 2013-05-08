@@ -28,15 +28,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-emboss"
 #define PLUG_IN_BINARY "emboss"
-#define PLUG_IN_ROLE   "gimp-emboss"
+#define PLUG_IN_ROLE   "picman-emboss"
 
 
 enum
@@ -75,13 +75,13 @@ struct embossFilter
 static void     query         (void);
 static void     run           (const gchar      *name,
                                gint              nparam,
-                               const GimpParam  *param,
+                               const PicmanParam  *param,
                                gint             *nretvals,
-                               GimpParam       **retvals);
+                               PicmanParam       **retvals);
 
-static void     emboss        (GimpDrawable     *drawable,
-                               GimpPreview      *preview);
-static gboolean emboss_dialog (GimpDrawable     *drawable);
+static void     emboss        (PicmanDrawable     *drawable,
+                               PicmanPreview      *preview);
+static gboolean emboss_dialog (PicmanDrawable     *drawable);
 
 static void     emboss_init   (gdouble           azimuth,
                                gdouble           elevation,
@@ -97,7 +97,7 @@ static void     emboss_row    (const guchar     *src,
 #define DtoR(d) ((d)*(G_PI/(gdouble)180))
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -110,18 +110,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"  },
-    { GIMP_PDB_IMAGE,    "image",     "The Image"                     },
-    { GIMP_PDB_DRAWABLE, "drawable",  "The Drawable"                  },
-    { GIMP_PDB_FLOAT,    "azimuth",   "The Light Angle (degrees)"     },
-    { GIMP_PDB_FLOAT,    "elevation", "The Elevation Angle (degrees)" },
-    { GIMP_PDB_INT32,    "depth",     "The Filter Width"              },
-    { GIMP_PDB_INT32,    "emboss",    "Emboss or Bumpmap"             }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"  },
+    { PICMAN_PDB_IMAGE,    "image",     "The Image"                     },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "The Drawable"                  },
+    { PICMAN_PDB_FLOAT,    "azimuth",   "The Light Angle (degrees)"     },
+    { PICMAN_PDB_FLOAT,    "elevation", "The Elevation Angle (degrees)" },
+    { PICMAN_PDB_INT32,    "depth",     "The Filter Width"              },
+    { PICMAN_PDB_INT32,    "emboss",    "Emboss or Bumpmap"             }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate an image created by embossing"),
                           "Emboss or Bumpmap the given drawable, specifying "
                           "the angle and elevation for the light source.",
@@ -130,55 +130,55 @@ query (void)
                           "1997",
                           N_("_Emboss..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparam,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nretvals,
-     GimpParam       **retvals)
+     PicmanParam       **retvals)
 {
-  static GimpParam  rvals[1];
-  GimpDrawable     *drawable;
+  static PicmanParam  rvals[1];
+  PicmanDrawable     *drawable;
 
   *nretvals = 1;
   *retvals = rvals;
 
   INIT_I18N ();
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (drawable->ntile_cols);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (drawable->ntile_cols);
 
 
-  rvals[0].type = GIMP_PDB_STATUS;
-  rvals[0].data.d_status = GIMP_PDB_SUCCESS;
+  rvals[0].type = PICMAN_PDB_STATUS;
+  rvals[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   switch (param[0].data.d_int32)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &evals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &evals);
 
       if (! emboss_dialog (drawable))
         {
-          rvals[0].data.d_status = GIMP_PDB_CANCEL;
+          rvals[0].data.d_status = PICMAN_PDB_CANCEL;
         }
       else
         {
-          gimp_set_data (PLUG_IN_PROC, &evals, sizeof (piArgs));
+          picman_set_data (PLUG_IN_PROC, &evals, sizeof (piArgs));
         }
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparam != 7)
         {
-          rvals[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+          rvals[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
 
@@ -190,8 +190,8 @@ run (const gchar      *name,
       emboss (drawable, NULL);
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &evals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &evals);
       /* use this image and drawable, even with last args */
       emboss (drawable, NULL);
     break;
@@ -332,10 +332,10 @@ emboss_row (const guchar *src,
 }
 
 static void
-emboss (GimpDrawable *drawable,
-        GimpPreview  *preview)
+emboss (PicmanDrawable *drawable,
+        PicmanPreview  *preview)
 {
-  GimpPixelRgn  src, dst;
+  PicmanPixelRgn  src, dst;
   gint          p_update;
   gint          y;
   gint          x1, y1, x2, y2;
@@ -346,14 +346,14 @@ emboss (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
       /* expand the bounds a little */
       x1 = MAX (0, x1 - evals.depth);
@@ -368,12 +368,12 @@ emboss (GimpDrawable *drawable,
   bypp = drawable->bpp;
   p_update = MAX (1, height / 20);
   rowsize = width * bypp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
-  gimp_pixel_rgn_init (&src, drawable,
+  picman_pixel_rgn_init (&src, drawable,
                        x1, y1, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dst, drawable,
+  picman_pixel_rgn_init (&dst, drawable,
                        x1, y1, width, height,
                        preview == NULL, TRUE);
 
@@ -382,47 +382,47 @@ emboss (GimpDrawable *drawable,
 
   emboss_init (DtoR(evals.azimuth), DtoR(evals.elevation), evals.depth);
   if (!preview)
-    gimp_progress_init (_("Emboss"));
+    picman_progress_init (_("Emboss"));
 
   /* first row */
-  gimp_pixel_rgn_get_rect (&src, srcbuf, x1, y1, width, 3);
+  picman_pixel_rgn_get_rect (&src, srcbuf, x1, y1, width, 3);
   memcpy (srcbuf, srcbuf + rowsize, rowsize);
   emboss_row (srcbuf, evals.embossp ? NULL : srcbuf,
               dstbuf, width, bypp, has_alpha);
-  gimp_pixel_rgn_set_row (&dst, dstbuf, 0, 0, width);
+  picman_pixel_rgn_set_row (&dst, dstbuf, 0, 0, width);
 
   /* middle rows */
   for (y = 0; y < height - 2; y++)
     {
       if (! preview && (y % p_update == 0))
-        gimp_progress_update ((gdouble) y / (gdouble) height);
+        picman_progress_update ((gdouble) y / (gdouble) height);
 
-      gimp_pixel_rgn_get_rect (&src, srcbuf, x1, y1 + y, width, 3);
+      picman_pixel_rgn_get_rect (&src, srcbuf, x1, y1 + y, width, 3);
       emboss_row (srcbuf, evals.embossp ? NULL : srcbuf,
                   dstbuf, width, bypp, has_alpha);
-      gimp_pixel_rgn_set_row (&dst, dstbuf, x1, y1 + y + 1, width);
+      picman_pixel_rgn_set_row (&dst, dstbuf, x1, y1 + y + 1, width);
     }
 
   /* last row */
-  gimp_pixel_rgn_get_rect (&src, srcbuf, x1, y2 - 3, width, 3);
+  picman_pixel_rgn_get_rect (&src, srcbuf, x1, y2 - 3, width, 3);
   memcpy (srcbuf + rowsize * 2, srcbuf + rowsize, rowsize);
   emboss_row (srcbuf, evals.embossp ? NULL : srcbuf,
               dstbuf, width, bypp, has_alpha);
-  gimp_pixel_rgn_set_row (&dst, dstbuf, x1, y2 - 1, width);
+  picman_pixel_rgn_set_row (&dst, dstbuf, x1, y2 - 1, width);
 
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &dst);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
-      gimp_displays_flush ();
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
+      picman_displays_flush ();
     }
 
   g_free (srcbuf);
@@ -430,7 +430,7 @@ emboss (GimpDrawable *drawable,
 }
 
 static gboolean
-emboss_dialog (GimpDrawable *drawable)
+emboss_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -442,11 +442,11 @@ emboss_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Emboss"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Emboss"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -458,7 +458,7 @@ emboss_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -466,15 +466,15 @@ emboss_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
                             G_CALLBACK (emboss),
                             drawable);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Function"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Function"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &evals.embossp, evals.embossp,
 
                                     _("_Bumpmap"), FUNCTION_BUMPMAP, &radio1,
@@ -486,10 +486,10 @@ emboss_dialog (GimpDrawable *drawable)
   gtk_widget_show (frame);
 
   g_signal_connect_swapped (radio1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (radio2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   table = gtk_table_new (3, 3, FALSE);
@@ -497,47 +497,47 @@ emboss_dialog (GimpDrawable *drawable)
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Azimuth:"), 100, 6,
                               evals.azimuth, 0.0, 360.0, 1.0, 10.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &evals.azimuth);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("E_levation:"), 100, 6,
                               evals.elevation, 0.0, 180.0, 1.0, 10.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &evals.elevation);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Depth:"), 100, 6,
                               evals.depth, 1.0, 100.0, 1.0, 5.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &evals.depth);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

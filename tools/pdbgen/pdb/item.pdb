@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub item_is_valid {
     $blurb = 'Returns TRUE if the item is valid.';
@@ -39,8 +39,8 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  valid = (GIMP_IS_ITEM (item) &&
-           ! gimp_item_is_removed (GIMP_ITEM (item)));
+  valid = (PICMAN_IS_ITEM (item) &&
+           ! picman_item_is_removed (PICMAN_ITEM (item)));
 }
 CODE
     );
@@ -67,7 +67,7 @@ sub item_get_image {
     %invoke = (
 	code => <<'CODE'
 {
-  image = gimp_item_get_image (GIMP_ITEM (item));
+  image = picman_item_get_image (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -130,7 +130,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  drawable = GIMP_IS_DRAWABLE (item);
+  drawable = PICMAN_IS_DRAWABLE (item);
 }
 CODE
     );
@@ -159,7 +159,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  layer = GIMP_IS_LAYER (item);
+  layer = PICMAN_IS_LAYER (item);
 }
 CODE
     );
@@ -187,7 +187,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  text_layer = gimp_item_is_text_layer (item);
+  text_layer = picman_item_is_text_layer (item);
 }
 CODE
     );
@@ -216,7 +216,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  channel = GIMP_IS_CHANNEL (item);
+  channel = PICMAN_IS_CHANNEL (item);
 }
 CODE
     );
@@ -245,7 +245,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  layer_mask = GIMP_IS_LAYER_MASK (item);
+  layer_mask = PICMAN_IS_LAYER_MASK (item);
 }
 CODE
     );
@@ -274,7 +274,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  selection = GIMP_IS_SELECTION (item);
+  selection = PICMAN_IS_SELECTION (item);
 }
 CODE
     );
@@ -303,7 +303,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  vectors = GIMP_IS_VECTORS (item);
+  vectors = PICMAN_IS_VECTORS (item);
 }
 CODE
     );
@@ -332,7 +332,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  group = (gimp_viewable_get_children (GIMP_VIEWABLE (item)) != NULL);
+  group = (picman_viewable_get_children (PICMAN_VIEWABLE (item)) != NULL);
 }
 CODE
     );
@@ -360,7 +360,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  parent = gimp_item_get_parent (item);
+  parent = picman_item_get_parent (item);
 }
 CODE
     );
@@ -391,11 +391,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpContainer *children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+  PicmanContainer *children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
   if (children)
     {
-      num_children = gimp_container_get_n_children (children);
+      num_children = picman_container_get_n_children (children);
 
       if (num_children)
         {
@@ -404,11 +404,11 @@ HELP
 
           child_ids = g_new (gint32, num_children);
 
-          for (list = GIMP_LIST (children)->list, i = 0;
+          for (list = PICMAN_LIST (children)->list, i = 0;
                list;
                list = g_list_next (list), i++)
             {
-              child_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+              child_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
             }
         }
     }
@@ -441,7 +441,7 @@ sub item_get_name {
     %invoke = (
 	code => <<'CODE'
 {
-  name = g_strdup (gimp_object_get_name (item));
+  name = g_strdup (picman_object_get_name (item));
 }
 CODE
     );
@@ -465,7 +465,7 @@ sub item_set_name {
     %invoke = (
 	code => <<'CODE'
 {
-  success = gimp_item_rename (GIMP_ITEM (item), name, error);
+  success = picman_item_rename (PICMAN_ITEM (item), name, error);
 }
 CODE
     );
@@ -492,7 +492,7 @@ sub item_get_visible {
     %invoke = (
 	code => <<'CODE'
 {
-  visible = gimp_item_get_visible (GIMP_ITEM (item));
+  visible = picman_item_get_visible (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -516,7 +516,7 @@ sub item_set_visible {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_set_visible (GIMP_ITEM (item), visible, TRUE);
+  picman_item_set_visible (PICMAN_ITEM (item), visible, TRUE);
 }
 CODE
     );
@@ -542,7 +542,7 @@ sub item_get_linked {
     %invoke = (
 	code => <<'CODE'
 {
-  linked = gimp_item_get_linked (GIMP_ITEM (item));
+  linked = picman_item_get_linked (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -565,7 +565,7 @@ sub item_set_linked {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_set_linked (GIMP_ITEM (item), linked, TRUE);
+  picman_item_set_linked (PICMAN_ITEM (item), linked, TRUE);
 }
 CODE
     );
@@ -591,7 +591,7 @@ sub item_get_lock_content {
     %invoke = (
 	code => <<'CODE'
 {
-  lock_content = gimp_item_get_lock_content (GIMP_ITEM (item));
+  lock_content = picman_item_get_lock_content (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -614,8 +614,8 @@ sub item_set_lock_content {
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_item_can_lock_content (GIMP_ITEM (item)))
-    gimp_item_set_lock_content (GIMP_ITEM (item), lock_content, TRUE);
+  if (picman_item_can_lock_content (PICMAN_ITEM (item)))
+    picman_item_set_lock_content (PICMAN_ITEM (item), lock_content, TRUE);
   else
     success = FALSE;
 }
@@ -643,7 +643,7 @@ sub item_get_lock_position {
     %invoke = (
 	code => <<'CODE'
 {
-  lock_position = gimp_item_get_lock_position (GIMP_ITEM (item));
+  lock_position = picman_item_get_lock_position (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -666,8 +666,8 @@ sub item_set_lock_position {
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_item_can_lock_position (GIMP_ITEM (item)))
-    gimp_item_set_lock_position (GIMP_ITEM (item), lock_position, TRUE);
+  if (picman_item_can_lock_position (PICMAN_ITEM (item)))
+    picman_item_set_lock_position (PICMAN_ITEM (item), lock_position, TRUE);
   else
     success = FALSE;
 }
@@ -700,7 +700,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  tattoo = gimp_item_get_tattoo (GIMP_ITEM (item));
+  tattoo = picman_item_get_tattoo (PICMAN_ITEM (item));
 }
 CODE
     );
@@ -728,7 +728,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_set_tattoo (GIMP_ITEM (item), tattoo);
+  picman_item_set_tattoo (PICMAN_ITEM (item), tattoo);
 }
 CODE
     );
@@ -753,7 +753,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_parasite_attach (item, parasite, TRUE);
+  picman_item_parasite_attach (item, parasite, TRUE);
 }
 CODE
     );
@@ -778,7 +778,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_item_parasite_detach (item, name, TRUE);
+  picman_item_parasite_detach (item, name, TRUE);
 }
 CODE
     );
@@ -808,7 +808,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  parasite = gimp_parasite_copy (gimp_item_parasite_find (item, name));
+  parasite = picman_parasite_copy (picman_item_parasite_find (item, name));
 
   if (! parasite)
     success = FALSE;
@@ -837,20 +837,20 @@ sub item_get_parasite_list {
     %invoke = (
 	code => <<'CODE'
 {
-  parasites = gimp_item_parasite_list (item, &num_parasites);
+  parasites = picman_item_parasite_list (item, &num_parasites);
 }
 CODE
     );
 }
 
-@headers = qw("core/gimplayermask.h"
-              "core/gimplist.h"
-              "core/gimpselection.h"
-              "text/gimptextlayer.h"
-	      "vectors/gimpvectors.h"
-              "gimppdb-utils.h"
-              "gimppdbcontext.h"
-              "gimp-intl.h");
+@headers = qw("core/picmanlayermask.h"
+              "core/picmanlist.h"
+              "core/picmanselection.h"
+              "text/picmantextlayer.h"
+	      "vectors/picmanvectors.h"
+              "picmanpdb-utils.h"
+              "picmanpdbcontext.h"
+              "picman-intl.h");
 
 @procs = qw(item_is_valid
             item_get_image
@@ -878,7 +878,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Item procedures';
-$doc_title = 'gimpitem';
+$doc_title = 'picmanitem';
 $doc_short_desc = 'Functions to manipulate items.';
 $doc_long_desc = 'Functions to manipulate items.';
 

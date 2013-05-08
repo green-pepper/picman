@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub plugins_query {
     $blurb = 'Queries the plugin database for its contents.';
@@ -58,7 +58,7 @@ sub plugins_query {
     %invoke = (
 	code => <<'CODE'
 {
-  num_plugins = gimp_plug_in_manager_query (gimp->plug_in_manager,
+  num_plugins = picman_plug_in_manager_query (picman->plug_in_manager,
                                             search_string,
                                             &menu_path,
                                             &plugin_accelerator,
@@ -75,10 +75,10 @@ sub plugin_domain_register {
     $blurb = 'Registers a textdomain for localisation.';
 
     $help = <<'HELP';
-This procedure adds a textdomain to the list of domains Gimp searches 
+This procedure adds a textdomain to the list of domains Picman searches 
 for strings when translating its menu entries. There is no need to 
 call this function for plug-ins that have their strings included in 
-the 'gimp-std-plugins' domain as that is used by default. If the compiled 
+the 'picman-std-plugins' domain as that is used by default. If the compiled 
 message catalog is not in the standard location, you may specify an 
 absolute path to another location. This procedure can only be called 
 in the query function of a plug-in and it has to be called before any
@@ -98,11 +98,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
-  if (plug_in && plug_in->call_mode == GIMP_PLUG_IN_CALL_QUERY)
+  if (plug_in && plug_in->call_mode == PICMAN_PLUG_IN_CALL_QUERY)
     {
-      gimp_plug_in_def_set_locale_domain (plug_in->plug_in_def,
+      picman_plug_in_def_set_locale_domain (plug_in->plug_in_def,
                                           domain_name, domain_path);
     }
   else
@@ -120,9 +120,9 @@ sub plugin_help_register {
     $help = <<HELP;
 
 This procedure registers user documentation for the calling plug-in
-with the GIMP help system. The domain_uri parameter points to the root
+with the PICMAN help system. The domain_uri parameter points to the root
 directory where the plug-in help is installed. For each supported
-language there should be a file called 'gimp-help.xml' that maps the
+language there should be a file called 'picman-help.xml' that maps the
 help IDs to the actual help files.
 HELP
 
@@ -138,11 +138,11 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
-  if (plug_in && plug_in->call_mode == GIMP_PLUG_IN_CALL_QUERY)
+  if (plug_in && plug_in->call_mode == PICMAN_PLUG_IN_CALL_QUERY)
     {
-      gimp_plug_in_def_set_help_domain (plug_in->plug_in_def,
+      picman_plug_in_def_set_help_domain (plug_in->plug_in_def,
                                         domain_name, domain_uri);
     }
   else
@@ -173,12 +173,12 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
-      success = gimp_plug_in_menu_register (plug_in, canonical, menu_path);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
+      success = picman_plug_in_menu_register (plug_in, canonical, menu_path);
       g_free (canonical);
     }
   else
@@ -195,7 +195,7 @@ sub plugin_menu_branch_register {
 
     $help = <<HELP;
 This procedure installs a sub-menu which does not belong to any procedure.
-The menu-name should be the untranslated menu label. GIMP will look up the
+The menu-name should be the untranslated menu label. PICMAN will look up the
 translation in the textdomain registered for the plug-in.
 HELP
 
@@ -211,11 +211,11 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      gimp_plug_in_manager_add_menu_branch (gimp->plug_in_manager,
+      picman_plug_in_manager_add_menu_branch (picman->plug_in_manager,
                                             plug_in->prog, menu_path, menu_name);
     }
   else
@@ -239,7 +239,7 @@ HELP
     @inargs = (
 	{ name => 'procedure_name', type => 'string', wrap => 1, non_empty => 1,
 	  desc => 'The procedure for which to install the icon' },
-        { name => 'icon_type', type => 'enum GimpIconType',
+        { name => 'icon_type', type => 'enum PicmanIconType',
           desc => 'The type of the icon' },
 	{ name => 'icon_data', type => 'int8array',
 	  desc => "The procedure's icon. The format depends on the
@@ -251,22 +251,22 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
-  if (plug_in && plug_in->call_mode == GIMP_PLUG_IN_CALL_QUERY)
+  if (plug_in && plug_in->call_mode == PICMAN_PLUG_IN_CALL_QUERY)
     {
-      GimpPlugInProcedure *proc;
+      PicmanPlugInProcedure *proc;
       gchar               *canonical;
 
-      canonical = gimp_canonicalize_identifier (procedure_name);
+      canonical = picman_canonicalize_identifier (procedure_name);
 
-      proc = gimp_plug_in_procedure_find (plug_in->plug_in_def->procedures,
+      proc = picman_plug_in_procedure_find (plug_in->plug_in_def->procedures,
                                           canonical);
 
       g_free (canonical);
 
       if (proc)
-        gimp_plug_in_procedure_set_icon (proc, icon_type,
+        picman_plug_in_procedure_set_icon (proc, icon_type,
                                          icon_data, icon_data_length);
       else
         success = FALSE;
@@ -285,11 +285,11 @@ sub plugin_set_pdb_error_handler {
 
     $help = <<HELP;
 This procedure changes the way that errors in procedure calls are
-handled. By default GIMP will raise an error dialog if a procedure
+handled. By default PICMAN will raise an error dialog if a procedure
 call made by a plug-in fails. Using this procedure the plug-in can
 change this behavior. If the error handler is set to
-%GIMP_PDB_ERROR_HANDLER_PLUGIN, then the plug-in is responsible for
-calling gimp_get_pdb_error() and handling the error whenever one if
+%PICMAN_PDB_ERROR_HANDLER_PLUGIN, then the plug-in is responsible for
+calling picman_get_pdb_error() and handling the error whenever one if
 its procedure calls fails. It can do this by displaying the error
 message or by forwarding it in its own return values.
 HELP
@@ -297,18 +297,18 @@ HELP
     &neo_pdb_misc('2008', '2.6');
 
     @inargs = (
-	{ name => 'handler', type => 'enum GimpPDBErrorHandler',
+	{ name => 'handler', type => 'enum PicmanPDBErrorHandler',
 	  desc => "Who is responsible for handling procedure call errors" }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      gimp_plug_in_set_error_handler (plug_in, handler);
+      picman_plug_in_set_error_handler (plug_in, handler);
     }
   else
     {
@@ -325,24 +325,24 @@ sub plugin_get_pdb_error_handler {
     $help = <<HELP;
 This procedure retrieves the currently active error handler for
 procedure calls made by the calling plug-in. See
-gimp_plugin_set_pdb_error_handler() for details.
+picman_plugin_set_pdb_error_handler() for details.
 HELP
 
     &neo_pdb_misc('2008', '2.6');
 
     @outargs = (
-	{ name => 'handler', type => 'enum GimpPDBErrorHandler',
+	{ name => 'handler', type => 'enum PicmanPDBErrorHandler',
 	  desc => "Who is responsible for handling procedure call errors" }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      handler = gimp_plug_in_get_error_handler (plug_in);
+      handler = picman_plug_in_get_error_handler (plug_in);
     }
   else
     {
@@ -359,8 +359,8 @@ sub plugin_enable_precision {
     $help = <<HELP;
 Switches this plug-in to using the real bit depth of drawables. This
 setting can only be enabled, and not disabled again during the
-lifetime of the plug-in. Using gimp_drawable_get_buffer(),
-gimp_drawable_get_shadow_buffer() or gimp_drawable_get_format() will
+lifetime of the plug-in. Using picman_drawable_get_buffer(),
+picman_drawable_get_shadow_buffer() or picman_drawable_get_format() will
 automatically call this function.
 HELP
 
@@ -369,11 +369,11 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      gimp_plug_in_enable_precision (plug_in);
+      picman_plug_in_enable_precision (plug_in);
     }
   else
     {
@@ -402,11 +402,11 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in)
     {
-      enabled = gimp_plug_in_precision_enabled (plug_in);
+      enabled = picman_plug_in_precision_enabled (plug_in);
     }
   else
     {
@@ -419,14 +419,14 @@ CODE
 
 @headers = qw(<string.h>
               <stdlib.h>
-              "libgimpbase/gimpbase.h"
-              "core/gimp.h"
-              "plug-in/gimpplugin.h"
-              "plug-in/gimpplugindef.h"
-              "plug-in/gimppluginmanager.h"
-              "plug-in/gimppluginmanager-menu-branch.h"
-              "plug-in/gimppluginmanager-query.h"
-              "plug-in/gimppluginprocedure.h");
+              "libpicmanbase/picmanbase.h"
+              "core/picman.h"
+              "plug-in/picmanplugin.h"
+              "plug-in/picmanplugindef.h"
+              "plug-in/picmanpluginmanager.h"
+              "plug-in/picmanpluginmanager-menu-branch.h"
+              "plug-in/picmanpluginmanager-query.h"
+              "plug-in/picmanpluginprocedure.h");
 
 @procs = qw(plugins_query
 	    plugin_domain_register
@@ -442,7 +442,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs[1,2,3,4,5,6,7,8,9]]);
 
 $desc = 'Plug-in';
-$doc_title = 'gimpplugin';
+$doc_title = 'picmanplugin';
 $doc_short_desc = 'Functions useful for plugins, e.g. registration and progress indicators.';
 $doc_long_desc = 'Functions useful for plugins, e.g. registration and progress indicators.';
 

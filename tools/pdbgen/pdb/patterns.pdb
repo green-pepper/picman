@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub patterns_refresh {
     $blurb = 'Refresh current patterns. This function always succeeds.';
@@ -29,7 +29,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_data_factory_data_refresh (gimp->pattern_factory, context);
+  picman_data_factory_data_refresh (picman->pattern_factory, context);
 }
 CODE
     );
@@ -39,8 +39,8 @@ sub patterns_get_list {
     $blurb = 'Retrieve a complete listing of the available patterns.';
 
     $help = <<'HELP';
-This procedure returns a complete listing of available GIMP patterns. Each name
-returned can be used as input to the gimp_context_set_pattern().
+This procedure returns a complete listing of available PICMAN patterns. Each name
+returned can be used as input to the picman_context_set_pattern().
 HELP
 
     &std_pdb_misc;
@@ -58,10 +58,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer-filter.h") ],
+        headers => [ qw("core/picmancontainer-filter.h") ],
 	code => <<'CODE'
 {
-  pattern_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->pattern_factory),
+  pattern_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->pattern_factory),
                                                          filter, &num_patterns);
 }
 CODE
@@ -69,7 +69,7 @@ CODE
 }
 
 sub patterns_get_pattern {
-    &std_pdb_deprecated ('gimp-context-get-pattern');
+    &std_pdb_deprecated ('picman-context-get-pattern');
 
     @outargs = (
 	{ name => 'name', type => 'string',
@@ -83,13 +83,13 @@ sub patterns_get_pattern {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPattern *pattern = gimp_context_get_pattern (context);
+  PicmanPattern *pattern = picman_context_get_pattern (context);
 
   if (pattern)
     {
-      name   = g_strdup (gimp_object_get_name (pattern));
-      width  = gimp_temp_buf_get_width  (pattern->mask);
-      height = gimp_temp_buf_get_height (pattern->mask);
+      name   = g_strdup (picman_object_get_name (pattern));
+      width  = picman_temp_buf_get_width  (pattern->mask);
+      height = picman_temp_buf_get_height (pattern->mask);
     }
   else
     success = FALSE;
@@ -99,7 +99,7 @@ CODE
 }
 
 sub patterns_get_pattern_data {
-    &std_pdb_deprecated ('gimp-pattern-get-pixels');
+    &std_pdb_deprecated ('picman-pattern-get-pixels');
 
     @inargs = (
 	{ name => 'name', type => 'string', null_ok => 1,
@@ -124,21 +124,21 @@ sub patterns_get_pattern_data {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPattern *pattern;
+  PicmanPattern *pattern;
 
   if (name && strlen (name))
-    pattern = gimp_pdb_get_pattern (gimp, name, error);
+    pattern = picman_pdb_get_pattern (picman, name, error);
   else
-    pattern = gimp_context_get_pattern (context);
+    pattern = picman_context_get_pattern (context);
 
   if (pattern)
     {
-      actual_name = g_strdup (gimp_object_get_name (pattern));
-      width       = gimp_temp_buf_get_width  (pattern->mask);
-      height      = gimp_temp_buf_get_height (pattern->mask);
-      mask_bpp    = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask));
-      length      = gimp_temp_buf_get_data_size (pattern->mask);
-      mask_data   = g_memdup (gimp_temp_buf_get_data (pattern->mask), length);
+      actual_name = g_strdup (picman_object_get_name (pattern));
+      width       = picman_temp_buf_get_width  (pattern->mask);
+      height      = picman_temp_buf_get_height (pattern->mask);
+      mask_bpp    = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask));
+      length      = picman_temp_buf_get_data_size (pattern->mask);
+      mask_data   = g_memdup (picman_temp_buf_get_data (pattern->mask), length);
     }
   else
     success = FALSE;
@@ -149,12 +149,12 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpcontext.h"
-              "core/gimpdatafactory.h"
-              "core/gimppattern.h"
-              "core/gimptempbuf.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmancontext.h"
+              "core/picmandatafactory.h"
+              "core/picmanpattern.h"
+              "core/picmantempbuf.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(patterns_refresh
             patterns_get_list
@@ -164,7 +164,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Patterns';
-$doc_title = 'gimppatterns';
+$doc_title = 'picmanpatterns';
 $doc_short_desc = 'Functions relating to patterns.';
 $doc_long_desc = 'Functions relating to patterns.';
 

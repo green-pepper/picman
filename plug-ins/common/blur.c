@@ -1,6 +1,6 @@
 /****************************************************************************
- * This is a plugin for GIMP v 0.99.8 or later.  Documentation is
- * available at http://www.rru.com/~meo/gimp/ .
+ * This is a plugin for PICMAN v 0.99.8 or later.  Documentation is
+ * available at http://www.rru.com/~meo/picman/ .
  *
  * Copyright (C) 1997-98 Miles O'Neal  <meo@rru.com>  http://www.rru.com/~meo/
  * Blur code Copyright (C) 1995 Spencer Kimball and Peter Mattis
@@ -56,9 +56,9 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*********************************
@@ -78,11 +78,11 @@
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -90,9 +90,9 @@ const GimpPlugInInfo PLUG_IN_INFO =
   run,   /* run_proc   */
 };
 
-static void         blur             (GimpDrawable *drawable);
+static void         blur             (PicmanDrawable *drawable);
 
-static inline void  blur_prepare_row (GimpPixelRgn *pixel_rgn,
+static inline void  blur_prepare_row (PicmanPixelRgn *pixel_rgn,
                                       guchar       *data,
                                       gint          x,
                                       gint          y,
@@ -106,21 +106,21 @@ MAIN ()
  *
  *  query() - query_proc
  *
- *      called by GIMP to learn about this plug-in
+ *      called by PICMAN to learn about this plug-in
  *
  ********************************/
 
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"               },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"               },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simple blur, fast but not very strong"),
                           "This plug-in blurs the specified drawable, using "
                           "a 3x3 blur. Indexed images are not supported.",
@@ -132,7 +132,7 @@ query (void)
                           "1995-1998",
                           N_("_Blur"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -140,18 +140,18 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  static GimpParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  static PicmanParam   values[1];
 
   INIT_I18N ();
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -159,36 +159,36 @@ run (const gchar      *name,
 
   if (strcmp (name, PLUG_IN_PROC) != 0 || nparams < 3)
     {
-      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
       return;
     }
 
   run_mode = param[0].data.d_int32;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*
    *  Make sure the drawable type is appropriate.
    */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Blurring"));
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_progress_init (_("Blurring"));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
       blur (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
         {
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
@@ -202,7 +202,7 @@ run (const gchar      *name,
  ********************************/
 
 static inline void
-blur_prepare_row (GimpPixelRgn *pixel_rgn,
+blur_prepare_row (PicmanPixelRgn *pixel_rgn,
                   guchar       *data,
                   gint          x,
                   gint          y,
@@ -212,7 +212,7 @@ blur_prepare_row (GimpPixelRgn *pixel_rgn,
 
   y = CLAMP (y, 0, pixel_rgn->h - 1);
 
-  gimp_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
+  picman_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
 
   /*
    *  Fill in edge pixels
@@ -233,9 +233,9 @@ blur_prepare_row (GimpPixelRgn *pixel_rgn,
  ********************************/
 
 static void
-blur (GimpDrawable *drawable)
+blur (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height;
   gint          bytes;
   guchar       *dest, *d;
@@ -248,7 +248,7 @@ blur (GimpDrawable *drawable)
   gint          ind;
   gboolean      has_alpha;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &width, &height))
     return;
 
@@ -262,7 +262,7 @@ blur (GimpDrawable *drawable)
   width = drawable->width;
   height = drawable->height;
   bytes = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   /*
    *  allocate row buffers
    */
@@ -274,8 +274,8 @@ blur (GimpDrawable *drawable)
   /*
    *  initialize the pixel regions
    */
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
 
   pr = prev_row + bytes;
   cr = cur_row + bytes;
@@ -346,7 +346,7 @@ blur (GimpDrawable *drawable)
        *  Save the modified row, shuffle the row pointers, and every
        *  so often, update the progress meter.
        */
-      gimp_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
+      picman_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
 
       tmp = pr;
       pr = cr;
@@ -354,17 +354,17 @@ blur (GimpDrawable *drawable)
       nr = tmp;
 
       if ((row % 32) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) (y2 - y1));
+        picman_progress_update ((gdouble) row / (gdouble) (y2 - y1));
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   /*
    *  update the blurred region
    */
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
   /*
    *  clean up after ourselves.
    */

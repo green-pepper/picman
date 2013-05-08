@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/Sketch
+## Makefile.am for picman/data/brushes/Sketch
 
-brushsketchdatadir = $(gimpdatadir)/brushes/Sketch
+brushsketchdatadir = $(picmandatadir)/brushes/Sketch
 
 brushsketchdata_DATA = \
 	Chalk-01.gih		\

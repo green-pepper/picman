@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,91 +25,91 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimplist.h"
-#include "core/gimpparamspecs.h"
-#include "text/gimptext-vectors.h"
-#include "text/gimptextlayer.h"
-#include "vectors/gimpanchor.h"
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpstroke-new.h"
-#include "vectors/gimpvectors-export.h"
-#include "vectors/gimpvectors-import.h"
-#include "vectors/gimpvectors.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlist.h"
+#include "core/picmanparamspecs.h"
+#include "text/picmantext-vectors.h"
+#include "text/picmantextlayer.h"
+#include "vectors/picmananchor.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanstroke-new.h"
+#include "vectors/picmanvectors-export.h"
+#include "vectors/picmanvectors-import.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-vectors_new_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_new_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *name;
-  GimpVectors *vectors = NULL;
+  PicmanVectors *vectors = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      vectors = gimp_vectors_new (image, name);
+      vectors = picman_vectors_new (image, name);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_vectors (gimp_value_array_index (return_vals, 1), vectors);
+    picman_value_set_vectors (picman_value_array_index (return_vals, 1), vectors);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_new_from_text_layer_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_new_from_text_layer_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpLayer *layer;
-  GimpVectors *vectors = NULL;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanLayer *layer;
+  PicmanVectors *vectors = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 1), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  layer = picman_value_get_layer (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+      if (picman_pdb_layer_is_text_layer (layer, 0, error))
         {
           gint x, y;
 
-          vectors = gimp_text_vectors_new (image,
-                                           gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)));
+          vectors = picman_text_vectors_new (image,
+                                           picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)));
 
-          gimp_item_get_offset (GIMP_ITEM (layer), &x, &y);
-          gimp_item_translate (GIMP_ITEM (vectors), x, y, FALSE);
+          picman_item_get_offset (PICMAN_ITEM (layer), &x, &y);
+          picman_item_translate (PICMAN_ITEM (vectors), x, y, FALSE);
         }
       else
         {
@@ -117,146 +117,146 @@ vectors_new_from_text_layer_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_vectors (gimp_value_array_index (return_vals, 1), vectors);
+    picman_value_set_vectors (picman_value_array_index (return_vals, 1), vectors);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_copy_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_copy_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
-  GimpVectors *vectors_copy = NULL;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
+  PicmanVectors *vectors_copy = NULL;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      vectors_copy = GIMP_VECTORS (gimp_item_duplicate (GIMP_ITEM (vectors),
+      vectors_copy = PICMAN_VECTORS (picman_item_duplicate (PICMAN_ITEM (vectors),
                                    G_TYPE_FROM_INSTANCE (vectors)));
 
       if (! vectors_copy)
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_vectors (gimp_value_array_index (return_vals, 1), vectors_copy);
+    picman_value_set_vectors (picman_value_array_index (return_vals, 1), vectors_copy);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_get_strokes_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_get_strokes_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 num_strokes = 0;
   gint32 *stroke_ids = NULL;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      num_strokes = gimp_vectors_get_n_strokes (vectors);
+      num_strokes = picman_vectors_get_n_strokes (vectors);
 
       if (num_strokes)
         {
-          GimpStroke *cur_stroke;
+          PicmanStroke *cur_stroke;
           gint        i = 0;
 
           stroke_ids = g_new (gint32, num_strokes);
 
-          for (cur_stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+          for (cur_stroke = picman_vectors_stroke_get_next (vectors, NULL);
                cur_stroke;
-               cur_stroke = gimp_vectors_stroke_get_next (vectors, cur_stroke))
+               cur_stroke = picman_vectors_stroke_get_next (vectors, cur_stroke))
             {
-              stroke_ids[i] = gimp_stroke_get_ID (cur_stroke);
+              stroke_ids[i] = picman_stroke_get_ID (cur_stroke);
               i++;
             }
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_strokes);
-      gimp_value_take_int32array (gimp_value_array_index (return_vals, 2), stroke_ids, num_strokes);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_strokes);
+      picman_value_take_int32array (picman_value_array_index (return_vals, 2), stroke_ids, num_strokes);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_stroke_get_length_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_get_length_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble precision;
   gdouble length = 0.0;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  precision = g_value_get_double (gimp_value_array_index (args, 2));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  precision = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
 
       if (stroke)
-        length = gimp_stroke_get_length (stroke, precision);
+        length = picman_stroke_get_length (stroke, precision);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), length);
+    g_value_set_double (picman_value_array_index (return_vals, 1), length);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_stroke_get_point_at_dist_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_get_point_at_dist_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble dist;
   gdouble precision;
@@ -265,20 +265,20 @@ vectors_stroke_get_point_at_dist_invoker (GimpProcedure         *procedure,
   gdouble slope = 0.0;
   gboolean valid = FALSE;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  dist = g_value_get_double (gimp_value_array_index (args, 2));
-  precision = g_value_get_double (gimp_value_array_index (args, 3));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  dist = g_value_get_double (picman_value_array_index (args, 2));
+  precision = g_value_get_double (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
 
       if (stroke)
         {
-          GimpCoords coord;
+          PicmanCoords coord;
 
-          valid = gimp_stroke_get_point_at_dist (stroke, dist, precision,
+          valid = picman_stroke_get_point_at_dist (stroke, dist, precision,
                                                  &coord, &slope);
           x_point = valid ? coord.x : 0;
           y_point = valid ? coord.y : 0;
@@ -287,358 +287,358 @@ vectors_stroke_get_point_at_dist_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_double (gimp_value_array_index (return_vals, 1), x_point);
-      g_value_set_double (gimp_value_array_index (return_vals, 2), y_point);
-      g_value_set_double (gimp_value_array_index (return_vals, 3), slope);
-      g_value_set_boolean (gimp_value_array_index (return_vals, 4), valid);
+      g_value_set_double (picman_value_array_index (return_vals, 1), x_point);
+      g_value_set_double (picman_value_array_index (return_vals, 2), y_point);
+      g_value_set_double (picman_value_array_index (return_vals, 3), slope);
+      g_value_set_boolean (picman_value_array_index (return_vals, 4), valid);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_remove_stroke_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_remove_stroke_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT, error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Remove path stroke"),
                                               vectors);
 
-          gimp_vectors_stroke_remove (vectors, stroke);
+          picman_vectors_stroke_remove (vectors, stroke);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_close_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_close_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT, error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Close path stroke"),
                                               vectors);
 
-          gimp_stroke_close (stroke);
+          picman_stroke_close (stroke);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_translate_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_translate_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gint32 off_x;
   gint32 off_y;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  off_x = g_value_get_int (gimp_value_array_index (args, 2));
-  off_y = g_value_get_int (gimp_value_array_index (args, 3));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  off_x = g_value_get_int (picman_value_array_index (args, 2));
+  off_y = g_value_get_int (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION,
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION,
                                                         error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Translate path stroke"),
                                               vectors);
 
-          gimp_stroke_translate (stroke, off_x, off_y);
+          picman_stroke_translate (stroke, off_x, off_y);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_scale_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_scale_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble scale_x;
   gdouble scale_y;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  scale_x = g_value_get_double (gimp_value_array_index (args, 2));
-  scale_y = g_value_get_double (gimp_value_array_index (args, 3));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  scale_x = g_value_get_double (picman_value_array_index (args, 2));
+  scale_y = g_value_get_double (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION,
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION,
                                                         error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Scale path stroke"),
                                               vectors);
 
-          gimp_stroke_scale (stroke, scale_x, scale_y);
+          picman_stroke_scale (stroke, scale_x, scale_y);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_rotate_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_rotate_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble center_x;
   gdouble center_y;
   gdouble angle;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  center_x = g_value_get_double (gimp_value_array_index (args, 2));
-  center_y = g_value_get_double (gimp_value_array_index (args, 3));
-  angle = g_value_get_double (gimp_value_array_index (args, 4));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  center_x = g_value_get_double (picman_value_array_index (args, 2));
+  center_y = g_value_get_double (picman_value_array_index (args, 3));
+  angle = g_value_get_double (picman_value_array_index (args, 4));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION,
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION,
                                                         error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Rotate path stroke"),
                                               vectors);
 
-          gimp_stroke_rotate (stroke, center_x, center_y, angle);
+          picman_stroke_rotate (stroke, center_x, center_y, angle);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_flip_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_flip_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gint32 flip_type;
   gdouble axis;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  flip_type = g_value_get_enum (gimp_value_array_index (args, 2));
-  axis = g_value_get_double (gimp_value_array_index (args, 3));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  flip_type = g_value_get_enum (picman_value_array_index (args, 2));
+  axis = g_value_get_double (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION,
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION,
                                                         error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Flip path stroke"),
                                               vectors);
 
-          gimp_stroke_flip (stroke, flip_type, axis);
+          picman_stroke_flip (stroke, flip_type, axis);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_flip_free_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_flip_free_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble x1;
   gdouble y1;
   gdouble x2;
   gdouble y2;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  x1 = g_value_get_double (gimp_value_array_index (args, 2));
-  y1 = g_value_get_double (gimp_value_array_index (args, 3));
-  x2 = g_value_get_double (gimp_value_array_index (args, 4));
-  y2 = g_value_get_double (gimp_value_array_index (args, 5));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  x1 = g_value_get_double (picman_value_array_index (args, 2));
+  y1 = g_value_get_double (picman_value_array_index (args, 3));
+  x2 = g_value_get_double (picman_value_array_index (args, 4));
+  y2 = g_value_get_double (picman_value_array_index (args, 5));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION,
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION,
                                                         error);
 
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Flip path stroke"),
                                               vectors);
 
-          gimp_stroke_flip_free (stroke, x1, y1, x2, y2);
+          picman_stroke_flip_free (stroke, x1, y1, x2, y2);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_stroke_get_points_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_get_points_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gint32 type = 0;
   gint32 num_points = 0;
   gdouble *controlpoints = NULL;
   gboolean closed = FALSE;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
 
-      if (GIMP_IS_BEZIER_STROKE (stroke))
+      if (PICMAN_IS_BEZIER_STROKE (stroke))
         {
           GArray *points_array;
           gint    i;
 
-          points_array = gimp_stroke_control_points_get (stroke, &closed);
+          points_array = picman_stroke_control_points_get (stroke, &closed);
 
           if (points_array)
             {
               num_points = points_array->len;
               controlpoints = g_new (gdouble, num_points * 2);
 
-              type = GIMP_VECTORS_STROKE_TYPE_BEZIER;
+              type = PICMAN_VECTORS_STROKE_TYPE_BEZIER;
               for (i = 0; i < num_points; i++)
                 {
                   controlpoints[2*i]   = g_array_index (points_array,
-                                                        GimpAnchor, i).position.x;
+                                                        PicmanAnchor, i).position.x;
                   controlpoints[2*i+1] = g_array_index (points_array,
-                                                        GimpAnchor, i).position.y;
+                                                        PicmanAnchor, i).position.y;
                 }
               g_array_free (points_array, TRUE);
               num_points *= 2;
@@ -650,56 +650,56 @@ vectors_stroke_get_points_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_enum (gimp_value_array_index (return_vals, 1), type);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), num_points);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 3), controlpoints, num_points);
-      g_value_set_boolean (gimp_value_array_index (return_vals, 4), closed);
+      g_value_set_enum (picman_value_array_index (return_vals, 1), type);
+      g_value_set_int (picman_value_array_index (return_vals, 2), num_points);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 3), controlpoints, num_points);
+      g_value_set_boolean (picman_value_array_index (return_vals, 4), closed);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_stroke_new_from_points_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_new_from_points_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 type;
   gint32 num_points;
   const gdouble *controlpoints;
   gboolean closed;
   gint32 stroke_id = 0;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  type = g_value_get_enum (gimp_value_array_index (args, 1));
-  num_points = g_value_get_int (gimp_value_array_index (args, 2));
-  controlpoints = gimp_value_get_floatarray (gimp_value_array_index (args, 3));
-  closed = g_value_get_boolean (gimp_value_array_index (args, 4));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  type = g_value_get_enum (picman_value_array_index (args, 1));
+  num_points = g_value_get_int (picman_value_array_index (args, 2));
+  controlpoints = picman_value_get_floatarray (picman_value_array_index (args, 3));
+  closed = g_value_get_boolean (picman_value_array_index (args, 4));
 
   if (success)
     {
-      GimpStroke *stroke;
-      GimpCoords *coords;
-      GimpCoords  default_coords = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanStroke *stroke;
+      PicmanCoords *coords;
+      PicmanCoords  default_coords = PICMAN_COORDS_DEFAULT_VALUES;
       gint i;
 
       success = FALSE;
 
-      if (type == GIMP_VECTORS_STROKE_TYPE_BEZIER &&
+      if (type == PICMAN_VECTORS_STROKE_TYPE_BEZIER &&
           num_points % 6 == 0)
         {
-          coords = g_new (GimpCoords, num_points/2);
+          coords = g_new (PicmanCoords, num_points/2);
           for (i = 0; i < num_points/2; i++)
             {
               coords[i] = default_coords;
@@ -707,18 +707,18 @@ vectors_stroke_new_from_points_invoker (GimpProcedure         *procedure,
               coords[i].y = controlpoints[i*2+1];
             }
 
-          stroke = gimp_stroke_new_from_coords (type, coords, num_points/2, closed);
+          stroke = picman_stroke_new_from_coords (type, coords, num_points/2, closed);
           if (stroke)
             {
-              if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-                gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+              if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+                picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                                   _("Add path stroke"),
                                                   vectors);
 
-              gimp_vectors_stroke_add (vectors, stroke);
+              picman_vectors_stroke_add (vectors, stroke);
               g_object_unref (stroke);
 
-              stroke_id = gimp_stroke_get_ID (stroke);
+              stroke_id = picman_stroke_get_ID (stroke);
 
               success = TRUE;
             }
@@ -727,46 +727,46 @@ vectors_stroke_new_from_points_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), stroke_id);
+    g_value_set_int (picman_value_array_index (return_vals, 1), stroke_id);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_stroke_interpolate_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_stroke_interpolate_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble precision;
   gint32 num_coords = 0;
   gdouble *coords = NULL;
   gboolean closed = FALSE;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  precision = g_value_get_double (gimp_value_array_index (args, 2));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  precision = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
 
       if (stroke)
         {
           GArray *coords_array;
           gint    i;
 
-          coords_array = gimp_stroke_interpolate (stroke, precision, &closed);
+          coords_array = picman_stroke_interpolate (stroke, precision, &closed);
 
           if (coords_array)
             {
@@ -775,8 +775,8 @@ vectors_stroke_interpolate_invoker (GimpProcedure         *procedure,
 
               for (i = 0; i < num_coords; i++)
                 {
-                  coords[2*i]   = g_array_index (coords_array, GimpCoords, i).x;
-                  coords[2*i+1] = g_array_index (coords_array, GimpCoords, i).y;
+                  coords[2*i]   = g_array_index (coords_array, PicmanCoords, i).x;
+                  coords[2*i+1] = g_array_index (coords_array, PicmanCoords, i).y;
                 }
               g_array_free (coords_array, TRUE);
               num_coords *= 2;
@@ -788,153 +788,153 @@ vectors_stroke_interpolate_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_coords);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 2), coords, num_coords);
-      g_value_set_boolean (gimp_value_array_index (return_vals, 3), closed);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_coords);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 2), coords, num_coords);
+      g_value_set_boolean (picman_value_array_index (return_vals, 3), closed);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_bezier_stroke_new_moveto_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_bezier_stroke_new_moveto_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gdouble x0;
   gdouble y0;
   gint32 stroke_id = 0;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  x0 = g_value_get_double (gimp_value_array_index (args, 1));
-  y0 = g_value_get_double (gimp_value_array_index (args, 2));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  x0 = g_value_get_double (picman_value_array_index (args, 1));
+  y0 = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (vectors),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (vectors), error))
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (vectors),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (vectors), error))
         {
-          GimpStroke *stroke;
-          GimpCoords  coord0 = GIMP_COORDS_DEFAULT_VALUES;
+          PicmanStroke *stroke;
+          PicmanCoords  coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
           coord0.x = x0;
           coord0.y = y0;
 
-          stroke = gimp_bezier_stroke_new_moveto (&coord0);
+          stroke = picman_bezier_stroke_new_moveto (&coord0);
 
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Add path stroke"),
                                               vectors);
 
-          gimp_vectors_stroke_add (vectors, stroke);
+          picman_vectors_stroke_add (vectors, stroke);
           g_object_unref (stroke);
 
-          stroke_id = gimp_stroke_get_ID (stroke);
+          stroke_id = picman_stroke_get_ID (stroke);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), stroke_id);
+    g_value_set_int (picman_value_array_index (return_vals, 1), stroke_id);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_bezier_stroke_lineto_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_bezier_stroke_lineto_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble x0;
   gdouble y0;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  x0 = g_value_get_double (gimp_value_array_index (args, 2));
-  y0 = g_value_get_double (gimp_value_array_index (args, 3));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  x0 = g_value_get_double (picman_value_array_index (args, 2));
+  y0 = g_value_get_double (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT, error);
 
       if (stroke)
         {
-          GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
           coord0.x = x0;
           coord0.y = y0;
 
-         if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-           gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+         if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+           picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                              _("Extend path stroke"),
                                              vectors);
 
-          gimp_bezier_stroke_lineto (stroke, &coord0);
+          picman_bezier_stroke_lineto (stroke, &coord0);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_bezier_stroke_conicto_invoker (GimpProcedure         *procedure,
-                                       Gimp                  *gimp,
-                                       GimpContext           *context,
-                                       GimpProgress          *progress,
-                                       const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_bezier_stroke_conicto_invoker (PicmanProcedure         *procedure,
+                                       Picman                  *picman,
+                                       PicmanContext           *context,
+                                       PicmanProgress          *progress,
+                                       const PicmanValueArray  *args,
                                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble x0;
   gdouble y0;
   gdouble x1;
   gdouble y1;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  x0 = g_value_get_double (gimp_value_array_index (args, 2));
-  y0 = g_value_get_double (gimp_value_array_index (args, 3));
-  x1 = g_value_get_double (gimp_value_array_index (args, 4));
-  y1 = g_value_get_double (gimp_value_array_index (args, 5));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  x0 = g_value_get_double (picman_value_array_index (args, 2));
+  y0 = g_value_get_double (picman_value_array_index (args, 3));
+  x1 = g_value_get_double (picman_value_array_index (args, 4));
+  y1 = g_value_get_double (picman_value_array_index (args, 5));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT, error);
 
       if (stroke)
         {
-          GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
-          GimpCoords coord1 = GIMP_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord1 = PICMAN_COORDS_DEFAULT_VALUES;
 
           coord0.x = x0;
           coord0.y = y0;
@@ -942,31 +942,31 @@ vectors_bezier_stroke_conicto_invoker (GimpProcedure         *procedure,
           coord1.x = x1;
           coord1.y = y1;
 
-         if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-           gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+         if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+           picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                              _("Extend path stroke"),
                                              vectors);
 
-          gimp_bezier_stroke_conicto (stroke, &coord0, &coord1);
+          picman_bezier_stroke_conicto (stroke, &coord0, &coord1);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_bezier_stroke_cubicto_invoker (GimpProcedure         *procedure,
-                                       Gimp                  *gimp,
-                                       GimpContext           *context,
-                                       GimpProgress          *progress,
-                                       const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_bezier_stroke_cubicto_invoker (PicmanProcedure         *procedure,
+                                       Picman                  *picman,
+                                       PicmanContext           *context,
+                                       PicmanProgress          *progress,
+                                       const PicmanValueArray  *args,
                                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 stroke_id;
   gdouble x0;
   gdouble y0;
@@ -975,25 +975,25 @@ vectors_bezier_stroke_cubicto_invoker (GimpProcedure         *procedure,
   gdouble x2;
   gdouble y2;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  stroke_id = g_value_get_int (gimp_value_array_index (args, 1));
-  x0 = g_value_get_double (gimp_value_array_index (args, 2));
-  y0 = g_value_get_double (gimp_value_array_index (args, 3));
-  x1 = g_value_get_double (gimp_value_array_index (args, 4));
-  y1 = g_value_get_double (gimp_value_array_index (args, 5));
-  x2 = g_value_get_double (gimp_value_array_index (args, 6));
-  y2 = g_value_get_double (gimp_value_array_index (args, 7));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  stroke_id = g_value_get_int (picman_value_array_index (args, 1));
+  x0 = g_value_get_double (picman_value_array_index (args, 2));
+  y0 = g_value_get_double (picman_value_array_index (args, 3));
+  x1 = g_value_get_double (picman_value_array_index (args, 4));
+  y1 = g_value_get_double (picman_value_array_index (args, 5));
+  x2 = g_value_get_double (picman_value_array_index (args, 6));
+  y2 = g_value_get_double (picman_value_array_index (args, 7));
 
   if (success)
     {
-      GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                        GIMP_PDB_ITEM_CONTENT, error);
+      PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                        PICMAN_PDB_ITEM_CONTENT, error);
 
       if (stroke)
         {
-          GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
-          GimpCoords coord1 = GIMP_COORDS_DEFAULT_VALUES;
-          GimpCoords coord2 = GIMP_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord1 = PICMAN_COORDS_DEFAULT_VALUES;
+          PicmanCoords coord2 = PICMAN_COORDS_DEFAULT_VALUES;
 
           coord0.x = x0;
           coord0.y = y0;
@@ -1004,32 +1004,32 @@ vectors_bezier_stroke_cubicto_invoker (GimpProcedure         *procedure,
           coord2.x = x2;
           coord2.y = y2;
 
-         if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-           gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+         if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+           picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                              _("Extend path stroke"),
                                              vectors);
 
-          gimp_bezier_stroke_cubicto (stroke, &coord0, &coord1, &coord2);
+          picman_bezier_stroke_cubicto (stroke, &coord0, &coord1, &coord2);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_bezier_stroke_new_ellipse_invoker (GimpProcedure         *procedure,
-                                           Gimp                  *gimp,
-                                           GimpContext           *context,
-                                           GimpProgress          *progress,
-                                           const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_bezier_stroke_new_ellipse_invoker (PicmanProcedure         *procedure,
+                                           Picman                  *picman,
+                                           PicmanContext           *context,
+                                           PicmanProgress          *progress,
+                                           const PicmanValueArray  *args,
                                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanVectors *vectors;
   gdouble x0;
   gdouble y0;
   gdouble radius_x;
@@ -1037,77 +1037,77 @@ vectors_bezier_stroke_new_ellipse_invoker (GimpProcedure         *procedure,
   gdouble angle;
   gint32 stroke_id = 0;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  x0 = g_value_get_double (gimp_value_array_index (args, 1));
-  y0 = g_value_get_double (gimp_value_array_index (args, 2));
-  radius_x = g_value_get_double (gimp_value_array_index (args, 3));
-  radius_y = g_value_get_double (gimp_value_array_index (args, 4));
-  angle = g_value_get_double (gimp_value_array_index (args, 5));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  x0 = g_value_get_double (picman_value_array_index (args, 1));
+  y0 = g_value_get_double (picman_value_array_index (args, 2));
+  radius_x = g_value_get_double (picman_value_array_index (args, 3));
+  radius_y = g_value_get_double (picman_value_array_index (args, 4));
+  angle = g_value_get_double (picman_value_array_index (args, 5));
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (vectors),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (vectors), error))
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (vectors),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (vectors), error))
         {
-          GimpStroke *stroke;
-          GimpCoords  coord0 = GIMP_COORDS_DEFAULT_VALUES;
+          PicmanStroke *stroke;
+          PicmanCoords  coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
           coord0.x = x0;
           coord0.y = y0;
 
-          stroke = gimp_bezier_stroke_new_ellipse (&coord0, radius_x, radius_y, angle);
+          stroke = picman_bezier_stroke_new_ellipse (&coord0, radius_x, radius_y, angle);
 
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Add path stroke"),
                                               vectors);
 
-          gimp_vectors_stroke_add (vectors, stroke);
+          picman_vectors_stroke_add (vectors, stroke);
           g_object_unref (stroke);
 
-          stroke_id = gimp_stroke_get_ID (stroke);
+          stroke_id = picman_stroke_get_ID (stroke);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), stroke_id);
+    g_value_set_int (picman_value_array_index (return_vals, 1), stroke_id);
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_to_selection_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_to_selection_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint32 operation;
   gboolean antialias;
   gboolean feather;
   gdouble feather_radius_x;
   gdouble feather_radius_y;
 
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 0), gimp);
-  operation = g_value_get_enum (gimp_value_array_index (args, 1));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 2));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 3));
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 4));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 5));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 0), picman);
+  operation = g_value_get_enum (picman_value_array_index (args, 1));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 2));
+  feather = g_value_get_boolean (picman_value_array_index (args, 3));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 4));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 5));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (vectors), NULL, 0, error))
-        gimp_item_to_selection (GIMP_ITEM (vectors),
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (vectors), NULL, 0, error))
+        picman_item_to_selection (PICMAN_ITEM (vectors),
                                 operation,
                                 antialias,
                                 feather,
@@ -1117,38 +1117,38 @@ vectors_to_selection_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_import_from_file_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_import_from_file_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *filename;
   gboolean merge;
   gboolean scale;
   gint32 num_vectors = 0;
   gint32 *vectors_ids = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 1));
-  merge = g_value_get_boolean (gimp_value_array_index (args, 2));
-  scale = g_value_get_boolean (gimp_value_array_index (args, 3));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 1));
+  merge = g_value_get_boolean (picman_value_array_index (args, 2));
+  scale = g_value_get_boolean (picman_value_array_index (args, 3));
 
   if (success)
     {
       GList *list, *vectors_list = NULL;
 
       /* FIXME tree */
-      success = gimp_vectors_import_file (image, filename,
+      success = picman_vectors_import_file (image, filename,
                                           merge, scale, NULL, -1,
                                           &vectors_list, error);
 
@@ -1164,36 +1164,36 @@ vectors_import_from_file_invoker (GimpProcedure         *procedure,
 
               list = vectors_list;
               for (i = 0; i < num_vectors; i++, list = g_list_next (list))
-                vectors_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+                vectors_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
               g_list_free (vectors_list);
             }
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_vectors);
-      gimp_value_take_int32array (gimp_value_array_index (return_vals, 2), vectors_ids, num_vectors);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_vectors);
+      picman_value_take_int32array (picman_value_array_index (return_vals, 2), vectors_ids, num_vectors);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_import_from_string_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_import_from_string_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *string;
   gint32 length;
   gboolean merge;
@@ -1201,18 +1201,18 @@ vectors_import_from_string_invoker (GimpProcedure         *procedure,
   gint32 num_vectors = 0;
   gint32 *vectors_ids = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  string = g_value_get_string (gimp_value_array_index (args, 1));
-  length = g_value_get_int (gimp_value_array_index (args, 2));
-  merge = g_value_get_boolean (gimp_value_array_index (args, 3));
-  scale = g_value_get_boolean (gimp_value_array_index (args, 4));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  string = g_value_get_string (picman_value_array_index (args, 1));
+  length = g_value_get_int (picman_value_array_index (args, 2));
+  merge = g_value_get_boolean (picman_value_array_index (args, 3));
+  scale = g_value_get_boolean (picman_value_array_index (args, 4));
 
   if (success)
     {
       GList *list, *vectors_list = NULL;
 
       /* FIXME tree */
-      success = gimp_vectors_import_buffer (image, string, length,
+      success = picman_vectors_import_buffer (image, string, length,
                                             merge, scale, NULL, -1,
                                             &vectors_list, error);
 
@@ -1228,1265 +1228,1265 @@ vectors_import_from_string_invoker (GimpProcedure         *procedure,
 
               list = vectors_list;
               for (i = 0; i < num_vectors; i++, list = g_list_next (list))
-                vectors_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+                vectors_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
               g_list_free (vectors_list);
             }
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_vectors);
-      gimp_value_take_int32array (gimp_value_array_index (return_vals, 2), vectors_ids, num_vectors);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_vectors);
+      picman_value_take_int32array (picman_value_array_index (return_vals, 2), vectors_ids, num_vectors);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-vectors_export_to_file_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_export_to_file_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *filename;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 1));
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 2), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 1));
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
-      success = gimp_vectors_export_file (image, vectors, filename, error);
+      success = picman_vectors_export_file (image, vectors, filename, error);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-vectors_export_to_string_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+vectors_export_to_string_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpVectors *vectors;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanVectors *vectors;
   gchar *string = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 1), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      string = gimp_vectors_export_string (image, vectors);
+      string = picman_vectors_export_string (image, vectors);
 
       success = (string != NULL);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), string);
+    g_value_take_string (picman_value_array_index (return_vals, 1), string);
 
   return return_vals;
 }
 
 void
-register_vectors_procs (GimpPDB *pdb)
+register_vectors_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-vectors-new
+   * picman-vectors-new
    */
-  procedure = gimp_procedure_new (vectors_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-new",
+  procedure = picman_procedure_new (vectors_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-new",
                                      "Creates a new empty vectors object.",
-                                     "Creates a new empty vectors object. The vectors object needs to be added to the image using 'gimp-image-insert-vectors'.",
+                                     "Creates a new empty vectors object. The vectors object needs to be added to the image using 'picman-image-insert-vectors'.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "the name of the new vector object.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_vectors_id ("vectors",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_vectors_id ("vectors",
                                                                "vectors",
                                                                "the current vector object, 0 if no vector exists in the image.",
-                                                               pdb->gimp, FALSE,
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               pdb->picman, FALSE,
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-new-from-text-layer
+   * picman-vectors-new-from-text-layer
    */
-  procedure = gimp_procedure_new (vectors_new_from_text_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-new-from-text-layer");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-new-from-text-layer",
+  procedure = picman_procedure_new (vectors_new_from_text_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-new-from-text-layer");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-new-from-text-layer",
                                      "Creates a new vectors object from a text layer.",
-                                     "Creates a new vectors object from a text layer. The vectors object needs to be added to the image using 'gimp-image-insert-vectors'.",
+                                     "Creates a new vectors object from a text layer. The vectors object needs to be added to the image using 'picman-image-insert-vectors'.",
                                      "Marcus Heese <heese@cip.ifi.lmu.de>",
                                      "Marcus Heese",
                                      "2008",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image.",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The text layer.",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_vectors_id ("vectors",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_vectors_id ("vectors",
                                                                "vectors",
                                                                "The vectors of the text layer.",
-                                                               pdb->gimp, FALSE,
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               pdb->picman, FALSE,
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-copy
+   * picman-vectors-copy
    */
-  procedure = gimp_procedure_new (vectors_copy_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-copy");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-copy",
+  procedure = picman_procedure_new (vectors_copy_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-copy");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-copy",
                                      "Copy a vectors object.",
                                      "This procedure copies the specified vectors object and returns the copy.",
                                      "Barak Itkin <lightningismyname@gmail.com>",
                                      "Barak Itkin",
                                      "2008",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object to copy",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_vectors_id ("vectors-copy",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_vectors_id ("vectors-copy",
                                                                "vectors copy",
                                                                "The newly copied vectors object",
-                                                               pdb->gimp, FALSE,
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               pdb->picman, FALSE,
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-get-strokes
+   * picman-vectors-get-strokes
    */
-  procedure = gimp_procedure_new (vectors_get_strokes_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-get-strokes");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-get-strokes",
+  procedure = picman_procedure_new (vectors_get_strokes_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-get-strokes");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-get-strokes",
                                      "List the strokes associated with the passed path.",
                                      "Returns an Array with the stroke-IDs associated with the passed path.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-strokes",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-strokes",
                                                           "num strokes",
                                                           "The number of strokes returned.",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32_array ("stroke-ids",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32_array ("stroke-ids",
                                                                 "stroke ids",
                                                                 "List of the strokes belonging to the path.",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-get-length
+   * picman-vectors-stroke-get-length
    */
-  procedure = gimp_procedure_new (vectors_stroke_get_length_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-get-length");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-get-length",
+  procedure = picman_procedure_new (vectors_stroke_get_length_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-get-length");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-get-length",
                                      "Measure the length of the given stroke.",
                                      "Measure the length of the given stroke.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("precision",
                                                     "precision",
                                                     "The precision used for the approximation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("length",
                                                         "length",
                                                         "The length (in pixels) of the given stroke.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-get-point-at-dist
+   * picman-vectors-stroke-get-point-at-dist
    */
-  procedure = gimp_procedure_new (vectors_stroke_get_point_at_dist_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-get-point-at-dist");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-get-point-at-dist",
+  procedure = picman_procedure_new (vectors_stroke_get_point_at_dist_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-get-point-at-dist");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-get-point-at-dist",
                                      "Get point at a specified distance along the stroke.",
                                      "This will return the x,y position of a point at a given distance along the stroke. The distance will be obtained by first digitizing the curve internally and then walking along the curve. For a closed stroke the start of the path is the first point on the path that was created. This might not be obvious. If the stroke is not long enough, a \"valid\" flag will be FALSE.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("dist",
                                                     "dist",
                                                     "The given distance.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("precision",
                                                     "precision",
                                                     "The precision used for the approximation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("x-point",
                                                         "x point",
                                                         "The x position of the point.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("y-point",
                                                         "y point",
                                                         "The y position of the point.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("slope",
                                                         "slope",
                                                         "The slope (dy / dx) at the specified point.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("valid",
                                                          "valid",
                                                          "Indicator for the validity of the returned data.",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-remove-stroke
+   * picman-vectors-remove-stroke
    */
-  procedure = gimp_procedure_new (vectors_remove_stroke_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-remove-stroke");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-remove-stroke",
+  procedure = picman_procedure_new (vectors_remove_stroke_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-remove-stroke");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-remove-stroke",
                                      "remove the stroke from a vectors object.",
                                      "Remove the stroke from a vectors object.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-close
+   * picman-vectors-stroke-close
    */
-  procedure = gimp_procedure_new (vectors_stroke_close_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-close");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-close",
+  procedure = picman_procedure_new (vectors_stroke_close_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-close");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-close",
                                      "closes the specified stroke.",
                                      "Closes the specified stroke.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-translate
+   * picman-vectors-stroke-translate
    */
-  procedure = gimp_procedure_new (vectors_stroke_translate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-translate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-translate",
+  procedure = picman_procedure_new (vectors_stroke_translate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-translate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-translate",
                                      "translate the given stroke.",
                                      "Translate the given stroke.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("off-x",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("off-x",
                                                       "off x",
                                                       "Offset in x direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("off-y",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("off-y",
                                                       "off y",
                                                       "Offset in y direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-scale
+   * picman-vectors-stroke-scale
    */
-  procedure = gimp_procedure_new (vectors_stroke_scale_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-scale");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-scale",
+  procedure = picman_procedure_new (vectors_stroke_scale_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-scale");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-scale",
                                      "scales the given stroke.",
                                      "Scale the given stroke.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("scale-x",
                                                     "scale x",
                                                     "Scale factor in x direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("scale-y",
                                                     "scale y",
                                                     "Scale factor in y direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-rotate
+   * picman-vectors-stroke-rotate
    */
-  procedure = gimp_procedure_new (vectors_stroke_rotate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-rotate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-rotate",
+  procedure = picman_procedure_new (vectors_stroke_rotate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-rotate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-rotate",
                                      "rotates the given stroke.",
                                      "Rotates the given stroke around given center by angle (in degrees).",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-x",
                                                     "center x",
                                                     "X coordinate of the rotation center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-y",
                                                     "center y",
                                                     "Y coordinate of the rotation center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "angle to rotate about",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-flip
+   * picman-vectors-stroke-flip
    */
-  procedure = gimp_procedure_new (vectors_stroke_flip_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-flip");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-flip",
+  procedure = picman_procedure_new (vectors_stroke_flip_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-flip");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-flip",
                                      "flips the given stroke.",
                                      "Rotates the given stroke around given center by angle (in degrees).",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("flip-type",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("flip-type",
                                                      "flip type",
                                                      "Flip orientation, either vertical or horizontal",
-                                                     GIMP_TYPE_ORIENTATION_TYPE,
-                                                     GIMP_ORIENTATION_HORIZONTAL,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[2]),
-                                      GIMP_ORIENTATION_UNKNOWN);
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_TYPE_ORIENTATION_TYPE,
+                                                     PICMAN_ORIENTATION_HORIZONTAL,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[2]),
+                                      PICMAN_ORIENTATION_UNKNOWN);
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("axis",
                                                     "axis",
                                                     "axis coordinate about which to flip, in pixels",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-flip-free
+   * picman-vectors-stroke-flip-free
    */
-  procedure = gimp_procedure_new (vectors_stroke_flip_free_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-flip-free");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-flip-free",
+  procedure = picman_procedure_new (vectors_stroke_flip_free_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-flip-free");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-flip-free",
                                      "flips the given stroke about an arbitrary axis.",
                                      "Flips the given stroke about an arbitrary axis. Axis is defined by two coordinates in the image (in pixels), through which the flipping axis passes.",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "Jo\xc3\xa3o S. O. Bueno",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "X coordinate of the first point of the flipping axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "Y coordinate of the first point of the flipping axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x2",
                                                     "x2",
                                                     "X coordinate of the second point of the flipping axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y2",
                                                     "y2",
                                                     "Y coordinate of the second point of the flipping axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-get-points
+   * picman-vectors-stroke-get-points
    */
-  procedure = gimp_procedure_new (vectors_stroke_get_points_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-get-points");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-get-points",
+  procedure = picman_procedure_new (vectors_stroke_get_points_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-get-points");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-get-points",
                                      "returns the control points of a stroke.",
-                                     "returns the control points of a stroke. The interpretation of the coordinates returned depends on the type of the stroke. For Gimp 2.4 this is always a bezier stroke, where the coordinates are the control points.",
+                                     "returns the control points of a stroke. The interpretation of the coordinates returned depends on the type of the stroke. For Picman 2.4 this is always a bezier stroke, where the coordinates are the control points.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("type",
                                                       "type",
-                                                      "type of the stroke (always GIMP_VECTORS_STROKE_TYPE_BEZIER for now).",
-                                                      GIMP_TYPE_VECTORS_STROKE_TYPE,
-                                                      GIMP_VECTORS_STROKE_TYPE_BEZIER,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-points",
+                                                      "type of the stroke (always PICMAN_VECTORS_STROKE_TYPE_BEZIER for now).",
+                                                      PICMAN_TYPE_VECTORS_STROKE_TYPE,
+                                                      PICMAN_VECTORS_STROKE_TYPE_BEZIER,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-points",
                                                           "num points",
                                                           "The number of floats returned.",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("controlpoints",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("controlpoints",
                                                                 "controlpoints",
                                                                 "List of the control points for the stroke (x0, y0, x1, y1, ...).",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                                PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("closed",
                                                          "closed",
                                                          "Whether the stroke is closed or not.",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-new-from-points
+   * picman-vectors-stroke-new-from-points
    */
-  procedure = gimp_procedure_new (vectors_stroke_new_from_points_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-new-from-points");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-new-from-points",
+  procedure = picman_procedure_new (vectors_stroke_new_from_points_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-new-from-points");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-new-from-points",
                                      "Adds a stroke of a given type to the vectors object.",
-                                     "Adds a stroke of a given type to the vectors object. The coordinates of the control points can be specified. For now only strokes of the type GIMP_VECTORS_STROKE_TYPE_BEZIER are supported. The control points are specified as a pair of float values for the x- and y-coordinate. The Bezier stroke type needs a multiple of three control points. Each Bezier segment endpoint (anchor, A) has two additional control points (C) associated. They are specified in the order CACCACCAC...",
+                                     "Adds a stroke of a given type to the vectors object. The coordinates of the control points can be specified. For now only strokes of the type PICMAN_VECTORS_STROKE_TYPE_BEZIER are supported. The control points are specified as a pair of float values for the x- and y-coordinate. The Bezier stroke type needs a multiple of three control points. Each Bezier segment endpoint (anchor, A) has two additional control points (C) associated. They are specified in the order CACCACCAC...",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("type",
                                                   "type",
-                                                  "type of the stroke (always GIMP_VECTORS_STROKE_TYPE_BEZIER for now).",
-                                                  GIMP_TYPE_VECTORS_STROKE_TYPE,
-                                                  GIMP_VECTORS_STROKE_TYPE_BEZIER,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-points",
+                                                  "type of the stroke (always PICMAN_VECTORS_STROKE_TYPE_BEZIER for now).",
+                                                  PICMAN_TYPE_VECTORS_STROKE_TYPE,
+                                                  PICMAN_VECTORS_STROKE_TYPE_BEZIER,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-points",
                                                       "num points",
                                                       "The number of elements in the array, i.e. the number of controlpoints in the stroke * 2 (x- and y-coordinate).",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("controlpoints",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("controlpoints",
                                                             "controlpoints",
                                                             "List of the x- and y-coordinates of the control points.",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("closed",
                                                      "closed",
                                                      "Whether the stroke is to be closed or not.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("stroke-id",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("stroke-id",
                                                           "stroke id",
                                                           "The stroke ID of the newly created stroke.",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-stroke-interpolate
+   * picman-vectors-stroke-interpolate
    */
-  procedure = gimp_procedure_new (vectors_stroke_interpolate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-stroke-interpolate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-stroke-interpolate",
+  procedure = picman_procedure_new (vectors_stroke_interpolate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-stroke-interpolate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-stroke-interpolate",
                                      "returns polygonal approximation of the stroke.",
                                      "returns polygonal approximation of the stroke.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("precision",
                                                     "precision",
                                                     "The precision used for the approximation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-coords",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-coords",
                                                           "num coords",
                                                           "The number of floats returned.",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("coords",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("coords",
                                                                 "coords",
                                                                 "List of the coords along the path (x0, y0, x1, y1, ...).",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                                PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("closed",
                                                          "closed",
                                                          "Whether the stroke is closed or not.",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-bezier-stroke-new-moveto
+   * picman-vectors-bezier-stroke-new-moveto
    */
-  procedure = gimp_procedure_new (vectors_bezier_stroke_new_moveto_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-bezier-stroke-new-moveto");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-bezier-stroke-new-moveto",
+  procedure = picman_procedure_new (vectors_bezier_stroke_new_moveto_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-bezier-stroke-new-moveto");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-bezier-stroke-new-moveto",
                                      "Adds a bezier stroke with a single moveto to the vectors object.",
                                      "Adds a bezier stroke with a single moveto to the vectors object.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The x-coordinate of the moveto",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The y-coordinate of the moveto",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("stroke-id",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("stroke-id",
                                                           "stroke id",
                                                           "The resulting stroke",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-bezier-stroke-lineto
+   * picman-vectors-bezier-stroke-lineto
    */
-  procedure = gimp_procedure_new (vectors_bezier_stroke_lineto_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-bezier-stroke-lineto");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-bezier-stroke-lineto",
+  procedure = picman_procedure_new (vectors_bezier_stroke_lineto_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-bezier-stroke-lineto");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-bezier-stroke-lineto",
                                      "Extends a bezier stroke with a lineto.",
                                      "Extends a bezier stroke with a lineto.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The x-coordinate of the lineto",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The y-coordinate of the lineto",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-bezier-stroke-conicto
+   * picman-vectors-bezier-stroke-conicto
    */
-  procedure = gimp_procedure_new (vectors_bezier_stroke_conicto_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-bezier-stroke-conicto");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-bezier-stroke-conicto",
+  procedure = picman_procedure_new (vectors_bezier_stroke_conicto_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-bezier-stroke-conicto");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-bezier-stroke-conicto",
                                      "Extends a bezier stroke with a conic bezier spline.",
                                      "Extends a bezier stroke with a conic bezier spline. Actually a cubic bezier spline gets added that realizes the shape of a conic bezier spline.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The x-coordinate of the control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The y-coordinate of the control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "The x-coordinate of the end point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "The y-coordinate of the end point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-bezier-stroke-cubicto
+   * picman-vectors-bezier-stroke-cubicto
    */
-  procedure = gimp_procedure_new (vectors_bezier_stroke_cubicto_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-bezier-stroke-cubicto");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-bezier-stroke-cubicto",
+  procedure = picman_procedure_new (vectors_bezier_stroke_cubicto_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-bezier-stroke-cubicto");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-bezier-stroke-cubicto",
                                      "Extends a bezier stroke with a cubic bezier spline.",
                                      "Extends a bezier stroke with a cubic bezier spline.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("stroke-id",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("stroke-id",
                                                       "stroke id",
                                                       "The stroke ID",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The x-coordinate of the first control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The y-coordinate of the first control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "The x-coordinate of the second control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "The y-coordinate of the second control point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x2",
                                                     "x2",
                                                     "The x-coordinate of the end point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y2",
                                                     "y2",
                                                     "The y-coordinate of the end point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-bezier-stroke-new-ellipse
+   * picman-vectors-bezier-stroke-new-ellipse
    */
-  procedure = gimp_procedure_new (vectors_bezier_stroke_new_ellipse_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-bezier-stroke-new-ellipse");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-bezier-stroke-new-ellipse",
+  procedure = picman_procedure_new (vectors_bezier_stroke_new_ellipse_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-bezier-stroke-new-ellipse");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-bezier-stroke-new-ellipse",
                                      "Adds a bezier stroke describing an ellipse the vectors object.",
                                      "Adds a bezier stroke describing an ellipse the vectors object.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The x-coordinate of the center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The y-coordinate of the center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("radius-x",
                                                     "radius x",
                                                     "The radius in x direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("radius-y",
                                                     "radius y",
                                                     "The radius in y direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "The angle the x-axis of the ellipse (radians, counterclockwise)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("stroke-id",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("stroke-id",
                                                           "stroke id",
                                                           "The resulting stroke",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-to-selection
+   * picman-vectors-to-selection
    */
-  procedure = gimp_procedure_new (vectors_to_selection_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-to-selection");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-to-selection",
-                                     "Deprecated: Use 'gimp-image-select-item' instead.",
-                                     "Deprecated: Use 'gimp-image-select-item' instead.",
+  procedure = picman_procedure_new (vectors_to_selection_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-to-selection");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-to-selection",
+                                     "Deprecated: Use 'picman-image-select-item' instead.",
+                                     "Deprecated: Use 'picman-image-select-item' instead.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
-                                     "gimp-image-select-item");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+                                     "picman-image-select-item");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object to render to the selection",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The desired operation with current selection",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialias selection.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather selection.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "Feather radius x.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "Feather radius y.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-import-from-file
+   * picman-vectors-import-from-file
    */
-  procedure = gimp_procedure_new (vectors_import_from_file_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-import-from-file");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-import-from-file",
+  procedure = picman_procedure_new (vectors_import_from_file_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-import-from-file");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-import-from-file",
                                      "Import paths from an SVG file.",
                                      "This procedure imports paths from an SVG file. SVG elements other than paths and basic shapes are ignored.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the SVG file to import.",
                                                        TRUE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("merge",
                                                      "merge",
                                                      "Merge paths into a single vectors object.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("scale",
                                                      "scale",
                                                      "Scale the SVG to image dimensions.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-vectors",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-vectors",
                                                           "num vectors",
                                                           "The number of newly created vectors",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32_array ("vectors-ids",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32_array ("vectors-ids",
                                                                 "vectors ids",
                                                                 "The list of newly created vectors",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-import-from-string
+   * picman-vectors-import-from-string
    */
-  procedure = gimp_procedure_new (vectors_import_from_string_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-import-from-string");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-import-from-string",
+  procedure = picman_procedure_new (vectors_import_from_string_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-import-from-string");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-import-from-string",
                                      "Import paths from an SVG string.",
-                                     "This procedure works like 'gimp-vectors-import-from-file' but takes a string rather than reading the SVG from a file. This allows you to write scripts that generate SVG and feed it to GIMP.",
+                                     "This procedure works like 'picman-vectors-import-from-file' but takes a string rather than reading the SVG from a file. This allows you to write scripts that generate SVG and feed it to PICMAN.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("string",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("string",
                                                        "string",
                                                        "A string that must be a complete and valid SVG document.",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("length",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("length",
                                                       "length",
                                                       "Number of bytes in string or -1 if the string is NULL terminated.",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("merge",
                                                      "merge",
                                                      "Merge paths into a single vectors object.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("scale",
                                                      "scale",
                                                      "Scale the SVG to image dimensions.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-vectors",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-vectors",
                                                           "num vectors",
                                                           "The number of newly created vectors",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32_array ("vectors-ids",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32_array ("vectors-ids",
                                                                 "vectors ids",
                                                                 "The list of newly created vectors",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-export-to-file
+   * picman-vectors-export-to-file
    */
-  procedure = gimp_procedure_new (vectors_export_to_file_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-export-to-file");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-export-to-file",
+  procedure = picman_procedure_new (vectors_export_to_file_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-export-to-file");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-export-to-file",
                                      "save a path as an SVG file.",
-                                     "This procedure creates an SVG file to save a Vectors object, that is, a path. The resulting file can be edited using a vector graphics application, or later reloaded into GIMP. If you pass 0 as the 'vectors' argument, then all paths in the image will be exported.",
+                                     "This procedure creates an SVG file to save a Vectors object, that is, a path. The resulting file can be edited using a vector graphics application, or later reloaded into PICMAN. If you pass 0 as the 'vectors' argument, then all paths in the image will be exported.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the SVG file to create.",
                                                        TRUE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object to be saved, or 0 for all in the image",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-vectors-export-to-string
+   * picman-vectors-export-to-string
    */
-  procedure = gimp_procedure_new (vectors_export_to_string_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-vectors-export-to-string");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-vectors-export-to-string",
+  procedure = picman_procedure_new (vectors_export_to_string_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-vectors-export-to-string");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-vectors-export-to-string",
                                      "Save a path as an SVG string.",
-                                     "This procedure works like 'gimp-vectors-export-to-file' but creates a string rather than a file. The contents are a NUL-terminated string that holds a complete XML document. If you pass 0 as the 'vectors' argument, then all paths in the image will be exported.",
+                                     "This procedure works like 'picman-vectors-export-to-file' but creates a string rather than a file. The contents are a NUL-terminated string that holds a complete XML document. If you pass 0 as the 'vectors' argument, then all paths in the image will be exported.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object to save, or 0 for all in the image",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("string",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("string",
                                                            "string",
                                                            "A string whose contents are a complete SVG document.",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

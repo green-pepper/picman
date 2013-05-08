@@ -1,12 +1,12 @@
 /*************************************/
-/* GIMP image manipulation routines. */
+/* PICMAN image manipulation routines. */
 /*************************************/
 
 #include "config.h"
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "lighting-main.h"
 #include "lighting-image.h"
@@ -14,14 +14,14 @@
 #include "lighting-ui.h"
 
 
-GimpDrawable *input_drawable,*output_drawable;
-GimpPixelRgn  source_region, dest_region;
+PicmanDrawable *input_drawable,*output_drawable;
+PicmanPixelRgn  source_region, dest_region;
 
-GimpDrawable *bump_drawable = NULL;
-GimpPixelRgn  bump_region;
+PicmanDrawable *bump_drawable = NULL;
+PicmanPixelRgn  bump_region;
 
-GimpDrawable *env_drawable = NULL;
-GimpPixelRgn  env_region;
+PicmanDrawable *env_drawable = NULL;
+PicmanPixelRgn  env_region;
 
 guchar          *preview_rgb_data = NULL;
 gint             preview_rgb_stride;
@@ -29,7 +29,7 @@ cairo_surface_t *preview_surface = NULL;
 
 glong  maxcounter;
 gint   imgtype, width, height, env_width, env_height, in_channels, out_channels;
-GimpRGB background;
+PicmanRGB background;
 
 gint border_x1, border_y1, border_x2, border_y2;
 
@@ -40,7 +40,7 @@ guchar sinemap[256], spheremap[256], logmap[256];
 /******************/
 
 guchar
-peek_map (GimpPixelRgn *region,
+peek_map (PicmanPixelRgn *region,
 	  gint       x,
 	  gint       y)
 {
@@ -48,7 +48,7 @@ peek_map (GimpPixelRgn *region,
   guchar ret_val;
 
 
-  gimp_pixel_rgn_get_pixel (region, data, x, y);
+  picman_pixel_rgn_get_pixel (region, data, x, y);
 
   if (region->bpp == 1)
   {
@@ -61,14 +61,14 @@ peek_map (GimpPixelRgn *region,
   return ret_val;
 }
 
-GimpRGB
+PicmanRGB
 peek (gint x,
       gint y)
 {
   guchar data[4];
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_pixel_rgn_get_pixel (&source_region,data, x, y);
+  picman_pixel_rgn_get_pixel (&source_region,data, x, y);
 
   color.r = (gdouble) (data[0]) / 255.0;
   color.g = (gdouble) (data[1]) / 255.0;
@@ -89,12 +89,12 @@ peek (gint x,
   return color;
 }
 
-GimpRGB
+PicmanRGB
 peek_env_map (gint x,
 	      gint y)
 {
   guchar data[4];
-  GimpRGB color;
+  PicmanRGB color;
 
   if (x < 0)
     x = 0;
@@ -105,7 +105,7 @@ peek_env_map (gint x,
   else if (y >= env_height)
     y = env_height - 1;
 
-  gimp_pixel_rgn_get_pixel (&env_region, data, x, y);
+  picman_pixel_rgn_get_pixel (&env_region, data, x, y);
 
   color.r = (gdouble) (data[0]) / 255.0;
   color.g = (gdouble) (data[1]) / 255.0;
@@ -118,7 +118,7 @@ peek_env_map (gint x,
 void
 poke (gint    x,
       gint    y,
-      GimpRGB *color)
+      PicmanRGB *color)
 {
   static guchar data[4];
 
@@ -136,7 +136,7 @@ poke (gint    x,
   data[2] = (guchar) (color->b * 255.0);
   data[3] = (guchar) (color->a * 255.0);
 
-  gimp_pixel_rgn_set_pixel (&dest_region, data, x, y);
+  picman_pixel_rgn_set_pixel (&dest_region, data, x, y);
 }
 
 gint
@@ -149,11 +149,11 @@ check_bounds (gint x,
     return TRUE;
 }
 
-GimpVector3
+PicmanVector3
 int_to_pos (gint x,
 	    gint y)
 {
-  GimpVector3 pos;
+  PicmanVector3 pos;
 
   if (width >= height)
     {
@@ -174,11 +174,11 @@ int_to_pos (gint x,
   return pos;
 }
 
-GimpVector3
+PicmanVector3
 int_to_posf (gdouble x,
 	     gdouble y)
 {
-  GimpVector3 pos;
+  PicmanVector3 pos;
 
   if (width >= height)
     {
@@ -247,13 +247,13 @@ pos_to_float (gdouble  x,
 /* Quartics bilinear interpolation stuff.     */
 /**********************************************/
 
-GimpRGB
+PicmanRGB
 get_image_color (gdouble  u,
 		 gdouble  v,
 		 gint    *inside)
 {
   gint    x1, y1, x2, y2;
-  GimpRGB p[4];
+  PicmanRGB p[4];
 
   x1 = RINT (u);
   y1 = RINT (v);
@@ -279,11 +279,11 @@ get_image_color (gdouble  u,
   p[2] = peek (x1, y2);
   p[3] = peek (x2, y2);
 
-  return gimp_bilinear_rgba (u, v, p);
+  return picman_bilinear_rgba (u, v, p);
 }
 
 gdouble
-get_map_value (GimpPixelRgn *region,
+get_map_value (PicmanPixelRgn *region,
 	       gdouble    u,
 	       gdouble    v,
 	       gint      *inside)
@@ -309,7 +309,7 @@ get_map_value (GimpPixelRgn *region,
   p[2] = (gdouble) peek_map (region, x1, y2);
   p[3] = (gdouble) peek_map (region, x2, y2);
 
-  return gimp_bilinear (u, v, p);
+  return picman_bilinear (u, v, p);
 }
 
 static void
@@ -344,7 +344,7 @@ compute_maps (void)
 /****************************************/
 
 gint
-image_setup (GimpDrawable *drawable,
+image_setup (PicmanDrawable *drawable,
 	     gint          interactive)
 {
   compute_maps ();
@@ -355,13 +355,13 @@ image_setup (GimpDrawable *drawable,
   input_drawable  = drawable;
   output_drawable = drawable;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
 			     &border_x1, &border_y1, &border_x2, &border_y2);
 
   width  = input_drawable->width;
   height = input_drawable->height;
 
-  gimp_pixel_rgn_init (&source_region, input_drawable,
+  picman_pixel_rgn_init (&source_region, input_drawable,
 		       0, 0, width, height, FALSE, FALSE);
 
   maxcounter = (glong) width * (glong) height;
@@ -370,7 +370,7 @@ image_setup (GimpDrawable *drawable,
   /* =================== */
 
   in_channels = 3;
-  if (gimp_drawable_has_alpha (input_drawable->drawable_id) == TRUE)
+  if (picman_drawable_has_alpha (input_drawable->drawable_id) == TRUE)
     in_channels++;
 
   if (interactive)

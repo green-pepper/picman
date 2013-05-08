@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; script-fu-paste-as-pattern
@@ -19,14 +19,14 @@
 
 
 (define (script-fu-paste-as-pattern name filename)
-  (let* ((pattern-image (car (gimp-edit-paste-as-new)))
+  (let* ((pattern-image (car (picman-edit-paste-as-new)))
          (pattern-draw 0)
          (path 0))
 
-    (if (= TRUE (car (gimp-image-is-valid pattern-image)))
+    (if (= TRUE (car (picman-image-is-valid pattern-image)))
       (begin
-        (set! pattern-draw (car (gimp-image-get-active-drawable pattern-image)))
-        (set! path (string-append gimp-directory
+        (set! pattern-draw (car (picman-image-get-active-drawable pattern-image)))
+        (set! path (string-append picman-directory
                              "/patterns/"
                              filename
                              (number->string pattern-image)
@@ -36,12 +36,12 @@
                        pattern-image pattern-draw path path
                        name)
        
-        (gimp-image-delete pattern-image)
+        (picman-image-delete pattern-image)
        
-        (gimp-patterns-refresh)
-        (gimp-context-set-pattern name)
+        (picman-patterns-refresh)
+        (picman-context-set-pattern name)
       )
-      (gimp-message _"There is no image data in the clipboard to paste.")
+      (picman-message _"There is no image data in the clipboard to paste.")
     )
   )
 )
@@ -49,7 +49,7 @@
 (script-fu-register "script-fu-paste-as-pattern"
   _"New _Pattern..."
   _"Paste the clipboard contents into a new pattern"
-  "Michael Natterer <mitch@gimp.org>"
+  "Michael Natterer <mitch@picman.org>"
   "Michael Natterer"
   "2005-09-25"
   ""

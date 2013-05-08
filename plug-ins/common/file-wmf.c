@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* WMF loading file filter for GIMP
+/* WMF loading file filter for PICMAN
  * -Dom Lachowicz <cinamod@hotmail.com> 2003
  * -Francis James Franklin <fjf@alinameridon.com>
  */
@@ -25,17 +25,17 @@
 #include <libwmf/api.h>
 #include <libwmf/gd.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
-#include <libgimpmath/gimpmath.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
+#include <libpicmanmath/picmanmath.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC               "file-wmf-load"
 #define LOAD_THUMB_PROC         "file-wmf-load-thumb"
 #define PLUG_IN_BINARY          "file-wmf"
-#define PLUG_IN_ROLE            "gimp-file-wmf"
+#define PLUG_IN_ROLE            "picman-file-wmf"
 
 #define WMF_DEFAULT_RESOLUTION  90.0
 #define WMF_DEFAULT_SIZE        500
@@ -59,9 +59,9 @@ static WmfLoadVals load_vals =
 static void      query          (void);
 static void      run            (const gchar       *name,
                                  gint               nparams,
-                                 const GimpParam   *param,
+                                 const PicmanParam   *param,
                                  gint              *nreturn_vals,
-                                 GimpParam        **return_vals);
+                                 PicmanParam        **return_vals);
 static gint32    load_image     (const gchar       *filename,
                                  GError           **error);
 static gboolean  load_wmf_size  (const gchar       *filename,
@@ -76,7 +76,7 @@ static guchar   *wmf_load_file  (const gchar       *filename,
                                  GError           **error);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,   /* init_proc  */
   NULL,   /* quit_proc  */
@@ -93,34 +93,34 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" },
-    { GIMP_PDB_FLOAT,  "resolution",   "Resolution to use for rendering the WMF (defaults to 72 dpi"     },
-    { GIMP_PDB_INT32,  "width",        "Width (in pixels) to load the WMF in, 0 for original width"      },
-    { GIMP_PDB_INT32,  "height",       "Height (in pixels) to load the WMF in, 0 for original height"    }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" },
+    { PICMAN_PDB_FLOAT,  "resolution",   "Resolution to use for rendering the WMF (defaults to 72 dpi"     },
+    { PICMAN_PDB_INT32,  "width",        "Width (in pixels) to load the WMF in, 0 for original width"      },
+    { PICMAN_PDB_INT32,  "height",       "Height (in pixels) to load the WMF in, 0 for original height"    }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,   "image",         "Output image"               }
+    { PICMAN_PDB_IMAGE,   "image",         "Output image"               }
   };
 
-  static const GimpParamDef thumb_args[] =
+  static const PicmanParamDef thumb_args[] =
   {
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load"   },
-    { GIMP_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"       }
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load"   },
+    { PICMAN_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"       }
   };
-  static const GimpParamDef thumb_return_vals[] =
+  static const PicmanParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"                },
-    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"      },
-    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"     }
+    { PICMAN_PDB_IMAGE,  "image",        "Thumbnail image"                },
+    { PICMAN_PDB_INT32,  "image-width",  "Width of full-sized image"      },
+    { PICMAN_PDB_INT32,  "image-height", "Height of full-sized image"     }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Loads files in the WMF file format",
                           "Loads files in the WMF file format",
                           "Dom Lachowicz <cinamod@hotmail.com>",
@@ -128,17 +128,17 @@ query (void)
                           "(c) 2003 - Version 0.3.0",
                           N_("Microsoft WMF file"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-wmf");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-wmf");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "wmf,apm", "",
                                     "0,string,\\327\\315\\306\\232,0,string,\\1\\0\\11\\0");
 
-  gimp_install_procedure (LOAD_THUMB_PROC,
+  picman_install_procedure (LOAD_THUMB_PROC,
                           "Loads a small preview from a WMF image",
                           "",
                           "Dom Lachowicz <cinamod@hotmail.com>",
@@ -146,12 +146,12 @@ query (void)
                           "(c) 2003 - Version 0.3.0",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (thumb_args),
                           G_N_ELEMENTS (thumb_return_vals),
                           thumb_args, thumb_return_vals);
 
-  gimp_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
+  picman_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
 }
 
 /*
@@ -160,13 +160,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[4];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status   = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[4];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status   = PICMAN_PDB_SUCCESS;
   const gchar       *filename = NULL;
   GError            *error    = NULL;
   gint32             image_ID = -1;
@@ -180,29 +180,29 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
       filename = param[1].data.d_string;
 
-      gimp_get_data (LOAD_PROC, &load_vals);
+      picman_get_data (LOAD_PROC, &load_vals);
 
       switch (run_mode)
         {
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (nparams > 3)  load_vals.resolution = param[3].data.d_float;
           if (nparams > 4)  load_vals.width      = param[4].data.d_int32;
           if (nparams > 5)  load_vals.height     = param[5].data.d_int32;
           break;
 
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           if (!load_dialog (param[1].data.d_string))
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           break;
         }
     }
@@ -233,18 +233,18 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (load_vals.resolution < GIMP_MIN_RESOLUTION ||
-          load_vals.resolution > GIMP_MAX_RESOLUTION)
+      if (load_vals.resolution < PICMAN_MIN_RESOLUTION ||
+          load_vals.resolution > PICMAN_MAX_RESOLUTION)
         {
           load_vals.resolution = WMF_DEFAULT_RESOLUTION;
         }
@@ -254,35 +254,35 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       if (strcmp (name, LOAD_THUMB_PROC) == 0)
         {
           *nreturn_vals = 4;
-          values[2].type         = GIMP_PDB_INT32;
+          values[2].type         = PICMAN_PDB_INT32;
           values[2].data.d_int32 = width;
-          values[3].type         = GIMP_PDB_INT32;
+          values[3].type         = PICMAN_PDB_INT32;
           values[3].data.d_int32 = height;
         }
       else
         {
-          gimp_set_data (LOAD_PROC, &load_vals, sizeof (load_vals));
+          picman_set_data (LOAD_PROC, &load_vals, sizeof (load_vals));
         }
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -371,7 +371,7 @@ load_wmf_size (const gchar *filename,
 
 /*  User interface  */
 
-static GimpSizeEntry *size       = NULL;
+static PicmanSizeEntry *size       = NULL;
 static GtkObject     *xadj       = NULL;
 static GtkObject     *yadj       = NULL;
 static GtkWidget     *constrain  = NULL;
@@ -388,10 +388,10 @@ static void
 load_dialog_size_callback (GtkWidget *widget,
                            gpointer   data)
 {
-  if (gimp_chain_button_get_active (GIMP_CHAIN_BUTTON (constrain)))
+  if (picman_chain_button_get_active (PICMAN_CHAIN_BUTTON (constrain)))
     {
-      gdouble x = gimp_size_entry_get_refval (size, 0) / (gdouble) wmf_width;
-      gdouble y = gimp_size_entry_get_refval (size, 1) / (gdouble) wmf_height;
+      gdouble x = picman_size_entry_get_refval (size, 0) / (gdouble) wmf_width;
+      gdouble y = picman_size_entry_get_refval (size, 1) / (gdouble) wmf_height;
 
       if (x != ratio_x)
         {
@@ -411,7 +411,7 @@ load_dialog_ratio_callback (GtkAdjustment *adj,
   gdouble x = gtk_adjustment_get_value (GTK_ADJUSTMENT (xadj));
   gdouble y = gtk_adjustment_get_value (GTK_ADJUSTMENT (yadj));
 
-  if (gimp_chain_button_get_active (GIMP_CHAIN_BUTTON (constrain)))
+  if (picman_chain_button_get_active (PICMAN_CHAIN_BUTTON (constrain)))
     {
       if (x != ratio_x)
         y = x;
@@ -423,12 +423,12 @@ load_dialog_ratio_callback (GtkAdjustment *adj,
 }
 
 static void
-load_dialog_resolution_callback (GimpSizeEntry *res,
+load_dialog_resolution_callback (PicmanSizeEntry *res,
                                  const gchar   *filename)
 {
   WmfLoadVals  vals = { 0.0, 0, 0 };
 
-  load_vals.resolution = vals.resolution = gimp_size_entry_get_refval (res, 0);
+  load_vals.resolution = vals.resolution = picman_size_entry_get_refval (res, 0);
 
   if (!load_wmf_size (filename, &vals))
     return;
@@ -444,9 +444,9 @@ wmf_preview_callback (GtkWidget     *widget,
                       GtkAllocation *allocation,
                       guchar        *pixels)
 {
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (widget),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (widget),
                           0, 0, allocation->width, allocation->height,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           pixels, allocation->width * 4);
 }
 
@@ -459,8 +459,8 @@ load_dialog_set_ratio (gdouble x,
 
   g_signal_handlers_block_by_func (size, load_dialog_size_callback, NULL);
 
-  gimp_size_entry_set_refval (size, 0, wmf_width  * x);
-  gimp_size_entry_set_refval (size, 1, wmf_height * y);
+  picman_size_entry_set_refval (size, 0, wmf_width  * x);
+  picman_size_entry_set_refval (size, 1, wmf_height * y);
 
   g_signal_handlers_unblock_by_func (size, load_dialog_size_callback, NULL);
 
@@ -495,11 +495,11 @@ load_dialog (const gchar *filename)
   WmfLoadVals  vals = { WMF_DEFAULT_RESOLUTION,
                         - WMF_PREVIEW_SIZE, - WMF_PREVIEW_SIZE };
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Render Windows Metafile"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Render Windows Metafile"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, LOAD_PROC,
+                            picman_standard_help_func, LOAD_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -513,7 +513,7 @@ load_dialog (const gchar *filename)
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
@@ -536,7 +536,7 @@ load_dialog (const gchar *filename)
   gtk_widget_show (frame);
 
   pixels = wmf_get_pixbuf (filename, &vals.width, &vals.height);
-  image = gimp_preview_area_new ();
+  image = picman_preview_area_new ();
   gtk_widget_set_size_request (image, vals.width, vals.height);
   gtk_container_add (GTK_CONTAINER (frame), image);
   gtk_widget_show (image);
@@ -585,7 +585,7 @@ load_dialog (const gchar *filename)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  spinbutton = gimp_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
+  spinbutton = picman_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 10);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
   gtk_widget_show (spinbutton);
@@ -595,28 +595,28 @@ load_dialog (const gchar *filename)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  size = GIMP_SIZE_ENTRY (gimp_size_entry_new (1, GIMP_UNIT_PIXEL, "%a",
+  size = PICMAN_SIZE_ENTRY (picman_size_entry_new (1, PICMAN_UNIT_PIXEL, "%a",
                                                TRUE, FALSE, FALSE, 10,
-                                               GIMP_SIZE_ENTRY_UPDATE_SIZE));
+                                               PICMAN_SIZE_ENTRY_UPDATE_SIZE));
   gtk_table_set_col_spacing (GTK_TABLE (size), 1, 6);
 
-  gimp_size_entry_add_field (size, GTK_SPIN_BUTTON (spinbutton), NULL);
+  picman_size_entry_add_field (size, GTK_SPIN_BUTTON (spinbutton), NULL);
 
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (size), FALSE, FALSE, 0);
   gtk_widget_show (GTK_WIDGET (size));
 
-  gimp_size_entry_set_refval_boundaries (size, 0,
-                                         GIMP_MIN_IMAGE_SIZE,
-                                         GIMP_MAX_IMAGE_SIZE);
-  gimp_size_entry_set_refval_boundaries (size, 1,
-                                         GIMP_MIN_IMAGE_SIZE,
-                                         GIMP_MAX_IMAGE_SIZE);
+  picman_size_entry_set_refval_boundaries (size, 0,
+                                         PICMAN_MIN_IMAGE_SIZE,
+                                         PICMAN_MAX_IMAGE_SIZE);
+  picman_size_entry_set_refval_boundaries (size, 1,
+                                         PICMAN_MIN_IMAGE_SIZE,
+                                         PICMAN_MAX_IMAGE_SIZE);
 
-  gimp_size_entry_set_refval (size, 0, wmf_width);
-  gimp_size_entry_set_refval (size, 1, wmf_height);
+  picman_size_entry_set_refval (size, 0, wmf_width);
+  picman_size_entry_set_refval (size, 1, wmf_height);
 
-  gimp_size_entry_set_resolution (size, 0, load_vals.resolution, FALSE);
-  gimp_size_entry_set_resolution (size, 1, load_vals.resolution, FALSE);
+  picman_size_entry_set_resolution (size, 0, load_vals.resolution, FALSE);
+  picman_size_entry_set_resolution (size, 1, load_vals.resolution, FALSE);
 
   g_signal_connect (size, "value-changed",
                     G_CALLBACK (load_dialog_size_callback),
@@ -634,10 +634,10 @@ load_dialog (const gchar *filename)
   gtk_box_pack_start (GTK_BOX (hbox), table2, FALSE, FALSE, 0);
 
   spinbutton =
-    gimp_spin_button_new (&xadj,
+    picman_spin_button_new (&xadj,
                           ratio_x,
-                          (gdouble) GIMP_MIN_IMAGE_SIZE / (gdouble) wmf_width,
-                          (gdouble) GIMP_MAX_IMAGE_SIZE / (gdouble) wmf_width,
+                          (gdouble) PICMAN_MIN_IMAGE_SIZE / (gdouble) wmf_width,
+                          (gdouble) PICMAN_MAX_IMAGE_SIZE / (gdouble) wmf_width,
                           0.01, 0.1, 0,
                           0.01, 4);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 10);
@@ -656,10 +656,10 @@ load_dialog (const gchar *filename)
   gtk_widget_show (label);
 
   spinbutton =
-    gimp_spin_button_new (&yadj,
+    picman_spin_button_new (&yadj,
                           ratio_y,
-                          (gdouble) GIMP_MIN_IMAGE_SIZE / (gdouble) wmf_height,
-                          (gdouble) GIMP_MAX_IMAGE_SIZE / (gdouble) wmf_height,
+                          (gdouble) PICMAN_MIN_IMAGE_SIZE / (gdouble) wmf_height,
+                          (gdouble) PICMAN_MAX_IMAGE_SIZE / (gdouble) wmf_height,
                           0.01, 0.1, 0,
                           0.01, 4);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 10);
@@ -678,12 +678,12 @@ load_dialog (const gchar *filename)
   gtk_widget_show (label);
 
   /*  the constrain ratio chainbutton  */
-  constrain = gimp_chain_button_new (GIMP_CHAIN_RIGHT);
-  gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (constrain), TRUE);
+  constrain = picman_chain_button_new (PICMAN_CHAIN_RIGHT);
+  picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (constrain), TRUE);
   gtk_table_attach_defaults (GTK_TABLE (table2), constrain, 1, 2, 0, 2);
   gtk_widget_show (constrain);
 
-  gimp_help_set_help_data (GIMP_CHAIN_BUTTON (constrain)->button,
+  picman_help_set_help_data (PICMAN_CHAIN_BUTTON (constrain)->button,
                            _("Constrain aspect ratio"), NULL);
 
   gtk_widget_show (table2);
@@ -695,9 +695,9 @@ load_dialog (const gchar *filename)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  res = gimp_size_entry_new (1, GIMP_UNIT_INCH, _("pixels/%a"),
+  res = picman_size_entry_new (1, PICMAN_UNIT_INCH, _("pixels/%a"),
                              FALSE, FALSE, FALSE, 10,
-                             GIMP_SIZE_ENTRY_UPDATE_RESOLUTION);
+                             PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION);
   gtk_table_set_col_spacing (GTK_TABLE (res), 1, 6);
 
   gtk_table_attach (GTK_TABLE (table), res, 1, 2, 4, 5,
@@ -706,9 +706,9 @@ load_dialog (const gchar *filename)
 
   /* don't let the resolution become too small ? does libwmf tend to
      crash with very small resolutions */
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (res), 0,
-                                         5.0, GIMP_MAX_RESOLUTION);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (res), 0, load_vals.resolution);
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (res), 0,
+                                         5.0, PICMAN_MAX_RESOLUTION);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (res), 0, load_vals.resolution);
 
   g_signal_connect (res, "value-changed",
                     G_CALLBACK (load_dialog_resolution_callback),
@@ -716,10 +716,10 @@ load_dialog (const gchar *filename)
 
   gtk_widget_show (dialog);
 
-  if (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
-      load_vals.width  = ROUND (gimp_size_entry_get_refval (size, 0));
-      load_vals.height = ROUND (gimp_size_entry_get_refval (size, 1));
+      load_vals.width  = ROUND (picman_size_entry_get_refval (size, 0));
+      load_vals.height = ROUND (picman_size_entry_get_refval (size, 1));
       run = TRUE;
     }
 
@@ -961,7 +961,7 @@ wmf_load_file (const gchar  *filename,
   /* FIXME: improve error message */
   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                _("Could not open '%s' for reading"),
-               gimp_filename_to_utf8 (filename));
+               picman_filename_to_utf8 (filename));
 
   return pixels;
 }
@@ -975,9 +975,9 @@ load_image (const gchar  *filename,
 {
   gint32        image;
   gint32        layer;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   guchar       *pixels;
-  GimpPixelRgn  pixel_rgn;
+  PicmanPixelRgn  pixel_rgn;
   guint         width, height;
   guint         rowstride;
   guint         count = 0;
@@ -991,26 +991,26 @@ load_image (const gchar  *filename,
 
   rowstride = width * 4;
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
-  image = gimp_image_new (width, height, GIMP_RGB);
-  gimp_image_set_filename (image, filename);
-  gimp_image_set_resolution (image,
+  image = picman_image_new (width, height, PICMAN_RGB);
+  picman_image_set_filename (image, filename);
+  picman_image_set_resolution (image,
                              load_vals.resolution, load_vals.resolution);
 
-  layer = gimp_layer_new (image,
+  layer = picman_layer_new (image,
                           _("Rendered WMF"),
                           width, height,
-                          GIMP_RGBA_IMAGE, 100, GIMP_NORMAL_MODE);
+                          PICMAN_RGBA_IMAGE, 100, PICMAN_NORMAL_MODE);
 
-  drawable = gimp_drawable_get (layer);
+  drawable = picman_drawable_get (layer);
 
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, TRUE, FALSE);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, TRUE, FALSE);
 
-  for (pr = gimp_pixel_rgns_register (1, &pixel_rgn);
+  for (pr = picman_pixel_rgns_register (1, &pixel_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       const guchar *src  = pixels + pixel_rgn.y * rowstride + pixel_rgn.x * 4;
       guchar       *dest = pixel_rgn.data;
@@ -1027,19 +1027,19 @@ load_image (const gchar  *filename,
       done += pixel_rgn.h * pixel_rgn.w;
 
       if (count++ % 16 == 0)
-        gimp_progress_update ((gdouble) done / (width * height));
+        picman_progress_update ((gdouble) done / (width * height));
     }
 
   g_free (pixels);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  /* Tell GIMP to display the image.
+  /* Tell PICMAN to display the image.
    */
-  gimp_image_insert_layer (image, layer, -1, 0);
-  gimp_drawable_flush (drawable);
+  picman_image_insert_layer (image, layer, -1, 0);
+  picman_drawable_flush (drawable);
 
   return image;
 }

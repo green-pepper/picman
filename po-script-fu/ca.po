@@ -1,8 +1,8 @@
 # translation of ca.po to Catalan
-# gimp-script-fu translation to Catalan.
+# picman-script-fu translation to Catalan.
 # Copyright © 2000, 2001, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 #
-# Softcatala <gimp a llistes.softcatala.org>, 2000-2008.
+# Softcatala <picman a llistes.softcatala.org>, 2000-2008.
 # Quim Perez i Noguer <noguer a gmail.com>, 2005-2008.
 # Xavier Conde Rueda <xavi.conde a gmail.com>, 2004-2007.
 # Jordi Jover, jordijn@softcatala.org, 2002.
@@ -14,7 +14,7 @@ msgstr ""
 "POT-Creation-Date: 2011-12-24 17:40+0100\n"
 "PO-Revision-Date: 2011-12-22 23:13+0100\n"
 "Last-Translator: Albert F. <lakonfrariadelavila@gmail.com>\n"
-"Language-Team: Catalan <gimp a llistes.softcatala.org>\n"
+"Language-Team: Catalan <picman a llistes.softcatala.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -161,8 +161,8 @@ msgid "_Start Server..."
 msgstr "_Inicia el servidor..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "El _GIMP a la xarxa "
+msgid "_PICMAN Online"
+msgstr "El _PICMAN a la xarxa "
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -203,8 +203,8 @@ msgid "_Beveled Pattern"
 msgstr "Patró_ bisellat"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Clàssic.Gimp.org"
+msgid "_Classic.Picman.Org"
+msgstr "_Clàssic.Picman.org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -782,7 +782,7 @@ msgstr "Crea per a pàgines web un gràfic simple en forma de botó bisellat "
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Degradat"
 
@@ -869,7 +869,7 @@ msgstr ""
 "fons per animació."
 
 #: ../plug-ins/script-fu/scripts/blend-anim.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Marc"
 
@@ -1463,7 +1463,7 @@ msgstr "Radi del difuminat"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Color"
 
@@ -1659,59 +1659,59 @@ msgstr "Pes de l'ombra (%)"
 msgid "_Fuzzy Border..."
 msgstr "Marc _difuminat..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Marcador per a la web del GIMP"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Marcador per a la web del PICMAN"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Marcador per al manual d'usuari"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "Crea i utilitza les _seleccions"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "Crea, obre i desa _fitxers"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "Dibuixa objectes _simples"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Com fer servir els _diàlegs"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "_Instal·la més connectors"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "Utilitza _camins"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "Conceptes _bàsics"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "Web dels _desenvolupadors"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "Web _principal"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "_Prepara les vostres imatges per al web"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "Web del manual d'_usuari"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "_Manipula fotos fetes amb càmeres digitals"
 
@@ -2457,128 +2457,128 @@ msgstr "Gira d'esquerra a dreta"
 msgid "_Spinning Globe..."
 msgstr "_Món que gira..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid ""
 "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr ""
 "Dibuixa espirògrafs, epitrocoides i corbes de Lissajous a la capa actual"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Esprai"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Pinzell"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Cercle"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Mètode de color"
 
-# era: msgstr "Dibuixa espirògrafs, epitrocòides i curves de Lissajous. Podeu obtenir més informació a http://netword.com/*spyrogimp"
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+# era: msgstr "Dibuixa espirògrafs, epitrocòides i curves de Lissajous. Podeu obtenir més informació a http://netword.com/*spyropicman"
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrocoide"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Degradat: serralada"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Degradat: rampes"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Hexàgon"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Relació del forat"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Dents interiors"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Marge (píxels)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Dents exteriors"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Llapis"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Pentàgon"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Polígon: 10 cares"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Polígon: 7 cares"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Polígon: 8 cares"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Polígon: 9 cares"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "S'està dibuixant l'espiroide"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Forma"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Color sòlid"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Espirògraf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Quadrat"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Angle inicial"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Eina"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Triangle"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Tipus"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
 msgstr "_Espirògraf..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
@@ -2892,15 +2892,15 @@ msgstr "Ombra amb reflex _Xach..."
 #~ msgid "Autocrop"
 #~ msgstr "Escapça automàticament"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
 #~ msgstr ""
 #~ "Crea una imatge d'una capçalera de primer nivell, emprant el tema de la "
-#~ "pàgina web del Gimp.org"
+#~ "pàgina web del Picman.org"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
 #~ msgstr ""
 #~ "Crea una imatge d'una capçalera de segon nivell, emprant el tema de la "
-#~ "pàgina web del Gimp.org"
+#~ "pàgina web del Picman.org"
 
 #~ msgid "Dark color"
 #~ msgstr "Color fosc"
@@ -2927,31 +2927,31 @@ msgstr "Ombra amb reflex _Xach..."
 #~ msgstr "C_apçalera petita..."
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
 #~ msgstr ""
 #~ "Crea una imatge d'un botó tubular d'una capçalera, emprant el tema de la "
-#~ "pàgina web del Gimp.org"
+#~ "pàgina web del Picman.org"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
 #~ msgstr ""
 #~ "Crea una imatge d'un botó tubular d'una etiqueta, emprant el tema de la "
-#~ "pàgina web del Gimp.org"
+#~ "pàgina web del Picman.org"
 
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Crea una imatge d'un botó tubular d'una etiqueta de segon nivell, emprant "
-#~ "el tema de la pàgina web del Gimp.org"
+#~ "el tema de la pàgina web del Picman.org"
 
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Crea una imatge d'un botó tubular d'una etiqueta de tercer nivell, "
-#~ "emprant el tema de la pàgina web del Gimp.org"
+#~ "emprant el tema de la pàgina web del Picman.org"
 
 #~ msgid "T_ube Sub-Button Label..."
 #~ msgstr "Etiqueta de lletres tubulars (_mitjana)..."

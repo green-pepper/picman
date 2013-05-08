@@ -1,9 +1,9 @@
-# GIMP controllerrc
+# PICMAN controllerrc
 
-(GimpControllerInfo "Main Mouse Wheel"
+(PicmanControllerInfo "Main Mouse Wheel"
     (enabled yes)
     (debug-events no)
-    (controller "GimpControllerWheel")
+    (controller "PicmanControllerWheel")
     (mapping
         (map "scroll-up-alt"                 "tools-value-1-increase-skip")
         (map "scroll-down-alt"               "tools-value-1-decrease-skip")
@@ -16,10 +16,10 @@
         (map "scroll-up-shift-control-alt"   "context-font-select-next")
         (map "scroll-down-shift-control-alt" "context-font-select-previous")))
 
-(GimpControllerInfo "Main Keyboard"
+(PicmanControllerInfo "Main Keyboard"
     (enabled yes)
     (debug-events no)
-    (controller "GimpControllerKeyboard")
+    (controller "PicmanControllerKeyboard")
     (mapping
         (map "cursor-up-shift"      "view-scroll-page-up")
         (map "cursor-down-shift"    "view-scroll-page-down")
@@ -34,7 +34,7 @@
         (map "cursor-left-alt"      "tools-value-1-decrease")
         (map "cursor-right-alt"     "tools-value-1-increase")))
 
-# (GimpControllerInfo "Linux Input Example"
+# (PicmanControllerInfo "Linux Input Example"
 #    (enabled yes)
 #    (debug-events no)
 #    (controller "ControllerLinuxInput"
@@ -43,7 +43,7 @@
 #        (map "wheel-turn-left"  "tools-value-2-decrease")
 #        (map "wheel-turn-right" "tools-value-2-increase")))
 
-# (GimpControllerInfo "Midi Example"
+# (PicmanControllerInfo "Midi Example"
 #    (enabled yes)
 #    (debug-events no)
 #    (controller "ControllerMidi"

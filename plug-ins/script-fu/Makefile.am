@@ -12,19 +12,19 @@ else
 libm = -lm
 endif
 
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la $(libm)
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la $(libm)
 
 libtinyscheme=tinyscheme/libtinyscheme.a $(libm)
 libftx=ftx/libftx.a
 
 if HAVE_WINDRES
-include $(top_srcdir)/build/windows/gimprc-plug-ins.rule
+include $(top_srcdir)/build/windows/picmanrc-plug-ins.rule
 script_fu_RC = script-fu.rc.o
 endif
 
@@ -47,7 +47,7 @@ AM_LDFLAGS = \
 SUBDIRS = tinyscheme ftx scripts
 
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
 libexec_PROGRAMS = script-fu
 
@@ -79,13 +79,13 @@ script_fu_SOURCES = \
 	scheme-wrapper.h
 
 LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpconfig)	\
-	$(libgimpmath)		\
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanconfig)	\
+	$(libpicmanmath)		\
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(libtinyscheme)	\
 	$(libftx)		\
 	$(GTK_LIBS)		\
@@ -101,7 +101,7 @@ LDADD = \
 check-for-deprecated-procedures-in-script-fu:
 	@echo "Looking for deprecated procedures in *.scm files"
 	@scm_files=`find $(top_srcdir)/plug-ins/script-fu -name "*.scm"`;       \
-	deprecated_procs=`$(top_builddir)/app/gimp-$(GIMP_APP_VERSION)$(EXEEXT) --dump-pdb-procedures-deprecated`; \
+	deprecated_procs=`$(top_builddir)/app/picman-$(PICMAN_APP_VERSION)$(EXEEXT) --dump-pdb-procedures-deprecated`; \
 	for scm_file in $$scm_files; do                                         \
 	  for proc in $$deprecated_procs; do                                    \
 	    if grep -qw $$proc $$scm_file; then                                 \

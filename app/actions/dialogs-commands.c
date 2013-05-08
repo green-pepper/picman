@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpwindowstrategy.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanwindowstrategy.h"
 
 #include "actions.h"
 #include "dialogs-commands.h"
@@ -43,7 +43,7 @@ dialogs_create_toplevel_cmd_callback (GtkAction   *action,
   return_if_no_widget (widget, data);
 
   if (value)
-    gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+    picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                     gtk_widget_get_screen (widget),
                                     NULL /*ui_manager*/,
                                     value, -1, TRUE);
@@ -54,15 +54,15 @@ dialogs_create_dockable_cmd_callback (GtkAction   *action,
                                       const gchar *value,
                                       gpointer     data)
 {
-  Gimp      *gimp;
+  Picman      *picman;
   GtkWidget *widget;
-  return_if_no_gimp   (gimp, data);
+  return_if_no_picman   (picman, data);
   return_if_no_widget (widget, data);
 
   if (value)
-    gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (gimp)),
-                                               gimp,
-                                               gimp_dialog_factory_get_singleton (),
+    picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (picman)),
+                                               picman,
+                                               picman_dialog_factory_get_singleton (),
                                                gtk_widget_get_screen (widget),
                                                value);
 }

@@ -1,4 +1,4 @@
-# translation of gimp script-fu to Russian
+# translation of picman script-fu to Russian
 # Copyright (C) 2000-2002,2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 #
 # Valek Filippov <frob@df.ru>, 2000-2002.
@@ -8,7 +8,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP Script-Fu 2.8\n"
+"Project-Id-Version: PICMAN Script-Fu 2.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-04 03:26+0400\n"
 "PO-Revision-Date: 2011-12-04 23:00+0400\n"
@@ -157,8 +157,8 @@ msgid "_Start Server..."
 msgstr "_Запустить сервер..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "GIMP в _Интернете"
+msgid "_PICMAN Online"
+msgstr "PICMAN в _Интернете"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -197,8 +197,8 @@ msgid "_Beveled Pattern"
 msgstr "_Приподнятые объекты"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Классический Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Классический Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -772,7 +772,7 @@ msgstr "Создать простую рельефную кнопку для в�
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Градиент"
 
@@ -858,7 +858,7 @@ msgstr ""
 "Создать промежуточные слои для анимации двух и более слоёв выше фонового"
 
 #: ../plug-ins/script-fu/scripts/blend-anim.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Кадр"
 
@@ -1449,7 +1449,7 @@ msgstr "Радиус размывания"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Цвет"
 
@@ -1645,59 +1645,59 @@ msgstr "Размер тени (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Нечеткая рамка..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Ссылка на веб-сайт GIMP"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Ссылка на веб-сайт PICMAN"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Ссылка на руководство пользователя"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "Сохранить и использовать _выделения"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "Создавать, открывать и со_хранять файлы"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "_Рисование простых объектов"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Как использовать _диалоги"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "_Реестр расширений"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "Ис_пользование контуров"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "Основные _концепции"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "С_айт для разработчиков"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "Официальный _сайт"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "По_дготовка _изображений к публикации в Интернете"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "_Сайт с руководством пользователя"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "Работа с цифровым _фото"
 
@@ -2423,126 +2423,126 @@ msgstr "Повернуть слева на право"
 msgid "_Spinning Globe..."
 msgstr "Вращающийся _шар..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid ""
 "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "Рисование спирографов, эпитрохоид и кривых Лиссажу в активном слое"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Аэрограф"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Кисть"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Круг"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Метод окраски"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Эпитрохоида"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Градиент: пилообразный цикл"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Градиент: треугольный цикл"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Шестиугольник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Размер отверстия"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Внутренние зубцы"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Лиссажу"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Отступ (точек)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Внешние зубцы"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Карандаш"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Пятиугольник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Многоугольник: 10 сторон"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Многоугольник: 7 сторон"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Многоугольник: 8 сторон"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Многоугольник: 9 сторон"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Визуализация спирографа"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Форма"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Сплошной цвет"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Спирограф"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Квадрат"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Начальный угол"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Инструмент"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Треугольник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Тип"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
 msgstr "Спиро_граф..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
@@ -2849,13 +2849,13 @@ msgstr "_Xach-эффект..."
 #~ msgid "Autocrop"
 #~ msgstr "Автокадрирование"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
 #~ msgstr ""
-#~ "Создать изображение большого заголовка, используя тему сайта gimp.org"
+#~ "Создать изображение большого заголовка, используя тему сайта picman.org"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
 #~ msgstr ""
-#~ "Создать изображение для маленького заголовка, используя тему сайта gimp."
+#~ "Создать изображение для маленького заголовка, используя тему сайта picman."
 #~ "org"
 
 #~ msgid "Dark color"
@@ -2883,26 +2883,26 @@ msgstr "_Xach-эффект..."
 #~ msgstr "_Маленький заголовок..."
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
-#~ msgstr "Создать изображение заголовка используя тему сайта gimp.org"
+#~ msgstr "Создать изображение заголовка используя тему сайта picman.org"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
 #~ msgstr ""
-#~ "Создать изображение отметки первого уровня используя тему сайта gimp.org"
+#~ "Создать изображение отметки первого уровня используя тему сайта picman.org"
 
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "Создать изображение отметки второго уровня используя тему сайта gimp.org"
+#~ "Создать изображение отметки второго уровня используя тему сайта picman.org"
 
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "Создать изображение отметки третьего уровня используя тему сайта gimp.org"
+#~ "Создать изображение отметки третьего уровня используя тему сайта picman.org"
 
 #~ msgid "T_ube Sub-Button Label..."
 #~ msgstr "Метки доп. кнопок трубы..."

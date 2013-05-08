@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-blend")
+(stock-id "picman-tool-blend")
 (name "FX Radial Softlight")
-(tool-options "GimpBlendOptions"
-    (tool "gimp-blend-tool")
+(tool-options "PicmanBlendOptions"
+    (tool "picman-blend-tool")
     (foreground (color-rgb 0.102075 0.183901 0.594317))
     (paint-mode softlight-mode)
     (gradient "FG to Transparent")
@@ -18,4 +18,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

@@ -1,0 +1,2066 @@
+# translation of picman-libpicman.master.po to Basque
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+#
+# Hizkuntza Politikarako Sailburuordetza <hizpol@ej-gv.es>, 2004.
+# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2004, 2006, 2008.
+# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2007, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.master\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-15 17:35+0200\n"
+"PO-Revision-Date: 2011-09-15 17:34+0200\n"
+"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
+"Language-Team: Basque <itzulpena@euskalgnu.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "ongi burutu da"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "exekuzioko errorea"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "deiaren errorea"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "bertan behera utzita"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Brotxaren hautapena"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Arakatu..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s pluginak ezin ditu geruzak kudeatu"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Batu ikusgai dauden geruzak"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"%s pluginak ezin ditu geruzen desplazamenduak, tamaina edo opakutasuna "
+"kudeatu"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s pluginak geruzak animazio-marko gisa bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Gorde animazio gisa"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Lautu irudia"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s pluginak ezin du gardentasuna kudeatu"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s pluginak ezin ditu geruza-maskarak kudeatu"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Aplikatu geruza-maskarak"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s pluginak GBU irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Bihurtu GBU"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s pluginak gris-eskalako irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Bihurtu gris-eskalara "
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s pluginak indexatutako irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Bihurtu indexatu ezarpen lehenetsiak erabiliz\n"
+"(egin eskuz emaitza doitzeko)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+"%s pluginak indexatutako bitmap (bi kolore) irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Bihurtu indexatura bitmap-ezarpen lehenetsiak erabiliz\n"
+"(egin eskuz emaitza doitzeko)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s  pluginak GBU edo gris-eskalako irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s pluginak GBU edo indexatutako irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+"%s pluginak gris-eskalako edo indexatutako irudiak bakarrik kudea ditzake"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s pluginak alfa kanala behar du"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Gehitu alfa kanala"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Berretsi gordetzea"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Berretsi"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Esportatu fitxategia"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "_Ez ikusi egin"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:989
+msgid "_Export"
+msgstr "_Esportatu"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Zure irudia esportatu egin behar da %s gisa gorde aurretik arrazoi "
+"hauengatik:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Esportatze-bihurketak ez du zure jatorrizko irudia aldatuko."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Geruza-maskara bat %s gisa gordetzera zoaz.\n"
+"Horrek ez ditu ikusgai dauden geruzak gordeko."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Kanal bat (gordetako hautaketa) %s gisa gordetzera zoaz.\n"
+"Horrek ez ditu ikusgai dauden geruzak gordeko."
+
+#: ../libpicman/picmanexport.c:980
+msgid "Export Image as "
+msgstr "Esportatu irudia honela "
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Letra-tipoaren hautapena"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Gradientearen hautapena"
+
+#: ../libpicman/picmanmenu.c:459 ../libpicmanwidgets/picmanintstore.c:238
+msgid "(Empty)"
+msgstr "(Hutsa)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Paletaren hautapena"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Eredu-hautapena"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "izenaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "azalpenaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "laguntzaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "egilearen arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "copyright-aren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "dataren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "motaren arabera"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Bat datorrenik ez"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "Bilaketako terminoa baliogabea edo osatu gabea"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Bilaketa"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Bilatu izenaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Bilatu azalpenaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Bilatu laguntzaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Bilatu egilearen arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Bilatu copyright-aren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Bilatu dataren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Bilatu motaren arabera"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "Prozedura %d"
+msgstr[1] "%d prozedura"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Ez dago bat datorrenik kontsultarekin"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "prozedura %d bat dator kontsultarekin"
+msgstr[1] "%d prozedura bat datoz kontsultarekin"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametroak"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Itzulitako balioak"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Informazio gehigarria"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Egilea:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Data:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Copyright-a:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "ehunekoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Zuria (opakutasun osoa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Beltza (gardentasun osoa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "Geruzaren _alfa kanala"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Transferitu geruzaren alfa kanala"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Hautapena"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "_Geruzaren gris-eskalako kopia"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "_Kanala"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "AurPlanoa AtzPlanora (GBU)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "AurPlanoa AtzPlanora (ÑSB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Aur.Pl gardenera"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Gradiente pertsonalizatua"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Aur.Pl.-ren kolore betegarria"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Atz.Pl.-aren kolore betegarria"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Ereduaren betegarria"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Gehitu uneko hautapenari"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Kendu uneko hautapenetik"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Ordeztu uneko hautapena"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Gurutzatu uneko hautapenarekin"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Gorria"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Berdea"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Urdina"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Grisa"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indexatua"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+msgctxt "check-size"
+msgid "Small"
+msgstr "Txikia"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Tartekoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+msgctxt "check-size"
+msgid "Large"
+msgstr "Handia"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Lauki argiak"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Tarteko tonuko laukiak"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Lauki ilunak"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+msgctxt "check-type"
+msgid "White only"
+msgstr "Zuria bakarrik"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Grisa bakarrik"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Beltza bakarrik"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Irudia"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Eredua"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Argitasuna"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Argitasuna"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Batez bestekoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Zuritu"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Belztu"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Lineala"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Bilineala"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Erradiala"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Karratua"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Konikoa (simetrikoa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Konikoa (asimetrikoa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Formaren araberakoa (angularra)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Formaren araberakoa (esferikoa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Formaren araberakoa (zulotxoduna)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Espirala (erlojuaren noranzkoan)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Espirala (erlojuaren noranzkoan)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Elkarguneak (puntuak)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Elkarguneak (gurutzaguneak)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Marratxoduna"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Marratxo bikoizduna"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Lisoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Stock-IDa"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Lineako Pixbuf"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Irudiaren fitxategia"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "GBU kolorea"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Gris-eskala"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Kolore indexatua"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+msgctxt "image-type"
+msgid "RGB"
+msgstr "GBU"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "GBU alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Gris-eskala"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Gris-eskala alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indexatua"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indexatua alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Bat ere ez"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Lineala"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Kubikoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Konstantea"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Inkrementala"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Bat ere ez"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Uhin horzduna"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Uhin triangeluarra"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Exekutatu interaktiboki"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Exekutatu ez-interaktiboki"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Exekutatu erabilitako azken balioekin"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Pixelak"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+msgctxt "size-type"
+msgid "Points"
+msgstr "Puntuak"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Itzalak"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Tarteko tonuak"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Argi-ukituak"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Normala (aurrera)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "Zentzagarria (atzera)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Doitu"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Moztu"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Moztu emaitzara"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Moztu itxurarekin"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "PICMANen barne-prozedura"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "PICMANen plugina"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "PICMANen hedapena"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Aldi baterako prozedura"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "Ezkerretik eskuinera"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "Eskuinetik ezkerrera"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Bat ere ez"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Arina"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Tartekoa"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Beteta"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Ezkerrean lerrokatuta"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Eskuinean lerrokatuta"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Zentratuta"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Beteta"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(UTF-8 kate baliogabea)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Kolorea kudeatzeko eragiketa-modua."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "(Lehen) monitorearen kolore-profila."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Gaituta dagoenean PICMANek leiho-sistemako pantailaren kolore-profila "
+"erabiltzen saiatuko da. Konfiguratutako monitorearen profila modu seguruan "
+"soilik erabiliko da."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "GBU laneko arearen kolore-profila lehenetsia."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "Erabiliko den CMYK kolore-profila GBUtik CMYKra bihurtzeko."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+"Inprimatutako bertsioa (soft-proba) simulatzeko erabiliko den kolore-profila."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Pantailako zenbat kolore mapatzen diren ezartzen du."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"GBUren laneko areatik inprimatze-simulazio gailura zenbat kolore bihurtzen "
+"diren ezartzen du."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Gaituta dagoenean, helburuko kolore-espazioan adierazi ezin daitezkeen "
+"koloreak markatuko ditu inprimatze-simulazioak."
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr "Erabiliko den kolorea kolore-gamatik kanpo dauden koloreak markatzeko"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "kolore-kudeaketarik ez"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Kudeatutako kolorearen pantaila"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Inprimatze-simulazioa"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Pertzeptiboa"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Kolore erlatiboaren metrika"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Saturazioa"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Kolore absolutuaren metrika"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "%s tokenarentzako balioa ez da baliozko UTF-8 katea"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:445
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+"'yes' edo 'no' espero zen %s token boolearrarentzat, baina '%s' jaso da"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:519
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "baliogabeko '%s' balioa %s tokenarentzat"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:534
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "Baliogabeko '%ld' balioa %s tokenarentzat"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:603
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "'%s' tokena analizatzen zen bitartean: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:507
+#: ../libpicmanconfig/picmanscanner.c:588
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "analisi-errore larria"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Ezin da ${%s} zabaldu"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Errorea '%s' fitxategian idaztean: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Ezin izan da '%s'(r)entzat aldi baterako fitxategia sortu: %s "
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Ezin izan da '%s' ireki idazteko: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Errorea '%s'(r)en aldi baterako fitxategian idaztean: %s\n"
+"Jatorrizko fitxategia ez da ukitu."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Errorea '%s'(r)en aldi baterako fitxategian idaztean: %s\n"
+"Ez da fitxategirik sortu."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Ezin izan da %s' sortu: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:264
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "UTF-8 kate baliogabea"
+
+#: ../libpicmanconfig/picmanscanner.c:615
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Errorea %2$d lerroan '%1$s' analizatzean : %3$s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Errorea '%s' modulua kargatzean: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Modulu-errorea"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Kargatuta"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Ezin izan da kargatu"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Ez da kargatu"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Ezin da baliozko etxeko direktorioa zehaztu.\n"
+"Koadro txikiak aldi baterako fitxategian (%s) gordeko dira."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Huts egin du koadro txikien '%s' karpeta sortzean."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Koadro txikiak ez du Thumb:URI etiketa"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Ezin izan da '%s'(r)en koadro txikia sortu: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "_Bilatu:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:134
+msgid "_Foreground Color"
+msgstr "_Aurreko planoaren kolorea"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:138
+msgid "_Background Color"
+msgstr "_Atzeko planoaren kolorea"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:142
+msgid "Blac_k"
+msgstr "_Beltza"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:146
+msgid "_White"
+msgstr "_Zuria"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "Hautatu kolore-profila diskotik..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Bat ere ez"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Eskalak"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Unekoa:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Zaharra:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Kolore hamaseitarraren notazioa HTMLn eta CCSn bezala. Sarrera honek CSSko "
+"kolore-izenak ere onartzen ditu."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "HTML -notazioa:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Ireki fitxategi-hautatzailea zure karpetak arakatzeko"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Ireki fitxategi-hautatzailea zure fitxategiak arakatzeko"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Hautatu karpeta"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Hautatu fitxategia"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "Sakatu F1 laguntza gehiagorako"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "KiloByte"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "MegaByte"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "GigaByte"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:281
+#: ../libpicmanwidgets/picmanpageselector.c:1177
+msgid "Nothing selected"
+msgstr "Ez dago ezer hautatuta"
+
+#: ../libpicmanwidgets/picmanpageselector.c:299
+msgid "Select _All"
+msgstr "Hautatu _denak"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Select _range:"
+msgstr "Hautatu _barrutia:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:331
+msgid "Open _pages as"
+msgstr "Ireki _orrialdeak honela"
+
+#: ../libpicmanwidgets/picmanpageselector.c:432
+msgid "Page 000"
+msgstr "000 orrialdea"
+
+#: ../libpicmanwidgets/picmanpageselector.c:520
+#: ../libpicmanwidgets/picmanpageselector.c:757
+#, c-format
+msgid "Page %d"
+msgstr "%d. orrialdea"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1182
+msgid "One page selected"
+msgstr "Orrialde bat hautatuta"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1189
+#: ../libpicmanwidgets/picmanpageselector.c:1193
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "Orrialde %d hautatuta"
+msgstr[1] "%d orrialde hautatuta"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:237
+msgid "Writable"
+msgstr "Idazkorra"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:246
+msgid "Folder"
+msgstr "Karpeta"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Egin klik tanta-kontagailuan, eta egin klik zure pantailako edozein "
+"koloretan kolore hori hautatzeko."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Aurrebista"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Egiaztatu tamaina"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Egiaztatu estiloa"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Sarrerako testu-eremua karaktere %dera mugatua."
+msgstr[1] "Sarrerako testu-eremua %d karakteretara mugatua."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Ainguratu"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "_Erdia"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Bikoiztu"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "_Editatu"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Estekatuta"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Itsatsi berri gisa"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Itsatsi hemen"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Berrezarri"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Ikusgai"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Trazua"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Letra arteko _tartea"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Le_rroen arteko tartea"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "_Aldatu tamaina"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "E_skalatu"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "_Moztu"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "_Transformatu"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_Biratu"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Zizailatu"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Gehiago..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Unitatearen hautapena"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Unitatea"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Faktorea"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Erabili balio hau ausazko zenbaki-sortzailearen hazi gisa, hala \"ausazko\" "
+"eragiketa jakin bat errepika dezakezu"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "_Hazi berria"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "Hasi ausazko zenbaki-sortzailea sortutako ausazko zenbaki batekin"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "_Ausaz nahastu"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Ikusgai"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Berdea"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Leihoa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Karratua"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Bertikala"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Horizontala"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_Ñ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Ñabardura"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Saturazioa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Balioa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Gorria"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Berdea"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_U"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Urdina"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Geruzak"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Irudiak"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Zooma handiagotu"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Zooma txikiagotu"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK kolore-hautatzailea (kolore-profilan erabilia)"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Cyana"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Magenta"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Horia"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Beltza"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profila: (bat ere ez)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profila: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "CMYK kolore-hautatzailea"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Beltz _gehigarria:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Beltzaren ehunekoa koloredun tintetatik ateratzeko."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Akuarela-estiloko kolore-hautatzailea"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Akuarela"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Presioa"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "ÑSB kolore-gurpila"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Gurpila"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX DirectInput gertaeren kontroladorea"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Gailua:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "Gailua DirectInput gertaerak irakurtzeko."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "%d. botoia"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "%d. botoiaren presioa"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "%d. botoiaren askapena"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "X mugitu ezkerrera"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "X mugitu eskuinera"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "Aldendu Y ardatzean"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "Gerturatu Y ardatzean"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "Z mugitu gora"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "Z mugitu behera"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "Okertu X ardatzean aldentzeko"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "Okertu X ardatzean gerturatzeko"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "Okerdura eskuinera Y ardatzean"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "Okerdura ezkerrera Y ardatzean"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "Biratu ezkerrera Z ardatzean"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "Biratu eskuinera Z ardatzean"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Handitu %d. graduatzailea"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Gutxiagotu %d. graduatzailea"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d X ikuspegia"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d Y ikuspegia"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d itzulera"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "DirectInput gertaerak"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Gailua ez dago konfiguratuta"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Gailua ez dago erabilgarri"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "0. botoia"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "1. botoia"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "2. botoia"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "3. botoia"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "4. botoia"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "5. botoia"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "6. botoia"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "7. botoia"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "8. botoia"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "9. botoia"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Saguaren botoia"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Ezkerreko botoia"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Eskuineko botoia"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Erdiko botoia"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Alboko botoia"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Botoi gehigarria"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Aurrera botoia"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Atzera botoia"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Zeregina botoia"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Gurpil botoia"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Gurpil botoia gora"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Gurpil botoia behera"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "Y mugitu aurrera"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "Y mugitu atzera"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "Okerdura aurrerantz X ardatzean"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "Okerdura atzerantz X ardatzean"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "Biratu gurpil horiz. atzerantz"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Biratu gurpil horiz. aurrerantz"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Markatu ezkerrera"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Markatu eskuinera"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Gurpila ezkerrera"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Gurpila eskuinera"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Linuxeko sarrerako gertaeren kontroladorea"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Gailuaren izena Linuxeko sarrerako gertaerak irakurtzeko."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Linuxeko sarrera"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Linuxeko sarreren gertaerak"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "%s(e)tik irakurtzen"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Gailua ez dago erabilgarri: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Fitxategi-amaiera"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "MIDI gertaeren kontroladorea"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Gailuaren izena MIDI gertaerak irakurtzeko."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Sartu 'alsa' ALSA sekuentziadorea erabiltzeko."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanala:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"MIDI kanala gertaerak irakurtzeko. Ezarri '-1' MIDIko kanal guztietatik "
+"irakurtzeko."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "%02x nota piztu"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "%02x nota itzali"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "%03d kontroladorea"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "MIDIko gertaerak"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "PICMAN MIDI sarreraren kontroladorea"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopia (gorriarekiko sentikortasunik ez)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopia (berdearekiko sentikortasunik ez)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopia (urdinarekiko sentikortasunik ez)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr ""
+"Kolorearen defizita simulatzeko iragazkia (Brettel-Vienot-Mollon algoritmoa)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Kolore-ikusmen urria"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Kolorearen _urritasun-mota:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Gamma kolorea bistaratzeko iragazkia"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Kontraste handiko kolorea bistaratzeko iragazkia"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrastea"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "Kontraste-_zikloak:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Kolore-kudeaketaren iragazkia, ICC kolore-profilan erabilia"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Kolore-kudeaketa"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Bat ere ez"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Iragazki honek Hobespenak elkarrizketa-koadroko Kolore-kudeaketa ataletik "
+"hartzen du bere konfigurazioa."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Eragiketa-modua:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Irudi-profila:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Monitorearen profila:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Inprimatze-simulazioaren profila:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Kolore seguruaren iragazkia, ICC kolore-profilan erabilia"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Kolore segurua"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Aukeratu ICC kolore-profil bat"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Fitxategi guztiak (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC kolore-profila (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profila:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "_Helburua:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "Puntu -beltzaren konpentsazioa"

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "print.h"
 #include "print-settings.h"
@@ -79,7 +79,7 @@ print_settings_save (PrintData *data)
   GKeyFile *key_file = print_settings_key_file_from_settings (data);
 
   /* image setup */
-  if (gimp_image_is_valid (data->image_id))
+  if (picman_image_is_valid (data->image_id))
     {
       g_key_file_set_integer (key_file, "image-setup",
                               "unit", data->unit);

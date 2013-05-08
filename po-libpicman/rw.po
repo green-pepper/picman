@@ -1,0 +1,1405 @@
+# translation of picman-libpicman to Kinyarwanda.
+# Copyright (C) 2005 Free Software Foundation, Inc.
+# This file is distributed under the same license as the picman-libpicman package.
+# Steve Murphy <murf@e-tools.com>, 2005
+# Steve performed initial rough translation from compendium built from translations provided by the following translators:
+# Philibert Ndandali  <ndandali@yahoo.fr>, 2005.
+# Viateur MUGENZI <muvia1@yahoo.fr>, 2005.
+# Noëlla Mupole <s24211045@tuks.co.za>, 2005.
+# Carole Karema <karemacarole@hotmail.com>, 2005.
+# JEAN BAPTISTE NGENDAHAYO <ngenda_denis@yahoo.co.uk>, 2005.
+# Augustin KIBERWA  <akiberwa@yahoo.co.uk>, 2005.
+# Donatien NSENGIYUMVA <ndonatienuk@yahoo.co.uk>, 2005..
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-01 13:03-0700\n"
+"PO-Revision-Date: 2005-03-31 20:55-0700\n"
+"Last-Translator: Steve Murphy <murf@e-tools.com>\n"
+"Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"ULL NAME <EMAIL@ADDRESS>\n"
+
+#: libpicman/picmanbrushmenu.c:140
+msgid "Brush Selection"
+msgstr ""
+
+#: libpicman/picmanbrushmenu.c:180 libpicman/picmanpatternmenu.c:165
+#, fuzzy
+msgid "_Browse..."
+msgstr "Gushakisha..."
+
+#: libpicman/picmanexport.c:215 libpicman/picmanexport.c:251
+#, c-format
+msgid "%s can't handle layers"
+msgstr ""
+
+#: libpicman/picmanexport.c:216 libpicman/picmanexport.c:225 libpicman/picmanexport.c:234
+msgid "Merge Visible Layers"
+msgstr ""
+
+#: libpicman/picmanexport.c:224
+#, fuzzy, c-format
+msgid "%s can't handle layer offsets, size or opacity"
+msgstr "%sAkugara Ingano Cyangwa"
+
+#: libpicman/picmanexport.c:233 libpicman/picmanexport.c:242
+#, fuzzy, c-format
+msgid "%s can only handle layers as animation frames"
+msgstr "%sNka Iyega Amakadiri"
+
+#: libpicman/picmanexport.c:234 libpicman/picmanexport.c:243
+#, fuzzy
+msgid "Save as Animation"
+msgstr "Kubika Nka"
+
+#: libpicman/picmanexport.c:243 libpicman/picmanexport.c:252 libpicman/picmanexport.c:261
+msgid "Flatten Image"
+msgstr ""
+
+#: libpicman/picmanexport.c:260
+#, fuzzy, c-format
+msgid "%s can't handle transparency"
+msgstr "%sIbonerana"
+
+#: libpicman/picmanexport.c:269
+#, fuzzy, c-format
+msgid "%s can't handle layer masks"
+msgstr "%sAkugara"
+
+#: libpicman/picmanexport.c:270
+msgid "Apply Layer Masks"
+msgstr ""
+
+#: libpicman/picmanexport.c:278
+#, fuzzy, c-format
+msgid "%s can only handle RGB images"
+msgstr "%sIshusho"
+
+#: libpicman/picmanexport.c:279 libpicman/picmanexport.c:317 libpicman/picmanexport.c:326
+#, fuzzy
+msgid "Convert to RGB"
+msgstr "Kuri"
+
+#: libpicman/picmanexport.c:287
+#, fuzzy, c-format
+msgid "%s can only handle grayscale images"
+msgstr "%sIngano y'ubwijime Ishusho"
+
+#: libpicman/picmanexport.c:288 libpicman/picmanexport.c:317 libpicman/picmanexport.c:338
+#, fuzzy
+msgid "Convert to Grayscale"
+msgstr "Kuri"
+
+#: libpicman/picmanexport.c:296
+#, fuzzy, c-format
+msgid "%s can only handle indexed images"
+msgstr "%sIshusho"
+
+#: libpicman/picmanexport.c:297 libpicman/picmanexport.c:326 libpicman/picmanexport.c:336
+#, fuzzy
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr "Kuri ikoresha Mburabuzi Kuri i Igisubizo"
+
+#: libpicman/picmanexport.c:306
+#, fuzzy, c-format
+msgid "%s can only handle bitmap (two color) indexed images"
+msgstr "%sBitimapu Ibara Ishusho"
+
+#: libpicman/picmanexport.c:307
+#, fuzzy
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr "Kuri ikoresha Bitimapu Mburabuzi Kuri i Igisubizo"
+
+#: libpicman/picmanexport.c:316
+#, fuzzy, c-format
+msgid "%s can only handle RGB or grayscale images"
+msgstr "%sCyangwa Ingano y'ubwijime Ishusho"
+
+#: libpicman/picmanexport.c:325
+#, fuzzy, c-format
+msgid "%s can only handle RGB or indexed images"
+msgstr "%sCyangwa Ishusho"
+
+#: libpicman/picmanexport.c:335
+#, fuzzy, c-format
+msgid "%s can only handle grayscale or indexed images"
+msgstr "%sIngano y'ubwijime Cyangwa Ishusho"
+
+#: libpicman/picmanexport.c:346
+#, fuzzy, c-format
+msgid "%s needs an alpha channel"
+msgstr "%sAlufa"
+
+#: libpicman/picmanexport.c:347
+msgid "Add Alpha Channel"
+msgstr ""
+
+#: libpicman/picmanexport.c:381
+#, fuzzy
+msgid "Confirm Save"
+msgstr "Kubika"
+
+#: libpicman/picmanexport.c:387
+msgid "Confirm"
+msgstr "Emeza"
+
+#: libpicman/picmanexport.c:459
+#, fuzzy
+msgid "Export File"
+msgstr "Idosiye"
+
+# #-#-#-#-#  setup2.pot (PACKAGE VERSION)  #-#-#-#-#
+# setup2/source\ui\dialog\dialog.src:DLG_INSERTDISKDLG.2.text
+# #-#-#-#-#  setup2.pot (PACKAGE VERSION)  #-#-#-#-#
+# setup2/source\ui\dialog\querydlg.src:RID_EXECERROR_DLG.BTN_QUERY_IGNORE.text
+#: libpicman/picmanexport.c:463
+#, fuzzy
+msgid "_Ignore"
+msgstr "Kwirengagiza"
+
+# filter/source\pdf\impdialog.src:RID_PDF_EXPORT_DLG.BT_OK.text
+# filter/source\xsltdialog\xmlfiltertestdialog.src:DLG_XML_FILTER_TEST_DIALOG.FL_EXPORT.text
+#: libpicman/picmanexport.c:465
+#, fuzzy
+msgid "_Export"
+msgstr "Kohereza"
+
+#. the headline
+#: libpicman/picmanexport.c:493
+#, fuzzy, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "Ishusho Mbere Nka kugirango i"
+
+#. the footline
+#: libpicman/picmanexport.c:564
+#, fuzzy
+msgid "The export conversion won't modify your original image."
+msgstr "Kohereza Ihindurangero Guhindura Umwimerere Ishusho"
+
+#: libpicman/picmanexport.c:664
+#, fuzzy, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr "Ibyerekeye Kuri Kubika a Akugara Nka OYA Kubika i Kigaragara"
+
+#: libpicman/picmanexport.c:670
+#, fuzzy, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr "Ibyerekeye Kuri Kubika a Ihitamo Nka OYA Kubika i Kigaragara"
+
+#: libpicman/picmanfontmenu.c:100
+msgid "Font Selection"
+msgstr ""
+
+#: libpicman/picmangradientmenu.c:115
+msgid "Gradient Selection"
+msgstr ""
+
+#: libpicman/picmanmenu.c:450 libpicmanwidgets/picmanintstore.c:181
+msgid "(Empty)"
+msgstr "(Kirimo ubusa)"
+
+#: libpicman/picmanpalettemenu.c:102
+msgid "Palette Selection"
+msgstr ""
+
+#: libpicman/picmanpatternmenu.c:125
+msgid "Pattern Selection"
+msgstr ""
+
+#: libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "ku ijana"
+
+#: libpicmanbase/picmanbaseenums.c:26
+msgid "_White (full opacity)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:27
+#, fuzzy
+msgid "_Black (full transparency)"
+msgstr "Ibonerana"
+
+#: libpicmanbase/picmanbaseenums.c:28
+#, fuzzy
+msgid "Layer's _alpha channel"
+msgstr "Alufa"
+
+#: libpicmanbase/picmanbaseenums.c:29
+#, fuzzy
+msgid "_Transfer layer's alpha channel"
+msgstr "Alufa"
+
+# filter/source\pdf\impdialog.src:RID_PDF_EXPORT_DLG.RB_SELECTION.text
+#: libpicmanbase/picmanbaseenums.c:30
+#, fuzzy
+msgid "_Selection"
+msgstr "Ihitamo"
+
+#: libpicmanbase/picmanbaseenums.c:31
+#, fuzzy
+msgid "_Grayscale copy of layer"
+msgstr "Gukoporora Bya Akugara"
+
+#: libpicmanbase/picmanbaseenums.c:61
+#, fuzzy
+msgid "FG to BG (RGB)"
+msgstr "Kuri"
+
+#: libpicmanbase/picmanbaseenums.c:62
+#, fuzzy
+msgid "FG to BG (HSV)"
+msgstr "Kuri"
+
+#: libpicmanbase/picmanbaseenums.c:63
+#, fuzzy
+msgid "FG to transparent"
+msgstr "Kuri Bibonerana"
+
+#: libpicmanbase/picmanbaseenums.c:64
+#, fuzzy
+msgid "Custom gradient"
+msgstr "Kugena Ikizamuko"
+
+#: libpicmanbase/picmanbaseenums.c:93
+#, fuzzy
+msgid "FG color fill"
+msgstr "Ibara Kuzuza"
+
+#: libpicmanbase/picmanbaseenums.c:94
+#, fuzzy
+msgid "BG color fill"
+msgstr "Ibara Kuzuza"
+
+#: libpicmanbase/picmanbaseenums.c:95
+#, fuzzy
+msgid "Pattern fill"
+msgstr "Kuzuza"
+
+#: libpicmanbase/picmanbaseenums.c:125
+#, fuzzy
+msgid "Add to the current selection"
+msgstr "Kuri i KIGEZWEHO Ihitamo"
+
+#: libpicmanbase/picmanbaseenums.c:126
+#, fuzzy
+msgid "Subtract from the current selection"
+msgstr "Bivuye i KIGEZWEHO Ihitamo"
+
+#: libpicmanbase/picmanbaseenums.c:127
+#, fuzzy
+msgid "Replace the current selection"
+msgstr "i KIGEZWEHO Ihitamo"
+
+#: libpicmanbase/picmanbaseenums.c:128
+#, fuzzy
+msgid "Intersect with the current selection"
+msgstr "Na: i KIGEZWEHO Ihitamo"
+
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Image.Color.RGB.Red.text
+#: libpicmanbase/picmanbaseenums.c:160 libpicmanwidgets/picmancolorscales.c:168
+#: libpicmanwidgets/picmancolorselect.c:352
+msgid "Red"
+msgstr "Umutuku"
+
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Image.Color.RGB.Green.text
+#: libpicmanbase/picmanbaseenums.c:161 libpicmanwidgets/picmancolorscales.c:169
+#: libpicmanwidgets/picmancolorselect.c:353
+msgid "Green"
+msgstr "Icyatsi"
+
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Image.Color.RGB.Blue.text
+#: libpicmanbase/picmanbaseenums.c:162 libpicmanwidgets/picmancolorscales.c:170
+#: libpicmanwidgets/picmancolorselect.c:354
+msgid "Blue"
+msgstr "Ubururu"
+
+#: libpicmanbase/picmanbaseenums.c:163
+msgid "Gray"
+msgstr "Ikigina"
+
+#: libpicmanbase/picmanbaseenums.c:164 libpicmanbase/picmanbaseenums.c:436
+msgid "Indexed"
+msgstr ""
+
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_PERCENTILE.4.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_TRIM_MEAN.4.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_WEIBULL.4.text
+#: libpicmanbase/picmanbaseenums.c:165 libpicmanwidgets/picmancolorscales.c:171
+#: libpicmanwidgets/picmancolorselect.c:355
+msgid "Alpha"
+msgstr "Alufa"
+
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....View.Window.Flag..02.text
+#: libpicmanbase/picmanbaseenums.c:194
+msgid "Small"
+msgstr "Gitoya"
+
+#: libpicmanbase/picmanbaseenums.c:195
+msgid "Medium"
+msgstr "Hagati"
+
+# offmgr/source\offapp\dialog\optgdlg.src:OFA_TP_VIEW.LB_BIG.3.text
+#: libpicmanbase/picmanbaseenums.c:196
+msgid "Large"
+msgstr "Binini"
+
+#: libpicmanbase/picmanbaseenums.c:228
+msgid "Light Checks"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:229
+msgid "Mid-Tone Checks"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:230
+msgid "Dark Checks"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:231
+msgid "White Only"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:232
+msgid "Gray Only"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:233
+msgid "Black Only"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:261
+#, fuzzy
+msgid "Image source"
+msgstr "Inkomoko"
+
+#: libpicmanbase/picmanbaseenums.c:262
+#, fuzzy
+msgid "Pattern source"
+msgstr "Inkomoko"
+
+#: libpicmanbase/picmanbaseenums.c:290
+msgid "Dodge"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:291
+msgid "Burn"
+msgstr ""
+
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_TRANSPARENCE.LB_TRGR_GRADIENT_TYPES.1.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_GRADIENT.LB_GRADIENT_TYPES.1.text
+#: libpicmanbase/picmanbaseenums.c:328 libpicmanbase/picmanbaseenums.c:468
+msgid "Linear"
+msgstr "Kurikiramurongo"
+
+#: libpicmanbase/picmanbaseenums.c:329
+#, fuzzy
+msgid "Bi-linear"
+msgstr "By'umurongo"
+
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_TRANSPARENCE.LB_TRGR_GRADIENT_TYPES.3.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_GRADIENT.LB_GRADIENT_TYPES.3.text
+#: libpicmanbase/picmanbaseenums.c:330
+msgid "Radial"
+msgstr "Nyakarambararo"
+
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/sdi\svxslots.src:SID_DRAW_SQUARE.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\sdstring.src:RID_SVXSTR_SQUARE.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\sdstring.src:RID_SVXSTR_LEND10.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_TRANSPARENCE.LB_TRGR_GRADIENT_TYPES.6.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_GRADIENT.LB_GRADIENT_TYPES.5.text
+# #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
+# svx/source\svdraw\svdstr.src:STR_ObjNameSingulQUAD.text
+#: libpicmanbase/picmanbaseenums.c:331
+msgid "Square"
+msgstr "kare"
+
+#: libpicmanbase/picmanbaseenums.c:332
+msgid "Conical (sym)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:333
+msgid "Conical (asym)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:334
+msgid "Shaped (angular)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:335
+#, fuzzy
+msgid "Shaped (spherical)"
+msgstr "Cy'umubumbe"
+
+#: libpicmanbase/picmanbaseenums.c:336
+msgid "Shaped (dimpled)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:337
+msgid "Spiral (cw)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:338
+msgid "Spiral (ccw)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:367
+msgid "Stock ID"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:368
+msgid "Inline pixbuf"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:369
+#, fuzzy
+msgid "Image file"
+msgstr "IDOSIYE"
+
+#: libpicmanbase/picmanbaseenums.c:398
+#, fuzzy
+msgid "RGB color"
+msgstr "Ibara"
+
+# #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Filter.Graphic.Export.JPG.ColorMode..1.text
+# #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
+# officecfg/registry\schema\org\openoffice\Office\Impress.xcs:....Misc.Preview..868.text
+# #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
+# officecfg/registry\schema\org\openoffice\Office\Impress.xcs:....Print.Other.Quality..1.text
+# #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
+# officecfg/registry\schema\org\openoffice\Office\Draw.xcs:....Misc.Preview..868.text
+# #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
+# officecfg/registry\schema\org\openoffice\Office\Draw.xcs:....Print.Other.Quality..1.text
+#: libpicmanbase/picmanbaseenums.c:399 libpicmanbase/picmanbaseenums.c:434
+msgid "Grayscale"
+msgstr "Igipimokigina"
+
+#: libpicmanbase/picmanbaseenums.c:400
+#, fuzzy
+msgid "Indexed color"
+msgstr "Ibara"
+
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_COLOR.LB_COLORMODEL.1.text
+#: libpicmanbase/picmanbaseenums.c:432
+msgid "RGB"
+msgstr "UmutukuIcyatsiUbururu"
+
+#: libpicmanbase/picmanbaseenums.c:433
+#, fuzzy
+msgid "RGB-alpha"
+msgstr "Alufa"
+
+#: libpicmanbase/picmanbaseenums.c:435
+#, fuzzy
+msgid "Grayscale-alpha"
+msgstr "Alufa"
+
+#: libpicmanbase/picmanbaseenums.c:437
+#, fuzzy
+msgid "Indexed-alpha"
+msgstr "Alufa"
+
+#: libpicmanbase/picmanbaseenums.c:467
+msgid "None (Fastest)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:469
+msgid "Cubic"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:470
+msgid "Lanczos (Best)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:498
+msgid "Constant"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:499
+msgid "Incremental"
+msgstr ""
+
+# goodies/source\filter.vcl\eps\dlgeps.src:DLG_EXPORT_EPS.RB_COMPRESSION_NONE.text
+#: libpicmanbase/picmanbaseenums.c:528
+msgid "None"
+msgstr "Nta na kimwe"
+
+#: libpicmanbase/picmanbaseenums.c:529
+#, fuzzy
+msgid "Sawtooth wave"
+msgstr "UMUVUMBA"
+
+#: libpicmanbase/picmanbaseenums.c:530
+#, fuzzy
+msgid "Triangular wave"
+msgstr "UMUVUMBA"
+
+# offmgr/source\offapp\dialog\optgdlg.src:OFA_TP_VIEW.FT_POINTLIMIT_UNIT.text
+#: libpicmanbase/picmanbaseenums.c:558
+msgid "Pixels"
+msgstr "Pigiseli"
+
+# 4705
+#: libpicmanbase/picmanbaseenums.c:559
+msgid "Points"
+msgstr "utubago"
+
+#: libpicmanbase/picmanbaseenums.c:588
+msgid "Shadows"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:589
+msgid "Midtones"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:590
+msgid "Highlights"
+msgstr "Amahitamogaragaza"
+
+#: libpicmanbase/picmanbaseenums.c:618
+msgid "Forward (traditional)"
+msgstr ""
+
+#: libpicmanbase/picmanbaseenums.c:619
+msgid "Backward (corrective)"
+msgstr ""
+
+#: libpicmanbase/picmanmemsize.c:177
+#, c-format
+msgid "%d Bytes"
+msgstr ""
+
+#: libpicmanbase/picmanmemsize.c:182
+#, fuzzy, c-format
+msgid "%.2f KB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:186
+#, fuzzy, c-format
+msgid "%.1f KB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%d KB"
+msgstr ""
+
+#: libpicmanbase/picmanmemsize.c:197
+#, fuzzy, c-format
+msgid "%.2f MB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:201
+#, fuzzy, c-format
+msgid "%.1f MB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%d MB"
+msgstr ""
+
+#: libpicmanbase/picmanmemsize.c:212
+#, fuzzy, c-format
+msgid "%.2f GB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:216
+#, fuzzy, c-format
+msgid "%.1f GB"
+msgstr ""
+"%.Project- Id- Version: basctl\n"
+"POT- Creation- Date: 2003- 12- 07 17: 13+ 02\n"
+"PO- Revision- Date: 2004- 11- 04 10: 13- 0700\n"
+"Last- Translator: Language- Team:< en@ li. org> MIME- Version: 1. 0\n"
+"Content- Type: text/ plain; charset= UTF- 8\n"
+"Content- Transfer- Encoding: 8bit\n"
+"X- Generator: KBabel 1. 0\n"
+"."
+
+#: libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%d GB"
+msgstr ""
+
+#: libpicmanbase/picmanutils.c:169 libpicmanbase/picmanutils.c:174
+#, fuzzy
+msgid "(invalid UTF-8 string)"
+msgstr "(Sibyo 8 Ikurikiranyanyuguti"
+
+#: libpicmanconfig/picmancolorconfig.c:40
+#, fuzzy
+msgid "Mode of operation for color management."
+msgstr "Bya kugirango Ibara"
+
+#: libpicmanconfig/picmancolorconfig.c:42
+#, fuzzy
+msgid "Sets the color profile for the display."
+msgstr "i Ibara Ibijyana kugirango i Kugaragaza"
+
+#: libpicmanconfig/picmancolorconfig.c:44
+#, fuzzy
+msgid "Sets default RGB workspace color profile."
+msgstr "Mburabuzi Umwanya- nkenerwa Ibara Ibijyana"
+
+#: libpicmanconfig/picmancolorconfig.c:46
+#, fuzzy
+msgid "Sets the CMYK color profile used to convert between RGB and CMYK."
+msgstr "i Ibara Ibijyana Kuri GUHINDURA hagati Na"
+
+#: libpicmanconfig/picmancolorconfig.c:48
+#, fuzzy
+msgid "Sets the color profile used when printing."
+msgstr "i Ibara Ibijyana Ryari: Icapa..."
+
+#: libpicmanconfig/picmancolorconfig.c:50
+#, fuzzy
+msgid "Sets how colors are mapped for your display."
+msgstr "Amabara kugirango Kugaragaza"
+
+#: libpicmanconfig/picmancolorconfig.c:52
+#, fuzzy
+msgid "Sets how colors are converted from workspace to simulation device."
+msgstr "Amabara Bivuye Umwanya- nkenerwa Kuri APAREYE"
+
+#: libpicmanconfig/picmancolorconfig-enums.c:24
+#, fuzzy
+msgid "No color management"
+msgstr "Ibara"
+
+#: libpicmanconfig/picmancolorconfig-enums.c:25
+#, fuzzy
+msgid "Color managed display"
+msgstr "Kugaragaza"
+
+#: libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr ""
+
+#: libpicmanconfig/picmancolorconfig-enums.c:56 modules/cdisplay_proof.c:55
+msgid "Perceptual"
+msgstr ""
+
+#: libpicmanconfig/picmancolorconfig-enums.c:57 modules/cdisplay_proof.c:56
+msgid "Relative Colorimetric"
+msgstr ""
+
+# 5287
+#: libpicmanconfig/picmancolorconfig-enums.c:58
+#: libpicmanwidgets/picmancolorscales.c:166 libpicmanwidgets/picmancolorselect.c:350
+#: modules/cdisplay_proof.c:57
+msgid "Saturation"
+msgstr "Ubwuzurane"
+
+#: libpicmanconfig/picmancolorconfig-enums.c:59 modules/cdisplay_proof.c:58
+msgid "Absolute Colorimetric"
+msgstr ""
+
+#: libpicmanconfig/picmancolorconfig-enums.c:88
+msgid "Ask"
+msgstr ""
+
+#: libpicmanconfig/picmancolorconfig-enums.c:89
+#, fuzzy
+msgid "Use embedded profile"
+msgstr "Gitsindiye Ibijyana"
+
+#: libpicmanconfig/picmancolorconfig-enums.c:90
+#, fuzzy
+msgid "Convert to RGB workspace"
+msgstr "Kuri Umwanya- nkenerwa"
+
+#: libpicmanconfig/picmanconfig-deserialize.c:95
+#, fuzzy, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "Agaciro kugirango ni OYA a Byemewe 8 Ikurikiranyanyuguti"
+
+#. please don't translate 'yes' and 'no'
+#: libpicmanconfig/picmanconfig-deserialize.c:423
+#, fuzzy, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "Ikitezwe: Cyangwa kugirango Icyungo"
+
+#: libpicmanconfig/picmanconfig-deserialize.c:497
+#, fuzzy, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "Sibyo Agaciro kugirango"
+
+#: libpicmanconfig/picmanconfig-deserialize.c:512
+#, fuzzy, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "Sibyo Agaciro kugirango"
+
+#: libpicmanconfig/picmanconfig-deserialize.c:581
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: libpicmanconfig/picmanconfig-iface.c:454 libpicmanconfig/picmanconfig-iface.c:467
+#: libpicmanconfig/picmanscanner.c:515 libpicmanconfig/picmanscanner.c:596
+#, fuzzy
+msgid "fatal parse error"
+msgstr "Ikosa"
+
+#: libpicmanconfig/picmanconfig-path.c:349
+#, fuzzy, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Kwagura"
+
+#: libpicmanconfig/picmanconfigwriter.c:135
+#, fuzzy, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "OYA Kurema By'igihe gito IDOSIYE kugirango"
+
+#: libpicmanconfig/picmanconfigwriter.c:148
+#, fuzzy, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "OYA Gufungura kugirango"
+
+#: libpicmanconfig/picmanconfigwriter.c:667
+#, fuzzy, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr "Kuri By'igihe gito IDOSIYE kugirango Umwimerere IDOSIYE OYA"
+
+#: libpicmanconfig/picmanconfigwriter.c:675
+#, fuzzy, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr "Kuri By'igihe gito IDOSIYE kugirango IDOSIYE Byaremwe"
+
+#: libpicmanconfig/picmanconfigwriter.c:686
+#, fuzzy, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Kuri"
+
+#: libpicmanconfig/picmanconfigwriter.c:704
+#, fuzzy, c-format
+msgid "Could not create '%s': %s"
+msgstr "OYA Kurema"
+
+#: libpicmanconfig/picmanscanner.c:102
+#, fuzzy, c-format
+msgid "Could not open '%s' for reading: %s"
+msgstr "OYA Gufungura kugirango"
+
+#: libpicmanconfig/picmanscanner.c:272
+#, fuzzy
+msgid "invalid UTF-8 string"
+msgstr "Sibyo 8 Ikurikiranyanyuguti"
+
+#: libpicmanconfig/picmanscanner.c:623
+#, fuzzy, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "in Umurongo"
+
+#: libpicmanmodule/picmanmodule.c:180
+#, fuzzy, c-format
+msgid "Loading module: '%s'\n"
+msgstr "Modire"
+
+#: libpicmanmodule/picmanmodule.c:197 libpicmanmodule/picmanmodule.c:216
+#: libpicmanmodule/picmanmodule.c:330 libpicmanmodule/picmanmodule.c:358
+#: libpicmanmodule/picmanmodule.c:482
+#, fuzzy, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Ibirimo Ikosa"
+
+#: libpicmanmodule/picmanmodule.c:286
+#, fuzzy, c-format
+msgid "Skipping module: '%s'\n"
+msgstr "Modire"
+
+#: libpicmanmodule/picmanmodule.c:426
+#, fuzzy
+msgid "Module error"
+msgstr "Ikosa"
+
+#: libpicmanmodule/picmanmodule.c:427
+msgid "Loaded"
+msgstr ""
+
+#: libpicmanmodule/picmanmodule.c:428
+#, fuzzy
+msgid "Load failed"
+msgstr "Byanze"
+
+#: libpicmanmodule/picmanmodule.c:429
+msgid "Not loaded"
+msgstr ""
+
+#: libpicmanthumb/picmanthumb-utils.c:125
+#, fuzzy, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"a Byemewe Ku Ntangiriro bushyinguro in i Ububiko kugirango By'igihe gito "
+"Idosiye"
+
+#: libpicmanthumb/picmanthumb-utils.c:249 libpicmanthumb/picmanthumb-utils.c:317
+#, fuzzy, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Kuri Kurema Ububiko"
+
+#: libpicmanthumb/picmanthumbnail.c:919
+#, fuzzy, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "OYA Kurema kugirango"
+
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_BITMAP.FT_COLOR.text
+#: libpicmanwidgets/picmancolorbutton.c:99
+#, fuzzy
+msgid "_Foreground Color"
+msgstr "Ibara rya mbugambanza"
+
+#: libpicmanwidgets/picmancolorbutton.c:103
+#, fuzzy
+msgid "_Background Color"
+msgstr "Ibara rya mbuganyuma"
+
+# officecfg/registry\schema\org\openoffice\Office\Math.xcs:....FontFormat.Weight..10.text
+#: libpicmanwidgets/picmancolorbutton.c:107
+#, fuzzy
+msgid "Blac_k"
+msgstr "umukara"
+
+#: libpicmanwidgets/picmancolorbutton.c:111
+#, fuzzy
+msgid "_White"
+msgstr "Umweru"
+
+#: libpicmanwidgets/picmancolorscales.c:133
+msgid "Scales"
+msgstr ""
+
+#: libpicmanwidgets/picmancolorscales.c:155 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_H"
+msgstr "h"
+
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS1.SC_OPCODE_KUM_KAP_Z.8.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS1.SC_OPCODE_KUM_ZINS_Z.8.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS1.SC_OPCODE_VBD.8.text
+#: libpicmanwidgets/picmancolorscales.c:156 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_S"
+msgstr "S"
+
+#: libpicmanwidgets/picmancolorscales.c:157 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_V"
+msgstr "v"
+
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_NEG_BINOM_VERT.4.text
+#: libpicmanwidgets/picmancolorscales.c:158 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_R"
+msgstr "R"
+
+#: libpicmanwidgets/picmancolorscales.c:159 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_G"
+msgstr "G"
+
+# sc/source\core\src\compiler.src:RID_SC_FUNCTION_NAMES.SC_OPCODE_B.text
+#: libpicmanwidgets/picmancolorscales.c:160 libpicmanwidgets/picmancolorselect.c:345
+#, fuzzy
+msgid "_B"
+msgstr "B"
+
+# sw/source\ui\index\cnttab.src:TP_TOX_ENTRY.WIN_TOKEN.STR_TOKEN_AUTHORITY.text
+#: libpicmanwidgets/picmancolorscales.c:161
+#, fuzzy
+msgid "_A"
+msgstr "A"
+
+# svtools/source\dialogs\colrdlg.src:DLG_COLOR.FT_HUE.text
+#: libpicmanwidgets/picmancolorscales.c:165 libpicmanwidgets/picmancolorselect.c:349
+#, fuzzy
+msgid "Hue"
+msgstr "Ibara"
+
+#: libpicmanwidgets/picmancolorscales.c:167 libpicmanwidgets/picmancolorselect.c:351
+msgid "Value"
+msgstr "Agaciro"
+
+#: libpicmanwidgets/picmancolorscales.c:243
+#, fuzzy
+msgid "Hexadecimal color notation as used in HTML and CSS"
+msgstr "Ibara Nka in Na"
+
+#: libpicmanwidgets/picmancolorscales.c:248
+msgid "HTML _Notation:"
+msgstr ""
+
+# sc/source\core\src\compiler.src:RID_SC_FUNCTION_NAMES.SC_OPCODE_CURRENT.text
+#: libpicmanwidgets/picmancolorselection.c:203
+#, fuzzy
+msgid "Current:"
+msgstr "KIGEZWEHO"
+
+# 4388
+#: libpicmanwidgets/picmancolorselection.c:225
+#, fuzzy
+msgid "Old:"
+msgstr "ki/ bishaje"
+
+#: libpicmanwidgets/picmanfileentry.c:351
+msgid "Select Folder"
+msgstr ""
+
+# wizards/source\euro\euro.src:MESSAGES_+_2.text
+#: libpicmanwidgets/picmanfileentry.c:353
+#, fuzzy
+msgid "Select File"
+msgstr "Guhitamo idosiye"
+
+#: libpicmanwidgets/picmanmemsizeentry.c:232
+msgid "Kilobytes"
+msgstr ""
+
+#: libpicmanwidgets/picmanmemsizeentry.c:233
+msgid "Megabytes"
+msgstr ""
+
+#: libpicmanwidgets/picmanmemsizeentry.c:234
+msgid "Gigabytes"
+msgstr ""
+
+#: libpicmanwidgets/picmanpatheditor.c:243
+msgid "Writable"
+msgstr ""
+
+# sfx2/source\explorer\explorer.src:STR_SFX_FOLDER.text
+#: libpicmanwidgets/picmanpatheditor.c:252
+msgid "Folder"
+msgstr "Ububiko"
+
+#: libpicmanwidgets/picmanpickbutton.c:138
+#, fuzzy
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"i Mugushagisho Hanyuma Kanda a Ibara Aho ariho hose ku Mugaragaza Kuri "
+"Guhitamo Ibara"
+
+#: libpicmanwidgets/picmanpreviewarea.c:126
+msgid "Check Size"
+msgstr ""
+
+#: libpicmanwidgets/picmanpreviewarea.c:133
+msgid "Check Style"
+msgstr ""
+
+#. toggle button to (des)activate the instant preview
+#: libpicmanwidgets/picmanpreview.c:240
+#, fuzzy
+msgid "_Preview"
+msgstr "Igaragazambere"
+
+#: libpicmanwidgets/picmanpropwidgets.c:1728
+#, fuzzy, c-format
+msgid "This text input field is limited to %d characters."
+msgstr "Umwandiko Iyinjiza Umwanya ni Kuri Inyuguti"
+
+# officecfg/registry\schema\org\openoffice\Office\Calc.xcs:....Content.Display.Anchor.text
+#: libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "Agafashi"
+
+# officecfg/registry\schema\org\openoffice\Office\DataAccess.xcs:....Column.Align..1.text
+#: libpicmanwidgets/picmanstock.c:114
+#, fuzzy
+msgid "C_enter"
+msgstr "hagati"
+
+#: libpicmanwidgets/picmanstock.c:115
+#, fuzzy
+msgid "_Duplicate"
+msgstr "Gusubiramo"
+
+# #-#-#-#-#  basctl.pot (PACKAGE VERSION)  #-#-#-#-#
+# basctl/source\basicide\basidesh.src:RID_BASICMENU.MN_EDIT.text
+# #-#-#-#-#  basctl.pot (PACKAGE VERSION)  #-#-#-#-#
+# basctl/source\basicide\basidesh.src:RID_BASICPLUGINMENU.MN_PLEDIT.text
+# #-#-#-#-#  basctl.pot (PACKAGE VERSION)  #-#-#-#-#
+# basctl/source\basicide\macrodlg.src:RID_MACROCHOOSER.RID_PB_EDIT.text
+# #-#-#-#-#  basctl.pot (PACKAGE VERSION)  #-#-#-#-#
+# basctl/source\basicide\moduldlg.src:RID_TP_MODULS.RID_PB_EDIT.text
+# #-#-#-#-#  basctl.pot (PACKAGE VERSION)  #-#-#-#-#
+# basctl/source\basicide\moduldlg.src:RID_TP_LIBS.RID_PB_EDIT.text
+#: libpicmanwidgets/picmanstock.c:116
+#, fuzzy
+msgid "_Edit"
+msgstr "Guhindura"
+
+#: libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr ""
+
+#: libpicmanwidgets/picmanstock.c:118
+#, fuzzy
+msgid "Paste as New"
+msgstr "Nka"
+
+#: libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr ""
+
+# offmgr/source\offapp\dialog\optgdlg.src:OFA_TP_MISC.PB_HELPAGENT_RESET.text
+#: libpicmanwidgets/picmanstock.c:120
+#, fuzzy
+msgid "_Reset"
+msgstr "Kugarura"
+
+# 6488
+#: libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "kigaragara"
+
+# #-#-#-#-#  svtools.pot (PACKAGE VERSION)  #-#-#-#-#
+# svtools/source\control\ctrlbox.src:STR_SVT_COLLATE_STROKE.text
+# #-#-#-#-#  svtools.pot (PACKAGE VERSION)  #-#-#-#-#
+# svtools/source\control\ctrlbox.src:STR_SVT_INDEXENTRY_STROKE.text
+#: libpicmanwidgets/picmanstock.c:154 libpicmanwidgets/picmanstock.c:158
+#, fuzzy
+msgid "_Stroke"
+msgstr "Akarongo"
+
+#: libpicmanwidgets/picmanstock.c:170
+msgid "L_etter Spacing"
+msgstr ""
+
+# sc/source\ui\drawfunc\objdraw.src:MN_TEXT_ATTR.RID_MN_FORMAT_LINESPACE.text
+#: libpicmanwidgets/picmanstock.c:171
+#, fuzzy
+msgid "L_ine Spacing"
+msgstr "Itandukanyamirongo"
+
+# starmath/source\smres.src:RID_TOOLBOXWINDOW.6.RID_SIZEXY.text
+#: libpicmanwidgets/picmanstock.c:187
+#, fuzzy
+msgid "_Resize"
+msgstr "Kuringaniza"
+
+#: libpicmanwidgets/picmanstock.c:188 libpicmanwidgets/picmanstock.c:292
+#, fuzzy
+msgid "_Scale"
+msgstr "Gupima"
+
+#: libpicmanwidgets/picmanstock.c:271
+msgid "Crop"
+msgstr "Gukataho"
+
+#: libpicmanwidgets/picmanstock.c:288
+#, fuzzy
+msgid "_Transform"
+msgstr "Guhindura"
+
+#: libpicmanwidgets/picmanstock.c:291
+#, fuzzy
+msgid "_Rotate"
+msgstr "Kuzengurutsa"
+
+#: libpicmanwidgets/picmanstock.c:293
+msgid "_Shear"
+msgstr ""
+
+# sc/source\ui\src\globstr.src:RID_GLOBSTR.STR_FUNCTIONLIST_MORE.text
+#: libpicmanwidgets/picmanunitmenu.c:302
+msgid "More..."
+msgstr "Birenzeho..."
+
+#: libpicmanwidgets/picmanunitmenu.c:612
+msgid "Unit Selection"
+msgstr ""
+
+#: libpicmanwidgets/picmanunitmenu.c:660
+#, fuzzy
+msgid "Unit"
+msgstr "Igice:"
+
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS1.SC_OPCODE_GDA.10.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS1.SC_OPCODE_VBD.12.text
+#: libpicmanwidgets/picmanunitmenu.c:664
+msgid "Factor"
+msgstr "Umubarwa"
+
+#: libpicmanwidgets/picmanwidgets.c:1001
+#, fuzzy
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr "iyi Agaciro kugirango Umubare iyi Kuri Gusubiramo a"
+
+#: libpicmanwidgets/picmanwidgets.c:1005
+msgid "_New Seed"
+msgstr ""
+
+#: libpicmanwidgets/picmanwidgets.c:1018
+#, fuzzy
+msgid "Seed random number generator with a generated random number"
+msgstr "Umubare Na: a Umubare"
+
+#: libpicmanwidgets/picmanwidgets.c:1022
+msgid "_Randomize"
+msgstr ""
+
+#: modules/cdisplay_colorblind.c:67
+#, fuzzy
+msgid "Protanopia (insensitivity to red"
+msgstr "Kuri Umutuku"
+
+#: modules/cdisplay_colorblind.c:69
+#, fuzzy
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Kuri Icyatsi"
+
+#: modules/cdisplay_colorblind.c:71
+#, fuzzy
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Kuri Ubururu"
+
+#: modules/cdisplay_colorblind.c:200
+#, fuzzy
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Muyunguruzi..."
+
+#: modules/cdisplay_colorblind.c:290
+msgid "Color Deficient Vision"
+msgstr ""
+
+#: modules/cdisplay_colorblind.c:503
+msgid "Color _Deficiency Type:"
+msgstr ""
+
+#: modules/cdisplay_gamma.c:91
+#, fuzzy
+msgid "Gamma color display filter"
+msgstr "Ibara Kugaragaza Muyunguruzi..."
+
+#: modules/cdisplay_gamma.c:160
+msgid "Gamma"
+msgstr "Gama"
+
+# sw/source\ui\utlui\attrdesc.src:STR_GAMMA.text
+#: modules/cdisplay_gamma.c:251
+#, fuzzy
+msgid "_Gamma:"
+msgstr "Gama:"
+
+#: modules/cdisplay_highcontrast.c:91
+#, fuzzy
+msgid "High Contrast color display filter"
+msgstr "Ibara Kugaragaza Muyunguruzi..."
+
+# officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Image.Color.Contrast.text
+#: modules/cdisplay_highcontrast.c:160
+msgid "Contrast"
+msgstr "Inyuranyamigaragarire"
+
+#: modules/cdisplay_highcontrast.c:251
+msgid "Contrast C_ycles:"
+msgstr ""
+
+#: modules/cdisplay_lcms.c:95
+#, fuzzy
+msgid "Color management display filter using ICC color profiles"
+msgstr "Kugaragaza Muyunguruzi... ikoresha Ibara"
+
+#: modules/cdisplay_lcms.c:163
+msgid "Color Management"
+msgstr ""
+
+#: modules/cdisplay_proof.c:127
+#, fuzzy
+msgid "Color proof filter using ICC color profile"
+msgstr "Muyunguruzi... ikoresha Ibara Ibijyana"
+
+#: modules/cdisplay_proof.c:221
+msgid "Color Proof"
+msgstr ""
+
+#: modules/cdisplay_proof.c:346
+msgid "_Intent:"
+msgstr ""
+
+#: modules/cdisplay_proof.c:350
+msgid "Choose an ICC Color Profile"
+msgstr ""
+
+#: modules/cdisplay_proof.c:353
+#, fuzzy
+msgid "_Profile:"
+msgstr "Ibijyana"
+
+#: modules/cdisplay_proof.c:358
+msgid "_Black Point Compensation"
+msgstr ""
+
+#: modules/colorsel_cmyk.c:73
+#, fuzzy
+msgid "CMYK color selector"
+msgstr "Ibara"
+
+# svx/source\dialog\tabarea.src:RID_SVXPAGE_COLOR.LB_COLORMODEL.2.text
+#: modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "CMYK"
+
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_BINOM_DIST.8.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_POISSON_DIST.6.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_NORM_DIST.8.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_EXP_DIST.6.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_GAMMA_DIST.8.text
+# #-#-#-#-#  sc.pot (PACKAGE VERSION)  #-#-#-#-#
+# sc/source\ui\src\scfuncs.src:RID_SC_FUNCTION_DESCRIPTIONS2.SC_OPCODE_WEIBULL.8.text
+#: modules/colorsel_cmyk.c:147
+#, fuzzy
+msgid "_C"
+msgstr "C"
+
+# scaddins/source\analysis\analysis.src:RID_ANALYSIS_FUNCTION_DESCRIPTIONS.ANALYSIS_Seriessum.6.text
+#: modules/colorsel_cmyk.c:148
+#, fuzzy
+msgid "_M"
+msgstr "M"
+
+# svx/source\engine3d\float3d.src:RID_SVXFLOAT3D_FIX_Y.text
+#: modules/colorsel_cmyk.c:149
+#, fuzzy
+msgid "_Y"
+msgstr "Y"
+
+#: modules/colorsel_cmyk.c:150
+#, fuzzy
+msgid "_K"
+msgstr "K"
+
+#: modules/colorsel_cmyk.c:154
+msgid "Cyan"
+msgstr "Ubururu bukeye"
+
+#: modules/colorsel_cmyk.c:155
+msgid "Magenta"
+msgstr "Umutuku werurutse"
+
+#: modules/colorsel_cmyk.c:156
+msgid "Yellow"
+msgstr "Umuhondo"
+
+#: modules/colorsel_cmyk.c:157
+msgid "Black"
+msgstr "Umukara"
+
+#: modules/colorsel_cmyk.c:191
+msgid "Black _Pullout:"
+msgstr ""
+
+#: modules/colorsel_cmyk.c:208
+#, fuzzy
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Ijanisha Bya umukara Kuri Inyuma Bya i"
+
+#: modules/colorsel_triangle.c:104
+#, fuzzy
+msgid "Painter-style triangle color selector"
+msgstr "IMISUSIRE Ibara"
+
+#: modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr ""
+
+#: modules/colorsel_water.c:88
+#, fuzzy
+msgid "Watercolor style color selector"
+msgstr "IMISUSIRE Ibara"
+
+#: modules/colorsel_water.c:154
+msgid "Watercolor"
+msgstr ""
+
+#: modules/colorsel_water.c:220
+msgid "Pressure"
+msgstr ""

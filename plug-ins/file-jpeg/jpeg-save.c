@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,10 +37,10 @@
 #include <libexif/exif-data.h>
 #endif /* HAVE_LIBEXIF */
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "jpeg.h"
 #include "jpeg-icc.h"
@@ -85,8 +85,8 @@ typedef struct
   guchar       *temp;
   guchar       *data;
   guchar       *src;
-  GimpDrawable *drawable;
-  GimpPixelRgn  pixel_rgn;
+  PicmanDrawable *drawable;
+  PicmanPixelRgn  pixel_rgn;
   const gchar  *file_name;
   gboolean      abort_me;
   guint         source_id;
@@ -191,7 +191,7 @@ background_jpeg_save (PreviewPersistent *pp)
       g_free (pp->data);
 
       if (pp->drawable)
-        gimp_drawable_detach (pp->drawable);
+        picman_drawable_detach (pp->drawable);
 
       /* display the preview stuff */
       if (!pp->abort_me)
@@ -211,7 +211,7 @@ background_jpeg_save (PreviewPersistent *pp)
           g_free (size_text);
 
           /* and load the preview */
-          load_image (pp->file_name, GIMP_RUN_NONINTERACTIVE, TRUE, NULL);
+          load_image (pp->file_name, PICMAN_RUN_NONINTERACTIVE, TRUE, NULL);
         }
 
       /* we cleanup here (load_image doesn't run in the background) */
@@ -220,7 +220,7 @@ background_jpeg_save (PreviewPersistent *pp)
       g_free (pp);
       prev_p = NULL;
 
-      gimp_displays_flush ();
+      picman_displays_flush ();
       gdk_flush ();
 
       return FALSE;
@@ -231,7 +231,7 @@ background_jpeg_save (PreviewPersistent *pp)
         {
           yend = pp->cinfo.next_scanline + pp->tile_height;
           yend = MIN (yend, pp->cinfo.image_height);
-          gimp_pixel_rgn_get_rect (&pp->pixel_rgn, pp->data, 0,
+          picman_pixel_rgn_get_rect (&pp->pixel_rgn, pp->data, 0,
                                    pp->cinfo.next_scanline,
                                    pp->cinfo.image_width,
                                    (yend - pp->cinfo.next_scanline));
@@ -265,10 +265,10 @@ save_image (const gchar  *filename,
             gboolean      preview,
             GError      **error)
 {
-  GimpPixelRgn   pixel_rgn;
-  GimpDrawable  *drawable;
-  GimpImageType  drawable_type;
-  GimpParasite  *parasite;
+  PicmanPixelRgn   pixel_rgn;
+  PicmanDrawable  *drawable;
+  PicmanImageType  drawable_type;
+  PicmanParasite  *parasite;
   static struct jpeg_compress_struct cinfo;
   static struct my_error_mgr         jerr;
   JpegSubsampling             subsampling;
@@ -280,14 +280,14 @@ save_image (const gchar  *filename,
   gint      rowstride, yend;
   gint      i, j;
 
-  drawable = gimp_drawable_get (drawable_ID);
-  drawable_type = gimp_drawable_type (drawable_ID);
-  gimp_pixel_rgn_init (&pixel_rgn, drawable,
+  drawable = picman_drawable_get (drawable_ID);
+  drawable_type = picman_drawable_type (drawable_ID);
+  picman_pixel_rgn_init (&pixel_rgn, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
 
   if (! preview)
-    gimp_progress_init_printf (_("Saving '%s'"),
-                               gimp_filename_to_utf8 (filename));
+    picman_progress_init_printf (_("Saving '%s'"),
+                               picman_filename_to_utf8 (filename));
 
   /* Step 1: allocate and initialize JPEG compression object */
 
@@ -310,7 +310,7 @@ save_image (const gchar  *filename,
       if (outfile)
         fclose (outfile);
       if (drawable)
-        gimp_drawable_detach (drawable);
+        picman_drawable_detach (drawable);
 
       return FALSE;
     }
@@ -330,7 +330,7 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
@@ -340,21 +340,21 @@ save_image (const gchar  *filename,
    */
   switch (drawable_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       /* # of color components per pixel */
       cinfo.input_components = drawable->bpp;
       has_alpha = FALSE;
       break;
 
-    case GIMP_RGBA_IMAGE:
-    case GIMP_GRAYA_IMAGE:
-      /* # of color components per pixel (minus the GIMP alpha channel) */
+    case PICMAN_RGBA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+      /* # of color components per pixel (minus the PICMAN alpha channel) */
       cinfo.input_components = drawable->bpp - 1;
       has_alpha = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       return FALSE;
 
     default:
@@ -370,8 +370,8 @@ save_image (const gchar  *filename,
   cinfo.image_width  = drawable->width;
   cinfo.image_height = drawable->height;
   /* colorspace of input image */
-  cinfo.in_color_space = (drawable_type == GIMP_RGB_IMAGE ||
-                          drawable_type == GIMP_RGBA_IMAGE)
+  cinfo.in_color_space = (drawable_type == PICMAN_RGB_IMAGE ||
+                          drawable_type == PICMAN_RGBA_IMAGE)
     ? JCS_RGB : JCS_GRAYSCALE;
   /* Now use the library's routine to set default compression parameters.
    * (You must set at least cinfo.in_color_space before calling this,
@@ -402,7 +402,7 @@ save_image (const gchar  *filename,
 
   cinfo.optimize_coding = jsvals.optimize;
 
-  subsampling = (gimp_drawable_is_rgb (drawable_ID) ?
+  subsampling = (picman_drawable_is_rgb (drawable_ID) ?
                  jsvals.subsmp : JPEG_SUBSAMPLING_1x1_1x1_1x1);
 
   /*  smoothing is not supported with nonstandard sampling ratios  */
@@ -480,13 +480,13 @@ save_image (const gchar  *filename,
     gdouble xresolution;
     gdouble yresolution;
 
-    gimp_image_get_resolution (orig_image_ID, &xresolution, &yresolution);
+    picman_image_get_resolution (orig_image_ID, &xresolution, &yresolution);
 
     if (xresolution > 1e-5 && yresolution > 1e-5)
       {
         gdouble factor;
 
-        factor = gimp_unit_get_factor (gimp_image_get_unit (orig_image_ID));
+        factor = picman_unit_get_factor (picman_image_get_unit (orig_image_ID));
 
         if (factor == 2.54 /* cm */ ||
             factor == 25.4 /* mm */)
@@ -579,7 +579,7 @@ save_image (const gchar  *filename,
           exif_data_save_data (exif_data_tmp, &exif_buf, &exif_buf_len);
         }
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
       g_print ("jpeg-save: saving EXIF block (%d bytes)\n", exif_buf_len);
 #endif
       jpeg_write_marker (&cinfo, JPEG_APP0 + 1, exif_buf, exif_buf_len);
@@ -592,7 +592,7 @@ save_image (const gchar  *filename,
   /* Step 4.1: Write the comment out - pw */
   if (image_comment && *image_comment)
     {
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
       g_print ("jpeg-save: saving image comment (%d bytes)\n",
                (int) strlen (image_comment));
 #endif
@@ -604,16 +604,16 @@ save_image (const gchar  *filename,
   if (jsvals.save_xmp)
     {
       /* FIXME: temporary hack until the right thing is done by a library */
-      parasite = gimp_image_get_parasite (orig_image_ID, "gimp-metadata");
+      parasite = picman_image_get_parasite (orig_image_ID, "picman-metadata");
       if (parasite)
         {
           const gchar *xmp_data;
           glong        xmp_data_size;
           guchar      *app_block;
 
-          xmp_data = ((const gchar *) gimp_parasite_data (parasite)) + 10;
-          xmp_data_size = gimp_parasite_data_size (parasite) - 10;
-#ifdef GIMP_UNSTABLE
+          xmp_data = ((const gchar *) picman_parasite_data (parasite)) + 10;
+          xmp_data_size = picman_parasite_data_size (parasite) - 10;
+#ifdef PICMAN_UNSTABLE
           g_print ("jpeg-save: saving XMP packet (%d bytes)\n",
                    (int) xmp_data_size);
 #endif
@@ -625,18 +625,18 @@ save_image (const gchar  *filename,
           jpeg_write_marker (&cinfo, JPEG_APP0 + 1, app_block,
                              sizeof (JPEG_APP_HEADER_XMP) + xmp_data_size);
           g_free (app_block);
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
         }
     }
 
   /* Step 4.3: store the color profile if there is one */
-  parasite = gimp_image_get_parasite (orig_image_ID, "icc-profile");
+  parasite = picman_image_get_parasite (orig_image_ID, "icc-profile");
   if (parasite)
     {
       jpeg_icc_write_profile (&cinfo,
-                              gimp_parasite_data (parasite),
-                              gimp_parasite_data_size (parasite));
-      gimp_parasite_free (parasite);
+                              picman_parasite_data (parasite),
+                              picman_parasite_data_size (parasite));
+      picman_parasite_free (parasite);
     }
 
   /* Step 5: while (scan lines remain to be written) */
@@ -650,10 +650,10 @@ save_image (const gchar  *filename,
   /* JSAMPLEs per row in image_buffer */
   rowstride = drawable->bpp * drawable->width;
   temp = g_new (guchar, cinfo.image_width * cinfo.input_components);
-  data = g_new (guchar, rowstride * gimp_tile_height ());
+  data = g_new (guchar, rowstride * picman_tile_height ());
 
   /* fault if cinfo.next_scanline isn't initially a multiple of
-   * gimp_tile_height */
+   * picman_tile_height */
   src = NULL;
 
   /*
@@ -667,7 +667,7 @@ save_image (const gchar  *filename,
 
       /* pass all the information we need */
       pp->cinfo       = cinfo;
-      pp->tile_height = gimp_tile_height();
+      pp->tile_height = picman_tile_height();
       pp->data        = data;
       pp->outfile     = outfile;
       pp->has_alpha   = has_alpha;
@@ -697,11 +697,11 @@ save_image (const gchar  *filename,
 
   while (cinfo.next_scanline < cinfo.image_height)
     {
-      if ((cinfo.next_scanline % gimp_tile_height ()) == 0)
+      if ((cinfo.next_scanline % picman_tile_height ()) == 0)
         {
-          yend = cinfo.next_scanline + gimp_tile_height ();
+          yend = cinfo.next_scanline + picman_tile_height ();
           yend = MIN (yend, cinfo.image_height);
-          gimp_pixel_rgn_get_rect (&pixel_rgn, data,
+          picman_pixel_rgn_get_rect (&pixel_rgn, data,
                                    0, cinfo.next_scanline,
                                    cinfo.image_width,
                                    (yend - cinfo.next_scanline));
@@ -724,7 +724,7 @@ save_image (const gchar  *filename,
       jpeg_write_scanlines (&cinfo, (JSAMPARRAY) &temp, 1);
 
       if ((cinfo.next_scanline % 32) == 0)
-        gimp_progress_update ((gdouble) cinfo.next_scanline /
+        picman_progress_update ((gdouble) cinfo.next_scanline /
                               (gdouble) cinfo.image_height);
     }
 
@@ -743,9 +743,9 @@ save_image (const gchar  *filename,
   g_free (data);
 
   /* And we're done! */
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   return TRUE;
 }
@@ -757,13 +757,13 @@ make_preview (void)
 
   if (jsvals.preview)
     {
-      gchar *tn = gimp_temp_name ("jpeg");
+      gchar *tn = picman_temp_name ("jpeg");
 
       if (! undo_touched)
         {
           /* we freeze undo saving so that we can avoid sucking up
            * tile cache with our unneeded preview steps. */
-          gimp_image_undo_freeze (preview_image_ID);
+          picman_image_undo_freeze (preview_image_ID);
 
           undo_touched = TRUE;
         }
@@ -775,13 +775,13 @@ make_preview (void)
                   TRUE, NULL);
 
       if (display_ID == -1)
-        display_ID = gimp_display_new (preview_image_ID);
+        display_ID = picman_display_new (preview_image_ID);
     }
   else
     {
       gtk_label_set_text (GTK_LABEL (preview_size), _("File size: unknown"));
 
-      gimp_displays_flush ();
+      picman_displays_flush ();
     }
 }
 
@@ -798,17 +798,17 @@ destroy_preview (void)
 
   if (drawable_global)
     {
-      gimp_drawable_detach (drawable_global);
+      picman_drawable_detach (drawable_global);
       drawable_global = NULL;
     }
 
-  if (gimp_image_is_valid (preview_image_ID) &&
-      gimp_item_is_valid (preview_layer_ID))
+  if (picman_image_is_valid (preview_image_ID) &&
+      picman_item_is_valid (preview_layer_ID))
     {
       /*  assuming that reference counting is working correctly,
           we do not need to delete the layer, removing it from
           the image should be sufficient  */
-      gimp_image_remove_layer (preview_image_ID, preview_layer_ID);
+      picman_image_remove_layer (preview_image_ID, preview_layer_ID);
 
       preview_layer_ID = -1;
     }
@@ -837,7 +837,7 @@ save_dialog (void)
   gchar         *text;
 
 
-  dialog = gimp_export_dialog_new (_("JPEG"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("JPEG"), PLUG_IN_BINARY, SAVE_PROC);
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (save_dialog_response),
@@ -850,7 +850,7 @@ save_dialog (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
@@ -859,7 +859,7 @@ save_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  pg.quality = entry = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  pg.quality = entry = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                              _("_Quality:"),
                                              SCALE_WIDTH, 0, jsvals.quality,
                                              0.0, 100.0, 1.0, 10.0, 0,
@@ -868,7 +868,7 @@ save_dialog (void)
                                              "file-jpeg-save-quality");
 
   g_signal_connect (entry, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &jsvals.quality);
   g_signal_connect (entry, "value-changed",
                     G_CALLBACK (make_preview),
@@ -876,13 +876,13 @@ save_dialog (void)
 
   preview_size = gtk_label_new (_("File size: unknown"));
   gtk_misc_set_alignment (GTK_MISC (preview_size), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (preview_size),
+  picman_label_set_attributes (GTK_LABEL (preview_size),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox), preview_size, FALSE, FALSE, 0);
   gtk_widget_show (preview_size);
 
-  gimp_help_set_help_data (preview_size,
+  picman_help_set_help_data (preview_size,
                            _("Enable preview to obtain the file size."), NULL);
 
   pg.preview = toggle =
@@ -892,7 +892,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.preview);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -910,7 +910,7 @@ save_dialog (void)
   gtk_container_add (GTK_CONTAINER (expander), vbox);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new ("<expander>");
+  frame = picman_frame_new ("<expander>");
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -926,7 +926,7 @@ save_dialog (void)
                     2, 6, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (table2);
 
-  pg.smoothing = entry = gimp_scale_entry_new (GTK_TABLE (table2), 0, 0,
+  pg.smoothing = entry = picman_scale_entry_new (GTK_TABLE (table2), 0, 0,
                                                _("S_moothing:"),
                                                100, 0, jsvals.smoothing,
                                                0.0, 1.0, 0.01, 0.1, 2,
@@ -934,7 +934,7 @@ save_dialog (void)
                                                NULL,
                                                "file-jpeg-save-smoothing");
   g_signal_connect (entry, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &jsvals.smoothing);
   g_signal_connect (entry, "value-changed",
                     G_CALLBACK (make_preview),
@@ -948,7 +948,7 @@ save_dialog (void)
 
   /*pg.scale_data = scale_data;*/
   pg.restart = restart_markers_scale = spinbutton =
-    gimp_spin_button_new (&pg.scale_data,
+    picman_spin_button_new (&pg.scale_data,
                           ((jsvals.restart == 0) ?
                            DEFAULT_RESTART_MCU_ROWS : jsvals.restart),
                           1.0, 64.0, 1.0, 1.0, 0, 1.0, 0);
@@ -978,7 +978,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.optimize);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -992,7 +992,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.progressive);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -1008,7 +1008,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.save_exif);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -1025,7 +1025,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.save_thumbnail);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -1042,7 +1042,7 @@ save_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.save_xmp);
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (make_preview),
@@ -1060,7 +1060,7 @@ save_dialog (void)
   gtk_table_attach (GTK_TABLE (table), toggle, 0, 4, 5, 6, GTK_FILL, 0, 0, 0);
   gtk_widget_show (toggle);
 
-  gimp_help_set_help_data (toggle,
+  picman_help_set_help_data (toggle,
                            _("If the original image was loaded from a JPEG "
                              "file using non-standard quality settings "
                              "(quantization tables), enable this option to "
@@ -1068,7 +1068,7 @@ save_dialog (void)
                            NULL);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &jsvals.use_orig_quality);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle),
@@ -1092,7 +1092,7 @@ save_dialog (void)
   gtk_widget_show (label);
 
   pg.subsmp =
-    combo = gimp_int_combo_box_new (_("4:4:4 (best quality)"),
+    combo = picman_int_combo_box_new (_("4:4:4 (best quality)"),
                                     JPEG_SUBSAMPLING_1x1_1x1_1x1,
                                     _("4:2:2 horizontal (chroma halved)"),
                                     JPEG_SUBSAMPLING_2x1_1x1_1x1,
@@ -1107,9 +1107,9 @@ save_dialog (void)
 
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
-  if (gimp_drawable_is_rgb (drawable_ID_global))
+  if (picman_drawable_is_rgb (drawable_ID_global))
     {
-      gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                   jsvals.subsmp,
                                   G_CALLBACK (subsampling_changed),
                                   entry);
@@ -1120,7 +1120,7 @@ save_dialog (void)
     }
   else
     {
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                      JPEG_SUBSAMPLING_1x1_1x1_1x1);
 
       gtk_widget_set_sensitive (combo, FALSE);
@@ -1134,11 +1134,11 @@ save_dialog (void)
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  pg.dct = combo = gimp_int_combo_box_new (_("Fast Integer"),   1,
+  pg.dct = combo = picman_int_combo_box_new (_("Fast Integer"),   1,
                                            _("Integer"),        0,
                                            _("Floating-Point"), 2,
                                            NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), jsvals.dct);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), jsvals.dct);
   gtk_table_attach (GTK_TABLE (table), combo, 3, 6, 3, 4,
                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
   gtk_widget_show (combo);
@@ -1146,13 +1146,13 @@ save_dialog (void)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &jsvals.dct);
   g_signal_connect (combo, "changed",
                     G_CALLBACK (make_preview),
                     NULL);
 
-  frame = gimp_frame_new (_("Comment"));
+  frame = picman_frame_new (_("Comment"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1180,7 +1180,7 @@ save_dialog (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
@@ -1249,7 +1249,7 @@ save_dialog_response (GtkWidget *widget,
 void
 load_defaults (void)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *def_str;
   JpegSaveVals  tmpvals;
   gint          num_fields;
@@ -1274,15 +1274,15 @@ load_defaults (void)
     jsvals.save_thumbnail = TRUE;
 #endif /* HAVE_LIBEXIF */
 
-  parasite = gimp_get_parasite (JPEG_DEFAULTS_PARASITE);
+  parasite = picman_get_parasite (JPEG_DEFAULTS_PARASITE);
 
   if (! parasite)
     return;
 
-  def_str = g_strndup (gimp_parasite_data (parasite),
-                       gimp_parasite_data_size (parasite));
+  def_str = g_strndup (picman_parasite_data (parasite),
+                       picman_parasite_data_size (parasite));
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
 
   num_fields = sscanf (def_str, "%lf %lf %d %d %d %d %d %d %d %d %d %d %d",
                        &tmpvals.quality,
@@ -1310,7 +1310,7 @@ load_defaults (void)
 static void
 save_defaults (void)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *def_str;
 
   def_str = g_strdup_printf ("%lf %lf %d %d %d %d %d %d %d %d %d %d %d",
@@ -1327,13 +1327,13 @@ save_defaults (void)
                              jsvals.save_thumbnail,
                              jsvals.save_xmp,
                              jsvals.use_orig_quality);
-  parasite = gimp_parasite_new (JPEG_DEFAULTS_PARASITE,
-                                GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new (JPEG_DEFAULTS_PARASITE,
+                                PICMAN_PARASITE_PERSISTENT,
                                 strlen (def_str), def_str);
 
-  gimp_attach_parasite (parasite);
+  picman_attach_parasite (parasite);
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
   g_free (def_str);
 }
 
@@ -1373,13 +1373,13 @@ load_gui_defaults (JpegSaveGui *pg)
   gtk_adjustment_set_value (GTK_ADJUSTMENT (pg->smoothing),
                             jsvals.smoothing);
 
-  if (gimp_drawable_is_rgb (drawable_ID_global))
+  if (picman_drawable_is_rgb (drawable_ID_global))
     {
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (pg->subsmp),
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (pg->subsmp),
                                      jsvals.subsmp);
     }
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (pg->dct),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (pg->dct),
                                  jsvals.dct);
 }
 
@@ -1404,12 +1404,12 @@ subsampling_changed (GtkWidget *combo,
 {
   gint value;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (combo), &value);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (combo), &value);
 
   jsvals.subsmp = value;
 
   /*  smoothing is not supported with nonstandard sampling ratios  */
-  gimp_scale_entry_set_sensitive (entry,
+  picman_scale_entry_set_sensitive (entry,
                                   jsvals.subsmp != JPEG_SUBSAMPLING_2x1_1x1_1x1 &&
                                   jsvals.subsmp != JPEG_SUBSAMPLING_1x2_1x1_1x1);
 
@@ -1445,7 +1445,7 @@ use_orig_qual_changed2 (GtkWidget *toggle,
   /* the test is (orig_quality > 0), not (orig_subsmp > 0) - this is normal */
   if (jsvals.use_orig_quality && orig_quality > 0)
     {
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), orig_subsmp);
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), orig_subsmp);
     }
 }
 
@@ -1503,7 +1503,7 @@ create_thumbnail (gint32    image_ID,
                   gdouble   quality,
                   guchar  **thumbnail_buffer)
 {
-  GimpDrawable               *drawable;
+  PicmanDrawable               *drawable;
   gint                        req_width, req_height, bpp, rbpp;
   guchar                     *thumbnail_data = NULL;
   struct jpeg_compress_struct cinfo;
@@ -1513,7 +1513,7 @@ create_thumbnail (gint32    image_ID,
   guchar                     *buf = NULL;
   gint                        i;
 
-  drawable = gimp_drawable_get (drawable_ID);
+  drawable = picman_drawable_get (drawable_ID);
 
   req_width  = 196;
   req_height = 196;
@@ -1521,7 +1521,7 @@ create_thumbnail (gint32    image_ID,
   if (MIN (drawable->width, drawable->height) < 196)
     req_width = req_height = MIN(drawable->width, drawable->height);
 
-  thumbnail_data = gimp_drawable_get_thumbnail_data (drawable_ID,
+  thumbnail_data = picman_drawable_get_thumbnail_data (drawable_ID,
                                                      &req_width, &req_height,
                                                      &bpp);
 
@@ -1570,7 +1570,7 @@ create_thumbnail (gint32    image_ID,
         }
 
       if (drawable)
-        gimp_drawable_detach (drawable);
+        picman_drawable_detach (drawable);
 
       return 0;
     }
@@ -1657,7 +1657,7 @@ create_thumbnail (gint32    image_ID,
 
   if (drawable)
     {
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
       drawable = NULL;
     }
 

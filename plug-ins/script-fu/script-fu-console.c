@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 
 #include <glib/gstdio.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -97,11 +97,11 @@ static void      script_fu_output_to_console     (TsOutputType      type,
 void
 script_fu_console_run (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *params,
+                       const PicmanParam  *params,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals)
+                       PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
+  static PicmanParam  values[1];
 
   ts_set_print_flag (1);
   script_fu_console_interface ();
@@ -109,8 +109,8 @@ script_fu_console_run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 }
 
 static void
@@ -122,15 +122,15 @@ script_fu_console_interface (void)
   GtkWidget        *scrolled_window;
   GtkWidget        *hbox;
 
-  gimp_ui_init ("script-fu", FALSE);
+  picman_ui_init ("script-fu", FALSE);
 
   console.input_id    = -1;
   console.history_max = 50;
 
-  console.dialog = gimp_dialog_new (_("Script-Fu Console"),
-                                    "gimp-script-fu-console",
+  console.dialog = picman_dialog_new (_("Script-Fu Console"),
+                                    "picman-script-fu-console",
                                     NULL, 0,
-                                    gimp_standard_help_func, PROC_NAME,
+                                    picman_standard_help_func, PROC_NAME,
 
                                     GTK_STOCK_SAVE,  RESPONSE_SAVE,
                                     GTK_STOCK_CLEAR, RESPONSE_CLEAR,
@@ -338,7 +338,7 @@ script_fu_console_save_response (GtkWidget        *dialog,
       if (! fh)
         {
           g_message (_("Could not open '%s' for writing: %s"),
-                     gimp_filename_to_utf8 (filename),
+                     picman_filename_to_utf8 (filename),
                      g_strerror (errno));
 
           g_free (filename);
@@ -366,9 +366,9 @@ script_fu_browse_callback (GtkWidget        *widget,
   if (! console->proc_browser)
     {
       console->proc_browser =
-        gimp_proc_browser_dialog_new (_("Script-Fu Procedure Browser"),
+        picman_proc_browser_dialog_new (_("Script-Fu Procedure Browser"),
                                       "script-fu-procedure-browser",
-                                      gimp_standard_help_func, PROC_NAME,
+                                      picman_standard_help_func, PROC_NAME,
 
                                       GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
                                       GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -401,18 +401,18 @@ script_fu_browse_response (GtkWidget        *widget,
                            gint              response_id,
                            ConsoleInterface *console)
 {
-  GimpProcBrowserDialog *dialog = GIMP_PROC_BROWSER_DIALOG (widget);
+  PicmanProcBrowserDialog *dialog = PICMAN_PROC_BROWSER_DIALOG (widget);
   gchar                 *proc_name;
   gchar                 *proc_blurb;
   gchar                 *proc_help;
   gchar                 *proc_author;
   gchar                 *proc_copyright;
   gchar                 *proc_date;
-  GimpPDBProcType        proc_type;
+  PicmanPDBProcType        proc_type;
   gint                   n_params;
   gint                   n_return_vals;
-  GimpParamDef          *params;
-  GimpParamDef          *return_vals;
+  PicmanParamDef          *params;
+  PicmanParamDef          *return_vals;
   gint                   i;
   GString               *text;
 
@@ -422,12 +422,12 @@ script_fu_browse_response (GtkWidget        *widget,
       return;
     }
 
-  proc_name = gimp_proc_browser_dialog_get_selected (dialog);
+  proc_name = picman_proc_browser_dialog_get_selected (dialog);
 
   if (proc_name == NULL)
     return;
 
-  gimp_procedural_db_proc_info (proc_name,
+  picman_procedural_db_proc_info (proc_name,
                                 &proc_blurb,
                                 &proc_help,
                                 &proc_author,
@@ -469,8 +469,8 @@ script_fu_browse_response (GtkWidget        *widget,
   g_free (proc_copyright);
   g_free (proc_date);
 
-  gimp_destroy_paramdefs (params,      n_params);
-  gimp_destroy_paramdefs (return_vals, n_return_vals);
+  picman_destroy_paramdefs (params,      n_params);
+  picman_destroy_paramdefs (return_vals, n_return_vals);
 }
 
 static void
@@ -606,7 +606,7 @@ script_fu_cc_key_function (GtkWidget        *widget,
       output = g_string_new (NULL);
       ts_register_output_func (ts_gstring_output_func, output);
 
-      gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+      picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
       if (ts_interpret_string (list->data) != 0)
         {
@@ -623,11 +623,11 @@ script_fu_cc_key_function (GtkWidget        *widget,
                                        console);
         }
 
-      gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_INTERNAL);
+      picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_INTERNAL);
 
       g_string_free (output, TRUE);
 
-      gimp_displays_flush ();
+      picman_displays_flush ();
 
       console->history = g_list_append (console->history, NULL);
 

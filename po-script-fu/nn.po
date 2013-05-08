@@ -5,8 +5,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp 2.8\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gimp&keywords=I18N+L10N&component=general\n"
+"Project-Id-Version: picman 2.8\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-05-06 16:49+0000\n"
 "PO-Revision-Date: 2012-06-05 17:35+0100\n"
 "Last-Translator: Kolbjørn Stuestøl <kolbjoern@stuestoel.no>\n"
@@ -35,8 +35,8 @@ msgid "_Start Server..."
 msgstr "_Start tenaren …"
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP på Internett"
+msgid "_PICMAN Online"
+msgstr "_PICMAN på Internett"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -75,8 +75,8 @@ msgid "_Beveled Pattern"
 msgstr "_Fasettert mønster"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -251,19 +251,19 @@ msgstr "Flis"
 msgid "Wrap"
 msgstr "Bryt"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Spyrograf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Sirkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Blyant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Einsfarga"
 
@@ -1077,11 +1077,11 @@ msgstr "IIR"
 #~ msgid "Autocrop"
 #~ msgstr "Beskjer automatisk"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
-#~ msgstr "Lager ei stor overskrift med tema frå gimp.org nettsidetema"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
+#~ msgstr "Lager ei stor overskrift med tema frå picman.org nettsidetema"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
-#~ msgstr "Lager ei mindre overskrift med tema frå gimp.org nettsidetema"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
+#~ msgstr "Lager ei mindre overskrift med tema frå picman.org nettsidetema"
 
 #~ msgid "Dark color"
 #~ msgstr "Mørk farge"
@@ -1111,30 +1111,30 @@ msgstr "IIR"
 #~ msgstr "_Lita overskrift …"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
 #~ msgstr ""
 #~ "Lager tekst til ein merkelapp  med røyrforma skrift og nettsidetema frå "
-#~ "gimp.org"
+#~ "picman.org"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
 #~ msgstr ""
-#~ "Lager tekst til knapp med røyrforma skrift og nettsidetema frå gimp.org"
+#~ "Lager tekst til knapp med røyrforma skrift og nettsidetema frå picman.org"
 
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Lager tekst til ein andre nivå knapp med røyrforma skrift og nettsidetema "
-#~ "frå gimp.org"
+#~ "frå picman.org"
 
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Lager tekst til ein tredje nivå knapp med røyrforma skrift og "
-#~ "nettsidetema frå gimp.org"
+#~ "nettsidetema frå picman.org"
 
 #~ msgid "T_ube Sub-Button Label..."
 #~ msgstr "Knappetekst _mindre …"
@@ -1729,8 +1729,8 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "Type"
 
-#~ msgid "_Spyrogimp..."
-#~ msgstr "_Spyrogimp …"
+#~ msgid "_Spyropicman..."
+#~ msgstr "_Spyropicman …"
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
 #~ msgstr "Lager ein logo med steinstruktur, stjerneglød og skygge"
@@ -1918,8 +1918,8 @@ msgstr "IIR"
 #~ msgid "_Weave..."
 #~ msgstr "_Vevnad …"
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Bokmerke til GIMP si nettside"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Bokmerke til PICMAN si nettside"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Bokmerke i handboka"
@@ -1943,7 +1943,7 @@ msgstr "IIR"
 #~ msgstr "_Bruker banar"
 
 #~ msgid "_Basic Concepts"
-#~ msgstr "Oppsett av GIMP"
+#~ msgstr "Oppsett av PICMAN"
 
 #~ msgid "_Developer Web Site"
 #~ msgstr "_Developer Web Site"

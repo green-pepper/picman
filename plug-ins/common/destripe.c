@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Destripe filter
@@ -25,10 +25,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*
@@ -37,7 +37,7 @@
 
 #define PLUG_IN_PROC    "plug-in-destripe"
 #define PLUG_IN_BINARY  "destripe"
-#define PLUG_IN_ROLE    "gimp-destripe"
+#define PLUG_IN_ROLE    "picman-destripe"
 #define PLUG_IN_VERSION "0.2"
 #define SCALE_WIDTH     140
 #define MAX_AVG         100
@@ -50,20 +50,20 @@
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
-static void      destripe        (GimpDrawable *drawable,
-                                  GimpPreview  *preview);
+static void      destripe        (PicmanDrawable *drawable,
+                                  PicmanPreview  *preview);
 
-static gboolean  destripe_dialog (GimpDrawable *drawable);
+static gboolean  destripe_dialog (PicmanDrawable *drawable);
 
 /*
  * Globals...
  */
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -91,15 +91,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
-    { GIMP_PDB_IMAGE,    "image",     "Input image"                           },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"                        },
-    { GIMP_PDB_INT32,    "avg-width", "Averaging filter width (default = 36)" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image"                           },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"                        },
+    { PICMAN_PDB_INT32,    "avg-width", "Averaging filter width (default = 36)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Remove vertical stripe artifacts from the image"),
                           "This plug-in tries to remove vertical stripes from "
                           "an image.",
@@ -108,24 +108,24 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("Des_tripe..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpRunMode        run_mode;   /* Current run mode */
-  GimpPDBStatusType  status;     /* Return status */
-  static GimpParam   values[1];  /* Return values */
-  GimpDrawable      *drawable;
+  PicmanRunMode        run_mode;   /* Current run mode */
+  PicmanPDBStatusType  status;     /* Return status */
+  static PicmanParam   values[1];  /* Return values */
+  PicmanDrawable      *drawable;
 
   INIT_I18N ();
 
@@ -133,10 +133,10 @@ run (const gchar      *name,
    * Initialize parameter data...
    */
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -146,7 +146,7 @@ run (const gchar      *name,
    * Get drawable information...
    */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*
    * See how we will run
@@ -154,11 +154,11 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*
        * Possibly retrieve data...
        */
-      gimp_get_data (PLUG_IN_PROC, &vals);
+      picman_get_data (PLUG_IN_PROC, &vals);
 
       /*
        * Get information from the dialog...
@@ -167,25 +167,25 @@ run (const gchar      *name,
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*
        * Make sure all the arguments are present...
        */
       if (nparams != 4)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       else
         vals.avg_width = param[3].data.d_int32;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS :
+    case PICMAN_RUN_WITH_LAST_VALS :
       /*
        * Possibly retrieve data...
        */
-      gimp_get_data (PLUG_IN_PROC, &vals);
+      picman_get_data (PLUG_IN_PROC, &vals);
       break;
 
     default :
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
     };
 
@@ -193,16 +193,16 @@ run (const gchar      *name,
    * Destripe the image...
    */
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if ((gimp_drawable_is_rgb (drawable->drawable_id) ||
-           gimp_drawable_is_gray (drawable->drawable_id)))
+      if ((picman_drawable_is_rgb (drawable->drawable_id) ||
+           picman_drawable_is_gray (drawable->drawable_id)))
         {
           /*
            * Set the tile cache size...
            */
-          gimp_tile_cache_ntiles ((drawable->width + gimp_tile_width () - 1) /
-                                  gimp_tile_width ());
+          picman_tile_cache_ntiles ((drawable->width + picman_tile_width () - 1) /
+                                  picman_tile_width ());
 
           /*
            * Run!
@@ -212,17 +212,17 @@ run (const gchar      *name,
           /*
            * If run mode is interactive, flush displays...
            */
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*
            * Store data...
            */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &vals, sizeof (vals));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &vals, sizeof (vals));
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     };
 
   /*
@@ -233,22 +233,22 @@ run (const gchar      *name,
   /*
    * Detach from the drawable...
    */
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-destripe (GimpDrawable *drawable,
-          GimpPreview  *preview)
+destripe (PicmanDrawable *drawable,
+          PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn;        /* source image region */
-  GimpPixelRgn  dst_rgn;        /* destination image region */
+  PicmanPixelRgn  src_rgn;        /* source image region */
+  PicmanPixelRgn  dst_rgn;        /* destination image region */
   guchar       *src_rows;       /* image data */
   gdouble       progress, progress_inc;
   gint          x1, x2, y1;
   gint          width, height;
   gint          bpp;
   glong        *hist, *corr;        /* "histogram" data */
-  gint          tile_width = gimp_tile_width ();
+  gint          tile_width = picman_tile_width ();
   gint          i, x, y, ox, cols;
 
   /* initialize */
@@ -259,16 +259,16 @@ destripe (GimpDrawable *drawable,
   /*
    * Let the user know what we're doing...
    */
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
     }
   else
     {
-      gimp_progress_init (_("Destriping"));
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      picman_progress_init (_("Destriping"));
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x1, &y1, &width, &height))
         {
           return;
@@ -283,9 +283,9 @@ destripe (GimpDrawable *drawable,
    * Setup for filter...
    */
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dst_rgn, drawable,
+  picman_pixel_rgn_init (&dst_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
   hist = g_new (long, width * bpp);
@@ -306,7 +306,7 @@ destripe (GimpDrawable *drawable,
       if (cols > tile_width)
         cols = tile_width;
 
-      gimp_pixel_rgn_get_rect (&src_rgn, rows, ox, y1, cols, height);
+      picman_pixel_rgn_get_rect (&src_rgn, rows, ox, y1, cols, height);
 
       for (y = 0; y < height; y++)
         {
@@ -318,7 +318,7 @@ destripe (GimpDrawable *drawable,
         }
 
       if (!preview)
-        gimp_progress_update (progress += progress_inc);
+        picman_progress_update (progress += progress_inc);
     }
 
   /*
@@ -371,10 +371,10 @@ destripe (GimpDrawable *drawable,
       if (cols > tile_width)
         cols = tile_width;
 
-      gimp_pixel_rgn_get_rect (&src_rgn, rows, ox, y1, cols, height);
+      picman_pixel_rgn_get_rect (&src_rgn, rows, ox, y1, cols, height);
 
       if (!preview)
-        gimp_progress_update (progress += progress_inc);
+        picman_progress_update (progress += progress_inc);
 
       for (y = 0; y < height; y++)
         {
@@ -395,10 +395,10 @@ destripe (GimpDrawable *drawable,
               }
         }
 
-      gimp_pixel_rgn_set_rect (&dst_rgn, src_rows,
+      picman_pixel_rgn_set_rect (&dst_rgn, src_rows,
                                ox, y1, cols, height);
       if (!preview)
-        gimp_progress_update (progress += progress_inc);
+        picman_progress_update (progress += progress_inc);
     }
 
   g_free (src_rows);
@@ -409,15 +409,15 @@ destripe (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &dst_rgn);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             x1, y1, width, height);
     }
   g_free (hist);
@@ -425,7 +425,7 @@ destripe (GimpDrawable *drawable,
 }
 
 static gboolean
-destripe_dialog (GimpDrawable *drawable)
+destripe_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -435,11 +435,11 @@ destripe_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Destripe"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Destripe"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -451,7 +451,7 @@ destripe_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -459,7 +459,7 @@ destripe_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -472,16 +472,16 @@ destripe_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Width:"), SCALE_WIDTH, 0,
                               vals.avg_width, 2, MAX_AVG, 1, 10, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &vals.avg_width);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   button = gtk_check_button_new_with_mnemonic (_("Create _histogram"));
@@ -490,15 +490,15 @@ destripe_dialog (GimpDrawable *drawable)
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &vals.histogram);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

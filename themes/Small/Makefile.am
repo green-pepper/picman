@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-themedatadir = $(gimpdatadir)/themes/Small
+themedatadir = $(picmandatadir)/themes/Small
 
 themedata_DATA = gtkrc
 

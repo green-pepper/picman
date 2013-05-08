@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * controller_midi.c
- * Copyright (C) 2004-2007 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2004-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 typedef struct
@@ -74,7 +74,7 @@ typedef struct _ControllerMidiClass ControllerMidiClass;
 
 struct _ControllerMidi
 {
-  GimpController  parent_instance;
+  PicmanController  parent_instance;
 
   gchar          *device;
   gint            midi_channel;
@@ -99,7 +99,7 @@ struct _ControllerMidi
 
 struct _ControllerMidiClass
 {
-  GimpControllerClass  parent_class;
+  PicmanControllerClass  parent_class;
 };
 
 
@@ -115,10 +115,10 @@ static void          midi_get_property        (GObject        *object,
                                                GValue         *value,
                                                GParamSpec     *pspec);
 
-static gint          midi_get_n_events        (GimpController *controller);
-static const gchar * midi_get_event_name      (GimpController *controller,
+static gint          midi_get_n_events        (PicmanController *controller);
+static const gchar * midi_get_event_name      (PicmanController *controller,
                                                gint            event_id);
-static const gchar * midi_get_event_blurb     (GimpController *controller,
+static const gchar * midi_get_event_blurb     (PicmanController *controller,
                                                gint            event_id);
 
 static gboolean      midi_set_device          (ControllerMidi *controller,
@@ -157,11 +157,11 @@ struct _GAlsaSource
 };
 #endif /* HAVE_ALSA */
 
-static const GimpModuleInfo midi_info =
+static const PicmanModuleInfo midi_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("MIDI event controller"),
-  "Michael Natterer <mitch@gimp.org>",
+  "Michael Natterer <mitch@picman.org>",
   "v0.2",
   "(c) 2004-2007, released under the GPL",
   "2004-2007"
@@ -169,19 +169,19 @@ static const GimpModuleInfo midi_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (ControllerMidi, controller_midi,
-                       GIMP_TYPE_CONTROLLER)
+                       PICMAN_TYPE_CONTROLLER)
 
 static MidiEvent midi_events[128 + 128 + 128];
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &midi_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   controller_midi_register_type (module);
 
@@ -191,7 +191,7 @@ gimp_module_register (GTypeModule *module)
 static void
 controller_midi_class_init (ControllerMidiClass *klass)
 {
-  GimpControllerClass *controller_class = GIMP_CONTROLLER_CLASS (klass);
+  PicmanControllerClass *controller_class = PICMAN_CONTROLLER_CLASS (klass);
   GObjectClass        *object_class     = G_OBJECT_CLASS (klass);
   gchar               *blurb;
 
@@ -211,7 +211,7 @@ controller_midi_class_init (ControllerMidiClass *klass)
                                                         _("Device:"),
                                                         blurb,
                                                         NULL,
-                                                        GIMP_CONFIG_PARAM_FLAGS));
+                                                        PICMAN_CONFIG_PARAM_FLAGS));
 
   g_free (blurb);
 
@@ -220,11 +220,11 @@ controller_midi_class_init (ControllerMidiClass *klass)
                                                      _("Channel:"),
                                                      _("The MIDI channel to read events from. Set to -1 for reading from all MIDI channels."),
                                                      -1, 15, -1,
-                                                     GIMP_CONFIG_PARAM_FLAGS));
+                                                     PICMAN_CONFIG_PARAM_FLAGS));
 
   controller_class->name            = _("MIDI");
-  controller_class->help_id         = "gimp-controller-midi";
-  controller_class->stock_id        = GIMP_STOCK_CONTROLLER_MIDI;
+  controller_class->help_id         = "picman-controller-midi";
+  controller_class->stock_id        = PICMAN_STOCK_CONTROLLER_MIDI;
 
   controller_class->get_n_events    = midi_get_n_events;
   controller_class->get_event_name  = midi_get_event_name;
@@ -312,13 +312,13 @@ midi_get_property (GObject    *object,
 }
 
 static gint
-midi_get_n_events (GimpController *controller)
+midi_get_n_events (PicmanController *controller)
 {
   return 128 + 128 + 128;
 }
 
 static const gchar *
-midi_get_event_name (GimpController *controller,
+midi_get_event_name (PicmanController *controller,
                      gint            event_id)
 {
   if (event_id < (128 + 128 + 128))
@@ -343,7 +343,7 @@ midi_get_event_name (GimpController *controller,
 }
 
 static const gchar *
-midi_get_event_blurb (GimpController *controller,
+midi_get_event_blurb (PicmanController *controller,
                       gint            event_id)
 {
   if (event_id <= 383)
@@ -422,9 +422,9 @@ midi_set_device (ControllerMidi *midi,
                               SND_SEQ_OPEN_INPUT, 0);
           if (ret >= 0)
             {
-              snd_seq_set_client_name (midi->sequencer, _("GIMP"));
+              snd_seq_set_client_name (midi->sequencer, _("PICMAN"));
               ret = snd_seq_create_simple_port (midi->sequencer,
-                                                _("GIMP MIDI Input Controller"),
+                                                _("PICMAN MIDI Input Controller"),
                                                 SND_SEQ_PORT_CAP_WRITE |
                                                 SND_SEQ_PORT_CAP_SUBS_WRITE,
                                                 SND_SEQ_PORT_TYPE_APPLICATION);
@@ -517,16 +517,16 @@ midi_event (ControllerMidi *midi,
       midi->midi_channel == -1 ||
       channel == midi->midi_channel)
     {
-      GimpControllerEvent event = { 0, };
+      PicmanControllerEvent event = { 0, };
 
-      event.any.type     = GIMP_CONTROLLER_EVENT_VALUE;
-      event.any.source   = GIMP_CONTROLLER (midi);
+      event.any.type     = PICMAN_CONTROLLER_EVENT_VALUE;
+      event.any.source   = PICMAN_CONTROLLER (midi);
       event.any.event_id = event_id;
 
       g_value_init (&event.value.value, G_TYPE_DOUBLE);
       g_value_set_double (&event.value.value, value);
 
-      gimp_controller_event (GIMP_CONTROLLER (midi), &event);
+      picman_controller_event (PICMAN_CONTROLLER (midi), &event);
 
       g_value_unset (&event.value.value);
     }

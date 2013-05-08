@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,23 +20,23 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsizebox.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansizebox.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "resize-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -45,16 +45,16 @@
 
 typedef struct
 {
-  GimpViewable       *viewable;
+  PicmanViewable       *viewable;
   gint                old_width;
   gint                old_height;
-  GimpUnit            old_unit;
+  PicmanUnit            old_unit;
   GtkWidget          *box;
   GtkWidget          *offset;
   GtkWidget          *area;
-  GimpItemSet         layer_set;
+  PicmanItemSet         layer_set;
   gboolean            resize_text_layers;
-  GimpResizeCallback  callback;
+  PicmanResizeCallback  callback;
   gpointer            user_data;
 } ResizeDialog;
 
@@ -65,7 +65,7 @@ static void   resize_dialog_response (GtkWidget    *dialog,
 static void   resize_dialog_reset    (ResizeDialog *private);
 static void   resize_dialog_free     (ResizeDialog *private);
 
-static void   size_notify            (GimpSizeBox  *box,
+static void   size_notify            (PicmanSizeBox  *box,
                                       GParamSpec   *pspec,
                                       ResizeDialog *private);
 static void   offset_update          (GtkWidget    *widget,
@@ -79,15 +79,15 @@ static void   offset_center_clicked  (GtkWidget    *widget,
 
 
 GtkWidget *
-resize_dialog_new (GimpViewable       *viewable,
-                   GimpContext        *context,
+resize_dialog_new (PicmanViewable       *viewable,
+                   PicmanContext        *context,
                    const gchar        *title,
                    const gchar        *role,
                    GtkWidget          *parent,
-                   GimpHelpFunc        help_func,
+                   PicmanHelpFunc        help_func,
                    const gchar        *help_id,
-                   GimpUnit            unit,
-                   GimpResizeCallback  callback,
+                   PicmanUnit            unit,
+                   PicmanResizeCallback  callback,
                    gpointer            user_data)
 {
   GtkWidget    *dialog;
@@ -101,32 +101,32 @@ resize_dialog_new (GimpViewable       *viewable,
   GtkObject    *adjustment;
   GdkPixbuf    *pixbuf;
   ResizeDialog *private;
-  GimpImage    *image = NULL;
+  PicmanImage    *image = NULL;
   const gchar  *text  = NULL;
   gint          width, height;
   gdouble       xres, yres;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
-  if (GIMP_IS_IMAGE (viewable))
+  if (PICMAN_IS_IMAGE (viewable))
     {
-      image = GIMP_IMAGE (viewable);
+      image = PICMAN_IMAGE (viewable);
 
-      width  = gimp_image_get_width (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width (image);
+      height = picman_image_get_height (image);
 
       text = _("Canvas Size");
     }
-  else if (GIMP_IS_ITEM (viewable))
+  else if (PICMAN_IS_ITEM (viewable))
     {
-      GimpItem *item = GIMP_ITEM (viewable);
+      PicmanItem *item = PICMAN_ITEM (viewable);
 
-      image = gimp_item_get_image (item);
+      image = picman_item_get_image (item);
 
-      width  = gimp_item_get_width  (item);
-      height = gimp_item_get_height (item);
+      width  = picman_item_get_width  (item);
+      height = picman_item_get_height (item);
 
       text = _("Layer Size");
     }
@@ -135,14 +135,14 @@ resize_dialog_new (GimpViewable       *viewable,
       g_return_val_if_reached (NULL);
     }
 
-  dialog = gimp_viewable_dialog_new (viewable, context,
-                                     title, role, GIMP_STOCK_RESIZE, title,
+  dialog = picman_viewable_dialog_new (viewable, context,
+                                     title, role, PICMAN_STOCK_RESIZE, title,
                                      parent,
                                      help_func, help_id,
 
-                                     GIMP_STOCK_RESET,  RESPONSE_RESET,
+                                     PICMAN_STOCK_RESET,  RESPONSE_RESET,
                                      GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
-                                     GIMP_STOCK_RESIZE, GTK_RESPONSE_OK,
+                                     PICMAN_STOCK_RESIZE, GTK_RESPONSE_OK,
 
                                      NULL);
 
@@ -163,14 +163,14 @@ resize_dialog_new (GimpViewable       *viewable,
   private->old_width          = width;
   private->old_height         = height;
   private->old_unit           = unit;
-  private->layer_set          = GIMP_ITEM_SET_NONE;
+  private->layer_set          = PICMAN_ITEM_SET_NONE;
   private->resize_text_layers = FALSE;
   private->callback           = callback;
   private->user_data          = user_data;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  private->box = g_object_new (GIMP_TYPE_SIZE_BOX,
+  private->box = g_object_new (PICMAN_TYPE_SIZE_BOX,
                                "width",           width,
                                "height",          height,
                                "unit",            unit,
@@ -190,14 +190,14 @@ resize_dialog_new (GimpViewable       *viewable,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  frame = gimp_frame_new (text);
+  frame = picman_frame_new (text);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   gtk_container_add (GTK_CONTAINER (frame), private->box);
   gtk_widget_show (private->box);
 
-  frame = gimp_frame_new (_("Offset"));
+  frame = picman_frame_new (_("Offset"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -206,45 +206,45 @@ resize_dialog_new (GimpViewable       *viewable,
   gtk_widget_show (vbox);
 
   /*  the offset sizeentry  */
-  spinbutton = gimp_spin_button_new (&adjustment,
+  spinbutton = picman_spin_button_new (&adjustment,
                                      1, 1, 1, 1, 10, 0,
                                      1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), SB_WIDTH);
 
-  private->offset = entry = gimp_size_entry_new (1, unit, "%p",
+  private->offset = entry = picman_size_entry_new (1, unit, "%p",
                                                  TRUE, FALSE, FALSE, SB_WIDTH,
-                                                 GIMP_SIZE_ENTRY_UPDATE_SIZE);
+                                                 PICMAN_SIZE_ENTRY_UPDATE_SIZE);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 0, 6);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 1, 6);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 3, 12);
   gtk_table_set_row_spacing (GTK_TABLE (entry), 0, 2);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (spinbutton), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), spinbutton,
                              1, 2, 0, 1);
   gtk_widget_show (spinbutton);
 
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("_X:"), 0, 0, 0.0);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),_("_Y:"), 1, 0, 0.0);
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),_("_Y:"), 1, 0, 0.0);
   gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
   gtk_widget_show (entry);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 0, xres, FALSE);
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 1, yres, FALSE);
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 0, xres, FALSE);
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 1, yres, FALSE);
 
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (entry), 0, 0, 0);
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (entry), 1, 0, 0);
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (entry), 0, 0, 0);
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (entry), 1, 0, 0);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 0, 0);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 1, 0);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 0, 0);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 1, 0);
 
   g_signal_connect (entry, "value-changed",
                     G_CALLBACK (offset_update),
                     private);
 
-  button = gtk_button_new_from_stock (GIMP_STOCK_CENTER);
+  button = gtk_button_new_from_stock (PICMAN_STOCK_CENTER);
   gtk_table_attach_defaults (GTK_TABLE (entry), button, 4, 5, 1, 2);
   gtk_widget_show (button);
 
@@ -261,16 +261,16 @@ resize_dialog_new (GimpViewable       *viewable,
   gtk_container_add (GTK_CONTAINER (abox), frame);
   gtk_widget_show (frame);
 
-  private->area = gimp_offset_area_new (width, height);
+  private->area = picman_offset_area_new (width, height);
   gtk_container_add (GTK_CONTAINER (frame), private->area);
   gtk_widget_show (private->area);
 
-  gimp_viewable_get_preview_size (viewable, 200, FALSE, TRUE, &width, &height);
-  pixbuf = gimp_viewable_get_pixbuf (viewable, context,
+  picman_viewable_get_preview_size (viewable, 200, FALSE, TRUE, &width, &height);
+  pixbuf = picman_viewable_get_pixbuf (viewable, context,
                                      width, height);
 
   if (pixbuf)
-    gimp_offset_area_set_pixbuf (GIMP_OFFSET_AREA (private->area), pixbuf);
+    picman_offset_area_set_pixbuf (PICMAN_OFFSET_AREA (private->area), pixbuf);
 
   g_signal_connect (private->area, "offsets-changed",
                     G_CALLBACK (offsets_changed),
@@ -280,13 +280,13 @@ resize_dialog_new (GimpViewable       *viewable,
                     G_CALLBACK (size_notify),
                     private);
 
-  if (GIMP_IS_IMAGE (viewable))
+  if (PICMAN_IS_IMAGE (viewable))
     {
       GtkWidget *hbox;
       GtkWidget *label;
       GtkWidget *combo;
 
-      frame = gimp_frame_new (_("Layers"));
+      frame = picman_frame_new (_("Layers"));
       gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
       gtk_widget_show (frame);
 
@@ -302,15 +302,15 @@ resize_dialog_new (GimpViewable       *viewable,
       gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 
-      combo = gimp_enum_combo_box_new (GIMP_TYPE_ITEM_SET);
+      combo = picman_enum_combo_box_new (PICMAN_TYPE_ITEM_SET);
       gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
       gtk_widget_show (combo);
 
       gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
-      gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                   private->layer_set,
-                                  G_CALLBACK (gimp_int_combo_box_get_active),
+                                  G_CALLBACK (picman_int_combo_box_get_active),
                                   &private->layer_set);
 
       button = gtk_check_button_new_with_mnemonic (_("Resize _text layers"));
@@ -320,7 +320,7 @@ resize_dialog_new (GimpViewable       *viewable,
       gtk_widget_show (button);
 
       g_signal_connect (button, "toggled",
-                        G_CALLBACK (gimp_toggle_button_update),
+                        G_CALLBACK (picman_toggle_button_update),
                         &private->resize_text_layers);
     }
 
@@ -332,8 +332,8 @@ resize_dialog_response (GtkWidget    *dialog,
                         gint          response_id,
                         ResizeDialog *private)
 {
-  GimpSizeEntry *entry = GIMP_SIZE_ENTRY (private->offset);
-  GimpUnit       unit;
+  PicmanSizeEntry *entry = PICMAN_SIZE_ENTRY (private->offset);
+  PicmanUnit       unit;
   gint           width;
   gint           height;
 
@@ -355,8 +355,8 @@ resize_dialog_response (GtkWidget    *dialog,
                          width,
                          height,
                          unit,
-                         gimp_size_entry_get_refval (entry, 0),
-                         gimp_size_entry_get_refval (entry, 1),
+                         picman_size_entry_get_refval (entry, 0),
+                         picman_size_entry_get_refval (entry, 1),
                          private->layer_set,
                          private->resize_text_layers,
                          private->user_data);
@@ -389,19 +389,19 @@ resize_dialog_free (ResizeDialog *private)
 }
 
 static void
-size_notify (GimpSizeBox  *box,
+size_notify (PicmanSizeBox  *box,
              GParamSpec   *pspec,
              ResizeDialog *private)
 {
   gint  diff_x = box->width  - private->old_width;
   gint  diff_y = box->height - private->old_height;
 
-  gimp_offset_area_set_size (GIMP_OFFSET_AREA (private->area),
+  picman_offset_area_set_size (PICMAN_OFFSET_AREA (private->area),
                              box->width, box->height);
 
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (private->offset), 0,
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (private->offset), 0,
                                          MIN (0, diff_x), MAX (0, diff_x));
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (private->offset), 1,
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (private->offset), 1,
                                          MIN (0, diff_y), MAX (0, diff_y));
 }
 
@@ -409,7 +409,7 @@ static gint
 resize_bound_off_x (ResizeDialog *private,
                     gint          offset_x)
 {
-  GimpSizeBox *box = GIMP_SIZE_BOX (private->box);
+  PicmanSizeBox *box = PICMAN_SIZE_BOX (private->box);
 
   if (private->old_width <= box->width)
     return CLAMP (offset_x, 0, (box->width - private->old_width));
@@ -421,7 +421,7 @@ static gint
 resize_bound_off_y (ResizeDialog *private,
                     gint          off_y)
 {
-  GimpSizeBox *box = GIMP_SIZE_BOX (private->box);
+  PicmanSizeBox *box = PICMAN_SIZE_BOX (private->box);
 
   if (private->old_height <= box->height)
     return CLAMP (off_y, 0, (box->height - private->old_height));
@@ -433,16 +433,16 @@ static void
 offset_update (GtkWidget    *widget,
                ResizeDialog *private)
 {
-  GimpSizeEntry *entry = GIMP_SIZE_ENTRY (private->offset);
+  PicmanSizeEntry *entry = PICMAN_SIZE_ENTRY (private->offset);
   gint           off_x;
   gint           off_y;
 
   off_x = resize_bound_off_x (private,
-                              RINT (gimp_size_entry_get_refval (entry, 0)));
+                              RINT (picman_size_entry_get_refval (entry, 0)));
   off_y = resize_bound_off_y (private,
-                              RINT (gimp_size_entry_get_refval (entry, 1)));
+                              RINT (picman_size_entry_get_refval (entry, 1)));
 
-  gimp_offset_area_set_offsets (GIMP_OFFSET_AREA (private->area), off_x, off_y);
+  picman_offset_area_set_offsets (PICMAN_OFFSET_AREA (private->area), off_x, off_y);
 }
 
 static void
@@ -451,23 +451,23 @@ offsets_changed (GtkWidget    *area,
                  gint          off_y,
                  ResizeDialog *private)
 {
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (private->offset), 0, off_x);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (private->offset), 1, off_y);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (private->offset), 0, off_x);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (private->offset), 1, off_y);
 }
 
 static void
 offset_center_clicked (GtkWidget    *widget,
                        ResizeDialog *private)
 {
-  GimpSizeBox *box = GIMP_SIZE_BOX (private->box);
+  PicmanSizeBox *box = PICMAN_SIZE_BOX (private->box);
   gint         off_x;
   gint         off_y;
 
   off_x = resize_bound_off_x (private, (box->width  - private->old_width)  / 2);
   off_y = resize_bound_off_y (private, (box->height - private->old_height) / 2);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (private->offset), 0, off_x);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (private->offset), 1, off_y);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (private->offset), 0, off_x);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (private->offset), 1, off_y);
 
   g_signal_emit_by_name (private->offset, "value-changed", 0);
 }

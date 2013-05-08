@@ -1,10 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
 
 if OS_WIN32
 mwindows = -mwindows
@@ -12,7 +12,7 @@ endif
 
 AM_LDFLAGS = $(mwindows)
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
 libexec_PROGRAMS = file-compressor
 
@@ -27,11 +27,11 @@ INCLUDES = \
 	-I$(includedir)
 
 LDADD = \
-	$(libgimpconfig)	\
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpmath)		\
-	$(libgimpbase)		\
+	$(libpicmanconfig)	\
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanmath)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\

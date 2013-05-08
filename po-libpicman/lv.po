@@ -1,0 +1,2159 @@
+# translation of picman-libpicman.HEAD.lv.po to latvian
+# translation of picman-libpicman.picman-2-0.po to latvian
+# Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+#
+# Gatis Kalnins <gatis.kalnins@metatrons.org>, 2004, 2005.
+# Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2010.
+# Rudolfs <rudolfs.mazurs@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD.lv\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=picman&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-11-18 02:53+0000\n"
+"PO-Revision-Date: 2011-12-17 22:54+0200\n"
+"Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
+"Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"Language: lv\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "izdevās"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "izpildīšanas kļūda"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "izsaukšanas kļūda"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "atcelts"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Otas izvēle"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Pārlūkot..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s spraudnis nevar apstrādāt slāņus"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Apvienot redzamos slāņus"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "%s spraudnis nevar apstrādāt slāņu nobīdi, izmēru vai blīvumu"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s spraudnis var apstrādāt slāņus tikai kā animētus kadrus"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Saglabāt kā animāciju"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Saplacināt attēlu"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s spraudnis nevar apstrādāt caurspīdīgumu"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s spraudnis nevar apstrādāt slāņa maskas"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Apstiprināt slāņa maskas"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s spraudnis var apstrādāt tikai RGB attēlus"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Pārveidot uz RGB"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s spraudnis var apstrādāt tikai pelēktoņu attēlus"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Pārveidot uz pelēktoņu"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s spraudnis var apstrādāt tikai indeksētus attēlus"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Pārveidot par indeksēto, izmantojot noklusētos iestatījumus\n"
+"(Rezultātu var koriģēt manuāli)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+"%s spraudnis var apstrādāt tikai bitkaršu (divu krāsu) indeksētos attēlus"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Pārveidot par indeksēto, izmantojot bitkartes noklusētos iestatījumus\n"
+"(Rezultātu var koriģēt manuāli)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s spraudnis var apstrādāt tikai RGB vai pelēktoņu attēlus"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s spraudnis var apstrādāt tikai RGB vai indeksētos attēlus"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "%s spraudnis var apstrādāt tikai pelēktoņu vai indeksētos attēlus"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s spraudnim ir nepieciešams alfa kanāls"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Pievienot alfa kanālu"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Apstiprināt saglabāšanu"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Apstiprināt"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Eksportēt failu"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "_Ignorēt"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "_Eksportēt"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Attēls ir jāeksportē kamēr tas nav saglabāts kā %s sekojošu iemeslu dēļ:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Eksportēšana nemainīs sākotnējo attēlu"
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Jūs drīz saglabāsiet slāņa masku kā %s.\n"
+"Redzamie slāņi netiks saglabāti."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Jūs drīz saglabāsiet kanālu (saglabāto iezīmējumu) kā %s.\n"
+"Redzamie slāņi netiks saglabāti."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "Eksportēt attēlu kā "
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Fonta izvēle"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Bezrēdzes"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Krāsu pārejas izvēle"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(Tukšs)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Paletes izvēle"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Raksta izvēle"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "pēc vārda"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "pēc apraksta"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "pēc palīdzības"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "pēc autora"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "pēc autortiesībām"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "pēc datuma"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "pēc tipa"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Nekas neatbilst vaicājumam"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "Meklētā frāze ir nederīga vai nepilnīga"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Meklē"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Meklē pēc vārda"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Meklē pēc apraksta"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Meklē pēc palīdzības"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Meklē pēc autora"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Meklē pēc autortiesībām"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Meklē pēc datuma"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Meklē pēc tipa"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d procedūra"
+msgstr[1] "%d procedūras"
+msgstr[2] "%d procedūru"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Nav atrasti atbilstoši rezultāti"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d procedūra atbilst vaicājumam"
+msgstr[1] "%d procedūras atbilst vaicājumam"
+msgstr[2] "%d procedūru atbilst vaicājumam"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametri"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Atgrieztās vērtības"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Papildus informācija"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Autors:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Datums:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Autortiesības:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "procenti"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Balts (pilnīgi blīvs)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Melns (pilnīgi caurspīdīgs)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "Slāņa _alfa kanāls"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "Pārcel_t slāņa alfa kanālu"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "Iezīmējum_s"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "Slāņa _pelēktoņu kopija"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "_Kanāls"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "Priekšplāns par fonu (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "Priekšplāns par fonu (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Priekšplāns par caurspīdīgumu"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Pielāgota krāsu pāreja"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Priekšplāna aizpildīšana"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Fona aizpildīšana"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Aizpildīšana ar rakstu"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Pievienot aktīvajam iezīmējumam"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Izņemt no aktīvā iezīmējuma"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Aizvietot aktīvo iezīmējumu"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Šķelt ar aktīvo iezīmējumu"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Sarkans"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Zaļš"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Zils"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Pelēks"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indeksēts"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+msgctxt "check-size"
+msgid "Small"
+msgstr "Mazs"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Vidējs"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+msgctxt "check-size"
+msgid "Large"
+msgstr "Liels"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Gaišas rūtiņas"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Pelēkas rūtiņas"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Tumšas rūtiņas"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+msgctxt "check-type"
+msgid "White only"
+msgstr "Tikai balts"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Tikai pelēks"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Tikai melns"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Attēls"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Raksts"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Gaišums"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Spīdums"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Vidējais"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Izgaismošana"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Aptumšošana"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Lineārs"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Bi-lineārs"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Radiāls"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Kvadrātisks"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Konisks (simetrisks)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Konisks (asimetrisks)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Pēc formas (stūraina)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Pēc formas (sfēriska)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Pēc formas (padziļināta)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Spirāle (pa pulkst.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Spirāle (pret pulkst.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Krustpunkti (punkti)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Krustpunkti (krustiņi)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Svītrots"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Dubulti svītrots"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Vienlaidus"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Krājuma ID"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Iekļauts attēlu buferis"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Attēla fails"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "RGB krāsa"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Pelēktoņu"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Indeksēta krāsa"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RGB-alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Pelēktoņu"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Pelēktoņu-alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indeksēts"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indeksēts-alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Nav"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Lineārs"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Kubisks"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Konstants"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Papildinošs"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Nav"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Zāģveida vilnis"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Trijstūrveida vilnis"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Palaist interaktīvi"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Palaist neinteraktīvi"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Palaist ar iepriekš lietotajām vērtībām"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Pikseļi"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+msgctxt "size-type"
+msgid "Points"
+msgstr "Punkti"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Ēnas"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Pustoņi"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Izgaismojumi"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Normāls (uz priekšu)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "Labojošs (atpakaļ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Pieskaņot"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Apgriezt"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Apcirst līdz rezultātam"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Apcirst ar samēru"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Iekšējā PICMAN procedūra"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "PICMAN spraudnis"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "PICMAN paplašinājums"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Pagaidu procedūra"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "No kreisās uz labo"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "No labās uz kreiso"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Nav"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Niecīgs"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Vidējs"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Pilns"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Līdzināt pie kreisās"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Līdzināt pie labās"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Vidū"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Aizpildīts"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(nekorekta UTF-8 rinda)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Krāsu pārvaldības darbības režīms"
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Jūsu (galvenā) ekrāna krāsu profils."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Kad ieslēgts, PICMAN mēģinās izmantot krāsu profilu no logu sistēmas. "
+"Konfigurētais monitora profils tiks izmantots tikai kā rezerves variants."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "Darbavietas noklusētais RGB krāsu profils."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "CMYK krāsu profils konvertēšanai no RGB uz CMYK"
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "Krāsu profils drukātās versijas simulēšanai (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Uzstādīt monitoram atbilstošas krāsas."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Iestata, kā krāsas tiek pārveidotas no RGB darbvirsmas uz drukāšanas "
+"simulēšanas iekārtu."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Kad ieslēgts, drukāšanas simulācija atzīmēs krāsas, kuras nevar attēlot "
+"mērķa krāsu telpā."
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+"Krāsa, kuru izmantot, lai atzīmētu krāsas, kuras ir ārpus krāsu diapazona."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Nav krāsu pārvaldības"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Krāsu pārvaldīts displejs"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Drukas simulācija"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Perceptuāls"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Relatīvi kolorimetrisks"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Piesātinātība"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Absolūti kolorimetrisks"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "zīmes %s vērtība nav derīga UTF-8 rinda"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "gaidāmā būla vērtība 'yes' vai 'no' ir %s, iegūts '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "nepareiza vērtība '%s' zīmei %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "nepareiza vērtība '%ld' zīmei %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "notiek sintaktiskā analīze '%s': %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "nelabojama leks. analīzes kļūda"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Nevar izvērst ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Kļūda ierakstot '%s':%s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Neizdevās izveidot pagaidu failu priekš '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Nevar atvērt '%s' ierakstīšanai: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Kļūme ierakstot pagaidu failā '%s': %s\n"
+"Oriģinālais fails nav aiztikts."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Kļūda ierakstot pagaidu failā '%s': %s\n"
+"Fails nav izveidots."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Neizdevās izveidot '%s': %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "nekorekta UTF-8 rinda"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+#| msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr "gaidāmā būla vērtība 'yes' vai 'no', iegūta '%s'"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Sintakses kļūda '%s' rindā %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Moduļa '%s' ielādes kļūda: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Kļūda modulī"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Ielādēts"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Ielādes kļūda"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Nav ielādēts"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Nevar noteikt korektu mājas mapi.\n"
+"Sīkattēli tiks izvietoti pagaidu failu mapē (%s)."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Neizdevās izveidot sīkattēlu mapi '%s'."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Sīkattēls nesatur Thumb::URI birku"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Neizdevās izveidot sīkattēlu priekš '%s': %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "_Meklēt:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "_Priekšplāna krāsa"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "_Fona krāsa"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "_Melns"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "_Balts"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "Izvēlieties krāsu profilu no diska..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Nav"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Skala"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Pašreizējā:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Iepriekšējā:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Krāsu heksadecimālais pieraksts kā HTML un CSS. Šis lauks pieņem arī CSS "
+"krāsu nosaukumus."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "HTML _notācija:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Atvērt failu izvēli, lai pārlūkotu mapes"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Atvērt failu izvēli, lai pārlūkotu failus"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Izvēlēties mapi"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Izvēlēties failu"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "Spiediet F1, lai uzzinātu vairāk"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "Kilobaiti"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "Megabaiti"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "Gigabaiti"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Nekas nav izvēlēts"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "Izvēlēties _visu"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "Izvēlēties _apgabalu:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Atvērt la_pas kā"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Lapa 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Lapa %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Ir izvēlēta viena lapa"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "Ir izvēlēta %d lapa"
+msgstr[1] "Ir izvēlētas %d lapas"
+msgstr[2] "Ir izvēlētas %d lapas"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Rediģējams"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Mape"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Izvēlieties pipeti un brīvi norādiet krāsu uz ekrāna, lai to izvēlētos."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Priekšskatījums"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Pārbaudīt izmēru"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Pārbaudīt stilu"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Šajā teksta laukā iespējams ierakstīt tikai %d rakstzīmes."
+msgstr[1] "Šajā teksta laukā iespējams ierakstīt tikai %d zīmes."
+msgstr[2] "Šajā teksta laukā iespējams ierakstīt tikai %d zīmes."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Nostiprināt"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "_Vidus"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Dublēt"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "R_ediģēt"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Saistītie"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Ielīmēt kā jaunu"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Ielīmēt iekš"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Atstatīt"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Redzams"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Apvilkt"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Attālums starp burti_em"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Attālums starp r_indām"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "Mainīt izmē_ru"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_Mainīt izmēru"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "_Apcirst"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "Pārveido_t"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "Pag_riezt"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Sašķiebt"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Papildus..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Vienību izvēle"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Vienība"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Reizinātājs"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Izmantojiet šo vērtību gadījumskaitļu ģeneratora inicializēšanai - tas ļaus "
+"jums atkārtot izvēlēto \"gadījuma\" operāciju"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "Jau_na sēkla"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "Inicializēt gadījumskaitļu ģeneratoru ar ģenerētu gadījumskaitli"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "_Sajaukt"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Atslēgts"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Ekrāns"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Logs"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Kvadrāts"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Portrets"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Ainava"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_T"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Tonis"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_P"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Piesātinātība"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Spilgtums"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Sarkans"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_Z"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Zaļš"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_I"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Zils"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_L"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Slāņi"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Attēli"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Tuvināt"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Tālināt"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK krāsu izvēle (izmantojot krāsu profilu)"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Ciāns"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Fuksīns"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Dzeltens"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Melns"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profils: (nav)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profils: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "_CMYK krāsu izvēlne"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Melnā a_pjoms:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Cik daudz procentus no melnās krāsas izvilkt no krāsainajām tintēm."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Akvareļkrāsu izvēlne"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Akvarelis"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Spiediens"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "HVS krāsu aplis"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Aplis"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX DirectInput notikumu kontrolieris"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Iekārta:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "Iekārta, no kuras nolasīt DirectInput notikumus."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "Taustiņš %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "Taustiņš %d nospiests"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "Taustiņš %d atlaists"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "X kustība pa kreisi"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "X kustība pa labi"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "Y pārvietot tālāk"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "Y pārvietot tuvāk"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "Z kustība augšup"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "Z kustība lejup"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "X ass noliekta tālāk"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "X ass noliekta tuvāk"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "Y ass noliekta pa labi"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "Y ass noliekta pa kreisi"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "Z ass noliekta pa kreisi"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "Z ass noliekta pa labi"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Slīdnis %d palielinās"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Slīdnis %d samazinās"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d X skats"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d Y skats"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d atgriež"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "DirectInput notikumi"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Neviena iekārta nav nokonfigurēta"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Iekārta nav pieejama"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Taustiņš 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Taustiņš 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Taustiņš 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Taustiņš 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Taustiņš 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Taustiņš 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Taustiņš 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Taustiņš 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Taustiņš 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Taustiņš 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Peles taustiņš"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Kreisais taustiņš"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Labais taustiņš"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Vidējais taustiņš"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Sānu taustiņš"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Papildus taustiņš"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Uz priekšu taustiņš"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Atpakaļ taustiņš"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Uzdevumu taustiņš"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Peles rullītis"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Rullītis lejup "
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Rullītis augšup"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "Y kustība uz priekšu"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "Y kustība atpakaļ"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "X ass noliekta uz priekšu"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "X ass noliekta atpakaļ"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "Horiz. rullītis pagriezts atpakaļ"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Horiz. rullītis pagriezts uz priekšu"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Aplis pa kreisi"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Aplis pa labi"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Ritenis pa kreisi"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Ritenis pa labi"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Linux ievada notikumu kontrolieris"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Iekārtas vārds, no kuras ielasīt Linux ievades notikumus."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Linux ievade"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Linux ievades notikumi"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Ielasa no %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Iekārta nav pieejama: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Faila beigas"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "MIDI notikumu kontrolieris"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Iekārtas nosaukums, no kuras ielasīt MIDI notikumus."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Ievadiet 'alsa', lai izmantotu ALSA virknētāju."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanāls:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"MIDI kanāls, no kura ielasīt notikumus. Iestatiet uz -1, lai lasītu no "
+"visiem MIDI kanāliem."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Nots %02x ieslēgta"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Nots %02x izslēgta"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Kontrolieris %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "MIDI notikumi"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "PICMAN MIDI ievades kontrolieris"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopija (nejūtīgums uz sarkano)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopija (nejūtīgums uz zaļo)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopija (nejūtīgums uz zilo)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Krāsas trūkuma modelēšanas filtrs (Brettela-Vienota-Mollona algoritms)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Skats ar pazeminātu krāsas uztveri"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Pazeminātas krāsas _uztveres tips:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Krāsu gammas filtrs"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Paaugstināta kontrasta filtrs"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrasts"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "Kontrasta c_ikli:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Krāsu pakāpes filtrs, izmantojot ICC krāsu profilu"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Krāsu pārvaldīšana"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Nav"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Šis filtrs savu konfigurāciju ņem no krāsu pārvaldības sadaļas iestatījumu "
+"dialogā."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Darbības režīms:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Attēla profils:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Monitora profils:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Drukāt simulācijas profilu:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Krāsu pakāpes filtrs, izmantojot ICC krāsu profilu"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Krāsu pakāpe"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Izvēlēties ICC krāsu parametrus"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Visi faili (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC krāsu profils (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profils:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "T_ips:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "_Melno punktu kompensācija"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "Lineāra"
+
+#~ msgid "interpolation|None"
+#~ msgstr "Nav"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "Lineāra"
+
+#~| msgid "Saturation"
+#~ msgid "intent|Saturation"
+#~ msgstr "Piesātinātība"
+
+#~ msgid "Pattern source"
+#~ msgstr "Šablona avots"
+
+#~ msgid "None (Fastest)"
+#~ msgstr "Nekas (ātrs)"
+
+#~ msgid "Lanczos (Best)"
+#~ msgstr "Kubisks (labāks)"
+
+#~ msgid "Forward (traditional)"
+#~ msgstr "Uz priekšu (tradicionāls)"
+
+#~ msgid "Backward (corrective)"
+#~ msgstr "Atpakaļ (koriģējošs)"
+
+#~ msgid "%d Bytes"
+#~ msgstr "%d baiti"
+
+#~ msgid "%.2f KB"
+#~ msgstr "%.2f KB"
+
+#~ msgid "%.1f KB"
+#~ msgstr "%.1f KB"
+
+#~ msgid "%d KB"
+#~ msgstr "%d KB"
+
+#~ msgid "%.2f MB"
+#~ msgstr "%.2f MB"
+
+#~ msgid "%.1f MB"
+#~ msgstr "%.1f MB"
+
+#~ msgid "%d MB"
+#~ msgstr "%d MB"
+
+#~ msgid "%.2f GB"
+#~ msgstr "%.2f GB"
+
+#~ msgid "%.1f GB"
+#~ msgstr "%.1f GB"
+
+#~ msgid "%d GB"
+#~ msgstr "%d GB"
+
+#~ msgid "Sets the color profile used when printing."
+#~ msgstr "Uzstādīt krāsu profilu izdrukai"
+
+#~ msgid "Ask"
+#~ msgstr "Jautāt"
+
+#~ msgid "Use embedded profile"
+#~ msgstr "Izmantot iegulto profilu"
+
+#~ msgid "Convert to RGB workspace"
+#~ msgstr "Pārveidot uz RGB"
+
+#~ msgid "Could not open '%s' for reading: %s"
+#~ msgstr "Nevar atvērt '%s' lasīšanai: %s"
+
+#~ msgid "Loading module: '%s'\n"
+#~ msgstr "Moduļa ielāde: '%s'\n"
+
+#~ msgid "Skipping module: '%s'\n"
+#~ msgstr "Izlaists modulis: '%s'\n"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "Trijstūrveida krāsu izvēlne"
+
+#~ msgid "Triangle"
+#~ msgstr "Trijstūris"

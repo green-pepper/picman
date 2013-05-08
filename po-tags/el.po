@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-tags.el\n"
+"Project-Id-Version: picman-tags.el\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-07-02 18:11+0000\n"
 "PO-Revision-Date: 2011-07-11 00:47+0200\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος)  <dmtrs32@gmail.com>\n"
@@ -20,10 +20,10 @@ msgstr ""
 "X-Poedit-Language: Greek\n"
 "X-Poedit-Country: GREECE\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "θολή"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "round"
 msgstr "στρογγυλή"

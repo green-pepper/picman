@@ -1,0 +1,2093 @@
+# translation of picman-libpicman.HEAD.po to Arabic
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Khaled Hosny <khaledhosny@eglug.org>, 2006, 2007, 2008, 2010, 2011, 2012.
+# Anas Husseini <anas_h_34@hotmail.com>, 2007, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-01 01:24+0200\n"
+"PO-Revision-Date: 2012-04-01 01:25+0200\n"
+"Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
+"Language-Team: Arabic <doc@arabeyes.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Virtaal 0.7.0\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "نجاح"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "خطأ في التنفيذ"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "خطأ في الاستدعاء"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "أُلغِيَ"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "اختيار الفرشاة"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_تصفّح..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "الملحقة %s لا يمكنها التعامل مع الطبقات"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "ادمج الطبقات المرئية"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "الملحقة %s لا يمكنها التعامل مع إزاحات أو أحجام أو تعتيم الطبقات"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "الملحقة %s يمكنها فقط التعامل مع الطبقات كإطارات رسوم متحركة"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "احفظ كرسوم متحركة"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "سطّح الصورة"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "الملحقة %s لا يمكنها التعامل مع الشفافية"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "الملحقة %s لا يمكنها التعامل مع أقنعة الطبقات"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "طبِّق أقنعة الطبقة"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "الملحقة %s يمكنها التعامل فقط مع صور ح‌خ‌ز"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "حوِّل إلى ح‌خ‌ز"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "الملحقة %s يمكنها التعامل فقط مع الصور الرمادية التدرج"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "حوِّل إلى تدرج رمادي"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "الملحقة %s يمكنها فقط التعامل مع الصور المفهرسة"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"حوِّل إلى صورة مفهرسة باستخدام الإعدادات الافتراضية\n"
+"(قم بذلك يدويًا لجعل النتيجة متناغمة)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "الملحقة %s يمكنها فقط التعامل مع صور نقطية (bmp) مفهرسة ذات لونين"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"حوِّل إلى صورة مفهرسة باستخدام إعدادات الصورة النقطية الافتراضية\n"
+"(قم بذلك يدويًا لجعل النتيجة متناغمة)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "الملحقة %s يمكنها فقط التعامل مع صور ح‌خ‌ز أو صور التدرج الرمادي"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "الملحقة %s يمكنها التعامل فقط مع صور ح‌خ‌ز أو الصور المفهرسة"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "الملحقة %s يمكنها التعامل فقط مع صور التدرج الرمادي أو الصور المفهرسة"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "الملحقة %s تتطلب قناة ألفا"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "أضِف قناة ألفا"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "أكّد الحفظ"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "أكّد"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "صدّر ملف"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "تجا_هل"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "صدّ_ر"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "صورتك ينبغي أن تصدّر قبل أن يتم حفظها كـ %s للأسباب التالية:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "تحويل الصورة المصدرة لن يعدل صورتك الأصلية."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"أنت على وشك حفظ قناع شبكة كـ %s.\n"
+"هذا لن يؤدي إلى حفظ الطبقات المرئية."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"أنت على وشك حفظ قناة (تحديد محفوظ) كـ %s.\n"
+"هذا لن يؤدي إلى حفظ الطبقات المرئية."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "صدّر الصورة باسم"
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "اختيار الخط"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "تحديد التدرج"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(فارغ)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "اختيار لوح الألوان"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "اختيار النمط"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "حسب الاسم"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "حسب الوصف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "حسب المساعدة"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "حسب المؤلف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "حسب حقوق النشر"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "حسب التاريخ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "حسب النوع"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "لا توجد تطابقات"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "عبارة البحث ناقصة أو غير سليمة"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "البحث"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "البحث حسب الاسم"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "البحث حسب الوصف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "البحث حسب المساعدة"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "البحث حسب المؤلف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "البحث حسب حقوق النشر"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "البحث حسب التاريخ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "البحث حسب النوع"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "لا إجراءات"
+msgstr[1] "إجراء واحد"
+msgstr[2] "إجرائين"
+msgstr[3] "%Id إجراءات"
+msgstr[4] "%Id إجراء"
+msgstr[5] "%Id إجراء"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "لا يوجد نتائج تطابق استعلامك"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "لا إجراءات تطابق استعلامك"
+msgstr[1] "إجراء واحد يطابق استعلامك"
+msgstr[2] "إجرائين يطابقان استعلامك"
+msgstr[3] "%Id إجراءات تطابق استعلامك"
+msgstr[4] "%Id إجراءا تطابق استعلامك"
+msgstr[5] "%Id إجراء تطابق استعلامك"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "المعاملات"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "القيم الإرجاعية"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "بيانات إضافية"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "المؤلف:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "التاريخ:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "حقوق النشر:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "بالمئة"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "أبي_ض (عتامة كاملة)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "أسو_د (شفافية كاملة)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "قناة أل_فا الخاصة بالطبقة"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "ا_نقل قناة ألفا الخاصة بالطبقة"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "الا_ختيار"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "نسخة _رمادية التدرج من الطبقة"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "ال_قناة"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "المقدمة للخلفية (ح‌خ‌ز)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "المقدمة للخلفية (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "المقدمة إلى شفافية"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "تدرج مخصص"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "لون ملء صدر الصورة"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "لون ملء الخلفية"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "لون تعبئة النمط"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "أضف إلى التحديد الحالي"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "اطرح من التحديد الحالي"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "استبدل التحديد الحالي"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "تقاطع مع التحديد الحالي"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+msgctxt "channel-type"
+msgid "Red"
+msgstr "أحمر"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+msgctxt "channel-type"
+msgid "Green"
+msgstr "أخضر"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "أزرق"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "رمادي"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "مفهرس"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "ألفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+msgctxt "check-size"
+msgid "Small"
+msgstr "صغير"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+msgctxt "check-size"
+msgid "Medium"
+msgstr "متوسط"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+msgctxt "check-size"
+msgid "Large"
+msgstr "كبير"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "مربعات خفيفة"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "مربعات متوسطة النغمة"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "مربعات داكنة"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+msgctxt "check-type"
+msgid "White only"
+msgstr "أبيض فقط"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "رمادي فقط"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+msgctxt "check-type"
+msgid "Black only"
+msgstr "أسود فقط"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+msgctxt "clone-type"
+msgid "Image"
+msgstr "صورة"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "نمط"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "الخفة"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "الإضاءة"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "متوسط"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "تجنب"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "حرق"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "خطي"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "خطي مزدوج"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "نصف قطري"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "مربع"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "مخروطي (متناظر)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "مخروطي (غير متناظر)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "شكلي (ذو زوايا)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "شكلي (كروي)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "شكلي (ذو غمازات)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "لولبي (cw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "لولبي (ccw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "الالتقاءات (نقط)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "الالتقاءات (تقاطعات)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "متقطع"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "متقطع مزدوج"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "صلب"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "معرف المخزون"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "براح البسكلات الفوري"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "ملف صورة"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "لون ح‌خ‌ز"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "تدرج رمادي"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "لون مفهرس"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+msgctxt "image-type"
+msgid "RGB"
+msgstr "ح‌خ‌ز"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "ح‌خ‌ز-ألفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "تدرج رمادي"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "تدرج رمادي-ألفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "مفهرس"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "مفهرسة-ألفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "بدون"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "خطي"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "مكعبي"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "جيبي (لانسزوس 3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "ثابت"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "تزايدي"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "بدون"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "موجة أسنان منشار"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "موجة مثلثة"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "شغّل تفاعليا"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "شغّل لا تفاعليا"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "شغّل مع آخر القيم المستخدمة"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "بكسلات"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+msgctxt "size-type"
+msgid "Points"
+msgstr "نقاط"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "ظلال"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "نغمات متوسطة"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "إبرازات"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "عادي (إلى الأمام)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "تصحيحي (إلى الخلف)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "ضبط"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "قصاصة"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "اقتطاع إلى النتيجة"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "اقتطاع مع مظهر"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "إجراء جِمب داخلي"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "ملحقة جِمب"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "امتداد جِمب"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "إجراء مؤقت"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "من اليسار إلى اليمين"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "من اليمين إلى اليسار"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "لا شيء"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "خفيف"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "متوسط"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "كامل"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "مساوى لليسار"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "مساوى لليمين"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "موسَّط"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "مملوء"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(غير صحيحة UTF-8 سلسة )"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "نمط العمليات لإدارة الألوان."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "ملف الألوان لشاشتك (الأولية)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"عند تفعيلها، سيحاول جِمب استخدام ملف الألوان من نظام النوافذ. سيُستخدم ملف "
+"الشاشة المعد كملف احتياطي فقط."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "ملف ألوان مساحة عمل ح‌خ‌ز الافتراضي."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "ملف ألوان CMYK يقوم بالتحويل بين ح‌خ‌ز و CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "ملف الألوان يقوم بطباعة صفحة تجريبية."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "تحديد عدد الألوان الموجودة في خريطة عرضك."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr "تحديد عدد الألوان التي يجب تحويلها من مساحة عمل ح‌خ‌ز إلى جهاز الطابعة."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "لا إدارة للألوان"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "جهاز عرض مُدار الألوان"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "محاكاة الطباعة"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "إدراكي"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "توزيع الألوان النسبي"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "التشبّع"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "توزيع الألوان المطلق"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "قيمة %s ليست نص UTF-8 صالح"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+"المتوقع أن تكون القيمة المنطقية لـ %s هي 'نعم' أو 'لا'، ولكن ما تم تلقيه هو "
+"'%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "قيمة '%s' غير مقبولة من أجل %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "قيمة '%ld' غير مقبولة من أجل %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "يجري تحليل المعطيات '%s': %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "خطأ تحليل فادح"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "لم يمكن توسيع ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "خطأ أثناء الكتابة في '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "لم يمكن إنشاء ملف مؤقت لـ '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "تعذر فتح '%s' للكتابة: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"خطأ أثناء كتابة الملف المؤقت لـ '%s': %s\n"
+"الملف الأصلي لم يجر عليه أي تعديل."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"خطأ أثناء كتابة الملف المؤقت لـ '%s': %s\n"
+"لم يتم إنشاء أي ملف."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "لم يمكن إنشاء '%s': %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "نص UTF-8 غير مقبول"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr ""
+"المتوقع أن تكون القيمة المنطقية هي 'yes' أو 'no'، ولكن ما تم تلقيه هو '%s'"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "خطأ أثناء تحليل '%s' في السطر %Id: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "خطأ عند تحميل الوحدة '%s': %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "خطأ وحدة"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "محمل"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "فشل التحميل"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "غير محمل"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"لم يمكن تعيين مجلد منزل صالح.\n"
+"الصور المصغرة سيتم تخزينها في مجلد الملفات المؤقتة (%s) بدلًا عن ذلك."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "فشل إنشاء ملف الصور المصغرة '%s'."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "مجلد الصور المصغرة لا يحتوي أي صورة::بطاقة URI"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "لم يمكن إنشاء صورة مصغرة لـ %s: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "ا_بحث:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "اللون الأ_مامي"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "اللون ال_خلفي"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "أ_سود"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "أبي_ض"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "اختر مواصفات اللون من القرص..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "لا شيء"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "المقاييس"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "الحالي:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "القديم:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"طريقة كتابة أرقام الألوان الست عشرية هي نفسها كما في HTML و CSS. هذا الإدخال "
+"يقبل أيضًا أسماء ألوان CSS."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "_طريقة تدوين HTML:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "افتح نافذة تصفح المجلدات"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "افتح نافذة تصفح الملفات"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "اختر مجلدا"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "اختر ملفا"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "انقر F1 للمزيد من المساعدة"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "كيلوبايت"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "ميجابايت"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "جيجابايت"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "لم يتم اختيار شيء"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "اخت_ر الكل"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "اختر م_جال:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "افتح ال_صفحات كـ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "الصفحة 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "الصفحة %Id"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "تم اختيار صفحة واحدة"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%Id صفحة مختارة"
+msgstr[1] "%Id صفحة مختارة"
+msgstr[2] "%Id صفحة مختارة"
+msgstr[3] "%Id صفحة مختارة"
+msgstr[4] "%Id صفحة مختارة"
+msgstr[5] "%Id صفحة مختارة"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "قابل للكتابة"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "المجلد"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"انقر على القطارة، ثم انقر على أي لون في أي مكان من شاشتك لاختيار هذا اللون."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_عاين"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "حجم المربعات"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "نمط المربعات"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "حقل إدخال النص هذا ليس محدودا بأي حروف."
+msgstr[1] "حقل إدخال النص هذا محدود بحرف واحد."
+msgstr[2] "حقل إدخال النص هذا محدود بحرفين."
+msgstr[3] "حقل إدخال النص هذا محدود بـ %Id حروف."
+msgstr[4] "حقل إدخال النص هذا محدود بـ %Id حرفا."
+msgstr[5] "حقل إدخال النص هذا محدود بـ %Id حرف."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "مرساة"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "المر_كز"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "ضا_عِف"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "_حرِّر"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "موصول"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "ألصق كجديد"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "ألصق في"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "أعِد ضب_ط"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "مرئي"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_جرة القلم"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "تباعد الحر_وف"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "تباعد الأ_سطر"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "غيِّر الحج_م"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_حجّم"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "ا_قتطع"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "حوِّ_ل"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_دوِّر"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "قُ_ص"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "المزيد..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "اختيار الوحدة"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "الوحدة"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "العامل"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"استخدم هذه القيمة لبذرة مولد الأرقام العشوائية - هذا سيسمح لك بتكرار عملية "
+"\"عشوائية\" معطاة"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "بذرة _جديدة"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "بذر مولد ارقام عشوائية برقم عشوائي مولد"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "ع_شوائي"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "مُعطَّلة"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "الشاشة"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "النافذة"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "مربع"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "طولي"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "عرضي"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_ت"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "التدرج"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_إ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "الإشباع"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_ق"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "القيمة"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_ح"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "أحمر"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_خ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "أخضر"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_ز"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "أزرق"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "ألفا"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "الطبقات"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "الصور"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "قرّب"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "بعّد"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "سيان"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "وردي"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "أصفر"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "أسود"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "مواصفات: (لا شيء)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "مواصفات: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "منتقي ألوان CMYK"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "الس_حب الأسود:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "كمية اللون الأسود التي ينبغي سحبها من الحبر الملون"
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "منتقي ألوان نمط اللون المائي"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "لون مائي"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "الضغط"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "عجلة ألوان HSV"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "عجلة"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "متحكم أحداث DirectInput لـ DirectX"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "الجهاز:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "الجهاز الذي ينبغي قراءة أحداث DirectInput منه."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "الزر %Id"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "ضغط الزر %Id"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "ترك ضغط الزر %Id"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "تحرك سيني يسارا"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "تحرك سيني يمينا"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "تحرك صادي بعيدا"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "تحرك صادي قريبا"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "تحرك عيني لأعلى"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "تحرك عيني لأسفل"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "انحراف محور س البعيد"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "انحراف محور س قريبا"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "المحور الصادي ينحني لليمين"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "المحور الصادي ينحني لليسار"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "التفاف محور ع يسارا"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "التفاف محور ع يمينا"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "زيادة المزلاق %Id"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "نقصان المزلاق %Id"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "عرض POV %Id X"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "عرض POV %Id Y"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "عائد POV %Id"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "أحداث DirectInput"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "لم يُعدّ أي جهاز"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "الجهاز غير متاح"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "الزر 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "الزر 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "الزر 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "الزر 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "الزر 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "الزر 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "الزر 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "الزر 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "الزر 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "الزر 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "زر الفأرة"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "الزر الأيسر"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "الزر الأيمن"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "الزر الأوسط "
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "الزر الجانبي"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "الزر الإضافي"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "الزر الأمامي"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "الزر الخلفي"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "مهمة الزر"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "عجلة الزر"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "تحريك العجلة إلى الأسفل"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "تحريك العجلة إلى الأعلى"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "تحرك صادي بعيدا"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "تحرك صادي للخلف"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "المحور السيني ينحني للأمام"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "المحور السيني ينحني للخلف"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "أفقيًا. العجلة تدور إلى الخلف"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "أفقيًا. العجلة تدور إلى الأمام"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "من اليسار إلى اليمين"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "قرص الساعة يتجه يمينًا"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "العجلة تستدير يسارًا"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "العجلة تستدير يمينًا"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "متحكم لينكس بأحداث الدخْل"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "اسم الجهاز الذي يقرأ لينكس أحداث الدخْل منه."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "دخْل لينكس"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "أحداث دخْل لينكس"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "يجري القراءة من %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "الجهاز غير متاح: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "نهاية الملف"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "متحكم أحداث MIDI"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "اسم الجهاز الذي ينبغي قراءة أحداث MIDI منه."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "أدخل 'alsa' لاستخدام مسلسِل ALSA."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "القناة:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"قناة MIDI التي ينبغي قراءة الأحداث منها. حدد -1 للقراءة من جميع قنوات MIDI."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "الإشارة %02x مضاءة"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "الإشارة %02x مطفأة"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "المتحكم %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "أحداث MIDI"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "جِمب"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "متحكم دخْل جِمب MIDI"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "بروتانوبيا (فقدان الشعور باللون الأحمر)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "دوترانوبيا (فقدان الشعور باللون الأخضر)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "تريتانوبيا (فقدان الشعور باللون الأزرق)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "مرشّح محاكاة عجز الألوان (خزارزمية بريتيل-فيينو-مولون)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "عجز رؤية الألوان"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "نوع عج_ز الألوان:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "مرشّح عرض ألوان جاما"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "جاما"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_جاما:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "مرشّح عرض ألوان التباين العالي"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "التباين"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "_دورات التباين:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "مرشّح عرض إدارة الألوان باستخدام ملفات ألوان ICC"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "إدارة الألوان"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "لا شيء"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr "هذا المرشّح يتلقى إعداداته من قسم إدارة الألوان في جدول التفضيلات."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "نمط العملية:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "مواصفات الصورة:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "ملف المراقبة:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "طباعة ملف المحاكاة:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "مرشّح إثبات الألوان باستخدام ملف ألوان ICC"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "إثبات الألوان"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "اختر ملف ألوان ICC"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "كل الملفات (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "لاحة ألوان ICC ‏(‪*.icc‬،‏ ‪*.icm‬)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "ال_ملف:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "ال_عزم على:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "تعويض النق_طة السوداء"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "خطي"
+
+#~ msgid "interpolation|None"
+#~ msgstr "لا شيء"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "خطي"
+
+#~ msgid "intent|Saturation"
+#~ msgstr "عزم على|إشباع"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "منتقي ألوان بأسلوب مثلث الطابعة"
+
+#~ msgid "Triangle"
+#~ msgstr "مثلث"

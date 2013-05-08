@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Plugin to convert a selection to a path.
  *
- * Copyright (C) 1999 Andy Thomas  alt@gimp.org
+ * Copyright (C) 1999 Andy Thomas  alt@picman.org
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 
 #include <string.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "global.h"
 #include "types.h"
@@ -42,11 +42,11 @@
 #include "spline.h"
 #include "selection-to-path.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_BINARY "selection-to-path"
-#define PLUG_IN_ROLE   "gimp-selection-to-path"
+#define PLUG_IN_ROLE   "picman-selection-to-path"
 
 #define RESPONSE_RESET 1
 #define MID_POINT      127
@@ -58,9 +58,9 @@
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gint      sel2path_dialog         (SELVALS   *sels);
 static void      sel2path_response       (GtkWidget *widget,
@@ -70,7 +70,7 @@ static void      dialog_print_selVals    (SELVALS   *sels);
 static gboolean  sel2path                (gint32     image_ID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -89,41 +89,41 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable (unused)" },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable (unused)" },
   };
 
-  static const GimpParamDef advanced_args[] =
+  static const PicmanParamDef advanced_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",                    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",                       "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",                    "Input drawable (unused)" },
-    { GIMP_PDB_FLOAT,    "align-threshold",             "align_threshold"},
-    { GIMP_PDB_FLOAT,    "corner-always-threshold",     "corner_always_threshold"},
-    { GIMP_PDB_INT8,     "corner-surround",             "corner_surround"},
-    { GIMP_PDB_FLOAT,    "corner-threshold",            "corner_threshold"},
-    { GIMP_PDB_FLOAT,    "error-threshold",             "error_threshold"},
-    { GIMP_PDB_INT8,     "filter-alternative-surround", "filter_alternative_surround"},
-    { GIMP_PDB_FLOAT,    "filter-epsilon",              "filter_epsilon"},
-    { GIMP_PDB_INT8,     "filter-iteration-count",      "filter_iteration_count"},
-    { GIMP_PDB_FLOAT,    "filter-percent",              "filter_percent"},
-    { GIMP_PDB_INT8,     "filter-secondary-surround",   "filter_secondary_surround"},
-    { GIMP_PDB_INT8,     "filter-surround",             "filter_surround"},
-    { GIMP_PDB_INT8,     "keep-knees",                  "{1-Yes, 0-No}"},
-    { GIMP_PDB_FLOAT,    "line-reversion-threshold",    "line_reversion_threshold"},
-    { GIMP_PDB_FLOAT,    "line-threshold",              "line_threshold"},
-    { GIMP_PDB_FLOAT,    "reparameterize-improvement",  "reparameterize_improvement"},
-    { GIMP_PDB_FLOAT,    "reparameterize-threshold",    "reparameterize_threshold"},
-    { GIMP_PDB_FLOAT,    "subdivide-search",            "subdivide_search"},
-    { GIMP_PDB_INT8,     "subdivide-surround",          "subdivide_surround"},
-    { GIMP_PDB_FLOAT,    "subdivide-threshold",         "subdivide_threshold"},
-    { GIMP_PDB_INT8,     "tangent-surround",            "tangent_surround"},
+    { PICMAN_PDB_INT32,    "run-mode",                    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",                       "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",                    "Input drawable (unused)" },
+    { PICMAN_PDB_FLOAT,    "align-threshold",             "align_threshold"},
+    { PICMAN_PDB_FLOAT,    "corner-always-threshold",     "corner_always_threshold"},
+    { PICMAN_PDB_INT8,     "corner-surround",             "corner_surround"},
+    { PICMAN_PDB_FLOAT,    "corner-threshold",            "corner_threshold"},
+    { PICMAN_PDB_FLOAT,    "error-threshold",             "error_threshold"},
+    { PICMAN_PDB_INT8,     "filter-alternative-surround", "filter_alternative_surround"},
+    { PICMAN_PDB_FLOAT,    "filter-epsilon",              "filter_epsilon"},
+    { PICMAN_PDB_INT8,     "filter-iteration-count",      "filter_iteration_count"},
+    { PICMAN_PDB_FLOAT,    "filter-percent",              "filter_percent"},
+    { PICMAN_PDB_INT8,     "filter-secondary-surround",   "filter_secondary_surround"},
+    { PICMAN_PDB_INT8,     "filter-surround",             "filter_surround"},
+    { PICMAN_PDB_INT8,     "keep-knees",                  "{1-Yes, 0-No}"},
+    { PICMAN_PDB_FLOAT,    "line-reversion-threshold",    "line_reversion_threshold"},
+    { PICMAN_PDB_FLOAT,    "line-threshold",              "line_threshold"},
+    { PICMAN_PDB_FLOAT,    "reparameterize-improvement",  "reparameterize_improvement"},
+    { PICMAN_PDB_FLOAT,    "reparameterize-threshold",    "reparameterize_threshold"},
+    { PICMAN_PDB_FLOAT,    "subdivide-search",            "subdivide_search"},
+    { PICMAN_PDB_INT8,     "subdivide-surround",          "subdivide_surround"},
+    { PICMAN_PDB_FLOAT,    "subdivide-threshold",         "subdivide_threshold"},
+    { PICMAN_PDB_INT8,     "tangent-surround",            "tangent_surround"},
   };
 
-  gimp_install_procedure ("plug-in-sel2path",
+  picman_install_procedure ("plug-in-sel2path",
                           "Converts a selection to a path",
                           "Converts a selection to a path",
                           "Andy Thomas",
@@ -131,11 +131,11 @@ query (void)
                           "1999",
                           NULL,
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_install_procedure ("plug-in-sel2path-advanced",
+  picman_install_procedure ("plug-in-sel2path-advanced",
                           "Converts a selection to a path (with advanced user menu)",
                           "Converts a selection to a path (with advanced user menu)",
                           "Andy Thomas",
@@ -143,7 +143,7 @@ query (void)
                           "1999",
                           NULL,
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (advanced_args), 0,
                           advanced_args, NULL);
 }
@@ -151,14 +151,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
+  static PicmanParam   values[1];
   gint32             image_ID;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status    = GIMP_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status    = PICMAN_PDB_SUCCESS;
   gboolean           no_dialog;
 
   INIT_I18N ();
@@ -171,7 +171,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   image_ID = param[1].data.d_image;
@@ -181,7 +181,7 @@ run (const gchar      *name,
       return;
     }
 
-  if (gimp_selection_is_empty (image_ID))
+  if (picman_selection_is_empty (image_ID))
     {
       g_message (_("No selection to convert"));
       return;
@@ -193,10 +193,10 @@ run (const gchar      *name,
     {
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-          if (gimp_get_data_size ("plug-in-sel2path-advanced") > 0)
+        case PICMAN_RUN_INTERACTIVE:
+          if (picman_get_data_size ("plug-in-sel2path-advanced") > 0)
             {
-              gimp_get_data ("plug-in-sel2path-advanced", &selVals);
+              picman_get_data ("plug-in-sel2path-advanced", &selVals);
             }
 
           if (!sel2path_dialog (&selVals))
@@ -206,11 +206,11 @@ run (const gchar      *name,
           fit_set_params (&selVals);
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (nparams != 23)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
 
-          if (status == GIMP_PDB_SUCCESS)
+          if (status == PICMAN_PDB_SUCCESS)
             {
               selVals.align_threshold             =  param[3].data.d_float;
               selVals.corner_always_threshold     =  param[4].data.d_float;
@@ -236,10 +236,10 @@ run (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
-          if(gimp_get_data_size ("plug-in-sel2path-advanced") > 0)
+        case PICMAN_RUN_WITH_LAST_VALS:
+          if(picman_get_data_size ("plug-in-sel2path-advanced") > 0)
             {
-              gimp_get_data ("plug-in-sel2path-advanced", &selVals);
+              picman_get_data ("plug-in-sel2path-advanced", &selVals);
 
               /* Set up the last values */
               fit_set_params (&selVals);
@@ -254,11 +254,11 @@ run (const gchar      *name,
   sel2path (image_ID);
   values[0].data.d_status = status;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       dialog_print_selVals(&selVals);
-      if (run_mode == GIMP_RUN_INTERACTIVE && !no_dialog)
-        gimp_set_data ("plug-in-sel2path-advanced", &selVals, sizeof(SELVALS));
+      if (run_mode == PICMAN_RUN_INTERACTIVE && !no_dialog)
+        picman_set_data ("plug-in-sel2path-advanced", &selVals, sizeof(SELVALS));
     }
 }
 
@@ -298,14 +298,14 @@ sel2path_dialog (SELVALS *sels)
 
   retVal = FALSE;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dlg = gimp_dialog_new (_("Selection to Path Advanced Settings"),
+  dlg = picman_dialog_new (_("Selection to Path Advanced Settings"),
                          PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, "plug-in-sel2path-advanced",
+                         picman_standard_help_func, "plug-in-sel2path-advanced",
 
-                         GIMP_STOCK_RESET, RESPONSE_RESET,
+                         PICMAN_STOCK_RESET, RESPONSE_RESET,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -317,7 +317,7 @@ sel2path_dialog (SELVALS *sels)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   g_signal_connect (dlg, "response",
                     G_CALLBACK (sel2path_response),
@@ -434,7 +434,7 @@ do_points (spline_list_array_type in_splines,
   if (!have_points)
     return;
 
-  vectors = gimp_vectors_new (image_ID, _("Selection"));
+  vectors = picman_vectors_new (image_ID, _("Selection"));
 
   for (j = 0; j < SPLINE_LIST_ARRAY_LENGTH (in_splines); j++)
     {
@@ -447,7 +447,7 @@ do_points (spline_list_array_type in_splines,
         continue;
 
       seg = SPLINE_LIST_ELT (spline_list, 0);
-      stroke = gimp_vectors_bezier_stroke_new_moveto (vectors,
+      stroke = picman_vectors_bezier_stroke_new_moveto (vectors,
                                                       START_POINT (seg).x,
                                                       START_POINT (seg).y);
 
@@ -456,11 +456,11 @@ do_points (spline_list_array_type in_splines,
           seg = SPLINE_LIST_ELT (spline_list, i);
 
           if (SPLINE_DEGREE (seg) == LINEAR)
-            gimp_vectors_bezier_stroke_lineto (vectors, stroke,
+            picman_vectors_bezier_stroke_lineto (vectors, stroke,
                                                END_POINT (seg).x,
                                                END_POINT (seg).y);
           else if (SPLINE_DEGREE (seg) == CUBIC)
-            gimp_vectors_bezier_stroke_cubicto (vectors, stroke,
+            picman_vectors_bezier_stroke_cubicto (vectors, stroke,
                                                 CONTROL1 (seg).x,
                                                 CONTROL1 (seg).y,
                                                 CONTROL2 (seg).x,
@@ -472,16 +472,16 @@ do_points (spline_list_array_type in_splines,
                        SPLINE_DEGREE (seg));
         }
 
-      gimp_vectors_stroke_close (vectors, stroke);
+      picman_vectors_stroke_close (vectors, stroke);
 
-      /* transform to GIMPs coordinate system, taking the selections
+      /* transform to PICMANs coordinate system, taking the selections
        * bounding box into account  */
-      gimp_vectors_stroke_scale (vectors, stroke, 1.0, -1.0);
-      gimp_vectors_stroke_translate (vectors, stroke,
+      picman_vectors_stroke_scale (vectors, stroke, 1.0, -1.0);
+      picman_vectors_stroke_translate (vectors, stroke,
                                      sel_x1, sel_y1 + sel_height + 1);
     }
 
-  gimp_image_insert_vectors (image_ID, vectors, -1, -1);
+  picman_image_insert_vectors (image_ID, vectors, -1, -1);
 }
 
 
@@ -492,7 +492,7 @@ sel2path (gint32 image_ID)
   pixel_outline_list_type  olt;
   spline_list_array_type   splines;
 
-  gimp_selection_bounds (image_ID, &has_sel,
+  picman_selection_bounds (image_ID, &has_sel,
                          &sel_x1, &sel_y1, &sel_x2, &sel_y2);
 
   sel_width  = sel_x2 - sel_x1;
@@ -500,12 +500,12 @@ sel2path (gint32 image_ID)
 
   /* Now get the selection channel */
 
-  selection_ID = gimp_image_get_selection (image_ID);
+  selection_ID = picman_image_get_selection (image_ID);
 
   if (selection_ID < 0)
     return FALSE;
 
-  sel_buffer = gimp_drawable_get_buffer (selection_ID);
+  sel_buffer = picman_drawable_get_buffer (selection_ID);
 
   olt = find_outline_pixels ();
 
@@ -515,7 +515,7 @@ sel2path (gint32 image_ID)
 
   g_object_unref (sel_buffer);
 
-  gimp_displays_flush ();
+  picman_displays_flush ();
 
   return TRUE;
 }

@@ -1,7 +1,7 @@
-# translation of gimp-python.master.po to Español
-# Spanish translation for gimp-python.
+# translation of picman-python.master.po to Español
+# Spanish translation for picman-python.
 # Copyright © 1998-2000,2003, 2006, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 #
 # Pablo G. del Campo <pablodc@bigfoot.com>, 2003, 2004.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2004, 2005, 2006.
@@ -12,9 +12,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python.master\n"
+"Project-Id-Version: picman-python.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-12-04 20:22+0000\n"
 "PO-Revision-Date: 2012-12-05 18:52+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
@@ -27,383 +27,383 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../plug-ins/pygimp/gimpfu.py:394
+#: ../plug-ins/pypicman/picmanfu.py:394
 msgid "Missing exception information"
 msgstr "Se ha perdido la información de la excepción"
 
-#: ../plug-ins/pygimp/gimpfu.py:403
+#: ../plug-ins/pypicman/picmanfu.py:403
 #, python-format
 msgid "An error occurred running %s"
 msgstr "Ocurrió un error al ejecutar %s"
 
-#: ../plug-ins/pygimp/gimpfu.py:414
+#: ../plug-ins/pypicman/picmanfu.py:414
 msgid "_More Information"
 msgstr "_Más información"
 
-#: ../plug-ins/pygimp/gimpfu.py:526 ../plug-ins/pygimp/gimpfu.py:538
-#: ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:526 ../plug-ins/pypicman/picmanfu.py:538
+#: ../plug-ins/pypicman/picmanfu.py:544
 msgid "No"
 msgstr "No"
 
-#: ../plug-ins/pygimp/gimpfu.py:536 ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:536 ../plug-ins/pypicman/picmanfu.py:544
 msgid "Yes"
 msgstr "Sí"
 
-#: ../plug-ins/pygimp/gimpfu.py:596 ../plug-ins/pygimp/gimpui.py:223
+#: ../plug-ins/pypicman/picmanfu.py:596 ../plug-ins/pypicman/picmanui.py:223
 msgid "Python-Fu File Selection"
 msgstr "Selección de archivos Python-Fu"
 
-#: ../plug-ins/pygimp/gimpfu.py:607
+#: ../plug-ins/pypicman/picmanfu.py:607
 msgid "Python-Fu Folder Selection"
 msgstr "Selección de carpeta Python-Fu"
 
-#: ../plug-ins/pygimp/gimpfu.py:696
+#: ../plug-ins/pypicman/picmanfu.py:696
 #, python-format
 msgid "Invalid input for '%s'"
 msgstr "Entrada inválida para «%s»"
 
-#: ../plug-ins/pygimp/gimpui.py:176
+#: ../plug-ins/pypicman/picmanui.py:176
 msgid "Python-Fu Color Selection"
 msgstr "Selección de color Python-Fu"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:109
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:109
 msgid "Saving as colored XHTML"
 msgstr "Guardando como XHTML coloreado"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:186
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:186
 msgid "Save as colored XHTML"
 msgstr "Guardar como XHTML coloreado"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:191
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:191
 msgid "Colored XHTML"
 msgstr "XHTML coloreado"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:198
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:198
 msgid "Character _source"
 msgstr "_Fuente del carácter"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:199
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:199
 msgid "Source code"
 msgstr "Código fuente"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:200
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:200
 msgid "Text file"
 msgstr "Archivo de texto"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:201
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:201
 msgid "Entry box"
 msgstr "Caja de entrada"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:202
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:202
 msgid "_File to read or characters to use"
 msgstr "_Archivo a leer o caracteres a usar"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:204
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:204
 msgid "Fo_nt size in pixels"
 msgstr "Ta_maño de la tipografía en píxeles"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:205
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:205
 msgid "_Write a separate CSS file"
 msgstr "E_scribir un archivo CSS separado"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:96
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:96
 msgid "Gradient to use"
 msgstr "Degradado que usar"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:97
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:97
 msgid "File Name"
 msgstr "Nombre del archivo"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:56
+#: ../plug-ins/pypicman/plug-ins/foggify.py:56
 msgid "Add a layer of fog"
 msgstr "Añadir una capa de niebla"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:61
+#: ../plug-ins/pypicman/plug-ins/foggify.py:61
 msgid "_Fog..."
 msgstr "_Niebla…"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "_Layer name"
 msgstr "Nombre de la _capa"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "Clouds"
 msgstr "Nubes"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:67
+#: ../plug-ins/pypicman/plug-ins/foggify.py:67
 msgid "_Fog color"
 msgstr "Color de la nie_bla"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:68
+#: ../plug-ins/pypicman/plug-ins/foggify.py:68
 msgid "_Turbulence"
 msgstr "_Turbulencia"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:69
+#: ../plug-ins/pypicman/plug-ins/foggify.py:69
 msgid "Op_acity"
 msgstr "Op_acidad"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:44
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:44
 msgid "Offset the colors in a palette"
 msgstr "Desplazar los colores de una paleta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:49
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:49
 msgid "_Offset Palette..."
 msgstr "_Desplazar paleta…"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:52
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:309
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:59
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:81
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:309
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:81
 msgid "Palette"
 msgstr "Paleta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:53
 msgid "Off_set"
 msgstr "De_splazamiento"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:22
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:22
 msgid "Red"
 msgstr "Rojo"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:22
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:22
 msgid "Green"
 msgstr "Verde"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:22
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:22
 msgid "Blue"
 msgstr "Azul"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:23
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:23
 msgid "Luma (Y)"
 msgstr "Luma (Y)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:24
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:24
 msgid "Hue"
 msgstr "Tono"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:24
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:24
 msgid "Saturation"
 msgstr "Saturación"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:24
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:24
 msgid "Value"
 msgstr "Valor"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:25
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:25
 msgid "Saturation (HSL)"
 msgstr "Saturación (HSL)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:25
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:25
 msgid "Lightness (HSL)"
 msgstr "Luminosidad (HSL)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:26
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:26
 msgid "Index"
 msgstr "Índice"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:27
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:27
 msgid "Random"
 msgstr "Aleatorio"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:78
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:78
 msgid "Lightness (LAB)"
 msgstr "Luminosidad (LAB)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:78
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:78
 msgid "A-color"
 msgstr "Color-A"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:78
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:78
 msgid "B-color"
 msgstr "Color-B"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:79
 msgid "Chroma (LCHab)"
 msgstr "Chroma (LCHab)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:79
 msgid "Hue (LCHab)"
 msgstr "Tono (LCHab)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:300
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:300
 msgid "Sort the colors in a palette"
 msgstr "Ordena los colores en una paleta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:306
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:306
 msgid "_Sort Palette..."
 msgstr "_Ordenar paleta…"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:310
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:310
 msgid "Se_lections"
 msgstr "Se_lecciones"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:311
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:311
 msgid "All"
 msgstr "Todos"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:311
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:311
 msgid "Slice / Array"
 msgstr "Rodaja / vector"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:311
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:311
 msgid "Autoslice (fg->bg)"
 msgstr "Troceado automático (frente->fondo)"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:311
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:311
 msgid "Partitioned"
 msgstr "Particionado"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:312
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:312
 msgid "Slice _expression"
 msgstr "_Expresión de troceado"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:313
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:313
 msgid "Channel to _sort"
 msgstr "Canal que _ordenar"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:315
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:315
 msgid "_Quantization"
 msgstr "_Cuantización"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:316
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:316
 msgid "_Ascending"
 msgstr "_Ascendente"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:317
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:317
 msgid "_Partitioning channel"
 msgstr "Canal de pa_rticionado"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:319
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:319
 msgid "Partition q_uantization"
 msgstr "C_uantización del particionado"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:52
 msgid "Create a repeating gradient using colors from the palette"
 msgstr "Crear un degradado que se repite, utilizando los colores de la paleta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:57
 msgid "Palette to _Repeating Gradient"
 msgstr "Paleta a degradado _repetido"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:74
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:74
 msgid "Create a gradient using colors from the palette"
 msgstr "Crea un degradado usando los colores de la paleta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:79
 msgid "Palette to _Gradient"
 msgstr "Paleta a _degradado"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:59
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:59
 msgid "Slice"
 msgstr "Rodaja"
 
 #. table snippet means a small piece of HTML code here
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:420
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:420
 msgid "Cuts an image along its guides, creates images and a HTML table snippet"
 msgstr ""
 "Corta una imagen a lo largo de sus guías, crea imágenes y un recorte de "
 "table HTML"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:431
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:431
 msgid "_Slice..."
 msgstr "_Rodajas…"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:436
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:436
 msgid "Path for HTML export"
 msgstr "Ruta para exportar HTML"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:437
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:437
 msgid "Filename for export"
 msgstr "Nombre de archivo para exportar"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:438
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:438
 msgid "Image name prefix"
 msgstr "Prefijo del nombre de la imagen"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:439
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:439
 msgid "Image format"
 msgstr "Formato de la imagen"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:440
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:440
 msgid "Separate image folder"
 msgstr "Separar carpeta de la imagen"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:442
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:442
 msgid "Folder for image export"
 msgstr "Carpeta para la exportación de imágenes"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:443
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:443
 msgid "Space between table elements"
 msgstr "Espacio entre los elementos de la tabla"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:445
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:445
 msgid "Javascript for onmouseover and clicked"
 msgstr "Código Javascript para «onmouseover» y «clicked»"
 
 #. table caps are table cells on the edge of the table
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:448
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:448
 msgid "Skip animation for table caps"
 msgstr "Saltar animación para capacidades de la tabla"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:56
+#: ../plug-ins/pypicman/plug-ins/python-console.py:56
 msgid "Python Console"
 msgstr "Consola de Python"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:60
+#: ../plug-ins/pypicman/plug-ins/python-console.py:60
 msgid "_Browse..."
 msgstr "_Examinar…"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:138
+#: ../plug-ins/pypicman/plug-ins/python-console.py:138
 msgid "Python Procedure Browser"
 msgstr "Examinador de procedimientos Python"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:167
+#: ../plug-ins/pypicman/plug-ins/python-console.py:167
 #, python-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "No se pudo abrir «%s» para escribir: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:182
+#: ../plug-ins/pypicman/plug-ins/python-console.py:182
 #, python-format
 msgid "Could not write to '%s': %s"
 msgstr "No se pudo escribir en %s: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:190
+#: ../plug-ins/pypicman/plug-ins/python-console.py:190
 msgid "Save Python-Fu Console Output"
 msgstr "Guardar la salida de la consola de Python-Fu"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:216
-msgid "Interactive GIMP Python interpreter"
-msgstr "Intérprete interactivo de Python del GIMP"
+#: ../plug-ins/pypicman/plug-ins/python-console.py:216
+msgid "Interactive PICMAN Python interpreter"
+msgstr "Intérprete interactivo de Python del PICMAN"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:221
+#: ../plug-ins/pypicman/plug-ins/python-console.py:221
 msgid "_Console"
 msgstr "_Consola"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:60
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:60
 msgid "Add a drop shadow to a layer, and optionally bevel it"
 msgstr "Aplicar sombra arrojada a una capa, y opcionalmente biselarla"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:65
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:65
 msgid "_Drop Shadow and Bevel..."
 msgstr "_Sombra arrojada y bisel…"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:70
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:70
 msgid "_Shadow blur"
 msgstr "Difuminado de la _sombra"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:71
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:71
 msgid "_Bevel"
 msgstr "_Bisel"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:72
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:72
 msgid "_Drop shadow"
 msgstr "Sombra a_rrojada"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:73
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:73
 msgid "Drop shadow _X displacement"
 msgstr "Desplazamiento _X de la sombra arrojada"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:74
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:74
 msgid "Drop shadow _Y displacement"
 msgstr "Desplazamiento _Y de la sombra arrojada"
 

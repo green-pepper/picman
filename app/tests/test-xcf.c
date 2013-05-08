@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,246 +23,246 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "widgets/widgets-types.h"
 
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanuimanager.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpchannel-select.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpgrid.h"
-#include "core/gimpgrouplayer.h"
-#include "core/gimpguide.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-grid.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-sample-points.h"
-#include "core/gimplayer.h"
-#include "core/gimpsamplepoint.h"
-#include "core/gimpselection.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmandrawable.h"
+#include "core/picmangrid.h"
+#include "core/picmangrouplayer.h"
+#include "core/picmanguide.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-grid.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-sample-points.h"
+#include "core/picmanlayer.h"
+#include "core/picmansamplepoint.h"
+#include "core/picmanselection.h"
 
-#include "vectors/gimpanchor.h"
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpvectors.h"
+#include "vectors/picmananchor.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanvectors.h"
 
 #include "file/file-open.h"
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
-#define GIMP_MAINIMAGE_WIDTH            100
-#define GIMP_MAINIMAGE_HEIGHT           90
-#define GIMP_MAINIMAGE_TYPE             GIMP_RGB
-#define GIMP_MAINIMAGE_PRECISION        GIMP_PRECISION_U8
+#define PICMAN_MAINIMAGE_WIDTH            100
+#define PICMAN_MAINIMAGE_HEIGHT           90
+#define PICMAN_MAINIMAGE_TYPE             PICMAN_RGB
+#define PICMAN_MAINIMAGE_PRECISION        PICMAN_PRECISION_U8
 
-#define GIMP_MAINIMAGE_LAYER1_NAME      "layer1"
-#define GIMP_MAINIMAGE_LAYER1_WIDTH     50
-#define GIMP_MAINIMAGE_LAYER1_HEIGHT    51
-#define GIMP_MAINIMAGE_LAYER1_FORMAT    babl_format ("R'G'B'A u8")
-#define GIMP_MAINIMAGE_LAYER1_OPACITY   1.0
-#define GIMP_MAINIMAGE_LAYER1_MODE      GIMP_NORMAL_MODE
+#define PICMAN_MAINIMAGE_LAYER1_NAME      "layer1"
+#define PICMAN_MAINIMAGE_LAYER1_WIDTH     50
+#define PICMAN_MAINIMAGE_LAYER1_HEIGHT    51
+#define PICMAN_MAINIMAGE_LAYER1_FORMAT    babl_format ("R'G'B'A u8")
+#define PICMAN_MAINIMAGE_LAYER1_OPACITY   1.0
+#define PICMAN_MAINIMAGE_LAYER1_MODE      PICMAN_NORMAL_MODE
 
-#define GIMP_MAINIMAGE_LAYER2_NAME      "layer2"
-#define GIMP_MAINIMAGE_LAYER2_WIDTH     25
-#define GIMP_MAINIMAGE_LAYER2_HEIGHT    251
-#define GIMP_MAINIMAGE_LAYER2_FORMAT    babl_format ("R'G'B' u8")
-#define GIMP_MAINIMAGE_LAYER2_OPACITY   0.0
-#define GIMP_MAINIMAGE_LAYER2_MODE      GIMP_MULTIPLY_MODE
+#define PICMAN_MAINIMAGE_LAYER2_NAME      "layer2"
+#define PICMAN_MAINIMAGE_LAYER2_WIDTH     25
+#define PICMAN_MAINIMAGE_LAYER2_HEIGHT    251
+#define PICMAN_MAINIMAGE_LAYER2_FORMAT    babl_format ("R'G'B' u8")
+#define PICMAN_MAINIMAGE_LAYER2_OPACITY   0.0
+#define PICMAN_MAINIMAGE_LAYER2_MODE      PICMAN_MULTIPLY_MODE
 
-#define GIMP_MAINIMAGE_GROUP1_NAME      "group1"
+#define PICMAN_MAINIMAGE_GROUP1_NAME      "group1"
 
-#define GIMP_MAINIMAGE_LAYER3_NAME      "layer3"
+#define PICMAN_MAINIMAGE_LAYER3_NAME      "layer3"
 
-#define GIMP_MAINIMAGE_LAYER4_NAME      "layer4"
+#define PICMAN_MAINIMAGE_LAYER4_NAME      "layer4"
 
-#define GIMP_MAINIMAGE_GROUP2_NAME      "group2"
+#define PICMAN_MAINIMAGE_GROUP2_NAME      "group2"
 
-#define GIMP_MAINIMAGE_LAYER5_NAME      "layer5"
+#define PICMAN_MAINIMAGE_LAYER5_NAME      "layer5"
 
-#define GIMP_MAINIMAGE_VGUIDE1_POS      42
-#define GIMP_MAINIMAGE_VGUIDE2_POS      82
-#define GIMP_MAINIMAGE_HGUIDE1_POS      3
-#define GIMP_MAINIMAGE_HGUIDE2_POS      4
+#define PICMAN_MAINIMAGE_VGUIDE1_POS      42
+#define PICMAN_MAINIMAGE_VGUIDE2_POS      82
+#define PICMAN_MAINIMAGE_HGUIDE1_POS      3
+#define PICMAN_MAINIMAGE_HGUIDE2_POS      4
 
-#define GIMP_MAINIMAGE_SAMPLEPOINT1_X   10
-#define GIMP_MAINIMAGE_SAMPLEPOINT1_Y   12
-#define GIMP_MAINIMAGE_SAMPLEPOINT2_X   41
-#define GIMP_MAINIMAGE_SAMPLEPOINT2_Y   49
+#define PICMAN_MAINIMAGE_SAMPLEPOINT1_X   10
+#define PICMAN_MAINIMAGE_SAMPLEPOINT1_Y   12
+#define PICMAN_MAINIMAGE_SAMPLEPOINT2_X   41
+#define PICMAN_MAINIMAGE_SAMPLEPOINT2_Y   49
 
-#define GIMP_MAINIMAGE_RESOLUTIONX      400
-#define GIMP_MAINIMAGE_RESOLUTIONY      410
+#define PICMAN_MAINIMAGE_RESOLUTIONX      400
+#define PICMAN_MAINIMAGE_RESOLUTIONY      410
 
-#define GIMP_MAINIMAGE_PARASITE_NAME    "test-parasite"
-#define GIMP_MAINIMAGE_PARASITE_DATA    "foo"
-#define GIMP_MAINIMAGE_PARASITE_SIZE    4                /* 'f' 'o' 'o' '\0' */
+#define PICMAN_MAINIMAGE_PARASITE_NAME    "test-parasite"
+#define PICMAN_MAINIMAGE_PARASITE_DATA    "foo"
+#define PICMAN_MAINIMAGE_PARASITE_SIZE    4                /* 'f' 'o' 'o' '\0' */
 
-#define GIMP_MAINIMAGE_COMMENT          "Created with code from "\
-                                        "app/tests/test-xcf.c in the GIMP "\
+#define PICMAN_MAINIMAGE_COMMENT          "Created with code from "\
+                                        "app/tests/test-xcf.c in the PICMAN "\
                                         "source tree, i.e. it was not created "\
                                         "manually and may thus look weird if "\
-                                        "opened and inspected in GIMP."
+                                        "opened and inspected in PICMAN."
 
-#define GIMP_MAINIMAGE_UNIT             GIMP_UNIT_PICA
+#define PICMAN_MAINIMAGE_UNIT             PICMAN_UNIT_PICA
 
-#define GIMP_MAINIMAGE_GRIDXSPACING     25.0
-#define GIMP_MAINIMAGE_GRIDYSPACING     27.0
+#define PICMAN_MAINIMAGE_GRIDXSPACING     25.0
+#define PICMAN_MAINIMAGE_GRIDYSPACING     27.0
 
-#define GIMP_MAINIMAGE_CHANNEL1_NAME    "channel1"
-#define GIMP_MAINIMAGE_CHANNEL1_WIDTH   GIMP_MAINIMAGE_WIDTH
-#define GIMP_MAINIMAGE_CHANNEL1_HEIGHT  GIMP_MAINIMAGE_HEIGHT
-#define GIMP_MAINIMAGE_CHANNEL1_COLOR   { 1.0, 0.0, 1.0, 1.0 }
+#define PICMAN_MAINIMAGE_CHANNEL1_NAME    "channel1"
+#define PICMAN_MAINIMAGE_CHANNEL1_WIDTH   PICMAN_MAINIMAGE_WIDTH
+#define PICMAN_MAINIMAGE_CHANNEL1_HEIGHT  PICMAN_MAINIMAGE_HEIGHT
+#define PICMAN_MAINIMAGE_CHANNEL1_COLOR   { 1.0, 0.0, 1.0, 1.0 }
 
-#define GIMP_MAINIMAGE_SELECTION_X      5
-#define GIMP_MAINIMAGE_SELECTION_Y      6
-#define GIMP_MAINIMAGE_SELECTION_W      7
-#define GIMP_MAINIMAGE_SELECTION_H      8
+#define PICMAN_MAINIMAGE_SELECTION_X      5
+#define PICMAN_MAINIMAGE_SELECTION_Y      6
+#define PICMAN_MAINIMAGE_SELECTION_W      7
+#define PICMAN_MAINIMAGE_SELECTION_H      8
 
-#define GIMP_MAINIMAGE_VECTORS1_NAME    "vectors1"
-#define GIMP_MAINIMAGE_VECTORS1_COORDS  { { 11.0, 12.0, /* pad zeroes */ },\
+#define PICMAN_MAINIMAGE_VECTORS1_NAME    "vectors1"
+#define PICMAN_MAINIMAGE_VECTORS1_COORDS  { { 11.0, 12.0, /* pad zeroes */ },\
                                           { 21.0, 22.0, /* pad zeroes */ },\
                                           { 31.0, 32.0, /* pad zeroes */ }, }
 
-#define GIMP_MAINIMAGE_VECTORS2_NAME    "vectors2"
-#define GIMP_MAINIMAGE_VECTORS2_COORDS  { { 911.0, 912.0, /* pad zeroes */ },\
+#define PICMAN_MAINIMAGE_VECTORS2_NAME    "vectors2"
+#define PICMAN_MAINIMAGE_VECTORS2_COORDS  { { 911.0, 912.0, /* pad zeroes */ },\
                                           { 921.0, 922.0, /* pad zeroes */ },\
                                           { 931.0, 932.0, /* pad zeroes */ }, }
 
 #define ADD_TEST(function) \
-  g_test_add_data_func ("/gimp-xcf/" #function, gimp, function);
+  g_test_add_data_func ("/picman-xcf/" #function, picman, function);
 
 
-GimpImage        * gimp_test_load_image                        (Gimp            *gimp,
+PicmanImage        * picman_test_load_image                        (Picman            *picman,
                                                                 const gchar     *uri);
-static void        gimp_write_and_read_file                    (Gimp            *gimp,
+static void        picman_write_and_read_file                    (Picman            *picman,
                                                                 gboolean         with_unusual_stuff,
                                                                 gboolean         compat_paths,
-                                                                gboolean         use_gimp_2_8_features);
-static GimpImage * gimp_create_mainimage                       (Gimp            *gimp,
+                                                                gboolean         use_picman_2_8_features);
+static PicmanImage * picman_create_mainimage                       (Picman            *picman,
                                                                 gboolean         with_unusual_stuff,
                                                                 gboolean         compat_paths,
-                                                                gboolean         use_gimp_2_8_features);
-static void        gimp_assert_mainimage                       (GimpImage       *image,
+                                                                gboolean         use_picman_2_8_features);
+static void        picman_assert_mainimage                       (PicmanImage       *image,
                                                                 gboolean         with_unusual_stuff,
                                                                 gboolean         compat_paths,
-                                                                gboolean         use_gimp_2_8_features);
+                                                                gboolean         use_picman_2_8_features);
 
 
 /**
- * write_and_read_gimp_2_6_format:
+ * write_and_read_picman_2_6_format:
  * @data:
  *
  * Do a write and read test on a file that could as well be
- * constructed with GIMP 2.6.
+ * constructed with PICMAN 2.6.
  **/
 static void
-write_and_read_gimp_2_6_format (gconstpointer data)
+write_and_read_picman_2_6_format (gconstpointer data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  gimp_write_and_read_file (gimp,
+  picman_write_and_read_file (picman,
                             FALSE /*with_unusual_stuff*/,
                             FALSE /*compat_paths*/,
-                            FALSE /*use_gimp_2_8_features*/);
+                            FALSE /*use_picman_2_8_features*/);
 }
 
 /**
- * write_and_read_gimp_2_6_format_unusual:
+ * write_and_read_picman_2_6_format_unusual:
  * @data:
  *
  * Do a write and read test on a file that could as well be
- * constructed with GIMP 2.6, and make it unusual, like compatible
+ * constructed with PICMAN 2.6, and make it unusual, like compatible
  * vectors and with a floating selection.
  **/
 static void
-write_and_read_gimp_2_6_format_unusual (gconstpointer data)
+write_and_read_picman_2_6_format_unusual (gconstpointer data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  gimp_write_and_read_file (gimp,
+  picman_write_and_read_file (picman,
                             TRUE /*with_unusual_stuff*/,
                             TRUE /*compat_paths*/,
-                            FALSE /*use_gimp_2_8_features*/);
+                            FALSE /*use_picman_2_8_features*/);
 }
 
 /**
- * load_gimp_2_6_file:
+ * load_picman_2_6_file:
  * @data:
  *
- * Loads a file created with GIMP 2.6 and makes sure it loaded as
+ * Loads a file created with PICMAN 2.6 and makes sure it loaded as
  * expected.
  **/
 static void
-load_gimp_2_6_file (gconstpointer data)
+load_picman_2_6_file (gconstpointer data)
 {
-  Gimp      *gimp  = GIMP (data);
-  GimpImage *image = NULL;
+  Picman      *picman  = PICMAN (data);
+  PicmanImage *image = NULL;
   gchar     *uri   = NULL;
 
-  uri = g_build_filename (g_getenv ("GIMP_TESTING_ABS_TOP_SRCDIR"),
-                          "app/tests/files/gimp-2-6-file.xcf",
+  uri = g_build_filename (g_getenv ("PICMAN_TESTING_ABS_TOP_SRCDIR"),
+                          "app/tests/files/picman-2-6-file.xcf",
                           NULL);
 
-  image = gimp_test_load_image (gimp, uri);
+  image = picman_test_load_image (picman, uri);
 
   /* The image file was constructed by running
-   * gimp_write_and_read_file (FALSE, FALSE) in GIMP 2.6 by
-   * copy-pasting the code to GIMP 2.6 and adapting it to changes in
-   * the core API, so we can use gimp_assert_mainimage() to make sure
+   * picman_write_and_read_file (FALSE, FALSE) in PICMAN 2.6 by
+   * copy-pasting the code to PICMAN 2.6 and adapting it to changes in
+   * the core API, so we can use picman_assert_mainimage() to make sure
    * the file was loaded successfully.
    */
-  gimp_assert_mainimage (image,
+  picman_assert_mainimage (image,
                          FALSE /*with_unusual_stuff*/,
                          FALSE /*compat_paths*/,
-                         FALSE /*use_gimp_2_8_features*/);
+                         FALSE /*use_picman_2_8_features*/);
 }
 
 /**
- * write_and_read_gimp_2_8_format:
+ * write_and_read_picman_2_8_format:
  * @data:
  *
- * Writes an XCF file that uses GIMP 2.8 features such as layer
+ * Writes an XCF file that uses PICMAN 2.8 features such as layer
  * groups, then reads the file and make sure no relevant information
  * was lost.
  **/
 static void
-write_and_read_gimp_2_8_format (gconstpointer data)
+write_and_read_picman_2_8_format (gconstpointer data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  gimp_write_and_read_file (gimp,
+  picman_write_and_read_file (picman,
                             FALSE /*with_unusual_stuff*/,
                             FALSE /*compat_paths*/,
-                            TRUE /*use_gimp_2_8_features*/);
+                            TRUE /*use_picman_2_8_features*/);
 }
 
-GimpImage *
-gimp_test_load_image (Gimp        *gimp,
+PicmanImage *
+picman_test_load_image (Picman        *picman,
                       const gchar *uri)
 {
-  GimpPlugInProcedure *proc     = NULL;
-  GimpImage           *image    = NULL;
-  GimpPDBStatusType    not_used = 0;
+  PicmanPlugInProcedure *proc     = NULL;
+  PicmanImage           *image    = NULL;
+  PicmanPDBStatusType    not_used = 0;
 
-  proc = file_procedure_find (gimp->plug_in_manager->load_procs,
+  proc = file_procedure_find (picman->plug_in_manager->load_procs,
                               uri,
                               NULL /*error*/);
-  image = file_open_image (gimp,
-                           gimp_get_user_context (gimp),
+  image = file_open_image (picman,
+                           picman_get_user_context (picman),
                            NULL /*progress*/,
                            uri,
                            "irrelevant" /*entered_filename*/,
                            FALSE /*as_new*/,
                            proc,
-                           GIMP_RUN_NONINTERACTIVE,
+                           PICMAN_RUN_NONINTERACTIVE,
                            &not_used /*status*/,
                            NULL /*mime_type*/,
                            NULL /*error*/);
@@ -271,7 +271,7 @@ gimp_test_load_image (Gimp        *gimp,
 }
 
 /**
- * gimp_write_and_read_file:
+ * picman_write_and_read_file:
  *
  * Constructs the main test image and asserts its state, writes it to
  * a file, reads the image from the file, and asserts the state of the
@@ -279,125 +279,125 @@ gimp_test_load_image (Gimp        *gimp,
  * function can be used for different formats.
  **/
 static void
-gimp_write_and_read_file (Gimp     *gimp,
+picman_write_and_read_file (Picman     *picman,
                           gboolean  with_unusual_stuff,
                           gboolean  compat_paths,
-                          gboolean  use_gimp_2_8_features)
+                          gboolean  use_picman_2_8_features)
 {
-  GimpImage           *image        = NULL;
-  GimpImage           *loaded_image = NULL;
-  GimpPlugInProcedure *proc         = NULL;
+  PicmanImage           *image        = NULL;
+  PicmanImage           *loaded_image = NULL;
+  PicmanPlugInProcedure *proc         = NULL;
   gchar               *uri          = NULL;
 
   /* Create the image */
-  image = gimp_create_mainimage (gimp,
+  image = picman_create_mainimage (picman,
                                  with_unusual_stuff,
                                  compat_paths,
-                                 use_gimp_2_8_features);
+                                 use_picman_2_8_features);
 
   /* Assert valid state */
-  gimp_assert_mainimage (image,
+  picman_assert_mainimage (image,
                          with_unusual_stuff,
                          compat_paths,
-                         use_gimp_2_8_features);
+                         use_picman_2_8_features);
 
   /* Write to file */
-  uri  = g_build_filename (g_get_tmp_dir (), "gimp-test.xcf", NULL);
-  proc = file_procedure_find (image->gimp->plug_in_manager->save_procs,
+  uri  = g_build_filename (g_get_tmp_dir (), "picman-test.xcf", NULL);
+  proc = file_procedure_find (image->picman->plug_in_manager->save_procs,
                               uri,
                               NULL /*error*/);
-  file_save (gimp,
+  file_save (picman,
              image,
              NULL /*progress*/,
              uri,
              proc,
-             GIMP_RUN_NONINTERACTIVE,
+             PICMAN_RUN_NONINTERACTIVE,
              FALSE /*change_saved_state*/,
              FALSE /*export_backward*/,
              FALSE /*export_forward*/,
              NULL /*error*/);
 
   /* Load from file */
-  loaded_image = gimp_test_load_image (image->gimp, uri);
+  loaded_image = picman_test_load_image (image->picman, uri);
 
   /* Assert on the loaded file. If success, it means that there is no
    * significant information loss when we wrote the image to a file
    * and loaded it again
    */
-  gimp_assert_mainimage (loaded_image,
+  picman_assert_mainimage (loaded_image,
                          with_unusual_stuff,
                          compat_paths,
-                         use_gimp_2_8_features);
+                         use_picman_2_8_features);
 
   g_unlink (uri);
   g_free (uri);
 }
 
 /**
- * gimp_create_mainimage:
+ * picman_create_mainimage:
  *
  * Creates the main test image, i.e. the image that we use for most of
  * our XCF testing purposes.
  *
- * Returns: The #GimpImage
+ * Returns: The #PicmanImage
  **/
-static GimpImage *
-gimp_create_mainimage (Gimp     *gimp,
+static PicmanImage *
+picman_create_mainimage (Picman     *picman,
                        gboolean  with_unusual_stuff,
                        gboolean  compat_paths,
-                       gboolean  use_gimp_2_8_features)
+                       gboolean  use_picman_2_8_features)
 {
-  GimpImage     *image             = NULL;
-  GimpLayer     *layer             = NULL;
-  GimpParasite  *parasite          = NULL;
-  GimpGrid      *grid              = NULL;
-  GimpChannel   *channel           = NULL;
-  GimpRGB        channel_color     = GIMP_MAINIMAGE_CHANNEL1_COLOR;
-  GimpChannel   *selection         = NULL;
-  GimpVectors   *vectors           = NULL;
-  GimpCoords     vectors1_coords[] = GIMP_MAINIMAGE_VECTORS1_COORDS;
-  GimpCoords     vectors2_coords[] = GIMP_MAINIMAGE_VECTORS2_COORDS;
-  GimpStroke    *stroke            = NULL;
-  GimpLayerMask *layer_mask        = NULL;
+  PicmanImage     *image             = NULL;
+  PicmanLayer     *layer             = NULL;
+  PicmanParasite  *parasite          = NULL;
+  PicmanGrid      *grid              = NULL;
+  PicmanChannel   *channel           = NULL;
+  PicmanRGB        channel_color     = PICMAN_MAINIMAGE_CHANNEL1_COLOR;
+  PicmanChannel   *selection         = NULL;
+  PicmanVectors   *vectors           = NULL;
+  PicmanCoords     vectors1_coords[] = PICMAN_MAINIMAGE_VECTORS1_COORDS;
+  PicmanCoords     vectors2_coords[] = PICMAN_MAINIMAGE_VECTORS2_COORDS;
+  PicmanStroke    *stroke            = NULL;
+  PicmanLayerMask *layer_mask        = NULL;
 
   /* Image size and type */
-  image = gimp_image_new (gimp,
-                          GIMP_MAINIMAGE_WIDTH,
-                          GIMP_MAINIMAGE_HEIGHT,
-                          GIMP_MAINIMAGE_TYPE,
-                          GIMP_MAINIMAGE_PRECISION);
+  image = picman_image_new (picman,
+                          PICMAN_MAINIMAGE_WIDTH,
+                          PICMAN_MAINIMAGE_HEIGHT,
+                          PICMAN_MAINIMAGE_TYPE,
+                          PICMAN_MAINIMAGE_PRECISION);
 
   /* Layers */
-  layer = gimp_layer_new (image,
-                          GIMP_MAINIMAGE_LAYER1_WIDTH,
-                          GIMP_MAINIMAGE_LAYER1_HEIGHT,
-                          GIMP_MAINIMAGE_LAYER1_FORMAT,
-                          GIMP_MAINIMAGE_LAYER1_NAME,
-                          GIMP_MAINIMAGE_LAYER1_OPACITY,
-                          GIMP_MAINIMAGE_LAYER1_MODE);
-  gimp_image_add_layer (image,
+  layer = picman_layer_new (image,
+                          PICMAN_MAINIMAGE_LAYER1_WIDTH,
+                          PICMAN_MAINIMAGE_LAYER1_HEIGHT,
+                          PICMAN_MAINIMAGE_LAYER1_FORMAT,
+                          PICMAN_MAINIMAGE_LAYER1_NAME,
+                          PICMAN_MAINIMAGE_LAYER1_OPACITY,
+                          PICMAN_MAINIMAGE_LAYER1_MODE);
+  picman_image_add_layer (image,
                         layer,
                         NULL,
                         0,
                         FALSE/*push_undo*/);
-  layer = gimp_layer_new (image,
-                          GIMP_MAINIMAGE_LAYER2_WIDTH,
-                          GIMP_MAINIMAGE_LAYER2_HEIGHT,
-                          GIMP_MAINIMAGE_LAYER2_FORMAT,
-                          GIMP_MAINIMAGE_LAYER2_NAME,
-                          GIMP_MAINIMAGE_LAYER2_OPACITY,
-                          GIMP_MAINIMAGE_LAYER2_MODE);
-  gimp_image_add_layer (image,
+  layer = picman_layer_new (image,
+                          PICMAN_MAINIMAGE_LAYER2_WIDTH,
+                          PICMAN_MAINIMAGE_LAYER2_HEIGHT,
+                          PICMAN_MAINIMAGE_LAYER2_FORMAT,
+                          PICMAN_MAINIMAGE_LAYER2_NAME,
+                          PICMAN_MAINIMAGE_LAYER2_OPACITY,
+                          PICMAN_MAINIMAGE_LAYER2_MODE);
+  picman_image_add_layer (image,
                         layer,
                         NULL,
                         0,
                         FALSE /*push_undo*/);
 
   /* Layer mask */
-  layer_mask = gimp_layer_create_mask (layer,
-                                       GIMP_ADD_BLACK_MASK,
+  layer_mask = picman_layer_create_mask (layer,
+                                       PICMAN_ADD_BLACK_MASK,
                                        NULL /*channel*/);
-  gimp_layer_add_mask (layer,
+  picman_layer_add_mask (layer,
                        layer_mask,
                        FALSE /*push_undo*/,
                        NULL /*error*/);
@@ -409,28 +409,28 @@ gimp_create_mainimage (Gimp     *gimp,
    */
 
   /* Guides, note we add them in reversed order */
-  gimp_image_add_hguide (image,
-                         GIMP_MAINIMAGE_HGUIDE2_POS,
+  picman_image_add_hguide (image,
+                         PICMAN_MAINIMAGE_HGUIDE2_POS,
                          FALSE /*push_undo*/);
-  gimp_image_add_hguide (image,
-                         GIMP_MAINIMAGE_HGUIDE1_POS,
+  picman_image_add_hguide (image,
+                         PICMAN_MAINIMAGE_HGUIDE1_POS,
                          FALSE /*push_undo*/);
-  gimp_image_add_vguide (image,
-                         GIMP_MAINIMAGE_VGUIDE2_POS,
+  picman_image_add_vguide (image,
+                         PICMAN_MAINIMAGE_VGUIDE2_POS,
                          FALSE /*push_undo*/);
-  gimp_image_add_vguide (image,
-                         GIMP_MAINIMAGE_VGUIDE1_POS,
+  picman_image_add_vguide (image,
+                         PICMAN_MAINIMAGE_VGUIDE1_POS,
                          FALSE /*push_undo*/);
 
 
   /* Sample points */
-  gimp_image_add_sample_point_at_pos (image,
-                                      GIMP_MAINIMAGE_SAMPLEPOINT1_X,
-                                      GIMP_MAINIMAGE_SAMPLEPOINT1_Y,
+  picman_image_add_sample_point_at_pos (image,
+                                      PICMAN_MAINIMAGE_SAMPLEPOINT1_X,
+                                      PICMAN_MAINIMAGE_SAMPLEPOINT1_Y,
                                       FALSE /*push_undo*/);
-  gimp_image_add_sample_point_at_pos (image,
-                                      GIMP_MAINIMAGE_SAMPLEPOINT2_X,
-                                      GIMP_MAINIMAGE_SAMPLEPOINT2_Y,
+  picman_image_add_sample_point_at_pos (image,
+                                      PICMAN_MAINIMAGE_SAMPLEPOINT2_X,
+                                      PICMAN_MAINIMAGE_SAMPLEPOINT2_Y,
                                       FALSE /*push_undo*/);
 
   /* Tatto
@@ -438,102 +438,102 @@ gimp_create_mainimage (Gimp     *gimp,
    */
 
   /* Resolution */
-  gimp_image_set_resolution (image,
-                             GIMP_MAINIMAGE_RESOLUTIONX,
-                             GIMP_MAINIMAGE_RESOLUTIONY);
+  picman_image_set_resolution (image,
+                             PICMAN_MAINIMAGE_RESOLUTIONX,
+                             PICMAN_MAINIMAGE_RESOLUTIONY);
 
 
   /* Parasites */
-  parasite = gimp_parasite_new (GIMP_MAINIMAGE_PARASITE_NAME,
-                                GIMP_PARASITE_PERSISTENT,
-                                GIMP_MAINIMAGE_PARASITE_SIZE,
-                                GIMP_MAINIMAGE_PARASITE_DATA);
-  gimp_image_parasite_attach (image,
+  parasite = picman_parasite_new (PICMAN_MAINIMAGE_PARASITE_NAME,
+                                PICMAN_PARASITE_PERSISTENT,
+                                PICMAN_MAINIMAGE_PARASITE_SIZE,
+                                PICMAN_MAINIMAGE_PARASITE_DATA);
+  picman_image_parasite_attach (image,
                               parasite);
-  gimp_parasite_free (parasite);
-  parasite = gimp_parasite_new ("gimp-comment",
-                                GIMP_PARASITE_PERSISTENT,
-                                strlen (GIMP_MAINIMAGE_COMMENT) + 1,
-                                GIMP_MAINIMAGE_COMMENT);
-  gimp_image_parasite_attach (image, parasite);
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
+  parasite = picman_parasite_new ("picman-comment",
+                                PICMAN_PARASITE_PERSISTENT,
+                                strlen (PICMAN_MAINIMAGE_COMMENT) + 1,
+                                PICMAN_MAINIMAGE_COMMENT);
+  picman_image_parasite_attach (image, parasite);
+  picman_parasite_free (parasite);
 
 
   /* Unit */
-  gimp_image_set_unit (image,
-                       GIMP_MAINIMAGE_UNIT);
+  picman_image_set_unit (image,
+                       PICMAN_MAINIMAGE_UNIT);
 
   /* Grid */
-  grid = g_object_new (GIMP_TYPE_GRID,
-                       "xspacing", GIMP_MAINIMAGE_GRIDXSPACING,
-                       "yspacing", GIMP_MAINIMAGE_GRIDYSPACING,
+  grid = g_object_new (PICMAN_TYPE_GRID,
+                       "xspacing", PICMAN_MAINIMAGE_GRIDXSPACING,
+                       "yspacing", PICMAN_MAINIMAGE_GRIDYSPACING,
                        NULL);
-  gimp_image_set_grid (image,
+  picman_image_set_grid (image,
                        grid,
                        FALSE /*push_undo*/);
   g_object_unref (grid);
 
   /* Channel */
-  channel = gimp_channel_new (image,
-                              GIMP_MAINIMAGE_CHANNEL1_WIDTH,
-                              GIMP_MAINIMAGE_CHANNEL1_HEIGHT,
-                              GIMP_MAINIMAGE_CHANNEL1_NAME,
+  channel = picman_channel_new (image,
+                              PICMAN_MAINIMAGE_CHANNEL1_WIDTH,
+                              PICMAN_MAINIMAGE_CHANNEL1_HEIGHT,
+                              PICMAN_MAINIMAGE_CHANNEL1_NAME,
                               &channel_color);
-  gimp_image_add_channel (image,
+  picman_image_add_channel (image,
                           channel,
                           NULL,
                           -1,
                           FALSE /*push_undo*/);
 
   /* Selection */
-  selection = gimp_image_get_mask (image);
-  gimp_channel_select_rectangle (selection,
-                                 GIMP_MAINIMAGE_SELECTION_X,
-                                 GIMP_MAINIMAGE_SELECTION_Y,
-                                 GIMP_MAINIMAGE_SELECTION_W,
-                                 GIMP_MAINIMAGE_SELECTION_H,
-                                 GIMP_CHANNEL_OP_REPLACE,
+  selection = picman_image_get_mask (image);
+  picman_channel_select_rectangle (selection,
+                                 PICMAN_MAINIMAGE_SELECTION_X,
+                                 PICMAN_MAINIMAGE_SELECTION_Y,
+                                 PICMAN_MAINIMAGE_SELECTION_W,
+                                 PICMAN_MAINIMAGE_SELECTION_H,
+                                 PICMAN_CHANNEL_OP_REPLACE,
                                  FALSE /*feather*/,
                                  0.0 /*feather_radius_x*/,
                                  0.0 /*feather_radius_y*/,
                                  FALSE /*push_undo*/);
 
   /* Vectors 1 */
-  vectors = gimp_vectors_new (image,
-                              GIMP_MAINIMAGE_VECTORS1_NAME);
+  vectors = picman_vectors_new (image,
+                              PICMAN_MAINIMAGE_VECTORS1_NAME);
   /* The XCF file can save vectors in two kind of ways, one old way
    * and a new way. Parameterize the way so we can test both variants,
-   * i.e. gimp_vectors_compat_is_compatible() must return both TRUE
+   * i.e. picman_vectors_compat_is_compatible() must return both TRUE
    * and FALSE.
    */
   if (! compat_paths)
     {
-      gimp_item_set_visible (GIMP_ITEM (vectors),
+      picman_item_set_visible (PICMAN_ITEM (vectors),
                              TRUE,
                              FALSE /*push_undo*/);
     }
   /* TODO: Add test for non-closed stroke. The order of the anchor
    * points changes for open strokes, so it's boring to test
    */
-  stroke = gimp_bezier_stroke_new_from_coords (vectors1_coords,
+  stroke = picman_bezier_stroke_new_from_coords (vectors1_coords,
                                                G_N_ELEMENTS (vectors1_coords),
                                                TRUE /*closed*/);
-  gimp_vectors_stroke_add (vectors, stroke);
-  gimp_image_add_vectors (image,
+  picman_vectors_stroke_add (vectors, stroke);
+  picman_image_add_vectors (image,
                           vectors,
                           NULL /*parent*/,
                           -1 /*position*/,
                           FALSE /*push_undo*/);
 
   /* Vectors 2 */
-  vectors = gimp_vectors_new (image,
-                              GIMP_MAINIMAGE_VECTORS2_NAME);
+  vectors = picman_vectors_new (image,
+                              PICMAN_MAINIMAGE_VECTORS2_NAME);
 
-  stroke = gimp_bezier_stroke_new_from_coords (vectors2_coords,
+  stroke = picman_bezier_stroke_new_from_coords (vectors2_coords,
                                                G_N_ELEMENTS (vectors2_coords),
                                                TRUE /*closed*/);
-  gimp_vectors_stroke_add (vectors, stroke);
-  gimp_image_add_vectors (image,
+  picman_vectors_stroke_add (vectors, stroke);
+  picman_image_add_vectors (image,
                           vectors,
                           NULL /*parent*/,
                           -1 /*position*/,
@@ -546,9 +546,9 @@ gimp_create_mainimage (Gimp     *gimp,
   if (with_unusual_stuff)
     {
       /* Floating selection */
-      gimp_selection_float (GIMP_SELECTION (gimp_image_get_mask (image)),
-                            gimp_image_get_active_drawable (image),
-                            gimp_get_user_context (gimp),
+      picman_selection_float (PICMAN_SELECTION (picman_image_get_mask (image)),
+                            picman_image_get_active_drawable (image),
+                            picman_get_user_context (picman),
                             TRUE /*cut_image*/,
                             0 /*off_x*/,
                             0 /*off_y*/,
@@ -556,9 +556,9 @@ gimp_create_mainimage (Gimp     *gimp,
     }
 
   /* Adds stuff like layer groups */
-  if (use_gimp_2_8_features)
+  if (use_picman_2_8_features)
     {
-      GimpLayer *parent;
+      PicmanLayer *parent;
 
       /* Add a layer group and some layers:
        *
@@ -570,9 +570,9 @@ gimp_create_mainimage (Gimp     *gimp,
        */
 
       /* group1 */
-      layer = gimp_group_layer_new (image);
-      gimp_object_set_name (GIMP_OBJECT (layer), GIMP_MAINIMAGE_GROUP1_NAME);
-      gimp_image_add_layer (image,
+      layer = picman_group_layer_new (image);
+      picman_object_set_name (PICMAN_OBJECT (layer), PICMAN_MAINIMAGE_GROUP1_NAME);
+      picman_image_add_layer (image,
                             layer,
                             NULL /*parent*/,
                             -1 /*position*/,
@@ -580,37 +580,37 @@ gimp_create_mainimage (Gimp     *gimp,
       parent = layer;
 
       /* layer3 */
-      layer = gimp_layer_new (image,
-                              GIMP_MAINIMAGE_LAYER1_WIDTH,
-                              GIMP_MAINIMAGE_LAYER1_HEIGHT,
-                              GIMP_MAINIMAGE_LAYER1_FORMAT,
-                              GIMP_MAINIMAGE_LAYER3_NAME,
-                              GIMP_MAINIMAGE_LAYER1_OPACITY,
-                              GIMP_MAINIMAGE_LAYER1_MODE);
-      gimp_image_add_layer (image,
+      layer = picman_layer_new (image,
+                              PICMAN_MAINIMAGE_LAYER1_WIDTH,
+                              PICMAN_MAINIMAGE_LAYER1_HEIGHT,
+                              PICMAN_MAINIMAGE_LAYER1_FORMAT,
+                              PICMAN_MAINIMAGE_LAYER3_NAME,
+                              PICMAN_MAINIMAGE_LAYER1_OPACITY,
+                              PICMAN_MAINIMAGE_LAYER1_MODE);
+      picman_image_add_layer (image,
                             layer,
                             parent,
                             -1 /*position*/,
                             FALSE /*push_undo*/);
 
       /* layer4 */
-      layer = gimp_layer_new (image,
-                              GIMP_MAINIMAGE_LAYER1_WIDTH,
-                              GIMP_MAINIMAGE_LAYER1_HEIGHT,
-                              GIMP_MAINIMAGE_LAYER1_FORMAT,
-                              GIMP_MAINIMAGE_LAYER4_NAME,
-                              GIMP_MAINIMAGE_LAYER1_OPACITY,
-                              GIMP_MAINIMAGE_LAYER1_MODE);
-      gimp_image_add_layer (image,
+      layer = picman_layer_new (image,
+                              PICMAN_MAINIMAGE_LAYER1_WIDTH,
+                              PICMAN_MAINIMAGE_LAYER1_HEIGHT,
+                              PICMAN_MAINIMAGE_LAYER1_FORMAT,
+                              PICMAN_MAINIMAGE_LAYER4_NAME,
+                              PICMAN_MAINIMAGE_LAYER1_OPACITY,
+                              PICMAN_MAINIMAGE_LAYER1_MODE);
+      picman_image_add_layer (image,
                             layer,
                             parent,
                             -1 /*position*/,
                             FALSE /*push_undo*/);
 
       /* group2 */
-      layer = gimp_group_layer_new (image);
-      gimp_object_set_name (GIMP_OBJECT (layer), GIMP_MAINIMAGE_GROUP2_NAME);
-      gimp_image_add_layer (image,
+      layer = picman_group_layer_new (image);
+      picman_object_set_name (PICMAN_OBJECT (layer), PICMAN_MAINIMAGE_GROUP2_NAME);
+      picman_image_add_layer (image,
                             layer,
                             parent,
                             -1 /*position*/,
@@ -618,14 +618,14 @@ gimp_create_mainimage (Gimp     *gimp,
       parent = layer;
 
       /* layer5 */
-      layer = gimp_layer_new (image,
-                              GIMP_MAINIMAGE_LAYER1_WIDTH,
-                              GIMP_MAINIMAGE_LAYER1_HEIGHT,
-                              GIMP_MAINIMAGE_LAYER1_FORMAT,
-                              GIMP_MAINIMAGE_LAYER5_NAME,
-                              GIMP_MAINIMAGE_LAYER1_OPACITY,
-                              GIMP_MAINIMAGE_LAYER1_MODE);
-      gimp_image_add_layer (image,
+      layer = picman_layer_new (image,
+                              PICMAN_MAINIMAGE_LAYER1_WIDTH,
+                              PICMAN_MAINIMAGE_LAYER1_HEIGHT,
+                              PICMAN_MAINIMAGE_LAYER1_FORMAT,
+                              PICMAN_MAINIMAGE_LAYER5_NAME,
+                              PICMAN_MAINIMAGE_LAYER1_OPACITY,
+                              PICMAN_MAINIMAGE_LAYER1_MODE);
+      picman_image_add_layer (image,
                             layer,
                             parent,
                             -1 /*position*/,
@@ -646,22 +646,22 @@ gimp_create_mainimage (Gimp     *gimp,
 }
 
 static void
-gimp_assert_vectors (GimpImage   *image,
+picman_assert_vectors (PicmanImage   *image,
                      const gchar *name,
-                     GimpCoords   coords[],
+                     PicmanCoords   coords[],
                      gsize        coords_size,
                      gboolean     visible)
 {
-  GimpVectors *vectors        = NULL;
-  GimpStroke  *stroke         = NULL;
+  PicmanVectors *vectors        = NULL;
+  PicmanStroke  *stroke         = NULL;
   GArray      *control_points = NULL;
   gboolean     closed         = FALSE;
   gint         i              = 0;
 
-  vectors = gimp_image_get_vectors_by_name (image, name);
-  stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+  vectors = picman_image_get_vectors_by_name (image, name);
+  stroke = picman_vectors_stroke_get_next (vectors, NULL);
   g_assert (stroke != NULL);
-  control_points = gimp_stroke_control_points_get (stroke,
+  control_points = picman_stroke_control_points_get (stroke,
                                                    &closed);
   g_assert (closed);
   g_assert_cmpint (control_points->len,
@@ -672,219 +672,219 @@ gimp_assert_vectors (GimpImage   *image,
       g_assert_cmpint (coords[i].x,
                        ==,
                        g_array_index (control_points,
-                                      GimpAnchor,
+                                      PicmanAnchor,
                                       i).position.x);
       g_assert_cmpint (coords[i].y,
                        ==,
                        g_array_index (control_points,
-                                      GimpAnchor,
+                                      PicmanAnchor,
                                       i).position.y);
     }
 
-  g_assert (gimp_item_get_visible (GIMP_ITEM (vectors)) ? TRUE : FALSE ==
+  g_assert (picman_item_get_visible (PICMAN_ITEM (vectors)) ? TRUE : FALSE ==
             visible ? TRUE : FALSE);
 }
 
 /**
- * gimp_assert_mainimage:
+ * picman_assert_mainimage:
  * @image:
  *
- * Verifies that the passed #GimpImage contains all the information
- * that was put in it by gimp_create_mainimage().
+ * Verifies that the passed #PicmanImage contains all the information
+ * that was put in it by picman_create_mainimage().
  **/
 static void
-gimp_assert_mainimage (GimpImage *image,
+picman_assert_mainimage (PicmanImage *image,
                        gboolean   with_unusual_stuff,
                        gboolean   compat_paths,
-                       gboolean   use_gimp_2_8_features)
+                       gboolean   use_picman_2_8_features)
 {
-  const GimpParasite *parasite               = NULL;
-  GimpLayer          *layer                  = NULL;
+  const PicmanParasite *parasite               = NULL;
+  PicmanLayer          *layer                  = NULL;
   GList              *iter                   = NULL;
-  GimpGuide          *guide                  = NULL;
-  GimpSamplePoint    *sample_point           = NULL;
+  PicmanGuide          *guide                  = NULL;
+  PicmanSamplePoint    *sample_point           = NULL;
   gdouble             xres                   = 0.0;
   gdouble             yres                   = 0.0;
-  GimpGrid           *grid                   = NULL;
+  PicmanGrid           *grid                   = NULL;
   gdouble             xspacing               = 0.0;
   gdouble             yspacing               = 0.0;
-  GimpChannel        *channel                = NULL;
-  GimpRGB             expected_channel_color = GIMP_MAINIMAGE_CHANNEL1_COLOR;
-  GimpRGB             actual_channel_color   = { 0, };
-  GimpChannel        *selection              = NULL;
+  PicmanChannel        *channel                = NULL;
+  PicmanRGB             expected_channel_color = PICMAN_MAINIMAGE_CHANNEL1_COLOR;
+  PicmanRGB             actual_channel_color   = { 0, };
+  PicmanChannel        *selection              = NULL;
   gint                x1                     = -1;
   gint                y1                     = -1;
   gint                x2                     = -1;
   gint                y2                     = -1;
   gint                w                      = -1;
   gint                h                      = -1;
-  GimpCoords          vectors1_coords[]      = GIMP_MAINIMAGE_VECTORS1_COORDS;
-  GimpCoords          vectors2_coords[]      = GIMP_MAINIMAGE_VECTORS2_COORDS;
+  PicmanCoords          vectors1_coords[]      = PICMAN_MAINIMAGE_VECTORS1_COORDS;
+  PicmanCoords          vectors2_coords[]      = PICMAN_MAINIMAGE_VECTORS2_COORDS;
 
   /* Image size and type */
-  g_assert_cmpint (gimp_image_get_width (image),
+  g_assert_cmpint (picman_image_get_width (image),
                    ==,
-                   GIMP_MAINIMAGE_WIDTH);
-  g_assert_cmpint (gimp_image_get_height (image),
+                   PICMAN_MAINIMAGE_WIDTH);
+  g_assert_cmpint (picman_image_get_height (image),
                    ==,
-                   GIMP_MAINIMAGE_HEIGHT);
-  g_assert_cmpint (gimp_image_get_base_type (image),
+                   PICMAN_MAINIMAGE_HEIGHT);
+  g_assert_cmpint (picman_image_get_base_type (image),
                    ==,
-                   GIMP_MAINIMAGE_TYPE);
+                   PICMAN_MAINIMAGE_TYPE);
 
   /* Layers */
-  layer = gimp_image_get_layer_by_name (image,
-                                        GIMP_MAINIMAGE_LAYER1_NAME);
-  g_assert_cmpint (gimp_item_get_width (GIMP_ITEM (layer)),
+  layer = picman_image_get_layer_by_name (image,
+                                        PICMAN_MAINIMAGE_LAYER1_NAME);
+  g_assert_cmpint (picman_item_get_width (PICMAN_ITEM (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER1_WIDTH);
-  g_assert_cmpint (gimp_item_get_height (GIMP_ITEM (layer)),
+                   PICMAN_MAINIMAGE_LAYER1_WIDTH);
+  g_assert_cmpint (picman_item_get_height (PICMAN_ITEM (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER1_HEIGHT);
-  g_assert_cmpstr (babl_get_name (gimp_drawable_get_format (GIMP_DRAWABLE (layer))),
+                   PICMAN_MAINIMAGE_LAYER1_HEIGHT);
+  g_assert_cmpstr (babl_get_name (picman_drawable_get_format (PICMAN_DRAWABLE (layer))),
                    ==,
-                   babl_get_name (GIMP_MAINIMAGE_LAYER1_FORMAT));
-  g_assert_cmpstr (gimp_object_get_name (GIMP_DRAWABLE (layer)),
+                   babl_get_name (PICMAN_MAINIMAGE_LAYER1_FORMAT));
+  g_assert_cmpstr (picman_object_get_name (PICMAN_DRAWABLE (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER1_NAME);
-  g_assert_cmpfloat (gimp_layer_get_opacity (layer),
+                   PICMAN_MAINIMAGE_LAYER1_NAME);
+  g_assert_cmpfloat (picman_layer_get_opacity (layer),
                      ==,
-                     GIMP_MAINIMAGE_LAYER1_OPACITY);
-  g_assert_cmpint (gimp_layer_get_mode (layer),
+                     PICMAN_MAINIMAGE_LAYER1_OPACITY);
+  g_assert_cmpint (picman_layer_get_mode (layer),
                    ==,
-                   GIMP_MAINIMAGE_LAYER1_MODE);
-  layer = gimp_image_get_layer_by_name (image,
-                                        GIMP_MAINIMAGE_LAYER2_NAME);
-  g_assert_cmpint (gimp_item_get_width (GIMP_ITEM (layer)),
+                   PICMAN_MAINIMAGE_LAYER1_MODE);
+  layer = picman_image_get_layer_by_name (image,
+                                        PICMAN_MAINIMAGE_LAYER2_NAME);
+  g_assert_cmpint (picman_item_get_width (PICMAN_ITEM (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER2_WIDTH);
-  g_assert_cmpint (gimp_item_get_height (GIMP_ITEM (layer)),
+                   PICMAN_MAINIMAGE_LAYER2_WIDTH);
+  g_assert_cmpint (picman_item_get_height (PICMAN_ITEM (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER2_HEIGHT);
-  g_assert_cmpstr (babl_get_name (gimp_drawable_get_format (GIMP_DRAWABLE (layer))),
+                   PICMAN_MAINIMAGE_LAYER2_HEIGHT);
+  g_assert_cmpstr (babl_get_name (picman_drawable_get_format (PICMAN_DRAWABLE (layer))),
                    ==,
-                   babl_get_name (GIMP_MAINIMAGE_LAYER2_FORMAT));
-  g_assert_cmpstr (gimp_object_get_name (GIMP_DRAWABLE (layer)),
+                   babl_get_name (PICMAN_MAINIMAGE_LAYER2_FORMAT));
+  g_assert_cmpstr (picman_object_get_name (PICMAN_DRAWABLE (layer)),
                    ==,
-                   GIMP_MAINIMAGE_LAYER2_NAME);
-  g_assert_cmpfloat (gimp_layer_get_opacity (layer),
+                   PICMAN_MAINIMAGE_LAYER2_NAME);
+  g_assert_cmpfloat (picman_layer_get_opacity (layer),
                      ==,
-                     GIMP_MAINIMAGE_LAYER2_OPACITY);
-  g_assert_cmpint (gimp_layer_get_mode (layer),
+                     PICMAN_MAINIMAGE_LAYER2_OPACITY);
+  g_assert_cmpint (picman_layer_get_mode (layer),
                    ==,
-                   GIMP_MAINIMAGE_LAYER2_MODE);
+                   PICMAN_MAINIMAGE_LAYER2_MODE);
 
   /* Guides, note that we rely on internal ordering */
-  iter = gimp_image_get_guides (image);
+  iter = picman_image_get_guides (image);
   g_assert (iter != NULL);
-  guide = GIMP_GUIDE (iter->data);
-  g_assert_cmpint (gimp_guide_get_position (guide),
+  guide = PICMAN_GUIDE (iter->data);
+  g_assert_cmpint (picman_guide_get_position (guide),
                    ==,
-                   GIMP_MAINIMAGE_VGUIDE1_POS);
+                   PICMAN_MAINIMAGE_VGUIDE1_POS);
   iter = g_list_next (iter);
   g_assert (iter != NULL);
-  guide = GIMP_GUIDE (iter->data);
-  g_assert_cmpint (gimp_guide_get_position (guide),
+  guide = PICMAN_GUIDE (iter->data);
+  g_assert_cmpint (picman_guide_get_position (guide),
                    ==,
-                   GIMP_MAINIMAGE_VGUIDE2_POS);
+                   PICMAN_MAINIMAGE_VGUIDE2_POS);
   iter = g_list_next (iter);
   g_assert (iter != NULL);
-  guide = GIMP_GUIDE (iter->data);
-  g_assert_cmpint (gimp_guide_get_position (guide),
+  guide = PICMAN_GUIDE (iter->data);
+  g_assert_cmpint (picman_guide_get_position (guide),
                    ==,
-                   GIMP_MAINIMAGE_HGUIDE1_POS);
+                   PICMAN_MAINIMAGE_HGUIDE1_POS);
   iter = g_list_next (iter);
   g_assert (iter != NULL);
-  guide = GIMP_GUIDE (iter->data);
-  g_assert_cmpint (gimp_guide_get_position (guide),
+  guide = PICMAN_GUIDE (iter->data);
+  g_assert_cmpint (picman_guide_get_position (guide),
                    ==,
-                   GIMP_MAINIMAGE_HGUIDE2_POS);
+                   PICMAN_MAINIMAGE_HGUIDE2_POS);
   iter = g_list_next (iter);
   g_assert (iter == NULL);
 
   /* Sample points, we rely on the same ordering as when we added
    * them, although this ordering is not a necessaity
    */
-  iter = gimp_image_get_sample_points (image);
+  iter = picman_image_get_sample_points (image);
   g_assert (iter != NULL);
-  sample_point = (GimpSamplePoint *) iter->data;
+  sample_point = (PicmanSamplePoint *) iter->data;
   g_assert_cmpint (sample_point->x,
                    ==,
-                   GIMP_MAINIMAGE_SAMPLEPOINT1_X);
+                   PICMAN_MAINIMAGE_SAMPLEPOINT1_X);
   g_assert_cmpint (sample_point->y,
                    ==,
-                   GIMP_MAINIMAGE_SAMPLEPOINT1_Y);
+                   PICMAN_MAINIMAGE_SAMPLEPOINT1_Y);
   iter = g_list_next (iter);
   g_assert (iter != NULL);
-  sample_point = (GimpSamplePoint *) iter->data;
+  sample_point = (PicmanSamplePoint *) iter->data;
   g_assert_cmpint (sample_point->x,
                    ==,
-                   GIMP_MAINIMAGE_SAMPLEPOINT2_X);
+                   PICMAN_MAINIMAGE_SAMPLEPOINT2_X);
   g_assert_cmpint (sample_point->y,
                    ==,
-                   GIMP_MAINIMAGE_SAMPLEPOINT2_Y);
+                   PICMAN_MAINIMAGE_SAMPLEPOINT2_Y);
   iter = g_list_next (iter);
   g_assert (iter == NULL);
 
   /* Resolution */
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
   g_assert_cmpint (xres,
                    ==,
-                   GIMP_MAINIMAGE_RESOLUTIONX);
+                   PICMAN_MAINIMAGE_RESOLUTIONX);
   g_assert_cmpint (yres,
                    ==,
-                   GIMP_MAINIMAGE_RESOLUTIONY);
+                   PICMAN_MAINIMAGE_RESOLUTIONY);
 
   /* Parasites */
-  parasite = gimp_image_parasite_find (image,
-                                       GIMP_MAINIMAGE_PARASITE_NAME);
-  g_assert_cmpint (gimp_parasite_data_size (parasite),
+  parasite = picman_image_parasite_find (image,
+                                       PICMAN_MAINIMAGE_PARASITE_NAME);
+  g_assert_cmpint (picman_parasite_data_size (parasite),
                    ==,
-                   GIMP_MAINIMAGE_PARASITE_SIZE);
-  g_assert_cmpstr (gimp_parasite_data (parasite),
+                   PICMAN_MAINIMAGE_PARASITE_SIZE);
+  g_assert_cmpstr (picman_parasite_data (parasite),
                    ==,
-                   GIMP_MAINIMAGE_PARASITE_DATA);
-  parasite = gimp_image_parasite_find (image,
-                                       "gimp-comment");
-  g_assert_cmpint (gimp_parasite_data_size (parasite),
+                   PICMAN_MAINIMAGE_PARASITE_DATA);
+  parasite = picman_image_parasite_find (image,
+                                       "picman-comment");
+  g_assert_cmpint (picman_parasite_data_size (parasite),
                    ==,
-                   strlen (GIMP_MAINIMAGE_COMMENT) + 1);
-  g_assert_cmpstr (gimp_parasite_data (parasite),
+                   strlen (PICMAN_MAINIMAGE_COMMENT) + 1);
+  g_assert_cmpstr (picman_parasite_data (parasite),
                    ==,
-                   GIMP_MAINIMAGE_COMMENT);
+                   PICMAN_MAINIMAGE_COMMENT);
 
   /* Unit */
-  g_assert_cmpint (gimp_image_get_unit (image),
+  g_assert_cmpint (picman_image_get_unit (image),
                    ==,
-                   GIMP_MAINIMAGE_UNIT);
+                   PICMAN_MAINIMAGE_UNIT);
 
   /* Grid */
-  grid = gimp_image_get_grid (image);
+  grid = picman_image_get_grid (image);
   g_object_get (grid,
                 "xspacing", &xspacing,
                 "yspacing", &yspacing,
                 NULL);
   g_assert_cmpint (xspacing,
                    ==,
-                   GIMP_MAINIMAGE_GRIDXSPACING);
+                   PICMAN_MAINIMAGE_GRIDXSPACING);
   g_assert_cmpint (yspacing,
                    ==,
-                   GIMP_MAINIMAGE_GRIDYSPACING);
+                   PICMAN_MAINIMAGE_GRIDYSPACING);
 
 
   /* Channel */
-  channel = gimp_image_get_channel_by_name (image,
-                                            GIMP_MAINIMAGE_CHANNEL1_NAME);
-  gimp_channel_get_color (channel, &actual_channel_color);
-  g_assert_cmpint (gimp_item_get_width (GIMP_ITEM (channel)),
+  channel = picman_image_get_channel_by_name (image,
+                                            PICMAN_MAINIMAGE_CHANNEL1_NAME);
+  picman_channel_get_color (channel, &actual_channel_color);
+  g_assert_cmpint (picman_item_get_width (PICMAN_ITEM (channel)),
                    ==,
-                   GIMP_MAINIMAGE_CHANNEL1_WIDTH);
-  g_assert_cmpint (gimp_item_get_height (GIMP_ITEM (channel)),
+                   PICMAN_MAINIMAGE_CHANNEL1_WIDTH);
+  g_assert_cmpint (picman_item_get_height (PICMAN_ITEM (channel)),
                    ==,
-                   GIMP_MAINIMAGE_CHANNEL1_HEIGHT);
+                   PICMAN_MAINIMAGE_CHANNEL1_HEIGHT);
   g_assert (memcmp (&expected_channel_color,
                     &actual_channel_color,
-                    sizeof (GimpRGB)) == 0);
+                    sizeof (PicmanRGB)) == 0);
 
   /* Selection, if the image contains unusual stuff it contains a
    * floating select, and when floating a selection, the selection
@@ -893,59 +893,59 @@ gimp_assert_mainimage (GimpImage *image,
    */
   if (! with_unusual_stuff)
     {
-      selection = gimp_image_get_mask (image);
-      gimp_channel_bounds (selection, &x1, &y1, &x2, &y2);
+      selection = picman_image_get_mask (image);
+      picman_channel_bounds (selection, &x1, &y1, &x2, &y2);
       w = x2 - x1;
       h = y2 - y1;
       g_assert_cmpint (x1,
                        ==,
-                       GIMP_MAINIMAGE_SELECTION_X);
+                       PICMAN_MAINIMAGE_SELECTION_X);
       g_assert_cmpint (y1,
                        ==,
-                       GIMP_MAINIMAGE_SELECTION_Y);
+                       PICMAN_MAINIMAGE_SELECTION_Y);
       g_assert_cmpint (w,
                        ==,
-                       GIMP_MAINIMAGE_SELECTION_W);
+                       PICMAN_MAINIMAGE_SELECTION_W);
       g_assert_cmpint (h,
                        ==,
-                       GIMP_MAINIMAGE_SELECTION_H);
+                       PICMAN_MAINIMAGE_SELECTION_H);
     }
 
   /* Vectors 1 */
-  gimp_assert_vectors (image,
-                       GIMP_MAINIMAGE_VECTORS1_NAME,
+  picman_assert_vectors (image,
+                       PICMAN_MAINIMAGE_VECTORS1_NAME,
                        vectors1_coords,
                        G_N_ELEMENTS (vectors1_coords),
                        ! compat_paths /*visible*/);
 
   /* Vectors 2 (always visible FALSE) */
-  gimp_assert_vectors (image,
-                       GIMP_MAINIMAGE_VECTORS2_NAME,
+  picman_assert_vectors (image,
+                       PICMAN_MAINIMAGE_VECTORS2_NAME,
                        vectors2_coords,
                        G_N_ELEMENTS (vectors2_coords),
                        FALSE /*visible*/);
 
   if (with_unusual_stuff)
-    g_assert (gimp_image_get_floating_selection (image) != NULL);
+    g_assert (picman_image_get_floating_selection (image) != NULL);
   else /* if (! with_unusual_stuff) */
-    g_assert (gimp_image_get_floating_selection (image) == NULL);
+    g_assert (picman_image_get_floating_selection (image) == NULL);
 
-  if (use_gimp_2_8_features)
+  if (use_picman_2_8_features)
     {
       /* Only verify the parent relationships, the layer attributes
        * are tested above
        */
-      GimpItem *group1 = GIMP_ITEM (gimp_image_get_layer_by_name (image, GIMP_MAINIMAGE_GROUP1_NAME));
-      GimpItem *layer3 = GIMP_ITEM (gimp_image_get_layer_by_name (image, GIMP_MAINIMAGE_LAYER3_NAME));
-      GimpItem *layer4 = GIMP_ITEM (gimp_image_get_layer_by_name (image, GIMP_MAINIMAGE_LAYER4_NAME));
-      GimpItem *group2 = GIMP_ITEM (gimp_image_get_layer_by_name (image, GIMP_MAINIMAGE_GROUP2_NAME));
-      GimpItem *layer5 = GIMP_ITEM (gimp_image_get_layer_by_name (image, GIMP_MAINIMAGE_LAYER5_NAME));
+      PicmanItem *group1 = PICMAN_ITEM (picman_image_get_layer_by_name (image, PICMAN_MAINIMAGE_GROUP1_NAME));
+      PicmanItem *layer3 = PICMAN_ITEM (picman_image_get_layer_by_name (image, PICMAN_MAINIMAGE_LAYER3_NAME));
+      PicmanItem *layer4 = PICMAN_ITEM (picman_image_get_layer_by_name (image, PICMAN_MAINIMAGE_LAYER4_NAME));
+      PicmanItem *group2 = PICMAN_ITEM (picman_image_get_layer_by_name (image, PICMAN_MAINIMAGE_GROUP2_NAME));
+      PicmanItem *layer5 = PICMAN_ITEM (picman_image_get_layer_by_name (image, PICMAN_MAINIMAGE_LAYER5_NAME));
 
-      g_assert (gimp_item_get_parent (group1) == NULL);
-      g_assert (gimp_item_get_parent (layer3) == group1);
-      g_assert (gimp_item_get_parent (layer4) == group1);
-      g_assert (gimp_item_get_parent (group2) == group1);
-      g_assert (gimp_item_get_parent (layer5) == group2);
+      g_assert (picman_item_get_parent (group1) == NULL);
+      g_assert (picman_item_get_parent (layer3) == group1);
+      g_assert (picman_item_get_parent (layer4) == group1);
+      g_assert (picman_item_get_parent (group2) == group1);
+      g_assert (picman_item_get_parent (layer5) == group2);
     }
 }
 
@@ -958,45 +958,45 @@ gimp_assert_mainimage (GimpImage *image,
  * These tests intend to
  *
  *  - Make sure that we are backwards compatible with files created by
- *    older version of GIMP, i.e. that we can load files from earlier
- *    version of GIMP
+ *    older version of PICMAN, i.e. that we can load files from earlier
+ *    version of PICMAN
  *
- *  - Make sure that the information put into a #GimpImage is not lost
- *    when the #GimpImage is written to a file and then read again
+ *  - Make sure that the information put into a #PicmanImage is not lost
+ *    when the #PicmanImage is written to a file and then read again
  **/
 int
 main (int    argc,
       char **argv)
 {
-  Gimp *gimp;
+  Picman *picman;
   int   result;
 
   g_type_init ();
   g_test_init (&argc, &argv, NULL);
 
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
 
   /* We share the same application instance across all tests. We need
    * the GUI variant for the file procs
    */
-  gimp = gimp_init_for_testing ();
+  picman = picman_init_for_testing ();
 
   /* Add tests */
-  ADD_TEST (write_and_read_gimp_2_6_format);
-  ADD_TEST (write_and_read_gimp_2_6_format_unusual);
-  ADD_TEST (load_gimp_2_6_file);
-  ADD_TEST (write_and_read_gimp_2_8_format);
+  ADD_TEST (write_and_read_picman_2_6_format);
+  ADD_TEST (write_and_read_picman_2_6_format_unusual);
+  ADD_TEST (load_picman_2_6_file);
+  ADD_TEST (write_and_read_picman_2_8_format);
 
   /* Don't write files to the source dir */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
 
   /* Run the tests */
   result = g_test_run ();
 
   /* Exit so we don't break script-fu plug-in wire */
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   return result;
 }

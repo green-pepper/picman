@@ -1,0 +1,244 @@
+<!-- ##### SECTION Title ##### -->
+picmanenums
+
+<!-- ##### SECTION Short_Description ##### -->
+Enums and definitions.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+Enums and definitions.
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### FUNCTION picman_enums_init ##### -->
+<para>
+
+</para>
+
+@void: 
+
+
+<!-- ##### ENUM PicmanBrushApplicationMode ##### -->
+<para>
+
+</para>
+
+@PICMAN_BRUSH_HARD: 
+@PICMAN_BRUSH_SOFT: 
+
+<!-- ##### ENUM PicmanBrushGeneratedShape ##### -->
+<para>
+The possible shapes generated brushes can take.
+</para>
+
+@PICMAN_BRUSH_GENERATED_CIRCLE:  The brush has a circle shape.
+@PICMAN_BRUSH_GENERATED_SQUARE:  The brush has a square shape.
+@PICMAN_BRUSH_GENERATED_DIAMOND: The brush has a diamond shape.
+
+<!-- ##### ENUM PicmanConvertDitherType ##### -->
+<para>
+
+</para>
+
+@PICMAN_NO_DITHER: 
+@PICMAN_FS_DITHER: 
+@PICMAN_FSLOWBLEED_DITHER: 
+@PICMAN_FIXED_DITHER: 
+
+<!-- ##### ENUM PicmanConvertPaletteType ##### -->
+<para>
+
+</para>
+
+@PICMAN_MAKE_PALETTE: 
+@PICMAN_REUSE_PALETTE: 
+@PICMAN_WEB_PALETTE: 
+@PICMAN_MONO_PALETTE: 
+@PICMAN_CUSTOM_PALETTE: 
+
+<!-- ##### ENUM PicmanConvolutionType ##### -->
+<para>
+
+</para>
+
+@PICMAN_NORMAL_CONVOL: 
+@PICMAN_ABSOLUTE_CONVOL: 
+@PICMAN_NEGATIVE_CONVOL: 
+
+<!-- ##### ENUM PicmanConvolveType ##### -->
+<para>
+Operation modes of the convolve tool.
+</para>
+
+@PICMAN_BLUR_CONVOLVE:    Blur the drawable.
+@PICMAN_SHARPEN_CONVOLVE: Sharpen the drawable.
+
+<!-- ##### ENUM PicmanFillType ##### -->
+<para>
+
+</para>
+
+@PICMAN_FOREGROUND_FILL: 
+@PICMAN_BACKGROUND_FILL: 
+@PICMAN_WHITE_FILL: 
+@PICMAN_TRANSPARENT_FILL: 
+@PICMAN_PATTERN_FILL: 
+
+<!-- ##### ENUM PicmanGradientSegmentColor ##### -->
+<para>
+
+</para>
+
+@PICMAN_GRADIENT_SEGMENT_RGB: 
+@PICMAN_GRADIENT_SEGMENT_HSV_CCW: 
+@PICMAN_GRADIENT_SEGMENT_HSV_CW: 
+
+<!-- ##### ENUM PicmanGradientSegmentType ##### -->
+<para>
+
+</para>
+
+@PICMAN_GRADIENT_SEGMENT_LINEAR: 
+@PICMAN_GRADIENT_SEGMENT_CURVED: 
+@PICMAN_GRADIENT_SEGMENT_SINE: 
+@PICMAN_GRADIENT_SEGMENT_SPHERE_INCREASING: 
+@PICMAN_GRADIENT_SEGMENT_SPHERE_DECREASING: 
+
+<!-- ##### ENUM PicmanHistogramChannel ##### -->
+<para>
+
+</para>
+
+@PICMAN_HISTOGRAM_VALUE: 
+@PICMAN_HISTOGRAM_RED: 
+@PICMAN_HISTOGRAM_GREEN: 
+@PICMAN_HISTOGRAM_BLUE: 
+@PICMAN_HISTOGRAM_ALPHA: 
+
+<!-- ##### ENUM PicmanHueRange ##### -->
+<para>
+
+</para>
+
+@PICMAN_ALL_HUES: 
+@PICMAN_RED_HUES: 
+@PICMAN_YELLOW_HUES: 
+@PICMAN_GREEN_HUES: 
+@PICMAN_CYAN_HUES: 
+@PICMAN_BLUE_HUES: 
+@PICMAN_MAGENTA_HUES: 
+
+<!-- ##### ENUM PicmanInkBlobType ##### -->
+<para>
+
+</para>
+
+@PICMAN_INK_BLOB_TYPE_CIRCLE: 
+@PICMAN_INK_BLOB_TYPE_SQUARE: 
+@PICMAN_INK_BLOB_TYPE_DIAMOND: 
+
+<!-- ##### ENUM PicmanLayerModeEffects ##### -->
+<para>
+
+</para>
+
+@PICMAN_NORMAL_MODE: 
+@PICMAN_DISSOLVE_MODE: 
+@PICMAN_BEHIND_MODE: 
+@PICMAN_MULTIPLY_MODE: 
+@PICMAN_SCREEN_MODE: 
+@PICMAN_OVERLAY_MODE: 
+@PICMAN_DIFFERENCE_MODE: 
+@PICMAN_ADDITION_MODE: 
+@PICMAN_SUBTRACT_MODE: 
+@PICMAN_DARKEN_ONLY_MODE: 
+@PICMAN_LIGHTEN_ONLY_MODE: 
+@PICMAN_HUE_MODE: 
+@PICMAN_SATURATION_MODE: 
+@PICMAN_COLOR_MODE: 
+@PICMAN_VALUE_MODE: 
+@PICMAN_DIVIDE_MODE: 
+@PICMAN_DODGE_MODE: 
+@PICMAN_BURN_MODE: 
+@PICMAN_HARDLIGHT_MODE: 
+@PICMAN_SOFTLIGHT_MODE: 
+@PICMAN_GRAIN_EXTRACT_MODE: 
+@PICMAN_GRAIN_MERGE_MODE: 
+@PICMAN_COLOR_ERASE_MODE: 
+
+<!-- ##### ENUM PicmanMaskApplyMode ##### -->
+<para>
+
+</para>
+
+@PICMAN_MASK_APPLY: 
+@PICMAN_MASK_DISCARD: 
+
+<!-- ##### ENUM PicmanMergeType ##### -->
+<para>
+
+</para>
+
+@PICMAN_EXPAND_AS_NECESSARY: 
+@PICMAN_CLIP_TO_IMAGE: 
+@PICMAN_CLIP_TO_BOTTOM_LAYER: 
+@PICMAN_FLATTEN_IMAGE: 
+
+<!-- ##### ENUM PicmanOffsetType ##### -->
+<para>
+
+</para>
+
+@PICMAN_OFFSET_BACKGROUND: 
+@PICMAN_OFFSET_TRANSPARENT: 
+
+<!-- ##### ENUM PicmanOrientationType ##### -->
+<para>
+Orientation values for all kinds of purposes, like guides.
+</para>
+
+@PICMAN_ORIENTATION_HORIZONTAL: Horizontal ortientation.
+@PICMAN_ORIENTATION_VERTICAL:   Vertical orientation.
+@PICMAN_ORIENTATION_UNKNOWN:    Undetermined orientation.
+
+<!-- ##### ENUM PicmanRotationType ##### -->
+<para>
+Steps for simple rotation based on multpiles of 90 degrees.
+</para>
+
+@PICMAN_ROTATE_90:  Rotate by 90 degrees.
+@PICMAN_ROTATE_180: Rotate by 180 degrees.
+@PICMAN_ROTATE_270: Rotate by 270 degrees.
+
+<!-- ##### ENUM PicmanSelectCriterion ##### -->
+<para>
+
+</para>
+
+@PICMAN_SELECT_CRITERION_COMPOSITE: 
+@PICMAN_SELECT_CRITERION_R: 
+@PICMAN_SELECT_CRITERION_G: 
+@PICMAN_SELECT_CRITERION_B: 
+@PICMAN_SELECT_CRITERION_H: 
+@PICMAN_SELECT_CRITERION_S: 
+@PICMAN_SELECT_CRITERION_V: 
+
+<!-- ##### FUNCTION picman_enums_get_type_names ##### -->
+<para>
+
+</para>
+
+@n_type_names: 
+@Returns: 
+
+

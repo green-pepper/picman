@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,29 +26,29 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-desktop-link-load"
 #define PLUG_IN_BINARY "file-desktop-link"
-#define PLUG_IN_ROLE   "gimp-file-desktop-link"
+#define PLUG_IN_ROLE   "picman-file-desktop-link"
 
 
 static void    query      (void);
 static void    run        (const gchar      *name,
                            gint              nparams,
-                           const GimpParam  *param,
+                           const PicmanParam  *param,
                            gint             *nreturn_vals,
-                           GimpParam       **return_vals);
+                           PicmanParam       **return_vals);
 
 static gint32  load_image (const gchar      *filename,
-                           GimpRunMode       run_mode,
+                           PicmanRunMode       run_mode,
                            GError          **error);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -61,45 +61,45 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Output image"                 }
+    { PICMAN_PDB_IMAGE,  "image",        "Output image"                 }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Follows a link to an image in a .desktop file",
                           "Opens a .desktop file and if it is a link, it "
-                          "asks GIMP to open the file the link points to.",
+                          "asks PICMAN to open the file the link points to.",
                           "Sven Neumann",
                           "Sven Neumann",
                           "2006",
                           N_("Desktop Link"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_load_handler (LOAD_PROC, "desktop", "");
+  picman_register_load_handler (LOAD_PROC, "desktop", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_EXECUTION_ERROR;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_EXECUTION_ERROR;
   GError            *error  = NULL;
   gint32             image_ID;
 
@@ -108,7 +108,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   if (strcmp (name, LOAD_PROC) == 0)
@@ -117,22 +117,22 @@ run (const gchar      *name,
 
       if (image_ID != -1)
         {
-          status = GIMP_PDB_SUCCESS;
+          status = PICMAN_PDB_SUCCESS;
 
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else if (error)
         {
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = error->message;
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   values[0].data.d_status = status;
@@ -140,7 +140,7 @@ run (const gchar      *name,
 
 static gint32
 load_image (const gchar  *filename,
-            GimpRunMode   run_mode,
+            PicmanRunMode   run_mode,
             GError      **load_error)
 {
   GKeyFile *file     = g_key_file_new ();
@@ -166,14 +166,14 @@ load_image (const gchar  *filename,
   value = g_key_file_get_value (file,
                                 group, G_KEY_FILE_DESKTOP_KEY_URL, &error);
   if (value)
-    image_ID = gimp_file_load (run_mode, value, value);
+    image_ID = picman_file_load (run_mode, value, value);
 
  out:
   if (error)
     {
       g_set_error (load_error, error->domain, error->code,
                    _("Error loading desktop file '%s': %s"),
-                   gimp_filename_to_utf8 (filename), error->message);
+                   picman_filename_to_utf8 (filename), error->message);
       g_error_free (error);
     }
 

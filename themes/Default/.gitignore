@@ -2,5 +2,5 @@
 /Makefile.in
 /.xvpics
 /.thumbnails
-/gimp-stock-pixbufs.h
-/gimp-wilber-pixbufs.h
+/picman-stock-pixbufs.h
+/picman-wilber-pixbufs.h

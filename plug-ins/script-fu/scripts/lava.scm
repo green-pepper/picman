@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Lava effect
@@ -32,9 +32,9 @@
                         separate-layer
                         current-grad)
   (let* (
-        (type (car (gimp-drawable-type-with-alpha drawable)))
-        (image-width (car (gimp-image-width image)))
-        (image-height (car (gimp-image-height image)))
+        (type (car (picman-drawable-type-with-alpha drawable)))
+        (image-width (car (picman-image-width image)))
+        (image-height (car (picman-image-height image)))
         (active-selection 0)
         (selection-bounds 0)
         (select-offset-x 0)
@@ -45,22 +45,22 @@
         (active-layer 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
-    (gimp-image-undo-group-start image)
+    (picman-context-push)
+    (picman-context-set-defaults)
+    (picman-image-undo-group-start image)
 
-    (if (= (car (gimp-drawable-has-alpha drawable)) FALSE)
-        (gimp-layer-add-alpha drawable)
+    (if (= (car (picman-drawable-has-alpha drawable)) FALSE)
+        (picman-layer-add-alpha drawable)
     )
 
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
-        (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
+        (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
     )
 
-    (set! active-selection (car (gimp-selection-save image)))
-    (gimp-image-set-active-layer image drawable)
+    (set! active-selection (car (picman-selection-save image)))
+    (picman-image-set-active-layer image drawable)
 
-    (set! selection-bounds (gimp-selection-bounds image))
+    (set! selection-bounds (picman-selection-bounds image))
     (set! select-offset-x (cadr selection-bounds))
     (set! select-offset-y (caddr selection-bounds))
     (set! select-width (- (cadr (cddr selection-bounds)) select-offset-x))
@@ -68,7 +68,7 @@
 
     (if (= separate-layer TRUE)
         (begin
-          (set! lava-layer (car (gimp-layer-new image
+          (set! lava-layer (car (picman-layer-new image
                                                 select-width
                                                 select-height
                                                 type
@@ -76,20 +76,20 @@
                                                 100
                                                 NORMAL-MODE)))
 
-          (gimp-image-insert-layer image lava-layer 0 -1)
-          (gimp-layer-set-offsets lava-layer select-offset-x select-offset-y)
-          (gimp-selection-none image)
-          (gimp-edit-clear lava-layer)
+          (picman-image-insert-layer image lava-layer 0 -1)
+          (picman-layer-set-offsets lava-layer select-offset-x select-offset-y)
+          (picman-selection-none image)
+          (picman-edit-clear lava-layer)
 
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
-          (gimp-image-set-active-layer image lava-layer)
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (picman-image-set-active-layer image lava-layer)
         )
     )
 
-    (set! active-layer (car (gimp-image-get-active-layer image)))
+    (set! active-layer (car (picman-image-get-active-layer image)))
 
     (if (= current-grad FALSE)
-        (gimp-context-set-gradient gradient)
+        (picman-context-set-gradient gradient)
     )
 
     (plug-in-solid-noise RUN-NONINTERACTIVE image active-layer FALSE TRUE seed 2 2 2)
@@ -100,23 +100,23 @@
     (plug-in-gradmap RUN-NONINTERACTIVE image active-layer)
 
     (if (= keep-selection FALSE)
-        (gimp-selection-none image)
+        (picman-selection-none image)
     )
 
-    (gimp-image-set-active-layer image drawable)
-    (gimp-image-remove-channel image active-selection)
+    (picman-image-set-active-layer image drawable)
+    (picman-image-remove-channel image active-selection)
 
-    (gimp-image-undo-group-end image)
-    (gimp-context-pop)
+    (picman-image-undo-group-end image)
+    (picman-context-pop)
 
-    (gimp-displays-flush)
+    (picman-displays-flush)
   )
 )
 
 (script-fu-register "script-fu-lava"
   _"_Lava..."
   _"Fill the current selection with lava"
-  "Adrian Likins <adrian@gimp.org>"
+  "Adrian Likins <adrian@picman.org>"
   "Adrian Likins"
   "10/12/97"
   "RGB* GRAY*"

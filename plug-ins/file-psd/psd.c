@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "psd.h"
 #include "psd-load.h"
@@ -32,21 +32,21 @@
 #include "psd-save.h"
 #endif
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /*  Local function prototypes  */
 
 static void  query (void);
 static void  run   (const gchar     *name,
                     gint             nparams,
-                    const GimpParam *param,
+                    const PicmanParam *param,
                     gint            *nreturn_vals,
-                    GimpParam      **return_vals);
+                    PicmanParam      **return_vals);
 
 
 /*  Local variables  */
 
-GimpPlugInInfo PLUG_IN_INFO =
+PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -62,48 +62,48 @@ query (void)
 {
   /* Register parameters */
   /* File Load */
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
   /* Thumbnail Load */
-  static const GimpParamDef thumb_args[] =
+  static const PicmanParamDef thumb_args[] =
   {
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load"  },
-    { GIMP_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"      }
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load"  },
+    { PICMAN_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"      }
   };
 
-  static const GimpParamDef thumb_return_vals[] =
+  static const PicmanParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               },
-    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"     },
-    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"    }
+    { PICMAN_PDB_IMAGE,  "image",        "Thumbnail image"               },
+    { PICMAN_PDB_INT32,  "image-width",  "Width of full-sized image"     },
+    { PICMAN_PDB_INT32,  "image-height", "Height of full-sized image"    }
   };
 
 #ifdef PSD_SAVE
   /* File save */
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
   };
 #endif /* PSD_SAVE */
 
   /* Register procedures */
 
   /* File load */
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Loads images from the Photoshop PSD file format",
                           "This plug-in loads images in Adobe "
                           "Photoshop (TM) native PSD format.",
@@ -112,19 +112,19 @@ query (void)
                           "2007",
                           N_("Photoshop image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-psd");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-psd");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "psd",
                                     "",
                                     "0,string,8BPS");
 
   /* Thumbnail load */
-  gimp_install_procedure (LOAD_THUMB_PROC,
+  picman_install_procedure (LOAD_THUMB_PROC,
                           "Loads thumbnails from the Photoshop PSD file format",
                           "This plug-in loads thumnail images from Adobe "
                           "Photoshop (TM) native PSD format files.",
@@ -133,16 +133,16 @@ query (void)
                           "2007",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (thumb_args),
                           G_N_ELEMENTS (thumb_return_vals),
                           thumb_args, thumb_return_vals);
 
-  gimp_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
+  picman_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
 
 #ifdef PSD_SAVE
   /* File save*/
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Saves images to the Photoshop PSD file format",
                           "This plug-in saves images in Adobe "
                           "Photoshop (TM) native PSD format.",
@@ -151,29 +151,29 @@ query (void)
                           "2007",
                           N_("Photoshop image"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_save_handler (SAVE_PROC, "psd", "");
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-psd");
+  picman_register_save_handler (SAVE_PROC, "psd", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-psd");
 #endif /* PSD_SAVE */
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[4];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[4];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
   gint32            image_ID;
   GError           *error  = NULL;
 #ifdef PSD_SAVE
   gint32            drawable_ID;
-  GimpExportReturn  export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn  export = PICMAN_EXPORT_CANCEL;
 #endif /* PSD_SAVE */
 
   INIT_I18N ();
@@ -181,8 +181,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   /* File load */
   if (strcmp (name, LOAD_PROC) == 0)
@@ -192,12 +192,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
@@ -206,7 +206,7 @@ run (const gchar      *name,
     {
       if (nparams < 2)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -219,16 +219,16 @@ run (const gchar      *name,
           if (image_ID != -1)
             {
               *nreturn_vals = 4;
-              values[1].type         = GIMP_PDB_IMAGE;
+              values[1].type         = PICMAN_PDB_IMAGE;
               values[1].data.d_image = image_ID;
-              values[2].type         = GIMP_PDB_INT32;
+              values[2].type         = PICMAN_PDB_INT32;
               values[2].data.d_int32 = width;
-              values[3].type         = GIMP_PDB_INT32;
+              values[3].type         = PICMAN_PDB_INT32;
               values[3].data.d_int32 = height;
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
     }
@@ -237,7 +237,7 @@ run (const gchar      *name,
   /* File save */
   else if (strcmp (name, SAVE_PROC) == 0)
     {
-      GimpRunMode run_mode;
+      PicmanRunMode run_mode;
 
       run_mode = param[0].data.d_int32;
       image_ID = param[1].data.d_int32;
@@ -245,19 +245,19 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA   |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYERS  |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS);
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA   |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYERS  |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYER_MASKS);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -265,7 +265,7 @@ run (const gchar      *name,
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string, image_ID, drawable_ID,
                           &error))
@@ -273,25 +273,25 @@ run (const gchar      *name,
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
 #endif /* PSD_SAVE */
 
   /* Unknown procedure */
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 

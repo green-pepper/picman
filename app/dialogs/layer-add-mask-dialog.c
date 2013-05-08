@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,31 +20,31 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
 
-#include "widgets/gimpcontainercombobox.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmancontainercombobox.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "layer-add-mask-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static gboolean   layer_add_mask_dialog_channel_selected (GimpContainerView  *view,
-                                                          GimpViewable       *viewable,
+static gboolean   layer_add_mask_dialog_channel_selected (PicmanContainerView  *view,
+                                                          PicmanViewable       *viewable,
                                                           gpointer            insert_data,
                                                           LayerAddMaskDialog *dialog);
 static void       layer_add_mask_dialog_free             (LayerAddMaskDialog *dialog);
@@ -53,10 +53,10 @@ static void       layer_add_mask_dialog_free             (LayerAddMaskDialog *di
 /*  public functions  */
 
 LayerAddMaskDialog *
-layer_add_mask_dialog_new (GimpLayer       *layer,
-                           GimpContext     *context,
+layer_add_mask_dialog_new (PicmanLayer       *layer,
+                           PicmanContext     *context,
                            GtkWidget       *parent,
-                           GimpAddMaskType  add_mask_type,
+                           PicmanAddMaskType  add_mask_type,
                            gboolean         invert)
 {
   LayerAddMaskDialog *dialog;
@@ -64,12 +64,12 @@ layer_add_mask_dialog_new (GimpLayer       *layer,
   GtkWidget          *frame;
   GtkWidget          *combo;
   GtkWidget          *button;
-  GimpImage          *image;
-  GimpChannel        *channel;
+  PicmanImage          *image;
+  PicmanChannel        *channel;
 
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   dialog = g_slice_new0 (LayerAddMaskDialog);
 
@@ -78,13 +78,13 @@ layer_add_mask_dialog_new (GimpLayer       *layer,
   dialog->invert        = invert;
 
   dialog->dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (layer), context,
-                              _("Add Layer Mask"), "gimp-layer-add-mask",
-                              GIMP_STOCK_LAYER_MASK,
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (layer), context,
+                              _("Add Layer Mask"), "picman-layer-add-mask",
+                              PICMAN_STOCK_LAYER_MASK,
                               _("Add a Mask to the Layer"),
                               parent,
-                              gimp_standard_help_func,
-                              GIMP_HELP_LAYER_MASK_ADD,
+                              picman_standard_help_func,
+                              PICMAN_HELP_LAYER_MASK_ADD,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               GTK_STOCK_ADD,    GTK_RESPONSE_OK,
@@ -108,37 +108,37 @@ layer_add_mask_dialog_new (GimpLayer       *layer,
   gtk_widget_show (vbox);
 
   frame =
-    gimp_enum_radio_frame_new (GIMP_TYPE_ADD_MASK_TYPE,
+    picman_enum_radio_frame_new (PICMAN_TYPE_ADD_MASK_TYPE,
                                gtk_label_new (_("Initialize Layer Mask to:")),
-                               G_CALLBACK (gimp_radio_button_update),
+                               G_CALLBACK (picman_radio_button_update),
                                &dialog->add_mask_type,
                                &button);
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (button),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (button),
                                    dialog->add_mask_type);
 
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
-  combo = gimp_container_combo_box_new (gimp_image_get_channels (image),
+  combo = picman_container_combo_box_new (picman_image_get_channels (image),
                                         context,
-                                        GIMP_VIEW_SIZE_SMALL, 1);
-  gimp_enum_radio_frame_add (GTK_FRAME (frame), combo,
-                             GIMP_ADD_CHANNEL_MASK, TRUE);
+                                        PICMAN_VIEW_SIZE_SMALL, 1);
+  picman_enum_radio_frame_add (GTK_FRAME (frame), combo,
+                             PICMAN_ADD_CHANNEL_MASK, TRUE);
   gtk_widget_show (combo);
 
   g_signal_connect (combo, "select-item",
                     G_CALLBACK (layer_add_mask_dialog_channel_selected),
                     dialog);
 
-  channel = gimp_image_get_active_channel (image);
+  channel = picman_image_get_active_channel (image);
 
   if (! channel)
-    channel = GIMP_CHANNEL (gimp_container_get_first_child (gimp_image_get_channels (image)));
+    channel = PICMAN_CHANNEL (picman_container_get_first_child (picman_image_get_channels (image)));
 
-  gimp_container_view_select_item (GIMP_CONTAINER_VIEW (combo),
-                                   GIMP_VIEWABLE (channel));
+  picman_container_view_select_item (PICMAN_CONTAINER_VIEW (combo),
+                                   PICMAN_VIEWABLE (channel));
 
   button = gtk_check_button_new_with_mnemonic (_("In_vert mask"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), dialog->invert);
@@ -146,7 +146,7 @@ layer_add_mask_dialog_new (GimpLayer       *layer,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dialog->invert);
 
   return dialog;
@@ -156,12 +156,12 @@ layer_add_mask_dialog_new (GimpLayer       *layer,
 /*  private functions  */
 
 static gboolean
-layer_add_mask_dialog_channel_selected (GimpContainerView  *view,
-                                        GimpViewable       *viewable,
+layer_add_mask_dialog_channel_selected (PicmanContainerView  *view,
+                                        PicmanViewable       *viewable,
                                         gpointer            insert_data,
                                         LayerAddMaskDialog *dialog)
 {
-  dialog->channel = GIMP_CHANNEL (viewable);
+  dialog->channel = PICMAN_CHANNEL (viewable);
 
   return TRUE;
 }

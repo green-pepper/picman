@@ -1,4 +1,4 @@
-# Danish translation of GIMP script-fu.
+# Danish translation of PICMAN script-fu.
 # Copyright (C) 2010 Free Software Foundation, Inc.
 # Birger Langkjer <birger.langkjer@image.dk>, 2000.
 # Keld Simonsen <keld@dkuug.dk>, 2000.
@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP script-fu\n"
+"Project-Id-Version: PICMAN script-fu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-18 17:31+0200\n"
 "PO-Revision-Date: 2011-07-25 20:42+0100\n"
@@ -169,8 +169,8 @@ msgid "_Start Server..."
 msgstr "_Start server..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP online"
+msgid "_PICMAN Online"
+msgstr "_PICMAN online"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -209,8 +209,8 @@ msgid "_Beveled Pattern"
 msgstr "Fac_etmønster"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -798,7 +798,7 @@ msgstr "Lav en simpel facetskåret grafikknap til hjemmesider"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Farveovergang"
 
@@ -886,7 +886,7 @@ msgstr ""
 "en animation"
 
 #: ../plug-ins/script-fu/scripts/blend-anim.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Ramme"
 
@@ -1491,7 +1491,7 @@ msgstr "Sløringsradius"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Farve"
 
@@ -1688,62 +1688,62 @@ msgstr "Skyggevægt (%)"
 msgid "_Fuzzy Border..."
 msgstr "Ud_flydende kant..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Bogmærk til GIMP-hjemmesiden"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Bogmærk til PICMAN-hjemmesiden"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Bogmærke til brugermanualen"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "Opret og brug _markeringer"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "Opret, åbn og gem _filer"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "Tegning af _simple objekter"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Sådan bruger du _dialoger"
 
 # "Register for udvidelsesmoduler"
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "Udvidelsesmodul_register"
 
 # "Brugsmønstre" - jeg forestiller mig at dette er henvisninger til et
 # afsnit i en manual eller lignende.
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "Bruger hjæl_pelinjer"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "_Grundlæggende ideer"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "_Internetside for udviklere"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "_Hovedhjemmeside"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "_Tilpas dine billeder til internettet"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "_Hjemmeside for brugermanual"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "_Arbejde med fotografier fra digitalkameraer"
 
@@ -2494,128 +2494,128 @@ msgstr "Drej fra venstre mod højre"
 msgid "_Spinning Globe..."
 msgstr "_Roterende kugle..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid ""
 "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr ""
 "Tilføjer spirografer, epitrochoider og Lissajous-kurver til det aktuelle lag"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Sprøjtepensel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Pensel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Cirkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Farvemetode"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrochoide"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Overgang: savtandsløkke"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Overgang: trekantsløkke"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Sekskant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Hulforhold"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Indre tand"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Margen (skærmpunkter)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Ydre tand"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Blyant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Femkant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Polygon: 10 sider"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Polygon: 7 sider"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Polygon: 8 sider"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Polygon: 9 sider"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Optegner spyro"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Form"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Ensfarvet"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spyrograf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Kvadrat"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Startvinkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Værktøj"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Trekant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Type"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
-msgstr "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
+msgstr "_Spyropicman..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
 msgid "Create a logo using a rock-like texture, a nova glow, and shadow"

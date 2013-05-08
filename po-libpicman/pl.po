@@ -1,0 +1,2081 @@
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Aviary.pl
+# Jeśli masz jakiekolwiek uwagi odnoszące się do tłumaczenia lub chcesz
+# pomóc w jego rozwijaniu i pielęgnowaniu, napisz do nas:
+# gnomepl@aviary.pl
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Bartosz Kosiorek <gang65@poczta.onet.pl>, 2005-2011.
+# Piotr Drąg <piotrdrag@gmail.com>, 2011.
+# Aviary.pl <gnomepl@aviary.pl>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-12-28 02:24+0100\n"
+"PO-Revision-Date: 2011-12-28 02:27+0100\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
+"Language-Team: Polish <gnomepl@aviary.pl>\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Polish\n"
+"X-Poedit-Country: Poland\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "powodzenie"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "błąd wykonania"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "błąd wywołania"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "anulowano"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Wybór pędzla"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Przeglądaj..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "Wtyczka %s nie obsługuje warstw"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Połącz widoczne warstwy"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "Wtyczka %s nie obsługuje przesunięć, rozmiarów ani krycia warstw"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "Wtyczka %s obsługuje warstwy wyłącznie jako ramki animacji"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Zapisz jako animację"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Spłaszcz obraz"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "Wtyczka %s nie obsługuje przezroczystości"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "Wtyczka %s nie obsługuje masek warstw"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Zastosuj maski warstw"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "Wtyczka %s obsługuje tylko obrazy RGB"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Przekonwertuj na RGB"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "Wtyczka %s obsługuje tylko obrazy w odcieniach szarości"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Przekonwertuj na odcienie szarości"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "Wtyczka %s obsługuje tylko obrazy indeksowane"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Przekonwertuj na indeksowany używając ustawień domyślnych\n"
+"(ręczna konwersja pozwoli na lepsze dopasowanie ustawień)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "Wtyczka %s obsługuje tylko bitmapowe (dwukolorowe) obrazy indeksowane"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Przekonwertuj na indeksowany używając ustawień domyślnych dla bitmap\n"
+"(ręczna konwersja pozwoli na lepsze dopasowanie ustawień)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "Wtyczka %s obsługuje tylko obrazy RGB lub w odcieniach szarości"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "Wtyczka %s obsługuje tylko obrazy RGB lub indeksowane"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+"Wtyczka %s obsługuje tylko obrazy indeksowane lub w odcieniach szarości"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "Wtyczka %s wymaga kanału alfa"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Dodaj kanał alfa"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Potwierdzenie zapisu"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Potwierdź"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Eksport pliku"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "Z_ignoruj"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "Wy_eksportuj"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Przed zapisaniem w formacie %s obraz powinien zostać wyeksportowany z "
+"poniższych powodów:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Konwersja podczas eksportu nie zmodyfikuje pierwotnego obrazu."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Próba zapisu maski warstwy jako %s.\n"
+"Widoczne warstwy nie zostaną zapisane."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Próba zapisania kanału (zapisanego zaznaczenia) jako %s.\n"
+"Widoczne warstwy nie zostaną zapisane."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "Eksport obrazu jako "
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Wybór czcionki"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Wybór gradientu"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(Pusty)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Wybór palety"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Wybór desenia"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "według nazwy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "według opisu"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "według pomocy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "według autora"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "według praw autorskich"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "według dat"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "według typu"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Brak wyników"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "Wyszukiwane wyrażenie jest nieprawidłowe lub niepełne"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Wyszukiwanie"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Wyszukiwanie według nazwy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Wyszukiwanie według opisu"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Wyszukiwanie według pomocy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Wyszukiwanie według autora"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Wyszukiwanie według prawa autorskiego"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Wyszukiwanie według daty"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Wyszukiwanie według typu"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d procedura"
+msgstr[1] "%d procedury"
+msgstr[2] "%d procedur"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Brak wyników dla zapytania"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d procedura pasuje do zapytania"
+msgstr[1] "%d procedury pasują do zapytania"
+msgstr[2] "%d procedur pasuje do zapytania"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametry"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Zwracane wartości"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Dodatkowe informacje"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Autor:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Data:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Prawa autorskie:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "procent"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Biała (bez przezroczystości)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Czarna (pełna przezroczystość)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "_Kanał alfa warstwy"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Przeniesienie kanału alfa warstwy"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Zaznaczenie"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "Kop_ia warstwy w odcieniach szarości"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "_Kanał"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "Kolor pierwszoplanowy na kolor tła (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "Kolor pierwszoplanowy na kolor tła (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Kolor pierwszoplanowy na przezroczystość"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Dowolny gradient"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Wypełnienie koloru pierwszoplanowego"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Wypełnienie koloru tła"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Wypełnienie desenia"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Dodaje do bieżącego zaznaczenia"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Odejmuje od bieżącego zaznaczenia"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Zastępuje bieżące zaznaczenie"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Część wspólna z bieżącym zaznaczeniem"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Czerwony"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Zielony"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Niebieski"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Szary"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indeksowany"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+msgctxt "check-size"
+msgid "Small"
+msgstr "Małe"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Średnie"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+msgctxt "check-size"
+msgid "Large"
+msgstr "Duże"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Jasne pole"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Szare pole"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Ciemne pole"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+msgctxt "check-type"
+msgid "White only"
+msgstr "Tylko białe"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Tylko szare"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Tylko czarne"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Obraz"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Deseń"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Jasność"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Jaskrawość"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Średni"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Rozjaśnianie"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Wypalanie"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Liniowy"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Dwuliniowy"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Promienisty"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Prostokątny"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Stożkowy (sym.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Stożkowy (asym.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Rozlany (kąt)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Rozlany (sfera)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Rozlany (dół)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Spiralny (w prawo)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Spiralny (w lewo)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Przecięcia (kropki)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Przecięcia (krzyżyki)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Kreskowany"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Podwójnie kreskowany"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Jednolity"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Standardowy identyfikator"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Osadzony bufor pikseli"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Plik obrazu"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "Kolory RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Odcienie szarości"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Tryb indeksowany"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RGB (alfa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Odcienie szarości"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Odcienie szarości (alfa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indeksowany"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indeksowany (alfa)"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Brak"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Liniowa"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Sześcienna"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Stałe"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Przyrostowe"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Brak"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Fala piłokształtna"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Fala trójkątna"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Uruchom interaktywnie"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Uruchom wsadowo"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Uruchom z ostatnio użytymi wartościami"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Piksele"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+msgctxt "size-type"
+msgid "Points"
+msgstr "Punkty"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Cienie"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Półtony"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Światła"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Zwykłe (przednie)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "Korekcyjne (tylne)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Dostosuj"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Przytnij"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Kadruj do wyniku"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Kadruj z proporcjami"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Wewnętrzna procedura programu PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "Wtyczka programu PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "Rozszerzenie programu PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Procedura tymczasowa"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "Od lewej do prawej"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "Od prawej do lewej"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Brak"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Lekki"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Średni"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Pełny"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Wyrównane do lewej"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Wyrównane do prawej"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Wyśrodkowane"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Wypełnione"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(nieprawidłowy tekst UTF-8)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Tryb zarządzania kolorami."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Profil kolorów dla monitora (podstawowego)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Kiedy jest włączone, to program PICMAN będzie próbował użyć profilu kolorów z "
+"menedżera okien. Skonfigurowany profil monitora jest używany w przypadku "
+"niepowodzenia."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "Domyślny profil kolorów przestrzeni roboczej RGB."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "Profil kolorów CMYK, używany do konwersji między RGB a CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "Profil kolorów używany do symulacji drukowanej wersji (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Ustawia, jak mapowane są kolory dla monitora."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Ustawia, jak kolory są konwertowane z obszaru roboczego RGB do urządzenia "
+"symulującego drukowanie."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Kiedy jest włączone, to symulacja druku będzie oznaczała kolory, które nie "
+"mogą być przedstawione w docelowej przestrzeni kolorów."
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr "Kolor używany do oznaczania kolorów, które są poza skalą."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Bez zarządzania kolorami"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Z zarządzaniem kolorami"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Symulacja drukowania"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Percepcyjny"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Względny kolorymetryczny"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Nasycenie"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Bezwzględny kolorymetryczny"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "wartość tokenu %s nie jest prawidłowym tekstem UTF-8"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+"oczekiwano wartości \"yes\" lub \"no\" tokenu logicznego %s, otrzymano \"%s\""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "nieprawidłowa wartość \"%s\" tokenu %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "nieprawidłowa wartość \"%ld\" tokenu %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "podczas przetwarzaniu tokenu \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "krytyczny błąd podczas przetwarzania"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Nie można rozwinąć ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Błąd podczas zapisywania do \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Nie można utworzyć pliku tymczasowego dla \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Nie można otworzyć \"%s\" do zapisania: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Błąd podczas zapisywania do pliku tymczasowego dla \"%s\": %s\n"
+"Pierwotny plik nie został zmieniony."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Błąd podczas zapisywania do pliku tymczasowego dla \"%s\": %s\n"
+"Nie utworzono pliku."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Nie można utworzyć \"%s\": %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "nieprawidłowy tekst UTF-8"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr ""
+"oczekiwano wartości \"yes\" lub \"no\" tokenu logicznego, otrzymano \"%s\""
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Błąd podczas przetwarzania \"%s\" w wierszu %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Błąd wczytywania modułu \"%s\": %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Błąd modułu"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Wczytany"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Wczytanie się nie powiodło"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Niewczytano"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Nie można ustalić prawidłowego katalogu domowego.\n"
+"Miniatury będą przechowywane w katalogu na pliki tymczasowe (%s)."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Utworzenie katalogu miniatur \"%s\" się nie powiodło."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Miniatura nie zawiera znacznika Thumb::URI"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Nie można utworzyć miniatury dla \"%s\": %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "Wy_szukiwanie:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "_Kolor pierwszoplanowy"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "Kolor _tła"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "_Czarny"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "_Biały"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "Wybór profilu kolorów z dysku..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Brak"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Skale"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Bieżący:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Poprzedni:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Heksadecymalny zapis koloru jest używany w językach HTML i CSS. To pole "
+"dopuszcza również nazwy kolorów CSS."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "_Zapis języka HTML:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Otwiera przeglądarkę plików, aby odnaleźć katalogi"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Otwiera przeglądarkę plików, aby odnaleźć pliki"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Wybór katalogu"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Wybór pliku"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "Naciśnięcie klawisza F1 wyświetli pomoc"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "Kilobajty"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "Megabajty"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "Gigabajty"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Nic nie zaznaczono"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "Z_aznacz wszystkie"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "_Zaznaczenie zakresu:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Otwórz _strony jako"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Strona 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Strona %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Zaznaczono jedną stronę"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d stronę zaznaczono"
+msgstr[1] "%d strony zaznaczono"
+msgstr[2] "%d stron zaznaczono"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Zapisywalny"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Katalog"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Kliknięcie zakraplacza, a następnie dowolnego punktu obrazu pobierze z niego "
+"kolor."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Podgląd"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Rozmiar szachownicy"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Wygląd szachownicy"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "To pole tekstowe jest ograniczone do %d znaku."
+msgstr[1] "To pole tekstowe jest ograniczone do %d znaków."
+msgstr[2] "To pole tekstowe jest ograniczone do %d znaków."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Zakotwicz"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "Wyśrodk_uj"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Duplikuj"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "_Modyfikuj"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Przyłączony"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Wklej jako nowy"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Wklej do"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Przywróć"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Widoczny"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "Ry_suj"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Odstępy międzyz_nakowe"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Odstępy między_wierszowe"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "Zmień _rozmiar"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "Prze_skaluj"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "K_adruj"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "_Przekształć"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "O_bróć"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Zetnij"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Inne..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Wybór jednostki"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Jednostka"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Współczynnik"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Wartość ta może zostać użyta w roli ziarna generatora liczb losowych, co "
+"pozwala na dokładne powtórzenie wykonanego \"losowego\" działania"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "_Nowe ziarno"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr ""
+"Ustala ziarno generatora liczb losowych na podstawie wygenerowanej losowo "
+"liczby"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "Wy_losuj"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Wyłączone"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Ekran"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Okno"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Prostokątny"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Pionowo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Poziomo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Odcień"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Nasycenie"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Wartość"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Czerwony"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Zielony"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Niebieski"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Warstwy"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Obrazy"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Powiększenie"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Zmniejszenie"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr "Wybór koloru z przestrzeni CMYK (używając profilu kolorów)"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Niebieskozielony"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Purpurowy"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Żółty"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Czarny"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profil: (brak)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profil: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "Wybór koloru z przestrzeni CMYK"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Odbieranie _czerni:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Procent czerni zabieranej od pozostałych barw."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Wybór koloru oparty na akwareli"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Akwarela"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Nacisk"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "Kółko koloru HSV"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Kółko"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "Kontroler zdarzeń DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Urządzenie:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "Urządzenie do odczytywania zdarzeń DirectInput."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "Przycisk %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "Naciśnięcie przycisku %d"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "Zwolnienie przycisku %d"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "Ruch w lewo X"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "Ruch w prawo X"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "Duży ruch Y"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "Mały ruch Y"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "Ruch do góry Z"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "Ruch do dołu Z"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "Wychylenie Y duże"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "Wychylenie Y małe"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "Wychylenie Y w prawo"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "Wychylenie Y w lewo"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "Wychylenie Z skręt w lewo"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "Wychylenie Z skręt w prawo"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Zwiększenie suwaka %d"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Zmniejszenie suwaka %d"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d widok X"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d widok Y"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d powrót"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "Zdarzenia DirectInput"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Nie skonfigurowano urządzenia"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Urządzenie jest niedostępne"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Przycisk 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Przycisk 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Przycisk 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Przycisk 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Przycisk 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Przycisk 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Przycisk 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Przycisk 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Przycisk 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Przycisk 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Przycisk myszy"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Lewy przycisk"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Prawy przycisk"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Środkowy przycisk"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Boczny przycisk"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Dodatkowy przycisk"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Przedni przycisk"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Tylni przycisk"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Zadanie przycisku"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Przycisk kierownicy"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Przycisk biegu dolnego"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Przycisk biegu następnego"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "Ruch naprzód Y"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "Ruch w tył Y"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "Wychylenie X do przodu"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "Wychylenie X do tyłu"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "Poziome kółko w tył"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Poziome kółko w przód"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Skręt w lewo"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Skręt w prawo"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Obrót kółka w lewo"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Obrót kółka w prawo"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Kontroler wprowadzania zdarzeń systemu Linux"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Nazwa urządzenia do odczytywania zdarzeń wprowadzania systemu Linux."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Wprowadzanie systemu Linux"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Zdarzenia wprowadzania systemu Linux"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Odczytywanie z %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Urządzenie jest niedostępne: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Koniec pliku"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "Kontroler zdarzeń MIDI"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Nazwa urządzenia do odczytywania zdarzeń MIDI."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Wpisanie \"alsa\" użyje sekwencera ALSA."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanał:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"Kanał MIDI do odczytywania zdarzeń. Ustawienie na -1 odczytuje ze wszystkich "
+"kanałów MIDI."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Ton %02x włączony"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Ton %02x wyłączony"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Kontroler %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "Zdarzenia MIDI"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "Kontroler wprowadzania MIDI programu PICMAN"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopia (nierozróżnianie czerwonego)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopia (nierozróżnianie zielonego)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopia (nierozróżnianie niebieskiego)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Filtr symulujący ślepotę barw (algorytm Brettela-Vienota-Mollona)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Ślepota barw"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Typ ślepoty _barw:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Filtr wyświetlania kolorów z korekcją gamma"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Filtr wyświetlania kolorów z wysokim kontrastem"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrast"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "_Cykle kontrastu:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Filtr zarządzania kolorami, używający profili kolorów ICC"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Zarządzanie kolorami"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Brak"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Ten filtr pobiera konfigurację z sekcji Zarządzanie kolorami okna "
+"Preferencji."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Tryb działania:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Profil obrazu:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Profil monitora:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Profil symulacji wydruku:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Filtr korygujący kolory używając profilu ICC"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Korekcja kolorów"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Wybór profilu kolorów ICC"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Wszystkie pliki (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "Profil kolorów ICC (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profil:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "Pożądany _efekt:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "Kompensacja _czarnego punktu"

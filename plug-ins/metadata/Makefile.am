@@ -1,25 +1,25 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
 
 if OS_WIN32
 mwindows = -mwindows
 endif
 
 if HAVE_WINDRES
-include $(top_srcdir)/build/windows/gimprc-plug-ins.rule
+include $(top_srcdir)/build/windows/picmanrc-plug-ins.rule
 metadata_RC = metadata.rc.o
 endif
 
 AM_LDFLAGS = $(mwindows)
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
 libexec_PROGRAMS = metadata
 
@@ -36,12 +36,12 @@ metadata_SOURCES = \
 	xmp-schemas.c		\
 	interface.h		\
 	interface.c		\
-	gimpxmpmodelwidget.h	\
-	gimpxmpmodelwidget.c	\
-	gimpxmpmodelentry.h	\
-	gimpxmpmodelentry.c	\
-	gimpxmpmodeltext.h	\
-	gimpxmpmodeltext.c	\
+	picmanxmpmodelwidget.h	\
+	picmanxmpmodelwidget.c	\
+	picmanxmpmodelentry.h	\
+	picmanxmpmodelentry.c	\
+	picmanxmpmodeltext.h	\
+	picmanxmpmodeltext.c	\
 	exif-decode.h		\
 	exif-decode.c
 #	exif-encode.h		\
@@ -69,13 +69,13 @@ INCLUDES = \
 	-I$(includedir)
 
 LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(EXIF_LIBS)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\

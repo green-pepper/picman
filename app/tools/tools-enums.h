@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,113 +22,113 @@
  * these enums are registered with the type system
  */
 
-#define GIMP_TYPE_BUTTON_PRESS_TYPE (gimp_button_press_type_get_type ())
+#define PICMAN_TYPE_BUTTON_PRESS_TYPE (picman_button_press_type_get_type ())
 
-GType gimp_button_press_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_BUTTON_PRESS_NORMAL,
-  GIMP_BUTTON_PRESS_DOUBLE,
-  GIMP_BUTTON_PRESS_TRIPLE
-} GimpButtonPressType;
-
-
-#define GIMP_TYPE_BUTTON_RELEASE_TYPE (gimp_button_release_type_get_type ())
-
-GType gimp_button_release_type_get_type (void) G_GNUC_CONST;
+GType picman_button_press_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_BUTTON_RELEASE_NORMAL,
-  GIMP_BUTTON_RELEASE_CANCEL,
-  GIMP_BUTTON_RELEASE_CLICK,
-  GIMP_BUTTON_RELEASE_NO_MOTION
-} GimpButtonReleaseType;
+  PICMAN_BUTTON_PRESS_NORMAL,
+  PICMAN_BUTTON_PRESS_DOUBLE,
+  PICMAN_BUTTON_PRESS_TRIPLE
+} PicmanButtonPressType;
 
 
-#define GIMP_TYPE_RECTANGLE_CONSTRAINT (gimp_rectangle_constraint_get_type ())
+#define PICMAN_TYPE_BUTTON_RELEASE_TYPE (picman_button_release_type_get_type ())
 
-GType gimp_rectangle_constraint_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RECTANGLE_CONSTRAIN_NONE,
-  GIMP_RECTANGLE_CONSTRAIN_IMAGE,
-  GIMP_RECTANGLE_CONSTRAIN_DRAWABLE
-} GimpRectangleConstraint;
-
-
-#define GIMP_TYPE_RECTANGLE_PRECISION (gimp_rectangle_precision_get_type ())
-
-GType gimp_rectangle_precision_get_type (void) G_GNUC_CONST;
+GType picman_button_release_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_RECTANGLE_PRECISION_INT,
-  GIMP_RECTANGLE_PRECISION_DOUBLE,
-} GimpRectanglePrecision;
+  PICMAN_BUTTON_RELEASE_NORMAL,
+  PICMAN_BUTTON_RELEASE_CANCEL,
+  PICMAN_BUTTON_RELEASE_CLICK,
+  PICMAN_BUTTON_RELEASE_NO_MOTION
+} PicmanButtonReleaseType;
 
 
-#define GIMP_TYPE_RECTANGLE_TOOL_FIXED_RULE (gimp_rectangle_tool_fixed_rule_get_type ())
+#define PICMAN_TYPE_RECTANGLE_CONSTRAINT (picman_rectangle_constraint_get_type ())
 
-GType gimp_rectangle_tool_fixed_rule_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RECTANGLE_TOOL_FIXED_ASPECT, /*< desc="Aspect ratio" >*/
-  GIMP_RECTANGLE_TOOL_FIXED_WIDTH,  /*< desc="Width"        >*/
-  GIMP_RECTANGLE_TOOL_FIXED_HEIGHT, /*< desc="Height"       >*/
-  GIMP_RECTANGLE_TOOL_FIXED_SIZE,   /*< desc="Size"         >*/
-} GimpRectangleToolFixedRule;
-
-
-#define GIMP_TYPE_RECT_SELECT_MODE (gimp_rect_select_mode_get_type ())
-
-GType gimp_rect_select_mode_get_type (void) G_GNUC_CONST;
+GType picman_rectangle_constraint_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_RECT_SELECT_MODE_FREE,        /*< desc="Free select"        >*/
-  GIMP_RECT_SELECT_MODE_FIXED_SIZE,  /*< desc="Fixed size"         >*/
-  GIMP_RECT_SELECT_MODE_FIXED_RATIO  /*< desc="Fixed aspect ratio" >*/
-} GimpRectSelectMode;
+  PICMAN_RECTANGLE_CONSTRAIN_NONE,
+  PICMAN_RECTANGLE_CONSTRAIN_IMAGE,
+  PICMAN_RECTANGLE_CONSTRAIN_DRAWABLE
+} PicmanRectangleConstraint;
 
 
-#define GIMP_TYPE_TRANSFORM_TYPE (gimp_transform_type_get_type ())
+#define PICMAN_TYPE_RECTANGLE_PRECISION (picman_rectangle_precision_get_type ())
 
-GType gimp_transform_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_TRANSFORM_TYPE_LAYER,     /*< desc="Layer"     >*/
-  GIMP_TRANSFORM_TYPE_SELECTION, /*< desc="Selection" >*/
-  GIMP_TRANSFORM_TYPE_PATH       /*< desc="Path"      >*/
-} GimpTransformType;
-
-
-#define GIMP_TYPE_VECTOR_MODE (gimp_vector_mode_get_type ())
-
-GType gimp_vector_mode_get_type (void) G_GNUC_CONST;
+GType picman_rectangle_precision_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_VECTOR_MODE_DESIGN,      /*< desc="Design" >*/
-  GIMP_VECTOR_MODE_EDIT,        /*< desc="Edit"   >*/
-  GIMP_VECTOR_MODE_MOVE         /*< desc="Move"   >*/
-} GimpVectorMode;
+  PICMAN_RECTANGLE_PRECISION_INT,
+  PICMAN_RECTANGLE_PRECISION_DOUBLE,
+} PicmanRectanglePrecision;
 
 
-#define GIMP_TYPE_TOOL_ACTION (gimp_tool_action_get_type ())
+#define PICMAN_TYPE_RECTANGLE_TOOL_FIXED_RULE (picman_rectangle_tool_fixed_rule_get_type ())
 
-GType gimp_tool_action_get_type (void) G_GNUC_CONST;
+GType picman_rectangle_tool_fixed_rule_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TOOL_ACTION_PAUSE,
-  GIMP_TOOL_ACTION_RESUME,
-  GIMP_TOOL_ACTION_HALT
-} GimpToolAction;
+  PICMAN_RECTANGLE_TOOL_FIXED_ASPECT, /*< desc="Aspect ratio" >*/
+  PICMAN_RECTANGLE_TOOL_FIXED_WIDTH,  /*< desc="Width"        >*/
+  PICMAN_RECTANGLE_TOOL_FIXED_HEIGHT, /*< desc="Height"       >*/
+  PICMAN_RECTANGLE_TOOL_FIXED_SIZE,   /*< desc="Size"         >*/
+} PicmanRectangleToolFixedRule;
+
+
+#define PICMAN_TYPE_RECT_SELECT_MODE (picman_rect_select_mode_get_type ())
+
+GType picman_rect_select_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_RECT_SELECT_MODE_FREE,        /*< desc="Free select"        >*/
+  PICMAN_RECT_SELECT_MODE_FIXED_SIZE,  /*< desc="Fixed size"         >*/
+  PICMAN_RECT_SELECT_MODE_FIXED_RATIO  /*< desc="Fixed aspect ratio" >*/
+} PicmanRectSelectMode;
+
+
+#define PICMAN_TYPE_TRANSFORM_TYPE (picman_transform_type_get_type ())
+
+GType picman_transform_type_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TRANSFORM_TYPE_LAYER,     /*< desc="Layer"     >*/
+  PICMAN_TRANSFORM_TYPE_SELECTION, /*< desc="Selection" >*/
+  PICMAN_TRANSFORM_TYPE_PATH       /*< desc="Path"      >*/
+} PicmanTransformType;
+
+
+#define PICMAN_TYPE_VECTOR_MODE (picman_vector_mode_get_type ())
+
+GType picman_vector_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_VECTOR_MODE_DESIGN,      /*< desc="Design" >*/
+  PICMAN_VECTOR_MODE_EDIT,        /*< desc="Edit"   >*/
+  PICMAN_VECTOR_MODE_MOVE         /*< desc="Move"   >*/
+} PicmanVectorMode;
+
+
+#define PICMAN_TYPE_TOOL_ACTION (picman_tool_action_get_type ())
+
+GType picman_tool_action_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TOOL_ACTION_PAUSE,
+  PICMAN_TOOL_ACTION_RESUME,
+  PICMAN_TOOL_ACTION_HALT
+} PicmanToolAction;
 
 
 /*
@@ -144,25 +144,25 @@ typedef enum /*< skip >*/
   SELECTION_ANCHOR
 } SelectFunction;
 
-/*  Modes of GimpEditSelectionTool  */
+/*  Modes of PicmanEditSelectionTool  */
 typedef enum /*< skip >*/
 {
-  GIMP_TRANSLATE_MODE_VECTORS,
-  GIMP_TRANSLATE_MODE_CHANNEL,
-  GIMP_TRANSLATE_MODE_LAYER_MASK,
-  GIMP_TRANSLATE_MODE_MASK,
-  GIMP_TRANSLATE_MODE_MASK_TO_LAYER,
-  GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER,
-  GIMP_TRANSLATE_MODE_LAYER,
-  GIMP_TRANSLATE_MODE_FLOATING_SEL
-} GimpTranslateMode;
+  PICMAN_TRANSLATE_MODE_VECTORS,
+  PICMAN_TRANSLATE_MODE_CHANNEL,
+  PICMAN_TRANSLATE_MODE_LAYER_MASK,
+  PICMAN_TRANSLATE_MODE_MASK,
+  PICMAN_TRANSLATE_MODE_MASK_TO_LAYER,
+  PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER,
+  PICMAN_TRANSLATE_MODE_LAYER,
+  PICMAN_TRANSLATE_MODE_FLOATING_SEL
+} PicmanTranslateMode;
 
 /*  Motion event report modes  */
 typedef enum /*< skip >*/
 {
-  GIMP_MOTION_MODE_EXACT,
-  GIMP_MOTION_MODE_COMPRESS
-} GimpMotionMode;
+  PICMAN_MOTION_MODE_EXACT,
+  PICMAN_MOTION_MODE_COMPRESS
+} PicmanMotionMode;
 
 
 #endif /* __TOOLS_ENUMS_H__ */

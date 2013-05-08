@@ -1,10 +1,10 @@
-# translation of gimp-script-fu.HEAD.po to Arabic
+# translation of picman-script-fu.HEAD.po to Arabic
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Khaled Hosny <khaledhosny@eglug.org>, 2008, 2010, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu.HEAD\n"
+"Project-Id-Version: picman-script-fu.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 01:23+0200\n"
 "PO-Revision-Date: 2011-02-19 18:27+0300\n"
@@ -35,7 +35,7 @@ msgid "_Start Server..."
 msgstr "اب_دأ الخادوم..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
+msgid "_PICMAN Online"
 msgstr "_جمب على الخط"
 
 #: ../plug-ins/script-fu/script-fu.c:302
@@ -75,8 +75,8 @@ msgid "_Beveled Pattern"
 msgstr "نموذج ال_زاوية المنحرفة"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -255,19 +255,19 @@ msgstr "بلاط"
 msgid "Wrap"
 msgstr "تغطية"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "التكرار الرسومي"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "دائرة"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "قلم رصاص"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "لون صلب"
 
@@ -1123,8 +1123,8 @@ msgstr "IIR"
 #~ msgid "_Fuzzy Border..."
 #~ msgstr "ال_ظل المبهم..."
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "وضع علامة مرجعية على موقع وب GIMP"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "وضع علامة مرجعية على موقع وب PICMAN"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "وضع علامة مرجعية على دليل المستخدم"
@@ -1728,7 +1728,7 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "النوع"
 
-#~ msgid "_Spyrogimp..."
+#~ msgid "_Spyropicman..."
 #~ msgstr "_جيمب اللولبي..."
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
@@ -1949,11 +1949,11 @@ msgstr "IIR"
 #~ msgid "Autocrop"
 #~ msgstr "اقتطاع تلقائي"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
-#~ msgstr "أنشئ صورة ذات ترويسة كبيرة باستخدام سمة صفحة وب gimp.org"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
+#~ msgstr "أنشئ صورة ذات ترويسة كبيرة باستخدام سمة صفحة وب picman.org"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
-#~ msgstr "أنشئ صورة ذات ترويسة صغيرة باستخدام سمة صفحة وب gimp.org"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
+#~ msgstr "أنشئ صورة ذات ترويسة صغيرة باستخدام سمة صفحة وب picman.org"
 
 #~ msgid "Dark color"
 #~ msgstr "لون غامق"
@@ -1980,25 +1980,25 @@ msgstr "IIR"
 #~ msgstr "ترويسة صغي_رة..."
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
-#~ msgstr "أنشئ صورة لترويسة ملصق زر أنبوب باستخدام سمة صفحة وب gimp.org"
+#~ msgstr "أنشئ صورة لترويسة ملصق زر أنبوب باستخدام سمة صفحة وب picman.org"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
-#~ msgstr "أنشئ صورة لملصق زر أنبوب باستخدام سمة صفحة وب gimp.org"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
+#~ msgstr "أنشئ صورة لملصق زر أنبوب باستخدام سمة صفحة وب picman.org"
 
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "أنشئ صورة لملصق زر أنبوب من الدرجة الثانية باستخدام سمة صفحة وب gimp.org"
+#~ "أنشئ صورة لملصق زر أنبوب من الدرجة الثانية باستخدام سمة صفحة وب picman.org"
 
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "أنشئ صورة لملصق زر أنبوب من الدرجة الثالثة باستخدام سمة صفحة وب gimp.org"
+#~ "أنشئ صورة لملصق زر أنبوب من الدرجة الثالثة باستخدام سمة صفحة وب picman.org"
 
 #~ msgid "T_ube Sub-Button Label..."
 #~ msgstr "_ملصق زر الأنبوب الفرعي..."

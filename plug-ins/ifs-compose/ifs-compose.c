@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * IfsCompose is a interface for creating IFS fractals by
@@ -34,12 +34,12 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "ifs-compose.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define RESPONSE_RESET           1
@@ -55,7 +55,7 @@
 #define PLUG_IN_PARASITE "ifscompose-parasite"
 #define PLUG_IN_PROC     "plug-in-ifscompose"
 #define PLUG_IN_BINARY   "ifs-compose"
-#define PLUG_IN_ROLE     "gimp-ifs-compose"
+#define PLUG_IN_ROLE     "picman-ifs-compose"
 
 typedef enum
 {
@@ -96,7 +96,7 @@ typedef struct
 
 typedef struct
 {
-  GimpRGB   *color;
+  PicmanRGB   *color;
   GtkWidget *hbox;
   GtkWidget *orig_preview;
   GtkWidget *button;
@@ -180,9 +180,9 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 /*  user interface functions  */
 static gint           ifs_compose_dialog          (gint32        drawable_id);
@@ -227,8 +227,8 @@ static void recompute_center_cb           (GtkWidget *widget,
 static void ifs_compose                   (gint32     drawable_id);
 
 static ColorMap *color_map_create         (const gchar  *name,
-                                           GimpRGB      *orig_color,
-                                           GimpRGB      *data,
+                                           PicmanRGB      *orig_color,
+                                           PicmanRGB      *data,
                                            gboolean      fixed_point);
 static void color_map_color_changed_cb    (GtkWidget    *widget,
                                            ColorMap     *color_map);
@@ -305,7 +305,7 @@ static IfsComposeInterface ifscint =
   FALSE,   /* run          */
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -319,17 +319,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
   };
 
-  static const GimpParamDef *return_vals = NULL;
+  static const PicmanParamDef *return_vals = NULL;
   static int nreturn_vals = 0;
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an Iterated Function System (IFS) fractal"),
                           "Interactively create an Iterated Function System "
                           "fractal. Use the window on the upper left to adjust "
@@ -344,25 +344,25 @@ query (void)
                           "1997",
                           N_("_IFS Fractal..."),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), nreturn_vals,
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Render/Nature");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status   = GIMP_PDB_SUCCESS;
-  GimpParasite      *parasite = NULL;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status   = PICMAN_PDB_SUCCESS;
+  PicmanParasite      *parasite = NULL;
   gint32             image_id;
   gint32             drawable_id;
   gboolean           found_parasite = FALSE;
@@ -375,7 +375,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   image_id    = param[1].data.d_image;
@@ -383,28 +383,28 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data; first look for a parasite -
        *  if not found, fall back to global values
        */
-      parasite = gimp_item_get_parasite (drawable_id,
+      parasite = picman_item_get_parasite (drawable_id,
                                          PLUG_IN_PARASITE);
       if (parasite)
         {
-          found_parasite = ifsvals_parse_string (gimp_parasite_data (parasite),
+          found_parasite = ifsvals_parse_string (picman_parasite_data (parasite),
                                                  &ifsvals, &elements);
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
         }
 
       if (!found_parasite)
         {
-          gint length = gimp_get_data_size (PLUG_IN_PROC);
+          gint length = picman_get_data_size (PLUG_IN_PROC);
 
           if (length > 0)
             {
               gchar *data = g_new (gchar, length);
 
-              gimp_get_data (PLUG_IN_PROC, data);
+              picman_get_data (PLUG_IN_PROC, data);
               ifsvals_parse_string (data, &ifsvals, &elements);
               g_free (data);
             }
@@ -418,19 +418,19 @@ run (const gchar      *name,
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
-      status = GIMP_PDB_CALLING_ERROR;
+    case PICMAN_RUN_NONINTERACTIVE:
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       {
-        gint length = gimp_get_data_size (PLUG_IN_PROC);
+        gint length = picman_get_data_size (PLUG_IN_PROC);
 
         if (length > 0)
           {
             gchar *data = g_new (gchar, length);
 
-            gimp_get_data (PLUG_IN_PROC, data);
+            picman_get_data (PLUG_IN_PROC, data);
             ifsvals_parse_string (data, &ifsvals, &elements);
             g_free (data);
           }
@@ -446,14 +446,14 @@ run (const gchar      *name,
     }
 
   /*  Render the fractal  */
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           gchar        *str;
-          GimpParasite *parasite;
+          PicmanParasite *parasite;
 
-          gimp_image_undo_group_start (image_id);
+          picman_image_undo_group_start (image_id);
 
           /*  run the effect  */
           ifs_compose (drawable_id);
@@ -463,20 +463,20 @@ run (const gchar      *name,
            */
           str = ifsvals_stringify (&ifsvals, elements);
 
-          gimp_set_data (PLUG_IN_PROC, str, strlen (str) + 1);
+          picman_set_data (PLUG_IN_PROC, str, strlen (str) + 1);
 
-          parasite = gimp_parasite_new (PLUG_IN_PARASITE,
-                                        GIMP_PARASITE_PERSISTENT |
-                                        GIMP_PARASITE_UNDOABLE,
+          parasite = picman_parasite_new (PLUG_IN_PARASITE,
+                                        PICMAN_PARASITE_PERSISTENT |
+                                        PICMAN_PARASITE_UNDOABLE,
                                         strlen (str) + 1, str);
-          gimp_item_attach_parasite (drawable_id, parasite);
-          gimp_parasite_free (parasite);
+          picman_item_attach_parasite (drawable_id, parasite);
+          picman_parasite_free (parasite);
 
           g_free (str);
 
-          gimp_image_undo_group_end (image_id);
+          picman_image_undo_group_end (image_id);
 
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
       else
         {
@@ -611,7 +611,7 @@ ifs_compose_color_page (void)
   GtkWidget *table;
   GtkWidget *label;
   GSList    *group = NULL;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -677,32 +677,32 @@ ifs_compose_color_page (void)
   group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (ifsD->full_button));
   gtk_widget_show (ifsD->full_button);
 
-  gimp_rgb_parse_name (&color, "red", -1);
-  gimp_rgb_set_alpha (&color, 1.0);
+  picman_rgb_parse_name (&color, "red", -1);
+  picman_rgb_set_alpha (&color, 1.0);
   ifsD->red_cmap = color_map_create (_("IFS Fractal: Red"), &color,
                                      &ifsD->current_vals.red_color, FALSE);
   gtk_table_attach (GTK_TABLE (table), ifsD->red_cmap->hbox, 1, 2, 2, 3,
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (ifsD->red_cmap->hbox);
 
-  gimp_rgb_parse_name (&color, "green", -1);
-  gimp_rgb_set_alpha (&color, 1.0);
+  picman_rgb_parse_name (&color, "green", -1);
+  picman_rgb_set_alpha (&color, 1.0);
   ifsD->green_cmap = color_map_create (_("IFS Fractal: Green"), &color,
                                        &ifsD->current_vals.green_color, FALSE);
   gtk_table_attach (GTK_TABLE (table), ifsD->green_cmap->hbox, 2, 3, 2, 3,
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (ifsD->green_cmap->hbox);
 
-  gimp_rgb_parse_name (&color, "blue", -1);
-  gimp_rgb_set_alpha (&color, 1.0);
+  picman_rgb_parse_name (&color, "blue", -1);
+  picman_rgb_set_alpha (&color, 1.0);
   ifsD->blue_cmap = color_map_create (_("IFS Fractal: Blue"), &color,
                                       &ifsD->current_vals.blue_color, FALSE);
   gtk_table_attach (GTK_TABLE (table), ifsD->blue_cmap->hbox, 3, 4, 2, 3,
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (ifsD->blue_cmap->hbox);
 
-  gimp_rgb_parse_name (&color, "black", -1);
-  gimp_rgb_set_alpha (&color, 1.0);
+  picman_rgb_parse_name (&color, "black", -1);
+  picman_rgb_set_alpha (&color, 1.0);
   ifsD->black_cmap = color_map_create (_("IFS Fractal: Black"), &color,
                                        &ifsD->current_vals.black_color, FALSE);
   gtk_table_attach (GTK_TABLE (table), ifsD->black_cmap->hbox, 4, 5, 2, 3,
@@ -724,8 +724,8 @@ ifs_compose_dialog (gint32 drawable_id)
   GtkWidget *aspect_frame;
   GtkWidget *notebook;
   GtkWidget *page;
-  gint       design_width  = gimp_drawable_width (drawable_id);
-  gint       design_height = gimp_drawable_height (drawable_id);
+  gint       design_width  = picman_drawable_width (drawable_id);
+  gint       design_height = picman_drawable_height (drawable_id);
 
   if (design_width > design_height)
     {
@@ -746,20 +746,20 @@ ifs_compose_dialog (gint32 drawable_id)
 
   ifsD = g_new0 (IfsDialog, 1);
 
-  ifsD->drawable_width  = gimp_drawable_width (drawable_id);
-  ifsD->drawable_height = gimp_drawable_height (drawable_id);
+  ifsD->drawable_width  = picman_drawable_width (drawable_id);
+  ifsD->drawable_height = picman_drawable_height (drawable_id);
   ifsD->preview_width   = design_width;
   ifsD->preview_height  = design_height;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("IFS Fractal"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("IFS Fractal"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_OPEN,   RESPONSE_OPEN,
                             GTK_STOCK_SAVE,   RESPONSE_SAVE,
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -773,7 +773,7 @@ ifs_compose_dialog (gint32 drawable_id)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   g_object_add_weak_pointer (G_OBJECT (dialog), (gpointer) &dialog);
 
@@ -823,7 +823,7 @@ ifs_compose_dialog (gint32 drawable_id)
   gtk_frame_set_shadow_type (GTK_FRAME (aspect_frame), GTK_SHADOW_IN);
   gtk_box_pack_start (GTK_BOX (hbox), aspect_frame, TRUE, TRUE, 0);
 
-  ifsD->preview = gimp_preview_area_new ();
+  ifsD->preview = picman_preview_area_new ();
   gtk_widget_set_size_request (ifsD->preview,
                                ifsD->preview_width,
                                ifsD->preview_height);
@@ -836,7 +836,7 @@ ifs_compose_dialog (gint32 drawable_id)
 
   /* The current transformation frame */
 
-  ifsD->current_frame = gimp_frame_new (NULL);
+  ifsD->current_frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), ifsD->current_frame,
                       FALSE, FALSE, 0);
 
@@ -1039,11 +1039,11 @@ design_op_menu_create (GtkWidget *window)
       NULL, "<control>Y", NULL,
       G_CALLBACK (redo) },
 
-    { "select-all", GIMP_STOCK_SELECTION_ALL,
+    { "select-all", PICMAN_STOCK_SELECTION_ALL,
       N_("Select _All"), "<control>A", NULL,
       G_CALLBACK (design_area_select_all_callback) },
 
-    { "center", GIMP_STOCK_CENTER,
+    { "center", PICMAN_STOCK_CENTER,
       N_("Re_center"), "<control>C", N_("Recompute Center"),
       G_CALLBACK (recompute_center_cb) },
 
@@ -1053,13 +1053,13 @@ design_op_menu_create (GtkWidget *window)
   };
   static GtkRadioActionEntry radio_actions[] =
   {
-    { "move", GIMP_STOCK_TOOL_MOVE,
+    { "move", PICMAN_STOCK_TOOL_MOVE,
       N_("Move"), "M", NULL, OP_TRANSLATE },
 
-    { "rotate", GIMP_STOCK_TOOL_ROTATE,
+    { "rotate", PICMAN_STOCK_TOOL_ROTATE,
       N_("Rotate"), "R", N_("Rotate / Scale"), OP_ROTATE },
 
-    { "stretch", GIMP_STOCK_TOOL_PERSPECTIVE,
+    { "stretch", PICMAN_STOCK_TOOL_PERSPECTIVE,
       N_("Stretch"), "S", NULL, OP_STRETCH }
   };
 
@@ -1158,9 +1158,9 @@ ifs_options_dialog (GtkWidget *parent)
       ifsOptD = g_new0 (IfsOptionsDialog, 1);
 
       ifsOptD->dialog =
-        gimp_dialog_new (_("IFS Fractal Render Options"), PLUG_IN_ROLE,
+        picman_dialog_new (_("IFS Fractal Render Options"), PLUG_IN_ROLE,
                          parent, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 
@@ -1252,10 +1252,10 @@ ifs_options_dialog (GtkWidget *parent)
 static void
 ifs_compose (gint32 drawable_id)
 {
-  GeglBuffer *buffer = gimp_drawable_get_shadow_buffer (drawable_id);
-  gint        width  = gimp_drawable_width (drawable_id);
-  gint        height = gimp_drawable_height (drawable_id);
-  gboolean    alpha  = gimp_drawable_has_alpha (drawable_id);
+  GeglBuffer *buffer = picman_drawable_get_shadow_buffer (drawable_id);
+  gint        width  = picman_drawable_width (drawable_id);
+  gint        height = picman_drawable_height (drawable_id);
+  gboolean    alpha  = picman_drawable_has_alpha (drawable_id);
   const Babl *format;
   gint        num_bands;
   gint        band_height;
@@ -1266,7 +1266,7 @@ ifs_compose (gint32 drawable_id)
   guchar     *mask = NULL;
   guchar     *nhits;
   guchar      rc, gc, bc;
-  GimpRGB     color;
+  PicmanRGB     color;
 
   if (alpha)
     format = babl_format ("R'G'B'A u8");
@@ -1284,15 +1284,15 @@ ifs_compose (gint32 drawable_id)
   data  = g_new (guchar, width * band_height * SQR (ifsvals.subdivide) * 3);
   nhits = g_new (guchar, width * band_height * SQR (ifsvals.subdivide));
 
-  gimp_context_get_background (&color);
-  gimp_rgb_get_uchar (&color, &rc, &gc, &bc);
+  picman_context_get_background (&color);
+  picman_rgb_get_uchar (&color, &rc, &gc, &bc);
 
   for (band_no = 0, band_y = 0; band_no < num_bands; band_no++)
     {
       GeglBufferIterator *iter;
       GeglRectangle      *roi;
 
-      gimp_progress_init_printf (_("Rendering IFS (%d/%d)"),
+      picman_progress_init_printf (_("Rendering IFS (%d/%d)"),
                                  band_no + 1, num_bands);
 
       /* render the band to a buffer */
@@ -1399,8 +1399,8 @@ ifs_compose (gint32 drawable_id)
 
   g_object_unref (buffer);
 
-  gimp_drawable_merge_shadow (drawable_id, TRUE);
-  gimp_drawable_update (drawable_id, 0, 0, width, height);
+  picman_drawable_merge_shadow (drawable_id, TRUE);
+  picman_drawable_update (drawable_id, 0, 0, width, height);
 }
 
 static void
@@ -1971,15 +1971,15 @@ val_changed_update (void)
 
 static ColorMap *
 color_map_create (const gchar *name,
-                  GimpRGB     *orig_color,
-                  GimpRGB     *data,
+                  PicmanRGB     *orig_color,
+                  PicmanRGB     *data,
                   gboolean     fixed_point)
 {
   GtkWidget *frame;
   GtkWidget *arrow;
   ColorMap  *color_map = g_new (ColorMap, 1);
 
-  gimp_rgb_set_alpha (data, 1.0);
+  picman_rgb_set_alpha (data, 1.0);
   color_map->color       = data;
   color_map->fixed_point = fixed_point;
   color_map->hbox        = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
@@ -1990,8 +1990,8 @@ color_map_create (const gchar *name,
   gtk_widget_show (frame);
 
   color_map->orig_preview =
-    gimp_color_area_new (fixed_point ? data : orig_color,
-                         GIMP_COLOR_AREA_FLAT, 0);
+    picman_color_area_new (fixed_point ? data : orig_color,
+                         PICMAN_COLOR_AREA_FLAT, 0);
   gtk_drag_dest_unset (color_map->orig_preview);
   gtk_widget_set_size_request (color_map->orig_preview,
                                COLOR_SAMPLE_SIZE, COLOR_SAMPLE_SIZE);
@@ -2002,17 +2002,17 @@ color_map_create (const gchar *name,
   gtk_box_pack_start (GTK_BOX (color_map->hbox), arrow, FALSE, FALSE, 0);
   gtk_widget_show (arrow);
 
-  color_map->button = gimp_color_button_new (name,
+  color_map->button = picman_color_button_new (name,
                                              COLOR_SAMPLE_SIZE,
                                              COLOR_SAMPLE_SIZE,
                                              data,
-                                             GIMP_COLOR_AREA_FLAT);
+                                             PICMAN_COLOR_AREA_FLAT);
   gtk_box_pack_start (GTK_BOX (color_map->hbox), color_map->button,
                       FALSE, FALSE, 0);
   gtk_widget_show (color_map->button);
 
   g_signal_connect (color_map->button, "color-changed",
-                    G_CALLBACK (gimp_color_button_get_color),
+                    G_CALLBACK (picman_color_button_get_color),
                     data);
 
   g_signal_connect (color_map->button, "color-changed",
@@ -2044,11 +2044,11 @@ color_map_color_changed_cb (GtkWidget *widget,
 static void
 color_map_update (ColorMap *color_map)
 {
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (color_map->button),
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (color_map->button),
                                color_map->color);
 
   if (color_map->fixed_point)
-    gimp_color_area_set_color (GIMP_COLOR_AREA (color_map->orig_preview),
+    picman_color_area_set_color (PICMAN_COLOR_AREA (color_map->orig_preview),
                                color_map->color);
 }
 
@@ -2103,7 +2103,7 @@ value_pair_create (gpointer      data,
   value_pair->type   = type;
   value_pair->timeout_id = 0;
 
-  value_pair->spin = gimp_spin_button_new ((GtkObject **) &value_pair->adjustment,
+  value_pair->spin = picman_spin_button_new ((GtkObject **) &value_pair->adjustment,
                                            1.0, lower, upper,
                                            (upper - lower) / 100,
                                            (upper - lower) / 10,
@@ -2293,9 +2293,9 @@ static void
 ifs_compose_set_defaults (void)
 {
   gint     i;
-  GimpRGB  color;
+  PicmanRGB  color;
 
-  gimp_context_get_foreground (&color);
+  picman_context_get_foreground (&color);
 
   ifsvals.aspect_ratio =
     (gdouble)ifsD->drawable_height / ifsD->drawable_width;
@@ -2386,7 +2386,7 @@ ifsfile_save_response (GtkWidget *dialog,
         {
           gchar *message =
             g_strdup_printf (_("Could not open '%s' for writing: %s"),
-                             gimp_filename_to_utf8 (filename),
+                             picman_filename_to_utf8 (filename),
                              g_strerror (errno));
 
           ifscompose_message_dialog (GTK_MESSAGE_ERROR, GTK_WINDOW (dialog),
@@ -2483,7 +2483,7 @@ ifsfile_load_response (GtkWidget *dialog,
         {
           gchar *message = g_strdup_printf (_("File '%s' doesn't seem to be "
                                               "an IFS Fractal file."),
-                                            gimp_filename_to_utf8 (filename));
+                                            picman_filename_to_utf8 (filename));
 
           ifscompose_message_dialog (GTK_MESSAGE_ERROR, GTK_WINDOW (dialog),
                                      _("Open failed"), message);
@@ -2590,7 +2590,7 @@ ifs_compose_new_callback (GtkAction *action,
                           gpointer   data)
 {
   GtkAllocation  allocation;
-  GimpRGB        color;
+  PicmanRGB        color;
   gint           i;
   AffElement    *elem;
 
@@ -2598,7 +2598,7 @@ ifs_compose_new_callback (GtkAction *action,
 
   undo_begin ();
 
-  gimp_context_get_foreground (&color);
+  picman_context_get_foreground (&color);
 
   elem = aff_element_new (0.5, 0.5 * allocation.height / allocation.width,
                           &color,
@@ -2705,9 +2705,9 @@ preview_idle_render (gpointer data)
 
   ifsD->preview_iterations -= iterations;
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (ifsD->preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (ifsD->preview),
                           0, 0, allocation.width, allocation.height,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           ifsD->preview_data,
                           allocation.width * 3);
 
@@ -2723,13 +2723,13 @@ ifs_compose_preview (void)
   gint     height = ifsD->preview_height;
   guchar   rc, gc, bc;
   guchar  *ptr;
-  GimpRGB  color;
+  PicmanRGB  color;
 
   if (!ifsD->preview_data)
     ifsD->preview_data = g_new (guchar, 3 * width * height);
 
-  gimp_context_get_background (&color);
-  gimp_rgb_get_uchar (&color, &rc, &gc, &bc);
+  picman_context_get_background (&color);
+  picman_rgb_get_uchar (&color, &rc, &gc, &bc);
 
   ptr = ifsD->preview_data;
   for (i = 0; i < width * height; i++)

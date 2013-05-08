@@ -1,0 +1,42 @@
+# recently closed docks
+
+(PicmanSessionInfo "Palettes - FG/BG - Images"
+    (position 585 115)
+    (size 200 575)
+    (open-on-exit)
+    (aux-info
+        (show-image-menu "false")
+        (follow-active-image "true"))
+    (picman-dock
+        (book
+            (current-page 0)
+            (dockable "picman-palette-list"
+                (tab-style preview)))
+        (book
+            (position 140)
+            (current-page 0)
+            (dockable "picman-color-editor"
+                (tab-style preview)
+                (aux-info
+                    (current-page "PicmanColorSelect"))))
+        (book
+            (position 415)
+            (current-page 0)
+            (dockable "picman-image-list"
+                (tab-style preview)))))
+(PicmanSessionInfo "Selection, Fonts"
+    (position 200 180)
+    (size 200 300)
+    (open-on-exit)
+    (aux-info
+        (show-image-menu "false")
+        (follow-active-image "true"))
+    (picman-dock
+        (book
+            (current-page 1)
+            (dockable "picman-selection-editor"
+                (tab-style icon))
+            (dockable "picman-font-list"
+                (tab-style preview)))))
+
+# end of recently closed docks

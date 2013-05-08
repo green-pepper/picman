@@ -1,13 +1,13 @@
-# gimp-tips's Portuguese Translation
-# Copyright © 2002, 2004, 2007 gimp
-# Distributed under the same licence as the gimp package
+# picman-tips's Portuguese Translation
+# Copyright © 2002, 2004, 2007 picman
+# Distributed under the same licence as the picman package
 # Duarte Loreto <happyguy_pt@hotmail.com>, 2002, 2004.
 # Bruno Queiroz <brunoqueiros@portugalmail.com>, 2007.
 # Pedro Barreira <almufadado@gmail.com>, 2011
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP 2.6\n"
+"Project-Id-Version: PICMAN 2.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-24 00:28+0000\n"
 "PO-Revision-Date: 2011-01-17 17:49+0100\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: Portugal\n"
 
-#: ../data/tips/gimp-tips.xml.in.h:1
+#: ../data/tips/picman-tips.xml.in.h:1
 msgid ""
 "<tt>Ctrl</tt>-click with the Bucket Fill tool to have it use the background "
 "color instead of the foreground color. Similarly, <tt>Ctrl</tt>-clicking "
@@ -33,7 +33,7 @@ msgstr ""
 "<tt>Ctrl</tt> com a ferramenta pipeta utiliza a cor de fundo em vez da cor "
 "de primeiro plano."
 
-#: ../data/tips/gimp-tips.xml.in.h:2
+#: ../data/tips/picman-tips.xml.in.h:2
 msgid ""
 "<tt>Ctrl</tt>-clicking on the layer mask's preview in the Layers dialog "
 "toggles the effect of the layer mask. <tt>Alt</tt>-clicking on the layer "
@@ -44,7 +44,7 @@ msgstr ""
 "camada da ante-visão da máscara no diálogo das Camadas alterna a "
 "visualização da máscara directamente."
 
-#: ../data/tips/gimp-tips.xml.in.h:3
+#: ../data/tips/picman-tips.xml.in.h:3
 msgid ""
 "<tt>Ctrl</tt>-drag with the Rotate tool will constrain the rotation to 15 "
 "degree angles."
@@ -52,7 +52,7 @@ msgstr ""
 "Arrastar-<tt>Ctrl</tt> com a ferramenta de Rotação irá restringir a rotação "
 "a ângulos de 15 graus."
 
-#: ../data/tips/gimp-tips.xml.in.h:4
+#: ../data/tips/picman-tips.xml.in.h:4
 msgid ""
 "<tt>Shift</tt>-click on the eye icon in the Layers dialog to hide all layers "
 "but that one. <tt>Shift</tt>-click again to show all layers."
@@ -61,7 +61,7 @@ msgstr ""
 "todas as camadas menos essa. Clique-<tt>Shift</tt> novamente para mostrar "
 "todas as camadas."
 
-#: ../data/tips/gimp-tips.xml.in.h:5
+#: ../data/tips/picman-tips.xml.in.h:5
 msgid ""
 "A floating selection must be anchored to a new layer or to the last active "
 "layer before doing other operations on the image. Click on the &quot;New "
@@ -73,13 +73,13 @@ msgstr ""
 "botões &quot;Nova Camada&quot; ou &quot;Ancorar Camada&quot; no diálogo "
 "Camadas, ou utilize os menus."
 
-#: ../data/tips/gimp-tips.xml.in.h:6
+#: ../data/tips/picman-tips.xml.in.h:6
 msgid ""
 "After you enabled &quot;Dynamic Keyboard Shortcuts&quot; in the Preferences "
 "dialog, you can reassign shortcut keys. Do so by bringing up the menu, "
 "selecting a menu item, and pressing the desired key combination. If &quot;"
 "Save Keyboard Shortcuts&quot; is enabled, the key bindings are saved when "
-"you exit GIMP. You should probably disable &quot;Dynamic Keyboard "
+"you exit PICMAN. You should probably disable &quot;Dynamic Keyboard "
 "Shortcuts&quot; afterwards, to prevent accidentally assigning/reassigning "
 "shortcuts."
 msgstr ""
@@ -87,11 +87,11 @@ msgstr ""
 "Preferências, pode redefinir teclas de atalho. Para o fazer, faça surgir o "
 "menu, seleccionando um item do menu, e premindo a nova combinação de teclas "
 "de atalho. Se &quot;Guardar Atalhos de Teclado&quot; estiver activo, os "
-"atalhos serão guardados quando sair do GIMP. Depois deverá desactivar &quot;"
+"atalhos serão guardados quando sair do PICMAN. Depois deverá desactivar &quot;"
 "Atalhos de Teclado Dinâmicos&quot; para evitar a redefinição de atalhos "
 "acidentalmente."
 
-#: ../data/tips/gimp-tips.xml.in.h:7
+#: ../data/tips/picman-tips.xml.in.h:7
 msgid ""
 "Click and drag on a ruler to place a guide on an image. All dragged "
 "selections will snap to the guides. You can remove guides by dragging them "
@@ -101,28 +101,28 @@ msgstr ""
 "selecções arrastadas serão atraidas para as guias. Pode remover as guias "
 "arrastando-as para fora da imagem com a ferramenta de Mover."
 
-#: ../data/tips/gimp-tips.xml.in.h:8
+#: ../data/tips/picman-tips.xml.in.h:8
 msgid ""
-"GIMP supports gzip compression on the fly. Just add <tt>.gz</tt> (or <tt>."
+"PICMAN supports gzip compression on the fly. Just add <tt>.gz</tt> (or <tt>."
 "bz2</tt>, if you have bzip2 installed) to the filename and your image will "
 "be saved compressed. Of course loading compressed images works too."
 msgstr ""
-"O GIMP suporta compressão gzip automaticamente. Basta adicionar <tt>.gz</tt> "
+"O PICMAN suporta compressão gzip automaticamente. Basta adicionar <tt>.gz</tt> "
 "(ou <tt>.bz2</tt>, se tiver o bzip2 instalado) ao nome do ficheiro e a sua "
 "imagem será guardada comprimida. Claro que também pode carregar as imagens "
 "comprimidas assim tão facilmente."
 
-#: ../data/tips/gimp-tips.xml.in.h:9
+#: ../data/tips/picman-tips.xml.in.h:9
 msgid ""
-"GIMP uses layers to let you organize your image. Think of them as a stack of "
+"PICMAN uses layers to let you organize your image. Think of them as a stack of "
 "slides or filters, such that looking through them you see a composite of "
 "their contents."
 msgstr ""
-"O GIMP utiliza camadas que lhe permitem organizar a sua imagem.  Pense nelas "
+"O PICMAN utiliza camadas que lhe permitem organizar a sua imagem.  Pense nelas "
 "como uma pilha de diapositivos ou filtros, de forma a que olhando através da "
 "pilha observa um composto dos seus conteúdos."
 
-#: ../data/tips/gimp-tips.xml.in.h:10
+#: ../data/tips/picman-tips.xml.in.h:10
 msgid ""
 "If a layer's name in the Layers dialog is displayed in <b>bold</b>, this "
 "layer doesn't have an alpha-channel. You can add an alpha-channel using "
@@ -132,7 +132,7 @@ msgstr ""
 "essa camada não tem um canal Transparência (alfa). Adicione transparência à "
 "imagem escolhendo Camada→Transparência→Adicionar Canal Transparência."
 
-#: ../data/tips/gimp-tips.xml.in.h:11
+#: ../data/tips/picman-tips.xml.in.h:11
 msgid ""
 "If some of your scanned photos do not look colorful enough, you can easily "
 "improve their tonal range with the &quot;Auto&quot; button in the Levels "
@@ -145,7 +145,7 @@ msgstr ""
 "esbatimentos de cor, poderá corrigi-los com a ferramenta de Curvas "
 "(Cores→Curvas)."
 
-#: ../data/tips/gimp-tips.xml.in.h:12
+#: ../data/tips/picman-tips.xml.in.h:12
 msgid ""
 "If you stroke a path (Edit→Stroke Path), the paint tools can be used with "
 "their current settings. You can use the Paintbrush in gradient mode or even "
@@ -154,7 +154,7 @@ msgstr ""
 "Se tiver aplicado um tracejado a um caminho (Editar→Traçar Caminho), as "
 "ferramentas de desenho podem ser utilizadas com as suas definições actuais. "
 
-#: ../data/tips/gimp-tips.xml.in.h:13
+#: ../data/tips/picman-tips.xml.in.h:13
 msgid ""
 "If your screen is too cluttered, you can press <tt>Tab</tt> in an image "
 "window to toggle the visibility of the toolbox and other dialogs."
@@ -162,17 +162,17 @@ msgstr ""
 "Se o seu ecrã estiver demasiado cheio, pode premir <tt>Tab</tt> numa janela "
 "de imagem para esconder ou mostrar a caixa de ferramentas e outros diálogos."
 
-#: ../data/tips/gimp-tips.xml.in.h:14
+#: ../data/tips/picman-tips.xml.in.h:14
 msgid ""
 "Most plug-ins work on the current layer of the current image. In some cases, "
 "you will have to merge all layers (Image→Flatten Image) if you want the plug-"
 "in to work on the whole image."
 msgstr ""
-"A maioria das Extensões do GIMP (plug-ins) funciona na camada actual da  "
+"A maioria das Extensões do PICMAN (plug-ins) funciona na camada actual da  "
 "imagem actual. Nalguns casos, terá de fundir todas as camadas numa só "
 "(Imagem→Aplanar Imagem) se pretender trabalhar a imagem como um todo."
 
-#: ../data/tips/gimp-tips.xml.in.h:15
+#: ../data/tips/picman-tips.xml.in.h:15
 msgid ""
 "Not all effects can be applied to all kinds of images. This is indicated by "
 "a grayed-out menu-entry. You may need to change the image mode to RGB "
@@ -185,7 +185,7 @@ msgstr ""
 "(Camadas→Transparência→Adicionar Canal Transparência) ou fundir todas as "
 "camadas numá só imagem (Imagem→Aplanar Imagem)."
 
-#: ../data/tips/gimp-tips.xml.in.h:16
+#: ../data/tips/picman-tips.xml.in.h:16
 msgid ""
 "Pressing and holding the <tt>Shift</tt> key before making a selection allows "
 "you to add to the current selection instead of replacing it. Using <tt>Ctrl</"
@@ -196,20 +196,20 @@ msgstr ""
 "da selecção actual use <tt>Ctrl</tt> em conjunto com a ferramenta de "
 "selecção."
 
-#: ../data/tips/gimp-tips.xml.in.h:17
+#: ../data/tips/picman-tips.xml.in.h:17
 msgid ""
-"When you save an image to work on it again later, try using XCF, GIMP's "
+"When you save an image to work on it again later, try using XCF, PICMAN's "
 "native file format (use the file extension <tt>.xcf</tt>). This preserves "
 "the layers and every aspect of your work-in-progress. Once a project is "
 "completed, you can save it as JPEG, PNG, GIF, ..."
 msgstr ""
 "Ao guardar uma imagem para mais tarde a trabalhar, experimente utilizar XCF, "
-"o formato de imagem nativo do GIMP (dê a extensão <tt>.xcf</tt> ao "
+"o formato de imagem nativo do PICMAN (dê a extensão <tt>.xcf</tt> ao "
 "ficheiro). Isto preserva as camadas e todos os aspectos do seu trabalho-em-"
 "curso. Assim que o seu projecto estiver acabado, pode guardá-lo como JPEG, "
 "PNG, GIF, ..."
 
-#: ../data/tips/gimp-tips.xml.in.h:18
+#: ../data/tips/picman-tips.xml.in.h:18
 msgid ""
 "You can adjust or move a selection by using <tt>Alt</tt>-drag. If this makes "
 "the window move, your window manager uses the <tt>Alt</tt> key already. Most "
@@ -222,7 +222,7 @@ msgstr ""
 "configurados para ignorarem a tecla <tt>Alt</tt> ou para usarem a tecla "
 "<tt>Super</tt> (ou \"tecla do Windows\") em vez dessa."
 
-#: ../data/tips/gimp-tips.xml.in.h:19
+#: ../data/tips/picman-tips.xml.in.h:19
 msgid ""
 "You can create and edit complex selections using the Path tool. The Paths "
 "dialog allows you to work on multiple paths and to convert them to "
@@ -232,7 +232,7 @@ msgstr ""
 "O diálogo de Caminhos permite-lhe trabalhar em múltiplos caminhos e converte-"
 "los em selecções."
 
-#: ../data/tips/gimp-tips.xml.in.h:20
+#: ../data/tips/picman-tips.xml.in.h:20
 msgid ""
 "You can drag a layer from the Layers dialog and drop it onto the toolbox. "
 "This will create a new image containing only that layer."
@@ -240,17 +240,17 @@ msgstr ""
 "Pode arrastar uma camada do diálogo Camadas e largá-la na caixa de "
 "ferramentas. Isto irá criar uma nova imagem contendo apenas aquela camada."
 
-#: ../data/tips/gimp-tips.xml.in.h:21
+#: ../data/tips/picman-tips.xml.in.h:21
 msgid ""
-"You can drag and drop many things in GIMP. For example, dragging a color "
+"You can drag and drop many things in PICMAN. For example, dragging a color "
 "from the toolbox or from a color palette and dropping it into an image will "
 "fill the current selection with that color."
 msgstr ""
-"Pode arrastar e largar muitas coisas no GIMP. Por exemplo, arrastar uma cor "
+"Pode arrastar e largar muitas coisas no PICMAN. Por exemplo, arrastar uma cor "
 "da caixa de ferramentas ou de uma paleta de cores e largá-la numa imagem irá "
 "encher a selecção actual com essa cor."
 
-#: ../data/tips/gimp-tips.xml.in.h:22
+#: ../data/tips/picman-tips.xml.in.h:22
 msgid ""
 "You can draw simple squares or circles using Edit→Stroke Selection. It "
 "strokes the edge of your current selection. More complex shapes can be drawn "
@@ -261,16 +261,16 @@ msgstr ""
 "selecção actual. Formas mais complexas podem ser desenhadas com a ferramenta "
 "de Caminhos ou com Filtros→Renderizar→Gfig."
 
-#: ../data/tips/gimp-tips.xml.in.h:23
+#: ../data/tips/picman-tips.xml.in.h:23
 msgid ""
-"You can get context-sensitive help for most of GIMP's features by pressing "
+"You can get context-sensitive help for most of PICMAN's features by pressing "
 "the F1 key at any time. This also works inside the menus."
 msgstr ""
 "Pode obter ajuda sensível ao contexto para a maioria das funcionalidades do "
-"GIMP pressionando F1 em qualquer altura a tecla. Isto também funciona nos "
+"PICMAN pressionando F1 em qualquer altura a tecla. Isto também funciona nos "
 "menus."
 
-#: ../data/tips/gimp-tips.xml.in.h:24
+#: ../data/tips/picman-tips.xml.in.h:24
 msgid ""
 "You can perform many layer operations by right-clicking on the text label of "
 "a layer in the Layers dialog."
@@ -278,7 +278,7 @@ msgstr ""
 "Pode realizar muitas operações de camadas clicando com o botão direito na "
 "etiqueta de texto de uma camada no diálogo Camadas."
 
-#: ../data/tips/gimp-tips.xml.in.h:25
+#: ../data/tips/picman-tips.xml.in.h:25
 msgid ""
 "You can save a selection to a channel (Select→Save to Channel) and then "
 "modify this channel with any paint tools. Using the buttons in the Channels "
@@ -290,7 +290,7 @@ msgstr ""
 "os botões no diálogo Canais, pode alternar a visibilidade deste novo canal "
 "ou convertê-lo numa selecção."
 
-#: ../data/tips/gimp-tips.xml.in.h:26
+#: ../data/tips/picman-tips.xml.in.h:26
 msgid ""
 "You can use <tt>Ctrl</tt>-<tt>Tab</tt> to cycle through all layers in an "
 "image (if your window manager doesn't trap those keys...)."
@@ -300,7 +300,7 @@ msgstr ""
 "combinação de teclas, pode sempre criar os seus próprios atalhos através das "
 "configurações em Editar→Atalhos de Teclado)."
 
-#: ../data/tips/gimp-tips.xml.in.h:27
+#: ../data/tips/picman-tips.xml.in.h:27
 msgid ""
 "You can use the middle mouse button to pan around the image (or optionally "
 "hold <tt>Spacebar</tt> while you move the mouse)."
@@ -308,7 +308,7 @@ msgstr ""
 "Pode utilizar o botão do meio do rato para se deslocar pela imagem (ou "
 "também pode segurar na <tt>Barra de Espaços</tt> enquanto move o rato)."
 
-#: ../data/tips/gimp-tips.xml.in.h:28
+#: ../data/tips/picman-tips.xml.in.h:28
 msgid ""
 "You can use the paint tools to change the selection. Click on the &quot;"
 "Quick Mask&quot; button at the bottom left of an image window. Change your "
@@ -324,10 +324,10 @@ msgstr ""
 #~ msgstr "<big>Bem Vindo Ao Programa de Manipulação de Imagem do GNU!</big>"
 
 #~ msgid ""
-#~ "GIMP allows you to undo most changes to the image, so feel free to "
+#~ "PICMAN allows you to undo most changes to the image, so feel free to "
 #~ "experiment."
 #~ msgstr ""
-#~ "O GIMP permite que desfaça a maioria das alterações à sua imagem, por "
+#~ "O PICMAN permite que desfaça a maioria das alterações à sua imagem, por "
 #~ "isso esteja à vontade para experimentar."
 
 #~ msgid ""

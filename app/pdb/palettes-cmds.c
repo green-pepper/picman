@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,143 +26,143 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer-filter.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimppalette.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontainer-filter.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanpalette.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-palettes_refresh_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_refresh_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
-  gimp_data_factory_data_refresh (gimp->palette_factory, context);
+  picman_data_factory_data_refresh (picman->palette_factory, context);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-palettes_get_list_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_get_list_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *filter;
   gint32 num_palettes = 0;
   gchar **palette_list = NULL;
 
-  filter = g_value_get_string (gimp_value_array_index (args, 0));
+  filter = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      palette_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->palette_factory),
+      palette_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->palette_factory),
                                                              filter, &num_palettes);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_palettes);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), palette_list, num_palettes);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_palettes);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), palette_list, num_palettes);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-palettes_get_palette_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_get_palette_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
   gint32 num_colors = 0;
 
-  GimpPalette *palette = gimp_context_get_palette (context);
+  PicmanPalette *palette = picman_context_get_palette (context);
 
   if (palette)
     {
-      name       = g_strdup (gimp_object_get_name (palette));
-      num_colors = gimp_palette_get_n_colors (palette);
+      name       = g_strdup (picman_object_get_name (palette));
+      num_colors = picman_palette_get_n_colors (palette);
     }
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_take_string (gimp_value_array_index (return_vals, 1), name);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), num_colors);
+      g_value_take_string (picman_value_array_index (return_vals, 1), name);
+      g_value_set_int (picman_value_array_index (return_vals, 2), num_colors);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-palettes_get_palette_entry_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_get_palette_entry_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 entry_num;
   gchar *actual_name = NULL;
   gint32 num_colors = 0;
-  GimpRGB color = { 0.0, 0.0, 0.0, 1.0 };
+  PicmanRGB color = { 0.0, 0.0, 0.0, 1.0 };
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  entry_num = g_value_get_int (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  entry_num = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpPalette *palette;
+      PicmanPalette *palette;
 
       if (name && strlen (name))
-        palette = gimp_pdb_get_palette (gimp, name, FALSE, error);
+        palette = picman_pdb_get_palette (picman, name, FALSE, error);
       else
-        palette = gimp_context_get_palette (context);
+        palette = picman_context_get_palette (context);
 
       if (palette)
         {
-          GimpPaletteEntry *entry = gimp_palette_get_entry (palette, entry_num);
+          PicmanPaletteEntry *entry = picman_palette_get_entry (palette, entry_num);
 
           if (entry)
             {
-              actual_name = g_strdup (gimp_object_get_name (palette));
-              num_colors  = gimp_palette_get_n_colors (palette);
+              actual_name = g_strdup (picman_object_get_name (palette));
+              num_colors  = picman_palette_get_n_colors (palette);
               color       = entry->color;
             }
           else
@@ -172,153 +172,153 @@ palettes_get_palette_entry_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_take_string (gimp_value_array_index (return_vals, 1), actual_name);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), num_colors);
-      gimp_value_set_rgb (gimp_value_array_index (return_vals, 3), &color);
+      g_value_take_string (picman_value_array_index (return_vals, 1), actual_name);
+      g_value_set_int (picman_value_array_index (return_vals, 2), num_colors);
+      picman_value_set_rgb (picman_value_array_index (return_vals, 3), &color);
     }
 
   return return_vals;
 }
 
 void
-register_palettes_procs (GimpPDB *pdb)
+register_palettes_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-palettes-refresh
+   * picman-palettes-refresh
    */
-  procedure = gimp_procedure_new (palettes_refresh_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-refresh");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-refresh",
+  procedure = picman_procedure_new (palettes_refresh_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-refresh");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-refresh",
                                      "Refreshes current palettes. This function always succeeds.",
                                      "This procedure retrieves all palettes currently in the user's palette path and updates the palette dialogs accordingly.",
-                                     "Adrian Likins <adrian@gimp.org>",
+                                     "Adrian Likins <adrian@picman.org>",
                                      "Adrian Likins",
                                      "1998",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-palettes-get-list
+   * picman-palettes-get-list
    */
-  procedure = gimp_procedure_new (palettes_get_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-get-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-get-list",
+  procedure = picman_procedure_new (palettes_get_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-get-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-get-list",
                                      "Retrieves a list of all of the available palettes",
-                                     "This procedure returns a complete listing of available palettes. Each name returned can be used as input to the command 'gimp-context-set-palette'.",
-                                     "Nathan Summers <rock@gimp.org>",
+                                     "This procedure returns a complete listing of available palettes. Each name returned can be used as input to the command 'picman-context-set-palette'.",
+                                     "Nathan Summers <rock@picman.org>",
                                      "Nathan Summers",
                                      "2001",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filter",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filter",
                                                        "filter",
                                                        "An optional regular expression used to filter the list",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-palettes",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-palettes",
                                                           "num palettes",
                                                           "The number of palettes in the list",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("palette-list",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("palette-list",
                                                                  "palette list",
                                                                  "The list of palette names",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-palettes-get-palette
+   * picman-palettes-get-palette
    */
-  procedure = gimp_procedure_new (palettes_get_palette_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-get-palette");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-get-palette",
-                                     "Deprecated: Use 'gimp-context-get-palette' instead.",
-                                     "Deprecated: Use 'gimp-context-get-palette' instead.",
+  procedure = picman_procedure_new (palettes_get_palette_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-get-palette");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-get-palette",
+                                     "Deprecated: Use 'picman-context-get-palette' instead.",
+                                     "Deprecated: Use 'picman-context-get-palette' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-context-get-palette");
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+                                     "picman-context-get-palette");
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The palette name",
                                                            FALSE, TRUE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-colors",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-colors",
                                                           "num colors",
                                                           "The palette num_colors",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-palettes-get-palette-entry
+   * picman-palettes-get-palette-entry
    */
-  procedure = gimp_procedure_new (palettes_get_palette_entry_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-get-palette-entry");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-get-palette-entry",
-                                     "Deprecated: Use 'gimp-palette-entry-get-color' instead.",
-                                     "Deprecated: Use 'gimp-palette-entry-get-color' instead.",
+  procedure = picman_procedure_new (palettes_get_palette_entry_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-get-palette-entry");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-get-palette-entry",
+                                     "Deprecated: Use 'picman-palette-entry-get-color' instead.",
+                                     "Deprecated: Use 'picman-palette-entry-get-color' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-palette-entry-get-color");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                     "picman-palette-entry-get-color");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The palette name (\"\" means currently active palette)",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("entry-num",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("entry-num",
                                                       "entry num",
                                                       "The entry to retrieve",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("actual-name",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("actual-name",
                                                            "actual name",
                                                            "The palette name",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-colors",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-colors",
                                                           "num colors",
                                                           "The palette num_colors",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_rgb ("color",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_rgb ("color",
                                                         "color",
                                                         "The color requested",
                                                         FALSE,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

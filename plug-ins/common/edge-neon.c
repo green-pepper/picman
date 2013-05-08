@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Neon filter for GIMP for BIPS
+/* Neon filter for PICMAN for BIPS
  *  -Spencer Kimball
  *
  * This filter works in a manner similar to the "edge"
@@ -30,15 +30,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-neon"
 #define PLUG_IN_BINARY "edge-neon"
-#define PLUG_IN_ROLE   "gimp-edge-neon"
+#define PLUG_IN_ROLE   "picman-edge-neon"
 
 
 typedef struct
@@ -55,17 +55,17 @@ typedef struct
 static void      query               (void);
 static void      run                 (const gchar      *name,
                                       gint              nparams,
-                                      const GimpParam  *param,
+                                      const PicmanParam  *param,
                                       gint             *nreturn_vals,
-                                      GimpParam       **return_vals);
+                                      PicmanParam       **return_vals);
 
-static void      neon                (GimpDrawable     *drawable,
+static void      neon                (PicmanDrawable     *drawable,
                                       gdouble           radius,
                                       gdouble           amount,
-                                      GimpPreview      *preview);
+                                      PicmanPreview      *preview);
 
-static gboolean  neon_dialog         (GimpDrawable     *drawable);
-static void      neon_preview_update (GimpPreview      *preview);
+static gboolean  neon_dialog         (PicmanDrawable     *drawable);
+static void      neon_preview_update (PicmanPreview      *preview);
 
 /*
  * Gaussian operator helper functions
@@ -91,7 +91,7 @@ static void      combine_to_gradient (guchar           *dest,
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -113,13 +113,13 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"                    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                          },
-    { GIMP_PDB_FLOAT,    "radius",   "Radius of neon effect (in pixels)"       },
-    { GIMP_PDB_FLOAT,    "amount",   "Effect enhancement variable (0.0 - 1.0)" },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"                    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                          },
+    { PICMAN_PDB_FLOAT,    "radius",   "Radius of neon effect (in pixels)"       },
+    { PICMAN_PDB_FLOAT,    "amount",   "Effect enhancement variable (0.0 - 1.0)" },
   };
 
   gchar *help_string =
@@ -130,7 +130,7 @@ query (void)
     "the processing time constant between large and small "
     "standard deviations.";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate the glowing boundary of a neon light"),
                           help_string,
                           "Spencer Kimball",
@@ -138,66 +138,66 @@ query (void)
                           "2002",
                           N_("_Neon..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Edge-Detect");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Edge-Detect");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size so that the gaussian blur works well  */
-  gimp_tile_cache_ntiles (2 * (MAX (drawable->ntile_rows, drawable->ntile_cols)));
+  picman_tile_cache_ntiles (2 * (MAX (drawable->ntile_rows, drawable->ntile_cols)));
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &evals);
+      picman_get_data (PLUG_IN_PROC, &evals);
 
       /*  First acquire information with a dialog  */
       if (! neon_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           evals.radius = param[3].data.d_float;
           evals.amount = param[4].data.d_float;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &evals);
+      picman_get_data (PLUG_IN_PROC, &evals);
       break;
 
     default:
@@ -205,32 +205,32 @@ run (const gchar      *name,
     }
 
   /* make sure the drawable exist and is not indexed */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Neon"));
+      picman_progress_init (_("Neon"));
 
       /*  run the neon effect  */
       neon (drawable, evals.radius, evals.amount, NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &evals, sizeof (NeonVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &evals, sizeof (NeonVals));
     }
   else
     {
-      status        = GIMP_PDB_EXECUTION_ERROR;
+      status        = PICMAN_PDB_EXECUTION_ERROR;
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = _("Cannot operate on indexed color images.");
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /**********************************************/
@@ -238,12 +238,12 @@ run (const gchar      *name,
 /**********************************************/
 
 static void
-neon (GimpDrawable *drawable,
+neon (PicmanDrawable *drawable,
       gdouble       radius,
       gdouble       amount,
-      GimpPreview  *preview)
+      PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gint          width, height;
   gint          bytes, bpp;
   gboolean      has_alpha;
@@ -266,14 +266,14 @@ neon (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       width  = (x2 - x1);
       height = (y2 - y1);
     }
@@ -283,7 +283,7 @@ neon (GimpDrawable *drawable,
 
   bytes     = drawable->bpp;
   bpp       = bytes;
-  has_alpha = gimp_drawable_has_alpha(drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha(drawable->drawable_id);
   if (has_alpha)
     bpp--;
 
@@ -294,7 +294,7 @@ neon (GimpDrawable *drawable,
   src2 = g_new (guchar, MAX (width, height) * bytes);
   dest = g_new (guchar, MAX (width, height) * bytes);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
 
   if (preview)
@@ -304,7 +304,7 @@ neon (GimpDrawable *drawable,
     }
   else
     {
-      gimp_pixel_rgn_init (&dest_rgn, drawable,
+      picman_pixel_rgn_init (&dest_rgn, drawable,
                            0, 0, drawable->width, drawable->height, TRUE, TRUE);
 
       progress = 0;
@@ -323,7 +323,7 @@ neon (GimpDrawable *drawable,
       memset (val_p, 0, height * bytes * sizeof (gdouble));
       memset (val_m, 0, height * bytes * sizeof (gdouble));
 
-      gimp_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, (y2 - y1));
+      picman_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, (y2 - y1));
 
       sp_p = src;
       sp_m = src + (height - 1) * bytes;
@@ -384,17 +384,17 @@ neon (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, (y2 - y1));
+          picman_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, (y2 - y1));
 
           progress += height * radius;
 
           if ((col % 20) == 0)
-            gimp_progress_update ((double) progress / (double) max_progress);
+            picman_progress_update ((double) progress / (double) max_progress);
         }
     }
 
   /*  Now the horizontal pass  */
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
 
   for (row = 0; row < height; row++)
@@ -402,7 +402,7 @@ neon (GimpDrawable *drawable,
       memset (val_p, 0, width * bytes * sizeof (gdouble));
       memset (val_m, 0, width * bytes * sizeof (gdouble));
 
-      gimp_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, (x2 - x1));
+      picman_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, (x2 - x1));
       if (preview)
         {
           memcpy (src2,
@@ -411,7 +411,7 @@ neon (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_get_row (&dest_rgn, src2, x1, row + y1, (x2 - x1));
+          picman_pixel_rgn_get_row (&dest_rgn, src2, x1, row + y1, (x2 - x1));
         }
 
       sp_p = src;
@@ -474,32 +474,32 @@ neon (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, (x2 - x1));
+          picman_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, (x2 - x1));
 
           progress += width * radius;
           if ((row % 20) == 0)
-            gimp_progress_update ((double) progress / (double) max_progress);
+            picman_progress_update ((double) progress / (double) max_progress);
         }
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer2, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer2, width * bytes);
       g_free (preview_buffer1);
       g_free (preview_buffer2);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  now, merge horizontal and vertical into a magnitude  */
-      gimp_pixel_rgn_init (&src_rgn, drawable,
+      picman_pixel_rgn_init (&src_rgn, drawable,
                            0, 0, drawable->width, drawable->height,
                            FALSE, TRUE);
 
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             x1, y1, (x2 - x1), (y2 - y1));
     }
   /*  free up buffers  */
@@ -683,7 +683,7 @@ find_constants (gdouble n_p[],
 /*******************************************************/
 
 static gboolean
-neon_dialog (GimpDrawable *drawable)
+neon_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -692,11 +692,11 @@ neon_dialog (GimpDrawable *drawable)
   GtkObject *scale_data;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Neon Detection"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Neon Detection"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -708,7 +708,7 @@ neon_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -716,7 +716,7 @@ neon_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -731,7 +731,7 @@ neon_dialog (GimpDrawable *drawable)
   gtk_widget_show (table);
 
   /*  Label, scale, entry for evals.radius  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Radius:"), 100, 8,
                                      evals.radius, 0.0, 64.0, 1, 10, 2,
                                      FALSE, 0.0,
@@ -739,29 +739,29 @@ neon_dialog (GimpDrawable *drawable)
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &evals.radius);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Label, scale, entry for evals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("_Amount:"), 100, 8,
                                      evals.amount, 0.0, 1.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &evals.amount);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -769,9 +769,9 @@ neon_dialog (GimpDrawable *drawable)
 }
 
 static void
-neon_preview_update (GimpPreview *preview)
+neon_preview_update (PicmanPreview *preview)
 {
-  neon (GIMP_DRAWABLE_PREVIEW (preview)->drawable,
+  neon (PICMAN_DRAWABLE_PREVIEW (preview)->drawable,
         evals.radius,
         evals.amount,
         preview);

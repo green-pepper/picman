@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -40,69 +40,69 @@
 #define W_OK 2
 #endif
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core/core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdocumentlist.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagefile.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmandocumentlist.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagefile.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginprocedure.h"
 
 #include "file-save.h"
 #include "file-utils.h"
-#include "gimp-file.h"
+#include "picman-file.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
-GimpPDBStatusType
-file_save (Gimp                *gimp,
-           GimpImage           *image,
-           GimpProgress        *progress,
+PicmanPDBStatusType
+file_save (Picman                *picman,
+           PicmanImage           *image,
+           PicmanProgress        *progress,
            const gchar         *uri,
-           GimpPlugInProcedure *file_proc,
-           GimpRunMode          run_mode,
+           PicmanPlugInProcedure *file_proc,
+           PicmanRunMode          run_mode,
            gboolean             change_saved_state,
            gboolean             export_backward,
            gboolean             export_forward,
            GError             **error)
 {
-  GimpDrawable      *drawable;
-  GimpValueArray    *return_vals;
-  GimpPDBStatusType  status;
+  PicmanDrawable      *drawable;
+  PicmanValueArray    *return_vals;
+  PicmanPDBStatusType  status;
   gchar             *filename;
   gint32             image_ID;
   gint32             drawable_ID;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress),
-                        GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (uri != NULL, GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_PROCEDURE (file_proc),
-                        GIMP_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress),
+                        PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (uri != NULL, PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_PROCEDURE (file_proc),
+                        PICMAN_PDB_CALLING_ERROR);
   g_return_val_if_fail ((export_backward && export_forward) == FALSE,
-                        GIMP_PDB_CALLING_ERROR);
+                        PICMAN_PDB_CALLING_ERROR);
   g_return_val_if_fail (error == NULL || *error == NULL,
-                        GIMP_PDB_CALLING_ERROR);
+                        PICMAN_PDB_CALLING_ERROR);
 
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
-    return GIMP_PDB_EXECUTION_ERROR;
+    return PICMAN_PDB_EXECUTION_ERROR;
 
   filename = file_utils_filename_from_uri (uri);
 
@@ -115,7 +115,7 @@ file_save (Gimp                *gimp,
             {
               g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
 				   _("Not a regular file"));
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
               goto out;
             }
 
@@ -123,7 +123,7 @@ file_save (Gimp                *gimp,
             {
               g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_ACCES,
                                    g_strerror (errno));
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
               goto out;
             }
         }
@@ -142,42 +142,42 @@ file_save (Gimp                *gimp,
   /* ref the image, so it can't get deleted during save */
   g_object_ref (image);
 
-  image_ID    = gimp_image_get_ID (image);
-  drawable_ID = gimp_item_get_ID (GIMP_ITEM (drawable));
+  image_ID    = picman_image_get_ID (image);
+  drawable_ID = picman_item_get_ID (PICMAN_ITEM (drawable));
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name (image->gimp->pdb,
-                                        gimp_get_user_context (gimp),
+    picman_pdb_execute_procedure_by_name (image->picman->pdb,
+                                        picman_get_user_context (picman),
                                         progress, error,
-                                        gimp_object_get_name (file_proc),
-                                        GIMP_TYPE_INT32,       run_mode,
-                                        GIMP_TYPE_IMAGE_ID,    image_ID,
-                                        GIMP_TYPE_DRAWABLE_ID, drawable_ID,
+                                        picman_object_get_name (file_proc),
+                                        PICMAN_TYPE_INT32,       run_mode,
+                                        PICMAN_TYPE_IMAGE_ID,    image_ID,
+                                        PICMAN_TYPE_DRAWABLE_ID, drawable_ID,
                                         G_TYPE_STRING,         filename,
                                         G_TYPE_STRING,         uri,
                                         G_TYPE_NONE);
 
-  status = g_value_get_enum (gimp_value_array_index (return_vals, 0));
+  status = g_value_get_enum (picman_value_array_index (return_vals, 0));
 
-  gimp_value_array_unref (return_vals);
+  picman_value_array_unref (return_vals);
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      GimpDocumentList *documents;
-      GimpImagefile    *imagefile;
+      PicmanDocumentList *documents;
+      PicmanImagefile    *imagefile;
 
       if (change_saved_state)
         {
-          gimp_image_set_uri (image, uri);
-          gimp_image_set_save_proc (image, file_proc);
+          picman_image_set_uri (image, uri);
+          picman_image_set_save_proc (image, file_proc);
 
           /* Forget the import source when we save. We interpret a
            * save as that the user is not interested in being able
            * to quickly export back to the original any longer
            */
-          gimp_image_set_imported_uri (image, NULL);
+          picman_image_set_imported_uri (image, NULL);
 
-          gimp_image_clean_all (image);
+          picman_image_clean_all (image);
         }
       else if (export_backward)
         {
@@ -185,53 +185,53 @@ file_save (Gimp                *gimp,
            * change nothing about export/import flags, only set
            * the export state to clean
            */
-          gimp_image_export_clean_all (image);
+          picman_image_export_clean_all (image);
 
-          gimp_object_name_changed (GIMP_OBJECT (image));
+          picman_object_name_changed (PICMAN_OBJECT (image));
         }
       else if (export_forward)
         {
           /* Remember the last entered Export URI for the image. We
            * only need to do this explicitly when exporting. It
-           * happens implicitly when saving since the GimpObject name
-           * of a GimpImage is the last-save URI
+           * happens implicitly when saving since the PicmanObject name
+           * of a PicmanImage is the last-save URI
            */
-          gimp_image_set_exported_uri (image, uri);
+          picman_image_set_exported_uri (image, uri);
 
           /* An image can not be considered both exported and imported
            * at the same time, so stop consider it as imported now
            * that we consider it exported.
            */
-          gimp_image_set_imported_uri (image, NULL);
+          picman_image_set_imported_uri (image, NULL);
 
-          gimp_image_export_clean_all (image);
+          picman_image_export_clean_all (image);
         }
 
       if (export_backward || export_forward)
-        gimp_image_exported (image, uri);
+        picman_image_exported (image, uri);
       else
-        gimp_image_saved (image, uri);
+        picman_image_saved (image, uri);
 
-      documents = GIMP_DOCUMENT_LIST (image->gimp->documents);
-      imagefile = gimp_document_list_add_uri (documents,
+      documents = PICMAN_DOCUMENT_LIST (image->picman->documents);
+      imagefile = picman_document_list_add_uri (documents,
                                               uri,
                                               file_proc->mime_type);
 
       /* only save a thumbnail if we are saving as XCF, see bug #25272 */
-      if (GIMP_PROCEDURE (file_proc)->proc_type == GIMP_INTERNAL)
-        gimp_imagefile_save_thumbnail (imagefile, file_proc->mime_type, image);
+      if (PICMAN_PROCEDURE (file_proc)->proc_type == PICMAN_INTERNAL)
+        picman_imagefile_save_thumbnail (imagefile, file_proc->mime_type, image);
     }
-  else if (status != GIMP_PDB_CANCEL)
+  else if (status != PICMAN_PDB_CANCEL)
     {
       if (error && *error == NULL)
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("%s plug-in could not save image"),
-                       gimp_plug_in_procedure_get_label (file_proc));
+                       picman_plug_in_procedure_get_label (file_proc));
         }
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 
   g_object_unref (image);
 

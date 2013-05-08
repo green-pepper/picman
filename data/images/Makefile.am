@@ -1,16 +1,16 @@
-## Makefile.am for gimp/data/images
+## Makefile.am for picman/data/images
 
-imagedatadir = $(gimpdatadir)/images
+imagedatadir = $(picmandatadir)/images
 
-if GIMP_UNSTABLE
-GIMP_LOGO = gimp-devel-logo.png
+if PICMAN_UNSTABLE
+PICMAN_LOGO = picman-devel-logo.png
 else
-GIMP_LOGO = gimp-logo.png
+PICMAN_LOGO = picman-logo.png
 endif
 
 imagedata_DATA = \
-	$(GIMP_LOGO)	\
-	gimp-splash.png	\
+	$(PICMAN_LOGO)	\
+	picman-splash.png	\
 	wilber.png
 
 EXTRA_DIST = $(imagedata_DATA)

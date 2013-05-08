@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/Splatters
+## Makefile.am for picman/data/brushes/Splatters
 
-brushsplattersdatadir = $(gimpdatadir)/brushes/Splatters
+brushsplattersdatadir = $(picmandatadir)/brushes/Splatters
 
 brushsplattersdata_DATA = \
 	Sparks-Hose.gih	\

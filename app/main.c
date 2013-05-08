@@ -1,4 +1,4 @@
-/* Picman - 4chan's /g/ - Technology board fork of Gimp (Gnu Image Manipulation Program)
+/* Picman - 4chan's /g/ - Technology board fork of Picman (Gnu Image Manipulation Program)
 * Copyright (C) 2013 Anonymous (http://www.boards.4chan.org/g/)
 *
 * Originally by:
@@ -40,22 +40,22 @@
 #include <io.h> /* get_osfhandle */
 #endif
 
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 #include <gdk/gdk.h>
 #endif
 
 #include <babl/babl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb/pdb-types.h"
 
-#include "config/gimpconfig-dump.h"
+#include "config/picmanconfig-dump.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimpprocedure.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanprocedure.h"
 #include "pdb/internal-procs.h"
 
 #include "about.h"
@@ -75,46 +75,46 @@
 #include <conio.h>
 #endif
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
-static gboolean gimp_option_fatal_warnings (const gchar *option_name,
+static gboolean picman_option_fatal_warnings (const gchar *option_name,
                                                const gchar *value,
                                                gpointer data,
                                                GError **error);
-static gboolean gimp_option_stack_trace_mode (const gchar *option_name,
+static gboolean picman_option_stack_trace_mode (const gchar *option_name,
                                                const gchar *value,
                                                gpointer data,
                                                GError **error);
-static gboolean gimp_option_pdb_compat_mode (const gchar *option_name,
+static gboolean picman_option_pdb_compat_mode (const gchar *option_name,
                                                const gchar *value,
                                                gpointer data,
                                                GError **error);
-static gboolean gimp_option_dump_gimprc (const gchar *option_name,
+static gboolean picman_option_dump_picmanrc (const gchar *option_name,
                                                const gchar *value,
                                                gpointer data,
                                                GError **error);
-static gboolean gimp_option_dump_pdb_procedures_deprecated
+static gboolean picman_option_dump_pdb_procedures_deprecated
                                               (const gchar *option_name,
                                                const gchar *value,
                                                gpointer data,
                                                GError **error);
 
-static void gimp_show_version_and_exit (void) G_GNUC_NORETURN;
-static void gimp_show_license_and_exit (void) G_GNUC_NORETURN;
+static void picman_show_version_and_exit (void) G_GNUC_NORETURN;
+static void picman_show_license_and_exit (void) G_GNUC_NORETURN;
 
-static void gimp_init_i18n (void);
-static void gimp_init_malloc (void);
+static void picman_init_i18n (void);
+static void picman_init_malloc (void);
 
-#if defined (G_OS_WIN32) && !defined (GIMP_CONSOLE_COMPILATION)
-static void gimp_open_console_window (void);
+#if defined (G_OS_WIN32) && !defined (PICMAN_CONSOLE_COMPILATION)
+static void picman_open_console_window (void);
 #else
-#define gimp_open_console_window() /* as nothing */
+#define picman_open_console_window() /* as nothing */
 #endif
 
-static const gchar *system_gimprc = NULL;
-static const gchar *user_gimprc = NULL;
+static const gchar *system_picmanrc = NULL;
+static const gchar *user_picmanrc = NULL;
 static const gchar *session_name = NULL;
 static const gchar *batch_interpreter = NULL;
 static const gchar **batch_commands = NULL;
@@ -135,24 +135,24 @@ static gboolean use_cpu_accel = TRUE;
 static gboolean console_messages = FALSE;
 static gboolean use_debug_handler = FALSE;
 
-#ifdef GIMP_UNSTABLE
-static GimpStackTraceMode stack_trace_mode = GIMP_STACK_TRACE_QUERY;
-static GimpPDBCompatMode pdb_compat_mode = GIMP_PDB_COMPAT_WARN;
+#ifdef PICMAN_UNSTABLE
+static PicmanStackTraceMode stack_trace_mode = PICMAN_STACK_TRACE_QUERY;
+static PicmanPDBCompatMode pdb_compat_mode = PICMAN_PDB_COMPAT_WARN;
 #else
-static GimpStackTraceMode stack_trace_mode = GIMP_STACK_TRACE_NEVER;
-static GimpPDBCompatMode pdb_compat_mode = GIMP_PDB_COMPAT_ON;
+static PicmanStackTraceMode stack_trace_mode = PICMAN_STACK_TRACE_NEVER;
+static PicmanPDBCompatMode pdb_compat_mode = PICMAN_PDB_COMPAT_ON;
 #endif
 
 
 static const GOptionEntry main_entries[] =
 {
   { "version", 'v', G_OPTION_FLAG_NO_ARG,
-    G_OPTION_ARG_CALLBACK, (GOptionArgFunc) gimp_show_version_and_exit,
+    G_OPTION_ARG_CALLBACK, (GOptionArgFunc) picman_show_version_and_exit,
     N_("Show version information and exit"), NULL
   },
   {
     "license", 0, G_OPTION_FLAG_NO_ARG,
-    G_OPTION_ARG_CALLBACK, (GOptionArgFunc) gimp_show_license_and_exit,
+    G_OPTION_ARG_CALLBACK, (GOptionArgFunc) picman_show_license_and_exit,
     N_("Show license information and exit"), NULL
   },
   {
@@ -206,14 +206,14 @@ static const GOptionEntry main_entries[] =
     N_("Use an alternate sessionrc file"), "<name>"
   },
   {
-    "gimprc", 'g', 0,
-    G_OPTION_ARG_FILENAME, &user_gimprc,
-    N_("Use an alternate user gimprc file"), "<filename>"
+    "picmanrc", 'g', 0,
+    G_OPTION_ARG_FILENAME, &user_picmanrc,
+    N_("Use an alternate user picmanrc file"), "<filename>"
   },
   {
-    "system-gimprc", 0, 0,
-    G_OPTION_ARG_FILENAME, &system_gimprc,
-    N_("Use an alternate system gimprc file"), "<filename>"
+    "system-picmanrc", 0, 0,
+    G_OPTION_ARG_FILENAME, &system_picmanrc,
+    N_("Use an alternate system picmanrc file"), "<filename>"
   },
   {
     "batch", 'b', 0,
@@ -232,13 +232,13 @@ static const GOptionEntry main_entries[] =
   },
   {
     "pdb-compat-mode", 0, 0,
-    G_OPTION_ARG_CALLBACK, gimp_option_pdb_compat_mode,
+    G_OPTION_ARG_CALLBACK, picman_option_pdb_compat_mode,
     /* don't translate the mode names (off|on|warn) */
     N_("PDB compatibility mode (off|on|warn)"), "<mode>"
   },
   {
     "stack-trace-mode", 0, 0,
-    G_OPTION_ARG_CALLBACK, gimp_option_stack_trace_mode,
+    G_OPTION_ARG_CALLBACK, picman_option_stack_trace_mode,
     /* don't translate the mode names (never|query|always) */
     N_("Debug in case of a crash (never|query|always)"), "<mode>"
   },
@@ -249,28 +249,28 @@ static const GOptionEntry main_entries[] =
   },
   {
     "g-fatal-warnings", 0, G_OPTION_FLAG_NO_ARG,
-    G_OPTION_ARG_CALLBACK, gimp_option_fatal_warnings,
+    G_OPTION_ARG_CALLBACK, picman_option_fatal_warnings,
     N_("Make all warnings fatal"), NULL
   },
   {
-    "dump-gimprc", 0, G_OPTION_FLAG_NO_ARG,
-    G_OPTION_ARG_CALLBACK, gimp_option_dump_gimprc,
-    N_("Output a gimprc file with default settings"), NULL
+    "dump-picmanrc", 0, G_OPTION_FLAG_NO_ARG,
+    G_OPTION_ARG_CALLBACK, picman_option_dump_picmanrc,
+    N_("Output a picmanrc file with default settings"), NULL
   },
   {
-    "dump-gimprc-system", 0, G_OPTION_FLAG_NO_ARG | G_OPTION_FLAG_HIDDEN,
-    G_OPTION_ARG_CALLBACK, gimp_option_dump_gimprc,
+    "dump-picmanrc-system", 0, G_OPTION_FLAG_NO_ARG | G_OPTION_FLAG_HIDDEN,
+    G_OPTION_ARG_CALLBACK, picman_option_dump_picmanrc,
     NULL, NULL
   },
   {
-    "dump-gimprc-manpage", 0, G_OPTION_FLAG_NO_ARG | G_OPTION_FLAG_HIDDEN,
-    G_OPTION_ARG_CALLBACK, gimp_option_dump_gimprc,
+    "dump-picmanrc-manpage", 0, G_OPTION_FLAG_NO_ARG | G_OPTION_FLAG_HIDDEN,
+    G_OPTION_ARG_CALLBACK, picman_option_dump_picmanrc,
     NULL, NULL
   },
   {
     "dump-pdb-procedures-deprecated", 0,
     G_OPTION_FLAG_NO_ARG | G_OPTION_FLAG_HIDDEN,
-    G_OPTION_ARG_CALLBACK, gimp_option_dump_pdb_procedures_deprecated,
+    G_OPTION_ARG_CALLBACK, picman_option_dump_pdb_procedures_deprecated,
     N_("Output a sorted list of deprecated procedures in the PDB"), NULL
   },
   {
@@ -325,19 +325,19 @@ main (int argc,
 #endif
 #endif
 
-#ifdef GIMP_UNSTABLE
-  gimp_open_console_window ();
+#ifdef PICMAN_UNSTABLE
+  picman_open_console_window ();
 #endif
 
-  gimp_init_malloc ();
+  picman_init_malloc ();
 
-  gimp_env_init (FALSE);
+  picman_env_init (FALSE);
 
-  gimp_log_init ();
+  picman_log_init ();
 
-  gimp_init_i18n ();
+  picman_init_i18n ();
 
-  g_set_application_name (GIMP_NAME);
+  g_set_application_name (PICMAN_NAME);
 
   basename = g_path_get_basename (argv[0]);
   g_set_prgname (basename);
@@ -371,24 +371,24 @@ main (int argc,
         }
       else if ((strcmp (arg, "--version") == 0) || (strcmp (arg, "-v") == 0))
         {
-          gimp_show_version_and_exit ();
+          picman_show_version_and_exit ();
         }
-#if defined (G_OS_WIN32) && !defined (GIMP_CONSOLE_COMPILATION)
+#if defined (G_OS_WIN32) && !defined (PICMAN_CONSOLE_COMPILATION)
       else if ((strcmp (arg, "--help") == 0) ||
                (strcmp (arg, "-?") == 0) ||
                (strncmp (arg, "--help-", 7) == 0))
         {
-          gimp_open_console_window ();
+          picman_open_console_window ();
         }
 #endif
     }
 
-#ifdef GIMP_CONSOLE_COMPILATION
+#ifdef PICMAN_CONSOLE_COMPILATION
   no_interface = TRUE;
 #endif
 
   context = g_option_context_new (_("[FILE|URI...]"));
-  g_option_context_set_summary (context, GIMP_NAME);
+  g_option_context_set_summary (context, PICMAN_NAME);
 
   g_option_context_add_main_entries (context, main_entries, GETTEXT_PACKAGE);
 
@@ -398,7 +398,7 @@ main (int argc,
     {
       if (error)
         {
-          gimp_open_console_window ();
+          picman_open_console_window ();
           g_print ("%s\n", error->message);
           g_error_free (error);
         }
@@ -414,13 +414,13 @@ main (int argc,
     }
 
   if (no_interface || be_verbose || console_messages || batch_commands != NULL)
-    gimp_open_console_window ();
+    picman_open_console_window ();
 
   if (no_interface)
     new_instance = TRUE;
 
-#ifndef GIMP_CONSOLE_COMPILATION
-  if (! new_instance && gimp_unique_open (filenames, as_new))
+#ifndef PICMAN_CONSOLE_COMPILATION
+  if (! new_instance && picman_unique_open (filenames, as_new))
     {
       if (be_verbose)
 g_print ("%s\n",
@@ -436,12 +436,12 @@ _("Another Picman instance is already running."));
   if (abort_message)
     app_abort (no_interface, abort_message);
 
-  gimp_init_signal_handlers (stack_trace_mode);
+  picman_init_signal_handlers (stack_trace_mode);
 
   app_run (argv[0],
            filenames,
-           system_gimprc,
-           user_gimprc,
+           system_picmanrc,
+           user_picmanrc,
            session_name,
            batch_interpreter,
            batch_commands,
@@ -466,7 +466,7 @@ _("Another Picman instance is already running."));
 
 #ifdef G_OS_WIN32
 
-/* Provide WinMain in case we build GIMP as a subsystem:windows
+/* Provide WinMain in case we build PICMAN as a subsystem:windows
 * application. Well, we do. When built with mingw, though, user code
 * execution still starts in main() in that case. So WinMain() gets
 * used on MSVC builds only.
@@ -487,7 +487,7 @@ WinMain (struct HINSTANCE__ *hInstance,
   return main (__argc, __argv);
 }
 
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 
 static void
 wait_console_window (void)
@@ -501,7 +501,7 @@ wait_console_window (void)
 }
 
 static void
-gimp_open_console_window (void)
+picman_open_console_window (void)
 {
   if (((HANDLE) _get_osfhandle (fileno (stdout)) == INVALID_HANDLE_VALUE ||
        (HANDLE) _get_osfhandle (fileno (stderr)) == INVALID_HANDLE_VALUE) && AllocConsole ())
@@ -523,7 +523,7 @@ gimp_open_console_window (void)
 
 
 static gboolean
-gimp_option_fatal_warnings (const gchar *option_name,
+picman_option_fatal_warnings (const gchar *option_name,
                             const gchar *value,
                             gpointer data,
                             GError **error)
@@ -539,17 +539,17 @@ gimp_option_fatal_warnings (const gchar *option_name,
 }
 
 static gboolean
-gimp_option_stack_trace_mode (const gchar *option_name,
+picman_option_stack_trace_mode (const gchar *option_name,
                               const gchar *value,
                               gpointer data,
                               GError **error)
 {
   if (strcmp (value, "never") == 0)
-    stack_trace_mode = GIMP_STACK_TRACE_NEVER;
+    stack_trace_mode = PICMAN_STACK_TRACE_NEVER;
   else if (strcmp (value, "query") == 0)
-    stack_trace_mode = GIMP_STACK_TRACE_QUERY;
+    stack_trace_mode = PICMAN_STACK_TRACE_QUERY;
   else if (strcmp (value, "always") == 0)
-    stack_trace_mode = GIMP_STACK_TRACE_ALWAYS;
+    stack_trace_mode = PICMAN_STACK_TRACE_ALWAYS;
   else
     return FALSE;
 
@@ -557,17 +557,17 @@ gimp_option_stack_trace_mode (const gchar *option_name,
 }
 
 static gboolean
-gimp_option_pdb_compat_mode (const gchar *option_name,
+picman_option_pdb_compat_mode (const gchar *option_name,
                              const gchar *value,
                              gpointer data,
                              GError **error)
 {
   if (! strcmp (value, "off"))
-    pdb_compat_mode = GIMP_PDB_COMPAT_OFF;
+    pdb_compat_mode = PICMAN_PDB_COMPAT_OFF;
   else if (! strcmp (value, "on"))
-    pdb_compat_mode = GIMP_PDB_COMPAT_ON;
+    pdb_compat_mode = PICMAN_PDB_COMPAT_ON;
   else if (! strcmp (value, "warn"))
-    pdb_compat_mode = GIMP_PDB_COMPAT_WARN;
+    pdb_compat_mode = PICMAN_PDB_COMPAT_WARN;
   else
     return FALSE;
 
@@ -575,35 +575,35 @@ gimp_option_pdb_compat_mode (const gchar *option_name,
 }
 
 static gboolean
-gimp_option_dump_gimprc (const gchar *option_name,
+picman_option_dump_picmanrc (const gchar *option_name,
                          const gchar *value,
                          gpointer data,
                          GError **error)
 {
-  GimpConfigDumpFormat format = GIMP_CONFIG_DUMP_NONE;
+  PicmanConfigDumpFormat format = PICMAN_CONFIG_DUMP_NONE;
 
-  gimp_open_console_window ();
+  picman_open_console_window ();
 
-  if (strcmp (option_name, "--dump-gimprc") == 0)
-    format = GIMP_CONFIG_DUMP_GIMPRC;
-  if (strcmp (option_name, "--dump-gimprc-system") == 0)
-    format = GIMP_CONFIG_DUMP_GIMPRC_SYSTEM;
-  else if (strcmp (option_name, "--dump-gimprc-manpage") == 0)
-    format = GIMP_CONFIG_DUMP_GIMPRC_MANPAGE;
+  if (strcmp (option_name, "--dump-picmanrc") == 0)
+    format = PICMAN_CONFIG_DUMP_PICMANRC;
+  if (strcmp (option_name, "--dump-picmanrc-system") == 0)
+    format = PICMAN_CONFIG_DUMP_PICMANRC_SYSTEM;
+  else if (strcmp (option_name, "--dump-picmanrc-manpage") == 0)
+    format = PICMAN_CONFIG_DUMP_PICMANRC_MANPAGE;
 
   if (format)
     {
-      Gimp *gimp;
+      Picman *picman;
       gboolean success;
 
-      gimp = g_object_new (GIMP_TYPE_GIMP, NULL);
+      picman = g_object_new (PICMAN_TYPE_PICMAN, NULL);
 
-      units_init (gimp);
+      units_init (picman);
       babl_init ();
 
-      success = gimp_config_dump (format);
+      success = picman_config_dump (format);
 
-      g_object_unref (gimp);
+      g_object_unref (picman);
 
       app_exit (success ? EXIT_SUCCESS : EXIT_FAILURE);
     }
@@ -612,38 +612,38 @@ gimp_option_dump_gimprc (const gchar *option_name,
 }
 
 static gboolean
-gimp_option_dump_pdb_procedures_deprecated (const gchar *option_name,
+picman_option_dump_pdb_procedures_deprecated (const gchar *option_name,
                                             const gchar *value,
                                             gpointer data,
                                             GError **error)
 {
-  Gimp *gimp;
+  Picman *picman;
   GList *deprecated_procs;
   GList *iter;
 
-  gimp = g_object_new (GIMP_TYPE_GIMP, NULL);
+  picman = g_object_new (PICMAN_TYPE_PICMAN, NULL);
 
   /* Make sure to turn on compatibility mode so deprecated procedures
 * are included
 */
-  gimp->pdb_compat_mode = GIMP_PDB_COMPAT_ON;
+  picman->pdb_compat_mode = PICMAN_PDB_COMPAT_ON;
 
   /* Initialize the list of procedures */
-  internal_procs_init (gimp->pdb);
+  internal_procs_init (picman->pdb);
 
   /* Get deprecated procedures */
-  deprecated_procs = gimp_pdb_get_deprecated_procedures (gimp->pdb);
+  deprecated_procs = picman_pdb_get_deprecated_procedures (picman->pdb);
 
   for (iter = deprecated_procs; iter; iter = g_list_next (iter))
     {
-      GimpProcedure *procedure = GIMP_PROCEDURE (iter->data);
+      PicmanProcedure *procedure = PICMAN_PROCEDURE (iter->data);
 
       g_print ("%s\n", procedure->original_name);
     }
 
   g_list_free (deprecated_procs);
 
-  g_object_unref (gimp);
+  g_object_unref (picman);
 
   app_exit (EXIT_SUCCESS);
 
@@ -651,31 +651,31 @@ gimp_option_dump_pdb_procedures_deprecated (const gchar *option_name,
 }
 
 static void
-gimp_show_version_and_exit (void)
+picman_show_version_and_exit (void)
 {
-  gimp_open_console_window ();
-  gimp_version_show (be_verbose);
+  picman_open_console_window ();
+  picman_version_show (be_verbose);
 
   app_exit (EXIT_SUCCESS);
 }
 
 static void
-gimp_show_license_and_exit (void)
+picman_show_license_and_exit (void)
 {
-  gimp_open_console_window ();
-  gimp_version_show (be_verbose);
+  picman_open_console_window ();
+  picman_version_show (be_verbose);
 
   g_print ("\n");
-  g_print (GIMP_LICENSE);
+  g_print (PICMAN_LICENSE);
   g_print ("\n\n");
 
   app_exit (EXIT_SUCCESS);
 }
 
 static void
-gimp_init_malloc (void)
+picman_init_malloc (void)
 {
-#ifdef GIMP_GLIB_MEM_PROFILER
+#ifdef PICMAN_GLIB_MEM_PROFILER
   g_mem_set_vtable (glib_mem_profiler_table);
   g_atexit (g_mem_profile);
 #endif
@@ -699,22 +699,22 @@ mallopt (M_MMAP_THRESHOLD, TILE_WIDTH * TILE_HEIGHT);
 }
 
 static void
-gimp_init_i18n (void)
+picman_init_i18n (void)
 {
   /* We may change the locale later if the user specifies a language
-* in the gimprc file. Here we are just initializing the locale
+* in the picmanrc file. Here we are just initializing the locale
 * according to the environment variables and set up the paths to
 * the message catalogs.
 */
 
   setlocale (LC_ALL, "");
 
-  bindtextdomain (GETTEXT_PACKAGE"-libgimp", gimp_locale_directory ());
+  bindtextdomain (GETTEXT_PACKAGE"-libpicman", picman_locale_directory ());
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
-  bind_textdomain_codeset (GETTEXT_PACKAGE"-libgimp", "UTF-8");
+  bind_textdomain_codeset (GETTEXT_PACKAGE"-libpicman", "UTF-8");
 #endif
 
-  bindtextdomain (GETTEXT_PACKAGE, gimp_locale_directory ());
+  bindtextdomain (GETTEXT_PACKAGE, picman_locale_directory ());
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif

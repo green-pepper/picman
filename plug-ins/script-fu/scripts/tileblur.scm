@@ -20,34 +20,34 @@
   (let* (
         (theImage inImage)
         (theLayer inLayer)
-        (theHeight (car (gimp-drawable-height theLayer)))
-        (theWidth (car (gimp-drawable-width theLayer)))
+        (theHeight (car (picman-drawable-height theLayer)))
+        (theWidth (car (picman-drawable-width theLayer)))
         )
 
     (define (pasteat xoff yoff)
-      (let ((theFloat (car(gimp-edit-paste theLayer 0))))
-        (gimp-layer-set-offsets theFloat (* xoff theWidth) (* yoff theHeight) )
-        (gimp-floating-sel-anchor theFloat)
+      (let ((theFloat (car(picman-edit-paste theLayer 0))))
+        (picman-layer-set-offsets theFloat (* xoff theWidth) (* yoff theHeight) )
+        (picman-floating-sel-anchor theFloat)
        )
     )
 
-    (gimp-context-push)
-    (gimp-context-set-feather FALSE)
-    (gimp-image-undo-group-start theImage)
+    (picman-context-push)
+    (picman-context-set-feather FALSE)
+    (picman-image-undo-group-start theImage)
 
-    (gimp-layer-resize theLayer (* 3 theWidth) (* 3 theHeight) 0 0)
+    (picman-layer-resize theLayer (* 3 theWidth) (* 3 theHeight) 0 0)
 
-    (gimp-image-select-rectangle theImage CHANNEL-OP-REPLACE 0 0 theWidth theHeight)
-    (gimp-edit-cut theLayer)
+    (picman-image-select-rectangle theImage CHANNEL-OP-REPLACE 0 0 theWidth theHeight)
+    (picman-edit-cut theLayer)
 
-    (gimp-selection-none theImage)
-    (gimp-layer-set-offsets theLayer theWidth theHeight)
+    (picman-selection-none theImage)
+    (picman-layer-set-offsets theLayer theWidth theHeight)
 
     (pasteat 1 1) (pasteat 1 2) (pasteat 1 3)
     (pasteat 2 1) (pasteat 2 2) (pasteat 2 3)
     (pasteat 3 1) (pasteat 3 2) (pasteat 3 3)
 
-    (gimp-selection-none theImage)
+    (picman-selection-none theImage)
     (if (= inType 0)
         (plug-in-gauss-iir RUN-NONINTERACTIVE
                            theImage theLayer inRadius inHoriz inVert)
@@ -55,12 +55,12 @@
                            theImage theLayer inRadius inHoriz inVert)
     )
 
-    (gimp-layer-resize theLayer
+    (picman-layer-resize theLayer
                        theWidth theHeight (- 0 theWidth) (- 0 theHeight))
-    (gimp-layer-set-offsets theLayer 0 0)
-    (gimp-image-undo-group-end theImage)
-    (gimp-displays-flush)
-    (gimp-context-pop)
+    (picman-layer-set-offsets theLayer 0 0)
+    (picman-image-undo-group-end theImage)
+    (picman-displays-flush)
+    (picman-context-pop)
   )
 )
 

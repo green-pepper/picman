@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,42 +25,42 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbaseenums.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbaseenums.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpgrid.h"
-#include "core/gimpimage-grid.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
+#include "core/picmangrid.h"
+#include "core/picmanimage-grid.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-image_grid_get_spacing_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_get_spacing_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gdouble xspacing = 0.0;
   gdouble yspacing = 0.0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_get (grid,
@@ -71,38 +71,38 @@ image_grid_get_spacing_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_double (gimp_value_array_index (return_vals, 1), xspacing);
-      g_value_set_double (gimp_value_array_index (return_vals, 2), yspacing);
+      g_value_set_double (picman_value_array_index (return_vals, 1), xspacing);
+      g_value_set_double (picman_value_array_index (return_vals, 2), yspacing);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_grid_set_spacing_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_set_spacing_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gdouble xspacing;
   gdouble yspacing;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  xspacing = g_value_get_double (gimp_value_array_index (args, 1));
-  yspacing = g_value_get_double (gimp_value_array_index (args, 2));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  xspacing = g_value_get_double (picman_value_array_index (args, 1));
+  yspacing = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_set (grid,
@@ -113,29 +113,29 @@ image_grid_set_spacing_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-image_grid_get_offset_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_get_offset_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gdouble xoffset = 0.0;
   gdouble yoffset = 0.0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_get (grid,
@@ -146,38 +146,38 @@ image_grid_get_offset_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_double (gimp_value_array_index (return_vals, 1), xoffset);
-      g_value_set_double (gimp_value_array_index (return_vals, 2), yoffset);
+      g_value_set_double (picman_value_array_index (return_vals, 1), xoffset);
+      g_value_set_double (picman_value_array_index (return_vals, 2), yoffset);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_grid_set_offset_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_set_offset_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gdouble xoffset;
   gdouble yoffset;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  xoffset = g_value_get_double (gimp_value_array_index (args, 1));
-  yoffset = g_value_get_double (gimp_value_array_index (args, 2));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  xoffset = g_value_get_double (picman_value_array_index (args, 1));
+  yoffset = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_set (grid,
@@ -188,28 +188,28 @@ image_grid_set_offset_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-image_grid_get_foreground_color_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_get_foreground_color_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpRGB fgcolor = { 0.0, 0.0, 0.0, 1.0 };
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanRGB fgcolor = { 0.0, 0.0, 0.0, 1.0 };
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         fgcolor = grid->fgcolor;
@@ -217,33 +217,33 @@ image_grid_get_foreground_color_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_rgb (gimp_value_array_index (return_vals, 1), &fgcolor);
+    picman_value_set_rgb (picman_value_array_index (return_vals, 1), &fgcolor);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_grid_set_foreground_color_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_set_foreground_color_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
-  GimpRGB fgcolor;
+  PicmanImage *image;
+  PicmanRGB fgcolor;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  gimp_value_get_rgb (gimp_value_array_index (args, 1), &fgcolor);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  picman_value_get_rgb (picman_value_array_index (args, 1), &fgcolor);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_set (grid, "fgcolor", &fgcolor, NULL);
@@ -251,28 +251,28 @@ image_grid_set_foreground_color_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-image_grid_get_background_color_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_get_background_color_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpRGB bgcolor = { 0.0, 0.0, 0.0, 1.0 };
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanRGB bgcolor = { 0.0, 0.0, 0.0, 1.0 };
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         bgcolor = grid->bgcolor;
@@ -280,33 +280,33 @@ image_grid_get_background_color_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_rgb (gimp_value_array_index (return_vals, 1), &bgcolor);
+    picman_value_set_rgb (picman_value_array_index (return_vals, 1), &bgcolor);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_grid_set_background_color_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_set_background_color_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
-  GimpRGB bgcolor;
+  PicmanImage *image;
+  PicmanRGB bgcolor;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  gimp_value_get_rgb (gimp_value_array_index (args, 1), &bgcolor);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  picman_value_get_rgb (picman_value_array_index (args, 1), &bgcolor);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_set (grid, "bgcolor", &bgcolor, NULL);
@@ -314,28 +314,28 @@ image_grid_set_background_color_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-image_grid_get_style_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_get_style_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 style = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_get (grid, "style", &style, NULL);
@@ -343,33 +343,33 @@ image_grid_get_style_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), style);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), style);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_grid_set_style_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+image_grid_set_style_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gint32 style;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  style = g_value_get_enum (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  style = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
       if (grid)
         g_object_set (grid, "style", style, NULL);
@@ -377,332 +377,332 @@ image_grid_set_style_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_grid_procs (GimpPDB *pdb)
+register_grid_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-image-grid-get-spacing
+   * picman-image-grid-get-spacing
    */
-  procedure = gimp_procedure_new (image_grid_get_spacing_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-get-spacing");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-get-spacing",
+  procedure = picman_procedure_new (image_grid_get_spacing_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-get-spacing");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-get-spacing",
                                      "Gets the spacing of an image's grid.",
                                      "This procedure retrieves the horizontal and vertical spacing of an image's grid. It takes the image as parameter.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("xspacing",
                                                         "xspacing",
                                                         "The image's grid horizontal spacing",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("yspacing",
                                                         "yspacing",
                                                         "The image's grid vertical spacing",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-set-spacing
+   * picman-image-grid-set-spacing
    */
-  procedure = gimp_procedure_new (image_grid_set_spacing_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-set-spacing");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-set-spacing",
+  procedure = picman_procedure_new (image_grid_set_spacing_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-set-spacing");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-set-spacing",
                                      "Sets the spacing of an image's grid.",
                                      "This procedure sets the horizontal and vertical spacing of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("xspacing",
                                                     "xspacing",
                                                     "The image's grid horizontal spacing",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("yspacing",
                                                     "yspacing",
                                                     "The image's grid vertical spacing",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-get-offset
+   * picman-image-grid-get-offset
    */
-  procedure = gimp_procedure_new (image_grid_get_offset_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-get-offset");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-get-offset",
+  procedure = picman_procedure_new (image_grid_get_offset_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-get-offset");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-get-offset",
                                      "Gets the offset of an image's grid.",
                                      "This procedure retrieves the horizontal and vertical offset of an image's grid. It takes the image as parameter.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("xoffset",
                                                         "xoffset",
                                                         "The image's grid horizontal offset",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("yoffset",
                                                         "yoffset",
                                                         "The image's grid vertical offset",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-set-offset
+   * picman-image-grid-set-offset
    */
-  procedure = gimp_procedure_new (image_grid_set_offset_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-set-offset");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-set-offset",
+  procedure = picman_procedure_new (image_grid_set_offset_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-set-offset");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-set-offset",
                                      "Sets the offset of an image's grid.",
                                      "This procedure sets the horizontal and vertical offset of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("xoffset",
                                                     "xoffset",
                                                     "The image's grid horizontal offset",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("yoffset",
                                                     "yoffset",
                                                     "The image's grid vertical offset",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-get-foreground-color
+   * picman-image-grid-get-foreground-color
    */
-  procedure = gimp_procedure_new (image_grid_get_foreground_color_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-get-foreground-color");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-get-foreground-color",
+  procedure = picman_procedure_new (image_grid_get_foreground_color_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-get-foreground-color");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-get-foreground-color",
                                      "Sets the foreground color of an image's grid.",
                                      "This procedure gets the foreground color of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_rgb ("fgcolor",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_rgb ("fgcolor",
                                                         "fgcolor",
                                                         "The image's grid foreground color",
                                                         TRUE,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-set-foreground-color
+   * picman-image-grid-set-foreground-color
    */
-  procedure = gimp_procedure_new (image_grid_set_foreground_color_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-set-foreground-color");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-set-foreground-color",
+  procedure = picman_procedure_new (image_grid_set_foreground_color_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-set-foreground-color");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-set-foreground-color",
                                      "Gets the foreground color of an image's grid.",
                                      "This procedure sets the foreground color of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("fgcolor",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("fgcolor",
                                                     "fgcolor",
                                                     "The new foreground color",
                                                     TRUE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-get-background-color
+   * picman-image-grid-get-background-color
    */
-  procedure = gimp_procedure_new (image_grid_get_background_color_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-get-background-color");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-get-background-color",
+  procedure = picman_procedure_new (image_grid_get_background_color_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-get-background-color");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-get-background-color",
                                      "Sets the background color of an image's grid.",
                                      "This procedure gets the background color of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_rgb ("bgcolor",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_rgb ("bgcolor",
                                                         "bgcolor",
                                                         "The image's grid background color",
                                                         TRUE,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-set-background-color
+   * picman-image-grid-set-background-color
    */
-  procedure = gimp_procedure_new (image_grid_set_background_color_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-set-background-color");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-set-background-color",
+  procedure = picman_procedure_new (image_grid_set_background_color_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-set-background-color");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-set-background-color",
                                      "Gets the background color of an image's grid.",
                                      "This procedure sets the background color of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("bgcolor",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("bgcolor",
                                                     "bgcolor",
                                                     "The new background color",
                                                     TRUE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-get-style
+   * picman-image-grid-get-style
    */
-  procedure = gimp_procedure_new (image_grid_get_style_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-get-style");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-get-style",
+  procedure = picman_procedure_new (image_grid_get_style_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-get-style");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-get-style",
                                      "Gets the style of an image's grid.",
                                      "This procedure retrieves the style of an image's grid.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("style",
                                                       "style",
                                                       "The image's grid style",
-                                                      GIMP_TYPE_GRID_STYLE,
-                                                      GIMP_GRID_DOTS,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_GRID_STYLE,
+                                                      PICMAN_GRID_DOTS,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-grid-set-style
+   * picman-image-grid-set-style
    */
-  procedure = gimp_procedure_new (image_grid_set_style_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-grid-set-style");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-grid-set-style",
+  procedure = picman_procedure_new (image_grid_set_style_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-grid-set-style");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-grid-set-style",
                                      "Sets the style unit of an image's grid.",
                                      "This procedure sets the style of an image's grid. It takes the image and the new style as parameters.",
                                      "Sylvain Foret",
                                      "Sylvain Foret",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("style",
                                                   "style",
                                                   "The image's grid style",
-                                                  GIMP_TYPE_GRID_STYLE,
-                                                  GIMP_GRID_DOTS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_GRID_STYLE,
+                                                  PICMAN_GRID_DOTS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

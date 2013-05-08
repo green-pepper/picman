@@ -1,4 +1,4 @@
-/* Convolution Matrix plug-in for GIMP -- Version 0.1
+/* Convolution Matrix plug-in for PICMAN -- Version 0.1
  * Copyright (C) 1997 Lauri Alanko <la@iki.fi>
  *
  *
@@ -21,15 +21,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-convmatrix"
 #define PLUG_IN_BINARY "convolution-matrix"
-#define PLUG_IN_ROLE   "gimp-convolution-matrix"
+#define PLUG_IN_ROLE   "picman-convolution-matrix"
 
 #define RESPONSE_RESET 1
 
@@ -79,23 +79,23 @@ static gchar * const bmode_labels[] =
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static gboolean  convolve_image_dialog (GimpDrawable  *drawable);
+static gboolean  convolve_image_dialog (PicmanDrawable  *drawable);
 
-static void      convolve_image        (GimpDrawable  *drawable,
-                                        GimpPreview   *preview);
+static void      convolve_image        (PicmanDrawable  *drawable,
+                                        PicmanPreview   *preview);
 
-static void      check_config          (GimpDrawable  *drawable);
+static void      check_config          (PicmanDrawable  *drawable);
 
 static gfloat    convolve_pixel        (guchar       **src_row,
                                         gint           x_offset,
                                         gint           channel,
-                                        GimpDrawable  *drawable);
+                                        PicmanDrawable  *drawable);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,   /* init_proc  */
   NULL,   /* quit_proc  */
@@ -181,23 +181,23 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,      "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,      "image",       "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE,   "drawable",    "Input drawable" },
-    { GIMP_PDB_INT32,      "argc-matrix", "The number of elements in the following array. Should be always 25." },
-    { GIMP_PDB_FLOATARRAY, "matrix",      "The 5x5 convolution matrix" },
-    { GIMP_PDB_INT32,      "alpha-alg",   "Enable weighting by alpha channel" },
-    { GIMP_PDB_FLOAT,      "divisor",     "Divisor" },
-    { GIMP_PDB_FLOAT,      "offset",      "Offset" },
+    { PICMAN_PDB_INT32,      "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,      "image",       "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE,   "drawable",    "Input drawable" },
+    { PICMAN_PDB_INT32,      "argc-matrix", "The number of elements in the following array. Should be always 25." },
+    { PICMAN_PDB_FLOATARRAY, "matrix",      "The 5x5 convolution matrix" },
+    { PICMAN_PDB_INT32,      "alpha-alg",   "Enable weighting by alpha channel" },
+    { PICMAN_PDB_FLOAT,      "divisor",     "Divisor" },
+    { PICMAN_PDB_FLOAT,      "offset",      "Offset" },
 
-    { GIMP_PDB_INT32,      "argc-channels", "The number of elements in following array. Should be always 5." },
-    { GIMP_PDB_INT32ARRAY, "channels",      "Mask of the channels to be filtered" },
-    { GIMP_PDB_INT32,      "bmode",         "Mode for treating image borders { EXTEND (0), WRAP (1), CLEAR (2) }" },
+    { PICMAN_PDB_INT32,      "argc-channels", "The number of elements in following array. Should be always 5." },
+    { PICMAN_PDB_INT32ARRAY, "channels",      "Mask of the channels to be filtered" },
+    { PICMAN_PDB_INT32,      "bmode",         "Mode for treating image borders { EXTEND (0), WRAP (1), CLEAR (2) }" },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Apply a generic 5x5 convolution matrix"),
                           "",
                           "Lauri Alanko",
@@ -205,25 +205,25 @@ query (void)
                           "1997",
                           N_("_Convolution Matrix..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Generic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Generic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               x, y;
-  GimpDrawable      *drawable;
+  PicmanDrawable      *drawable;
 
   INIT_I18N ();
 
@@ -233,31 +233,31 @@ run (const gchar      *name,
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  The plug-in is not able to handle images smaller than 3x3 pixels  */
   if (drawable->width < 3 || drawable->height < 3)
     {
       g_message (_("Convolution does not work on layers "
                    "smaller than 3x3 pixels."));
-      status = GIMP_PDB_EXECUTION_ERROR;
-      values[0].type = GIMP_PDB_STATUS;
+      status = PICMAN_PDB_EXECUTION_ERROR;
+      values[0].type = PICMAN_PDB_STATUS;
       values[0].data.d_status = status;
       return;
     }
 
   config = default_config;
-  if (run_mode == GIMP_RUN_NONINTERACTIVE)
+  if (run_mode == PICMAN_RUN_NONINTERACTIVE)
     {
       if ((nparams != 11) && (nparams != 12))
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
           if (param[3].data.d_int32 != MATRIX_CELLS)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -273,7 +273,7 @@ run (const gchar      *name,
 
           if (param[8].data.d_int32 != CHANNELS)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -288,9 +288,9 @@ run (const gchar      *name,
     }
   else
     {
-      gimp_get_data (PLUG_IN_PROC, &config);
+      picman_get_data (PLUG_IN_PROC, &config);
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           /*  Oh boy. We get to do a dialog box, because we can't really
            *  expect the user to set us up with the right values using gdb.
@@ -300,48 +300,48 @@ run (const gchar      *name,
           if (! convolve_image_dialog (drawable))
             {
               /* The dialog was closed, or something similarly evil happened. */
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Applying convolution"));
-          gimp_tile_cache_ntiles (2 * (drawable->width /
-                                  gimp_tile_width () + 1));
+          picman_progress_init (_("Applying convolution"));
+          picman_tile_cache_ntiles (2 * (drawable->width /
+                                  picman_tile_width () + 1));
           convolve_image (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &config, sizeof (config));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &config, sizeof (config));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
 
-/*  A generic wrapper to gimp_pixel_rgn_get_row which handles unlimited
+/*  A generic wrapper to picman_pixel_rgn_get_row which handles unlimited
  *  wrapping or gives the transparent regions outside the image
  *  fills additional bytes before and after image row to provide border modes.
  */
 
 static void
-my_get_row (GimpPixelRgn *PR,
+my_get_row (PicmanPixelRgn *PR,
             guchar       *dest,
             gint          x,
             gint          y,
@@ -394,7 +394,7 @@ my_get_row (GimpPixelRgn *PR,
       if (w)
         {
           i = MIN (w, width);
-          gimp_pixel_rgn_get_row (PR, dest, x, y, i);
+          picman_pixel_rgn_get_row (PR, dest, x, y, i);
           dest += i * bpp;
           w -= i;
           x += i;
@@ -407,14 +407,14 @@ my_get_row (GimpPixelRgn *PR,
       while (x < 0)
         x += width;
       i = MIN (w, width - x);
-      gimp_pixel_rgn_get_row (PR, dest, x, y, i);
+      picman_pixel_rgn_get_row (PR, dest, x, y, i);
       w -= i;
       dest += i * bpp;
       x = 0;
       while (w)
         {
           i = MIN (w, width);
-          gimp_pixel_rgn_get_row (PR, dest, x, y, i);
+          picman_pixel_rgn_get_row (PR, dest, x, y, i);
           w -= i;
           dest += i * bpp;
         }
@@ -423,7 +423,7 @@ my_get_row (GimpPixelRgn *PR,
     case EXTEND:
       if (x < 0)
         {
-          gimp_pixel_rgn_get_pixel (PR, dest, 0, y);
+          picman_pixel_rgn_get_pixel (PR, dest, 0, y);
           x++;
           w--;
           dest += bpp;
@@ -442,7 +442,7 @@ my_get_row (GimpPixelRgn *PR,
       if (w && width - x > 0)
         {
           i = MIN (w, width - x);
-          gimp_pixel_rgn_get_row (PR, dest, x, y, i);
+          picman_pixel_rgn_get_row (PR, dest, x, y, i);
           w -= i;
           dest += i * bpp;
         }
@@ -465,7 +465,7 @@ static gfloat
 convolve_pixel (guchar       **src_row,
                 gint           x_offset,
                 gint           channel,
-                GimpDrawable  *drawable)
+                PicmanDrawable  *drawable)
 {
   static gfloat matrixsum = 0; /* FIXME: this certainly breaks the preview */
   static gint bpp         = 0;
@@ -517,10 +517,10 @@ convolve_pixel (guchar       **src_row,
 }
 
 static void
-convolve_image (GimpDrawable *drawable,
-                GimpPreview  *preview)
+convolve_image (PicmanDrawable *drawable,
+                PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height, row, col;
   gint          src_w, src_row_w, src_h, i;
   gint          src_x1, src_y1, src_x2, src_y2;
@@ -541,14 +541,14 @@ convolve_image (GimpDrawable *drawable,
    */
   if (preview)
     {
-      gimp_preview_get_position (preview, &src_x1, &src_y1);
-      gimp_preview_get_size (preview, &src_w, &src_h);
+      picman_preview_get_position (preview, &src_x1, &src_y1);
+      picman_preview_get_size (preview, &src_w, &src_h);
       src_x2 = src_x1 + src_w;
       src_y2 = src_y1 + src_h;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id,
+      picman_drawable_mask_bounds (drawable->drawable_id,
                                  &src_x1, &src_y1, &src_x2, &src_y2);
       src_w = src_x2 - src_x1;
       src_h = src_y2 - src_y1;
@@ -562,7 +562,7 @@ convolve_image (GimpDrawable *drawable,
   bpp  = drawable->bpp;
   alpha_channel = bpp - 1;
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id))
     {
       for (i = 0; i < CHANNELS - 1; i++)
         chanmask[i] = config.channels[i + 1];
@@ -572,7 +572,7 @@ convolve_image (GimpDrawable *drawable,
       chanmask[0] = config.channels[0];
     }
 
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     chanmask[alpha_channel] = config.channels[4];
 
   src_row_w = src_w + HALF_WINDOW + HALF_WINDOW;
@@ -588,9 +588,9 @@ convolve_image (GimpDrawable *drawable,
   y1 = MAX (src_y1 - HALF_WINDOW, 0);
   x2 = MIN (src_x2 + HALF_WINDOW, width);
   y2 = MIN (src_y2 + HALF_WINDOW, height);
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        x1, y1, x2 - x1, y2 - y1, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable,
+  picman_pixel_rgn_init (&destPR, drawable,
                        src_x1, src_y1, src_w, src_h,
                        preview == NULL, TRUE);
 
@@ -629,7 +629,7 @@ convolve_image (GimpDrawable *drawable,
           }
 
       if (row >= src_y1 + HALF_WINDOW)
-        gimp_pixel_rgn_set_row (&destPR,
+        picman_pixel_rgn_set_row (&destPR,
                                 dest_row[0], src_x1, row - HALF_WINDOW, src_w);
 
       if (row < src_y2 - 1)
@@ -653,27 +653,27 @@ convolve_image (GimpDrawable *drawable,
         }
 
       if ((row % 10 == 0) && !preview)
-        gimp_progress_update ((double) (row - src_y1) / src_h);
+        picman_progress_update ((double) (row - src_y1) / src_h);
     }
 
   /* put the remaining rows in the buffer in place */
   for (i = 1; i <  DEST_ROWS; i++)
-    gimp_pixel_rgn_set_row (&destPR, dest_row[i],
+    picman_pixel_rgn_set_row (&destPR, dest_row[i],
                             src_x1, src_y2 + i - 1 - HALF_WINDOW, src_w);
 
 
   /*  update the region  */
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &destPR);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             src_x1, src_y1, src_x2 - src_x1, src_y2 - src_y1);
     }
 
@@ -794,7 +794,7 @@ check_matrix (void)
 static void
 response_callback (GtkWidget    *widget,
                    gint          response_id,
-                   GimpDrawable *drawable)
+                   PicmanDrawable *drawable)
 {
   switch (response_id)
     {
@@ -815,11 +815,11 @@ response_callback (GtkWidget    *widget,
 
 /* Checks that the configuration is valid for the image type */
 static void
-check_config (GimpDrawable *drawable)
+check_config (PicmanDrawable *drawable)
 {
   config.alpha_weighting = 0;
 
-  if (!gimp_drawable_has_alpha (drawable->drawable_id))
+  if (!picman_drawable_has_alpha (drawable->drawable_id))
     {
       config.alpha_weighting = -1;
       config.bmode           = EXTEND;
@@ -876,7 +876,7 @@ my_bmode_callback (GtkWidget *widget,
 }
 
 static gboolean
-convolve_image_dialog (GimpDrawable *drawable)
+convolve_image_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -893,13 +893,13 @@ convolve_image_dialog (GimpDrawable *drawable)
   gint       x, y, i;
   GSList    *group;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Convolution Matrix"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Convolution Matrix"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -911,7 +911,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -919,7 +919,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -934,7 +934,7 @@ convolve_image_dialog (GimpDrawable *drawable)
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_box_pack_start (GTK_BOX (main_hbox), vbox, TRUE, TRUE, 0);
 
-  frame = gimp_frame_new (_("Matrix"));
+  frame = picman_frame_new (_("Matrix"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
   inbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
@@ -958,7 +958,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                           G_CALLBACK (entry_callback),
                           &config.matrix[x][y]);
         g_signal_connect_swapped (entry, "changed",
-                                  G_CALLBACK (gimp_preview_invalidate),
+                                  G_CALLBACK (picman_preview_invalidate),
                                   preview);
       }
 
@@ -987,7 +987,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                     G_CALLBACK (entry_callback),
                     &config.divisor);
   g_signal_connect_swapped (entry, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
@@ -1013,7 +1013,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                     G_CALLBACK (entry_callback),
                     &config.offset);
   g_signal_connect_swapped (entry, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
@@ -1035,7 +1035,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                     G_CALLBACK (my_toggle_callback),
                     &config.autoset);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   widget_set.alpha_weighting = button =
@@ -1049,7 +1049,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                     G_CALLBACK (my_toggle_callback),
                     &config.alpha_weighting);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (box);
@@ -1058,7 +1058,7 @@ convolve_image_dialog (GimpDrawable *drawable)
   inbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_box_pack_start (GTK_BOX (main_hbox), inbox, FALSE, FALSE, 0);
 
-  frame = gimp_frame_new (_("Border"));
+  frame = picman_frame_new (_("Border"));
   gtk_box_pack_start (GTK_BOX (inbox), frame, FALSE, FALSE, 0);
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
@@ -1078,14 +1078,14 @@ convolve_image_dialog (GimpDrawable *drawable)
                         G_CALLBACK (my_bmode_callback),
                         GINT_TO_POINTER (i + 1));
       g_signal_connect_swapped (button, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
     }
 
   gtk_widget_show (box);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Channels"));
+  frame = picman_frame_new (_("Channels"));
   gtk_box_pack_start (GTK_BOX (inbox), frame, FALSE, FALSE, 0);
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
@@ -1093,9 +1093,9 @@ convolve_image_dialog (GimpDrawable *drawable)
 
   for (i = 0; i < CHANNELS; i++)
     {
-      if ((gimp_drawable_is_gray (drawable->drawable_id) && i==0) ||
-          (gimp_drawable_is_rgb  (drawable->drawable_id) && i>=1 && i<=3) ||
-          (gimp_drawable_has_alpha (drawable->drawable_id) && i==4))
+      if ((picman_drawable_is_gray (drawable->drawable_id) && i==0) ||
+          (picman_drawable_is_rgb  (drawable->drawable_id) && i>=1 && i<=3) ||
+          (picman_drawable_has_alpha (drawable->drawable_id) && i==4))
         {
           widget_set.channels[i] = button =
             gtk_check_button_new_with_mnemonic (gettext (channel_labels[i]));
@@ -1107,7 +1107,7 @@ convolve_image_dialog (GimpDrawable *drawable)
                             G_CALLBACK (my_toggle_callback),
                             &config.channels[i]);
           g_signal_connect_swapped (button, "toggled",
-                                    G_CALLBACK (gimp_preview_invalidate),
+                                    G_CALLBACK (picman_preview_invalidate),
                                     preview);
         }
       else

@@ -1,9 +1,9 @@
 /* $Id$
  * Contains routines for generating mazes, somewhat intertwined with
- * Gimp plug-in-maze specific stuff.
+ * Picman plug-in-maze specific stuff.
  *
  * Kevin Turner <acapnotic@users.sourceforge.net>
- * http://gimp-plug-ins.sourceforge.net/maze/
+ * http://picman-plug-ins.sourceforge.net/maze/
  */
 
 /* mazegen code from rec.games.programmer's maze-faq:
@@ -17,7 +17,7 @@
  */
 
 /* I've put a HTMLized version of the FAQ up at
- * http://www.poboxes.com/kevint/gimp/maze-faq/maze-faq.html
+ * http://www.poboxes.com/kevint/picman/maze-faq/maze-faq.html
  */
 
 /*
@@ -40,12 +40,12 @@
 
 #include <stdlib.h>
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 #include "maze.h"
 #include "maze-algorithms.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define ABSMOD(A,B) (((A) < 0) ? (((B) + (A)) % (B)) : ((A) % (B)))
@@ -275,7 +275,7 @@ prim (gint    pos,
 
   g_rand_set_seed (gr, rnd);
 
-  gimp_progress_init (_("Constructing maze using Prim's Algorithm"));
+  picman_progress_init (_("Constructing maze using Prim's Algorithm"));
 
   /* OUT is zero, so we should be already initalized. */
 
@@ -286,7 +286,7 @@ prim (gint    pos,
   maz[pos] = IN;
 
   /* For now, repeating everything four times seems manageable.  But when
-     Gimp is extended to drawings in n-dimensional space instead of 2D,
+     Picman is extended to drawings in n-dimensional space instead of 2D,
      this will require a bit of a re-write. */
   /* Add frontier. */
   up    = CELL_UP (pos);
@@ -462,9 +462,9 @@ prim (gint    pos,
         }
 
       if (progress++ % PRIMS_PROGRESS_UPDATE)
-        gimp_progress_update ((double) progress / (double) max_progress);
+        picman_progress_update ((double) progress / (double) max_progress);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_slist_free (front_cells);
 }
@@ -485,7 +485,7 @@ prim_tileable (guchar *maz,
 
   g_rand_set_seed (gr, rnd);
 
-  gimp_progress_init (_("Constructing tileable maze using Prim's Algorithm"));
+  picman_progress_init (_("Constructing tileable maze using Prim's Algorithm"));
 
   /* OUT is zero, so we should be already initalized. */
 
@@ -638,9 +638,9 @@ prim_tileable (guchar *maz,
         }
 
       if (progress++ % PRIMS_PROGRESS_UPDATE)
-        gimp_progress_update ((double) progress / (double) max_progress);
+        picman_progress_update ((double) progress / (double) max_progress);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_slist_free (front_cells);
 }

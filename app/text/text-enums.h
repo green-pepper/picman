@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,27 @@
 #define __TEXT_ENUMS_H__
 
 
-#define GIMP_TYPE_TEXT_BOX_MODE (gimp_text_box_mode_get_type ())
+#define PICMAN_TYPE_TEXT_BOX_MODE (picman_text_box_mode_get_type ())
 
-GType gimp_text_box_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum /*< pdb-skip >*/
-{
-  GIMP_TEXT_BOX_DYNAMIC, /*< desc="Dynamic" >*/
-  GIMP_TEXT_BOX_FIXED    /*< desc="Fixed"   >*/
-} GimpTextBoxMode;
-
-
-#define GIMP_TYPE_TEXT_OUTLINE (gimp_text_outline_get_type ())
-
-GType gimp_text_outline_get_type (void) G_GNUC_CONST;
+GType picman_text_box_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum /*< pdb-skip >*/
 {
-  GIMP_TEXT_OUTLINE_NONE,
-  GIMP_TEXT_OUTLINE_STROKE_ONLY,
-  GIMP_TEXT_OUTLINE_STROKE_FILL
-} GimpTextOutline;
+  PICMAN_TEXT_BOX_DYNAMIC, /*< desc="Dynamic" >*/
+  PICMAN_TEXT_BOX_FIXED    /*< desc="Fixed"   >*/
+} PicmanTextBoxMode;
+
+
+#define PICMAN_TYPE_TEXT_OUTLINE (picman_text_outline_get_type ())
+
+GType picman_text_outline_get_type (void) G_GNUC_CONST;
+
+typedef enum /*< pdb-skip >*/
+{
+  PICMAN_TEXT_OUTLINE_NONE,
+  PICMAN_TEXT_OUTLINE_STROKE_ONLY,
+  PICMAN_TEXT_OUTLINE_STROKE_FILL
+} PicmanTextOutline;
 
 
 #endif /* __TEXT_ENUMS_H__ */

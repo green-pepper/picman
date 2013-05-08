@@ -1,8 +1,8 @@
-/* Deinterlace 1.00 - image processing plug-in for GIMP
+/* Deinterlace 1.00 - image processing plug-in for PICMAN
  *
  * Copyright (C) 1997 Andrew Kieschnick (andrewk@mail.utexas.edu)
  *
- * Original deinterlace for GIMP 0.54 API by Federico Mena Quintero
+ * Original deinterlace for PICMAN 0.54 API by Federico Mena Quintero
  *
  * Copyright (C) 1996 Federico Mena Quintero
  *
@@ -22,15 +22,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-deinterlace"
 #define PLUG_IN_BINARY "deinterlace"
-#define PLUG_IN_ROLE   "gimp-deinterlace"
+#define PLUG_IN_ROLE   "picman-deinterlace"
 
 
 enum
@@ -50,18 +50,18 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 
-static void      deinterlace        (GimpDrawable *drawable,
-                                     GimpPreview  *preview);
+static void      deinterlace        (PicmanDrawable *drawable,
+                                     PicmanPreview  *preview);
 
-static gboolean  deinterlace_dialog (GimpDrawable *drawable);
+static gboolean  deinterlace_dialog (PicmanDrawable *drawable);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -79,15 +79,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,     "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,     "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE,  "drawable", "Input drawable"       },
-    { GIMP_PDB_INT32,     "evenodd",  "Which lines to keep { KEEP-ODD (0), KEEP-EVEN (1) }" }
+    { PICMAN_PDB_INT32,     "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,     "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE,  "drawable", "Input drawable"       },
+    { PICMAN_PDB_INT32,     "evenodd",  "Which lines to keep { KEEP-ODD (0), KEEP-EVEN (1) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Fix images where every other row is missing"),
                           "Deinterlace is useful for processing images from "
                           "video capture cards. When only the odd or even "
@@ -99,90 +99,90 @@ query (void)
                           "1997",
                           N_("_Deinterlace..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &devals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &devals);
       if (! deinterlace_dialog (drawable))
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 4)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         devals.evenness = param[3].data.d_int32;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &devals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &devals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Deinterlace"));
-          gimp_tile_cache_ntiles (2 * (drawable->width /
-                                       gimp_tile_width () + 1));
+          picman_progress_init (_("Deinterlace"));
+          picman_tile_cache_ntiles (2 * (drawable->width /
+                                       picman_tile_width () + 1));
           deinterlace (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &devals, sizeof (DeinterlaceValues));
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &devals, sizeof (DeinterlaceValues));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-deinterlace (GimpDrawable *drawable,
-             GimpPreview  *preview)
+deinterlace (PicmanDrawable *drawable,
+             PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gboolean      has_alpha;
   guchar       *dest;
   guchar       *dest_buffer = NULL;
@@ -197,29 +197,29 @@ deinterlace (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x, &y);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x, &y);
+      picman_preview_get_size (preview, &width, &height);
 
       dest_buffer = g_new (guchar, width * height * bytes);
       dest = dest_buffer;
     }
   else
     {
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x, &y, &width, &height))
         return;
 
       dest = g_new (guchar, width * bytes);
 
-      gimp_pixel_rgn_init (&destPR, drawable, x, y, width, height, TRUE, TRUE);
+      picman_pixel_rgn_init (&destPR, drawable, x, y, width, height, TRUE, TRUE);
     }
 
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        x, MAX (y - 1, 0),
                        width, MIN (height + 1, drawable->height),
                        FALSE, FALSE);
 
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   /*  allocate row buffers  */
   upper = g_new (guchar, width * bytes);
@@ -228,19 +228,19 @@ deinterlace (GimpDrawable *drawable,
   /*  loop through the rows, performing our magic  */
   for (row = y; row < y + height; row++)
     {
-      gimp_pixel_rgn_get_row (&srcPR, dest, x, row, width);
+      picman_pixel_rgn_get_row (&srcPR, dest, x, row, width);
 
       if (row % 2 != devals.evenness)
         {
           if (row > 0)
-            gimp_pixel_rgn_get_row (&srcPR, upper, x, row - 1, width);
+            picman_pixel_rgn_get_row (&srcPR, upper, x, row - 1, width);
           else
-            gimp_pixel_rgn_get_row (&srcPR, upper, x, devals.evenness, width);
+            picman_pixel_rgn_get_row (&srcPR, upper, x, devals.evenness, width);
 
           if (row + 1 < drawable->height)
-            gimp_pixel_rgn_get_row (&srcPR, lower, x, row + 1, width);
+            picman_pixel_rgn_get_row (&srcPR, lower, x, row + 1, width);
           else
-            gimp_pixel_rgn_get_row (&srcPR, lower, x, row - 1 + devals.evenness,
+            picman_pixel_rgn_get_row (&srcPR, lower, x, row - 1 + devals.evenness,
                                     width);
 
           if (has_alpha)
@@ -281,25 +281,25 @@ deinterlace (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&destPR, dest, x, row, width);
+          picman_pixel_rgn_set_row (&destPR, dest, x, row, width);
 
           if ((row % 20) == 0)
-            gimp_progress_update ((double) row / (double) (height));
+            picman_progress_update ((double) row / (double) (height));
         }
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, dest_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, dest_buffer, width * bytes);
       dest = dest_buffer;
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  update the deinterlaced region  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 
   g_free (lower);
@@ -308,7 +308,7 @@ deinterlace (GimpDrawable *drawable,
 }
 
 static gboolean
-deinterlace_dialog (GimpDrawable *drawable)
+deinterlace_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -318,11 +318,11 @@ deinterlace_dialog (GimpDrawable *drawable)
   GtkWidget *even;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Deinterlace"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Deinterlace"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -334,7 +334,7 @@ deinterlace_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -342,15 +342,15 @@ deinterlace_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
                             G_CALLBACK (deinterlace),
                             drawable);
 
-  frame = gimp_int_radio_group_new (FALSE, NULL,
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (FALSE, NULL,
+                                    G_CALLBACK (picman_radio_button_update),
                                     &devals.evenness, devals.evenness,
 
                                     _("Keep o_dd fields"),  ODD_FIELDS,  &odd,
@@ -359,10 +359,10 @@ deinterlace_dialog (GimpDrawable *drawable)
                                     NULL);
 
   g_signal_connect_swapped (odd, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (even, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
@@ -370,7 +370,7 @@ deinterlace_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

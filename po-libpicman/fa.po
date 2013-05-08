@@ -1,0 +1,1807 @@
+# Persian Translation of picman-libpicman.
+# Copyright (C) 2007 Sharif FarsiWeb, Inc.
+# This file is distributed under the same license as the PICMAN package.
+# Meelad Zakaria <meelad@farsiweb.info>, 2007.
+# Farzad Ghanei <farzad@farsiweb.info>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-05-05 03:36+0100\n"
+"PO-Revision-Date: 2007-04-21 16:24+0330\n"
+"Last-Translator: Meelad Zakaria <meelad@farsiweb.info>\n"
+"Language-Team: Persian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "انتخاب قلم‌مو"
+
+#: ../libpicman/picmanbrushselectbutton.c:911
+#: ../libpicman/picmanpatternselectbutton.c:712
+msgid "_Browse..."
+msgstr "_مرور..."
+
+#: ../libpicman/picmanexport.c:217 ../libpicman/picmanexport.c:253
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s نمی‌تواند با لایه‌ها کار کند"
+
+#: ../libpicman/picmanexport.c:218 ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "ادغام لایه‌های مرئی"
+
+#: ../libpicman/picmanexport.c:226
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "%s نمی‌تواند با اُفست، اندازه یا ماتی لایه‌ها کار کند"
+
+#: ../libpicman/picmanexport.c:235 ../libpicman/picmanexport.c:244
+#, fuzzy, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s فقط می‌تواند با لایه‌ها به عنوان فریم‌های پویانمایی کار کند"
+
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "ذخیره به صورت پویانمایی"
+
+#: ../libpicman/picmanexport.c:245 ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "مسطح کردن تصویر"
+
+#: ../libpicman/picmanexport.c:262
+#, fuzzy, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s نمی‌تواند با شفافیت کار کند"
+
+#: ../libpicman/picmanexport.c:271
+#, fuzzy, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s نمی‌تواند با نقاب لایه‌ها کار کند"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "اِعمال نقاب‌های لایه"
+
+#: ../libpicman/picmanexport.c:280
+#, fuzzy, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s تنها می‌تواند با تصاویر RGB کار کند"
+
+#: ../libpicman/picmanexport.c:281 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "تبدیل به RGB"
+
+#: ../libpicman/picmanexport.c:289
+#, fuzzy, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s تنها می‌تواند با تصاویر بی‌رنگ کار کند"
+
+#: ../libpicman/picmanexport.c:290 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "تبدیل به بی‌رنگ"
+
+#: ../libpicman/picmanexport.c:298
+#, fuzzy, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s تنها می‌تواند با تصاویر دارای رنگ نمونه‌رنگی کار کند"
+
+#: ../libpicman/picmanexport.c:299 ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"تبدیل رنگ‌ها به نمونه‌رنگی با استفاده از تنظیمات پیش‌فرض(برای تنظیم دقیق، این "
+"کار را دستی انجام دهید)"
+
+#: ../libpicman/picmanexport.c:308
+#, fuzzy, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "%s تنها می‌تواند با تصاویر نقشه‌بیتی (۲ رنگ) با رنگ نمونه‌رنگی کار کند"
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"تبدیل رنگ‌ها به نمونه‌رنگی با استفاده از تنظیمات پیش‌فرض نقشه‌بیتی(برای تنظیم "
+"دقیق، این کار را به صورت دستی انجام دهید)"
+
+#: ../libpicman/picmanexport.c:318
+#, fuzzy, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s تنها می‌تواند با تصاویر دارای رنگ RGB یا بی‌رنگ کار کند"
+
+#: ../libpicman/picmanexport.c:327
+#, fuzzy, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s تنها می‌تواند با تصاویر دارای رنگ RGB یا نمونه‌رنگی کار کند"
+
+#: ../libpicman/picmanexport.c:337
+#, fuzzy, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "%s تنها می‌تواند با تصاویر بی‌رنگ یا دارای رنگ نمونه‌رنگی کار کند"
+
+#: ../libpicman/picmanexport.c:348
+#, fuzzy, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s یک کانال آلفا لازم دارد"
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "اضافه کردن کانال آلفا"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "تأیید ذخیره‌سازی"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "تأیید"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "صدور پرونده"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "_نادیده گرفته شود"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "_صادر شود"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"پیش از آن که بتوانید تصویرتان را به صورت %s ذخیره کنید باید آن را صادر کنید، "
+"دلایل از این قرار است:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr "تبدیل برای صدور تغییری در تصویر اصلی شما نخواهد داد."
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"شما در حال ذخیره کردن نقاب لایه به صورت %s هستید.\n"
+"با این کار لایه‌های مرئی ذخیره نخواهند شد."
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"شما در حال ذخیره کردن یک کانال (انتخاب ذخیره شده) به صورت %s هستید.\n"
+"با این کار لایه‌های مرئی ذخیره نخواهند شد."
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "انتخاب قلم"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "انتخاب طیف"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(خالی)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "انتخاب تخته‌رنگ"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "انتخاب الگو"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "بر مبنای نام"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "بر مبنای شرح"
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "بر مبنای راهنما"
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "بر مبنای مؤلف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "بر مبنای کپی‌رایت"
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "بر مبنای تاریخ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "بر مبنای نوع"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "در حال جستجو"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "در حال جستجو بر مبنای نام"
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "در حال جستجو بر مبنای شرح"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "در حال جستجو بر مبنای راهنما"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "در حال جستجو بر مبنای مؤلف"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "در حال جستجو بر مبنای کپی‌رایت"
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "در حال جستجو بر مبنای تاریخ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "در حال جستجو بر مبنای نوع"
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%Id روال"
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "پرس و جوی شما نتیجه‌ای در بر نداشت"
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%Id روال با پرس و جوی شما مطابقت دارد"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516 ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "بدون نتیجه"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr "پارامترها"
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "مقادیر بازگشتی"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "اطلاعات اضافی"
+
+#: ../libpicman/picmanprocview.c:210
+msgid "Author:"
+msgstr "مؤلف:"
+
+#: ../libpicman/picmanprocview.c:222
+msgid "Date:"
+msgstr "تاریخ:"
+
+#: ../libpicman/picmanprocview.c:234
+msgid "Copyright:"
+msgstr "کپی‌رایت:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "درصد"
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+msgid "_White (full opacity)"
+msgstr "س_فید (کاملاً مات)"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_Black (full transparency)"
+msgstr "_سیاه (کاملاً شفاف)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "Layer's _alpha channel"
+msgstr "_کانال آلفای لایه"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "_Transfer layer's alpha channel"
+msgstr "انتقال کانال آلفای لایه"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Selection"
+msgstr "_انتخاب"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Grayscale copy of layer"
+msgstr "نسخهٔ _بی‌رنگ لایه"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "C_hannel"
+msgstr "_کانال"
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+msgid "FG to BG (RGB)"
+msgstr "پیش‌زمینه تا پس‌زمینه (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (HSV)"
+msgstr "پیش‌زمینه تا پس‌زمینه (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to transparent"
+msgstr "پیش‌زمینه به شفاف"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "Custom gradient"
+msgstr "هاشور سفارشی"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+msgid "FG color fill"
+msgstr "رنگ‌آمیزی با پیش‌زمینه"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "BG color fill"
+msgstr "رنگ‌آمیزی با پس‌زمینه"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "Pattern fill"
+msgstr "رنگ‌آمیزی با الگو"
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+msgid "Add to the current selection"
+msgstr "به انتخاب فعلی اضافه شود"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Subtract from the current selection"
+msgstr "از انتخاب فعلی کم شود"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Replace the current selection"
+msgstr "جایگزین انتخاب فعلی شود"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Intersect with the current selection"
+msgstr "اشتراک با انتخاب فعلی"
+
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "قرمز"
+
+#: ../libpicmanbase/picmanbaseenums.c:163 ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "سبز"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "آبی"
+
+#: ../libpicmanbase/picmanbaseenums.c:165
+msgid "Gray"
+msgstr "خاکستری"
+
+#: ../libpicmanbase/picmanbaseenums.c:166 ../libpicmanbase/picmanbaseenums.c:531
+msgid "Indexed"
+msgstr "نمونه‌رنگی"
+
+#: ../libpicmanbase/picmanbaseenums.c:167 ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "آلفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Small"
+msgstr "ریز"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Medium"
+msgstr "متوسط"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Large"
+msgstr "درشت"
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+#, fuzzy
+msgid "Light checks"
+msgstr "چهارخانه‌های روشن"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+#, fuzzy
+msgid "Mid-tone checks"
+msgstr "چهارخانه‌های متوسط"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+#, fuzzy
+msgid "Dark checks"
+msgstr "چهارخانه‌های تیره"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+#, fuzzy
+msgid "White only"
+msgstr "فقط سفید"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+#, fuzzy
+msgid "Gray only"
+msgstr "فقط خاکستری"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+#, fuzzy
+msgid "Black only"
+msgstr "فقط سیاه"
+
+#: ../libpicmanbase/picmanbaseenums.c:263
+msgid "Image source"
+msgstr "مبدأ تصویر"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Pattern source"
+msgstr "مبدأ الگو"
+
+#: ../libpicmanbase/picmanbaseenums.c:293
+msgid "Lightness"
+msgstr "روشنی"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Luminosity"
+msgstr "درخشندگی"
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Average"
+msgstr "معدل"
+
+#: ../libpicmanbase/picmanbaseenums.c:323
+msgid "Dodge"
+msgstr "حرکت دادن"
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Burn"
+msgstr "سوزاندن"
+
+#: ../libpicmanbase/picmanbaseenums.c:388
+msgid "gradient|Linear"
+msgstr "خطی"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "Bi-linear"
+msgstr "دوخطی"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Radial"
+msgstr "شعاعی"
+
+#: ../libpicmanbase/picmanbaseenums.c:391 ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "مربعی"
+
+#: ../libpicmanbase/picmanbaseenums.c:392
+msgid "Conical (sym)"
+msgstr "کانونی (متقارن)"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (asym)"
+msgstr "کانونی (نامتقارن)"
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Shaped (angular)"
+msgstr "شکل‌دار (گوشه‌دار)"
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (spherical)"
+msgstr "شکل‌دار (کُره‌ای)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (dimpled)"
+msgstr "شکل‌دار (گود)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Spiral (cw)"
+msgstr "مارپیچ (در جهت حرکت عقربه‌های ساعت)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (ccw)"
+msgstr "مارپیچ (خلاف جهت عقربه‌های ساعت)"
+
+#: ../libpicmanbase/picmanbaseenums.c:429
+msgid "Intersections (dots)"
+msgstr "اشتراک (نقطه‌ای)"
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (crosshairs)"
+msgstr "اشتراک (مگسک)"
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Dashed"
+msgstr "خط‌چین"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Double dashed"
+msgstr "خط‌چین ۲ تایی"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Solid"
+msgstr "یکدست"
+
+#: ../libpicmanbase/picmanbaseenums.c:462
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Image file"
+msgstr "پروندهٔ تصویر"
+
+#: ../libpicmanbase/picmanbaseenums.c:493
+msgid "RGB color"
+msgstr "رنگ RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:494 ../libpicmanbase/picmanbaseenums.c:529
+msgid "Grayscale"
+msgstr "بی‌رنگ"
+
+#: ../libpicmanbase/picmanbaseenums.c:495
+msgid "Indexed color"
+msgstr "رنگ نمونه‌گیری شده"
+
+#: ../libpicmanbase/picmanbaseenums.c:527
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB-alpha"
+msgstr "RGB-آلفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale-alpha"
+msgstr "ابی‌رنگ-آلفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed-alpha"
+msgstr "نمونه‌رنگی-آلفا"
+
+#: ../libpicmanbase/picmanbaseenums.c:562
+msgid "interpolation|None"
+msgstr "هیچ‌کدام"
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|Linear"
+msgstr "خطی"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "Cubic"
+msgstr "مکعبی"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Sinc (Lanczos3)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:593
+msgid "Constant"
+msgstr "ثابت"
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Incremental"
+msgstr "افزایشی"
+
+#: ../libpicmanbase/picmanbaseenums.c:623 ../modules/cdisplay_lcms.c:267
+msgid "None"
+msgstr "هیچ‌کدام"
+
+#: ../libpicmanbase/picmanbaseenums.c:624
+msgid "Sawtooth wave"
+msgstr "موج اره‌ای"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Triangular wave"
+msgstr "موج مثلثی"
+
+#: ../libpicmanbase/picmanbaseenums.c:654
+msgid "Run interactively"
+msgstr "اجرا به صورت تبادلی"
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run non-interactively"
+msgstr "اجرا به صورت غیر تبادلی"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run with last used values"
+msgstr "اجرا با آخرین مقادیر به کار رفته"
+
+#: ../libpicmanbase/picmanbaseenums.c:684
+msgid "Pixels"
+msgstr "نقاط"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Points"
+msgstr "پونت"
+
+#: ../libpicmanbase/picmanbaseenums.c:714
+msgid "Shadows"
+msgstr "سایه‌ها"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Midtones"
+msgstr "رنگسایه‌های میانی"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Highlights"
+msgstr "نورها"
+
+#: ../libpicmanbase/picmanbaseenums.c:744
+#, fuzzy
+msgid "Normal (Forward)"
+msgstr "جلو"
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:775
+msgid "Adjust"
+msgstr "تنظیم"
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Clip"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Crop to result"
+msgstr "حاشیه‌گیری به نتیجه"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop with aspect"
+msgstr "حاشیه‌گیری با حفظ نسبت"
+
+#: ../libpicmanbase/picmanbaseenums.c:881
+msgid "Internal PICMAN procedure"
+msgstr "روال داخلی گیمپ"
+
+#: ../libpicmanbase/picmanbaseenums.c:882
+msgid "PICMAN Plug-In"
+msgstr "متصل شوندهٔ گیمپ"
+
+#: ../libpicmanbase/picmanbaseenums.c:883
+msgid "PICMAN Extension"
+msgstr "ضمیمهٔ گیمپ"
+
+#: ../libpicmanbase/picmanbaseenums.c:884
+msgid "Temporary Procedure"
+msgstr "روالٔ موقتی"
+
+#: ../libpicmanbase/picmanmemsize.c:180
+#, fuzzy, c-format
+msgid "%d Byte"
+msgid_plural "%d Bytes"
+msgstr[0] "%Id بایت"
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.2f KB"
+msgstr "%I.2f کیلوبایت"
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%.1f KB"
+msgstr "%I.1f کیلوبایت"
+
+#: ../libpicmanbase/picmanmemsize.c:194
+#, c-format
+msgid "%d KB"
+msgstr "%Id کیلوبایت"
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.2f MB"
+msgstr "%I.2f مگابایت"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%.1f MB"
+msgstr "%I.1f مگابایت"
+
+#: ../libpicmanbase/picmanmemsize.c:209
+#, c-format
+msgid "%d MB"
+msgstr "%Id مگابایت"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, c-format
+msgid "%.2f GB"
+msgstr "%I.2f گیگابایت"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%.1f GB"
+msgstr "%I.1f گیگابایت"
+
+#: ../libpicmanbase/picmanmemsize.c:224
+#, c-format
+msgid "%d GB"
+msgstr "%Id گیگابایت"
+
+#: ../libpicmanbase/picmanutils.c:170 ../libpicmanbase/picmanutils.c:175
+#: ../modules/cdisplay_lcms.c:259
+msgid "(invalid UTF-8 string)"
+msgstr "(رشتهٔ یوتی‌اف-۸ نامعتبر)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:40
+msgid "Mode of operation for color management."
+msgstr "طرز کار مدیریت رنگ‌ها."
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "The color profile of your (primary) monitor."
+msgstr "مجموعه تنظیمات رنگی نمایشگر (اصلی) شما."
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"اگر فعال شود، گیمپ سعی می‌کند که از مجموعهٔ تنظیمات رنگی نمایشگر سیستم "
+"پنجره‌های سیستم‌عامل استفاده کند. از مجموعهٔ تنظیمات رنگی نمایشگر پیکربندی شده، "
+"تنها به عنوان پشتیبان استفاده می‌شود. "
+
+#: ../libpicmanconfig/picmancolorconfig.c:48
+msgid "The default RGB working space color profile."
+msgstr "مجموعه تنظیمات رنگی فضای کاری RGB پیش‌فرض."
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "مجموعهٔ تنظیمات رنگی CMYK که برای تبدیل بین RGB و CMYK استفاده می‌شود."
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "مجموعه تنظیمات رنگی مورد استفاده برای شبیه‌سازی نسخهٔ چاپی (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "Sets how colors are mapped for your display."
+msgstr "چگونگی نگاشت رنگ‌ها در نمایشگر شما را تنظیم می‌کند."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"چگونگی تبدیل رنگ‌ها از فضای کاری RGB را به رنگ‌های مورد استفادهٔ دستگاه "
+"شبیه‌سازی چاپ تنظیم می‌کند."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr "بدون مدیریت رنگ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr "نمایش با رنگ مدیریت شده"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr "شبیه‌سازی چاپ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr "ادراکی"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+#, fuzzy
+msgid "Relative colorimetric"
+msgstr "رنگ‌سنجی نسبی"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "غلظت"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+#, fuzzy
+msgid "Absolute colorimetric"
+msgstr "رنگ‌سنجی مطلق"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:96
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "مقدار %s یک رشتهٔ معتبر UTF-8 نیست."
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:427
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "برای مقدار بولی %s «yes» یا «no» مورد نیاز است، ولی «%s» دریافت شد"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:501
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "مقدار نامعتبر «%s» برای %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:516
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "مقدار نامعتبر «%Ild» برای %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:585
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "در هنگام تجزیهٔ «%s»: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467 ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+msgid "fatal parse error"
+msgstr "خطای تجزیهٔ مهلک"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "نمی‌توان ${%s} را باز کرد"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:135
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "نمی‌توان برای «%s» پروندهٔ موقتی ایجاد کرد: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:148
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "نمی‌توان «%s» را برای نوشتن باز کرد: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:667
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"خطا هنگام نوشتن در پروندهٔ موقتی برای «%s»: %s\n"
+"پروندهٔ اصلی دست‌کاری نشده است."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:675
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"خطا هنگام نوشتن در پروندهٔ موقتی برای «%s»: %s\n"
+"پرونده‌ای ایجاد نشد."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:686
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "خطا هنگام نوشتن در «%s»: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:704
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "نمی‌توان «%s» را ایجاد کرد: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:255
+msgid "invalid UTF-8 string"
+msgstr "رشتهٔ یوتی‌اف-۸ نامعتبر"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "خطا هنگام تجزیهٔ «%s» در سطر %Id: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:153 ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280 ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "خطا در بار کردن پیمانهٔ «%s»: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "خطای پیمانه"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr "بار شد"
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr "بار کردن با شکست مواجه شد"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr "بار نشد"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:125
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"نمی‌توان یک پوشهٔ آغازهٔ معتبر تعیین کرد.\n"
+"در عوض مسطوره‌ها در پوشهٔ  پرونده‌های موقتی (%s) ذخیره خواهند شد."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:249 ../libpicmanthumb/picmanthumb-utils.c:317
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "ایجاد پوشهٔ «‎%s» برای مسطوره‌ها با شکست مواجه شد."
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "نمی‌توان برای %s مسطوره ایجاد کرد: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "_جستجو:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "رنگ پی_ش‌زمینه"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "رنگ پ_س‌زمینه"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr "س_یاه"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "س_فید"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr "مقیاس‌ها"
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "در حال حاضر:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "قدیمی:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+#, fuzzy
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr "نمایش شانزده‌شانزدهی رنگ‌ها همان طور که در HTML و CSS استفاده می‌شود."
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+#, fuzzy
+msgid "HTML _notation:"
+msgstr "ن_مایش HTML:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr "برای مرور پوشه‌ها یک انتخاب کنندهٔ پرونده باز کنید"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr "برای مرور پرونده‌هایتان یک انتخاب کنندهٔ پرونده باز کنید"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "انتخاب پوشه"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "انتخاب پرونده"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr "کیلوبایت"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr "مگابایت"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr "گیگابایت"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "Nothing selected"
+msgstr "چیزی انتخاب نشده"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "انتخاب _همه"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr "انتخاب م_حدوده:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr "باز کردن _صفحات به صورت"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "صفحهٔ ۰۰۰"
+
+#: ../libpicmanwidgets/picmanpageselector.c:512
+#: ../libpicmanwidgets/picmanpageselector.c:749
+#, c-format
+msgid "Page %d"
+msgstr "صفحهٔ %Id"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1176
+msgid "One page selected"
+msgstr "یک صفحه انتخاب شد"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+#: ../libpicmanwidgets/picmanpageselector.c:1187
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "هر %Id صفحه انتخاب شد"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "قابل نوشتن"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "پوشه"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"اول روی قطره‌چکان و سپس روی رنگی در هر کجای صفحهٔ نمایش کلیک کنید تا انتخاب "
+"شود."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr "اندازهٔ چهارخانه‌ها"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr "سبک چهارخانه‌ها"
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "_پیش‌نمایش"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1901
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "این فیلد ورودی متنی به %Id نویسه محدود شده است."
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "لنگر"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr "مرک_ز"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr "تک_ثیر"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr "_ویرایش"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr "پیونددار"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr "چسباندن به عنوان جدید"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr "چسباندن در"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr "ب_رگرداندن به مقادیر اولیه"
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "مرئی"
+
+#: ../libpicmanwidgets/picmanstock.c:157 ../libpicmanwidgets/picmanstock.c:161
+msgid "_Stroke"
+msgstr "_قلم‌ضربه"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_etter Spacing"
+msgstr "فا_صله‌گذاری بین حروف"
+
+#: ../libpicmanwidgets/picmanstock.c:174
+msgid "L_ine Spacing"
+msgstr "فاصله‌گذاری بین _سطرها"
+
+#: ../libpicmanwidgets/picmanstock.c:190
+msgid "_Resize"
+msgstr "ت_غییر اندازه"
+
+#: ../libpicmanwidgets/picmanstock.c:191 ../libpicmanwidgets/picmanstock.c:319
+msgid "_Scale"
+msgstr "بزر_گ‌نمایی"
+
+#: ../libpicmanwidgets/picmanstock.c:295
+#, fuzzy
+msgid "Cr_op"
+msgstr "_حاشیه‌گیری"
+
+#: ../libpicmanwidgets/picmanstock.c:314
+msgid "_Transform"
+msgstr "_تبدیل"
+
+#: ../libpicmanwidgets/picmanstock.c:318
+msgid "_Rotate"
+msgstr "_چرخش"
+
+#: ../libpicmanwidgets/picmanstock.c:320
+msgid "_Shear"
+msgstr "_قیچی"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "بیشتر..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:577
+msgid "Unit Selection"
+msgstr "انتخاب واحد"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:626
+msgid "Unit"
+msgstr "واحد"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:630
+msgid "Factor"
+msgstr "عامل"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"از این مقدار به عنوان بذر مولد عدد تصادفی استفاده کنید. این کار این امکان را "
+"به شما می‌دهد که بتوانید یک عملیات «تصادفی» را تکرار کنید."
+
+#: ../libpicmanwidgets/picmanwidgets.c:1009
+msgid "_New Seed"
+msgstr "بذر _جدید"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "Seed random number generator with a generated random number"
+msgstr "بذرگذاری مولد عدد تصادفی، یا یک عدد تصادفی تولید شده"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1026
+msgid "_Randomize"
+msgstr "تصادفی کردن"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "پرتره‌ای"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "منظره‌ای"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "H (_ف)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "فام"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr "S (_غ)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "غلظت"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr "V (_ر)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "مقدار"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "R (_ق)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "G (_س)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "B (_ب)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "A (_الف)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "لایه‌ها"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "تصاویر"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "زوم به داخل"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "زوم به خارج"
+
+#: ../modules/cdisplay_colorblind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "پروتانوپیا (بی‌حسی نسبت به قرمز)"
+
+#: ../modules/cdisplay_colorblind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "دوترانوپیا (بی‌حسی نسبت به سبز)"
+
+#: ../modules/cdisplay_colorblind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "تریتانوپیا (بی‌حسی نسبت به آبی)"
+
+#: ../modules/cdisplay_colorblind.c:200
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "شبیه‌سازی صافی کمبود رنگ (الگوریتم Brettel-Vienot-Mollon)"
+
+#: ../modules/cdisplay_colorblind.c:292
+msgid "Color Deficient Vision"
+msgstr "ضعف در تشخیص رنگ‌ها"
+
+#: ../modules/cdisplay_colorblind.c:507
+#, fuzzy
+msgid "Color _deficiency type:"
+msgstr "نوع _ضعف تشخیص رنگ:"
+
+#: ../modules/cdisplay_gamma.c:91
+msgid "Gamma color display filter"
+msgstr "صافی نمایش رنگ گاما"
+
+#: ../modules/cdisplay_gamma.c:160
+msgid "Gamma"
+msgstr "گاما"
+
+#: ../modules/cdisplay_gamma.c:253
+msgid "_Gamma:"
+msgstr "_گاما:"
+
+#: ../modules/cdisplay_highcontrast.c:91
+msgid "High Contrast color display filter"
+msgstr "صافی نمایش رنگ با کنتراست بالا"
+
+#: ../modules/cdisplay_highcontrast.c:160
+msgid "Contrast"
+msgstr "کنتراست"
+
+#: ../modules/cdisplay_highcontrast.c:253
+#, fuzzy
+msgid "Contrast c_ycles:"
+msgstr "_چرخه‌های کنتراست:"
+
+#: ../modules/cdisplay_lcms.c:116
+msgid "Color management display filter using ICC color profiles"
+msgstr "صافی نمایش مدیریت رنگ، با استفاده از مجموعه تنظیمات رنگی ICC"
+
+#: ../modules/cdisplay_lcms.c:184
+msgid "Color Management"
+msgstr "مدیریت رنگ‌ها"
+
+#: ../modules/cdisplay_lcms.c:288
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr "این صافی تنظیمات خود را از بخش مدیریت رنگ‌ها در محاورهٔ ترجیحات می‌گیرد."
+
+#: ../modules/cdisplay_lcms.c:302
+msgid "Mode of operation:"
+msgstr "حالت عملیات:"
+
+#: ../modules/cdisplay_lcms.c:309
+msgid "RGB working space profile:"
+msgstr "مجموعه تنظیمات فضای کاری RGB:"
+
+#: ../modules/cdisplay_lcms.c:316
+msgid "Monitor profile:"
+msgstr "مجموعه تنظیمات نمایشگر:"
+
+#: ../modules/cdisplay_lcms.c:323
+msgid "Print simulation profile:"
+msgstr "مجموعه تنظیمات شبیه‌سازی چاپ:"
+
+#: ../modules/cdisplay_proof.c:102
+msgid "Color proof filter using ICC color profile"
+msgstr "صافی تثبیت رنگ با استفاده از مجموعه تنظیمات رنگی ICC"
+
+#: ../modules/cdisplay_proof.c:179
+msgid "Color Proof"
+msgstr "تثبیت رنگ"
+
+#: ../modules/cdisplay_proof.c:306
+msgid "_Intent:"
+msgstr "_هدف:"
+
+#: ../modules/cdisplay_proof.c:310
+msgid "Choose an ICC Color Profile"
+msgstr "یک مجموعه تنظیمات رنگی ICC انتخاب کنید"
+
+#: ../modules/cdisplay_proof.c:313
+msgid "_Profile:"
+msgstr "_مجموعه تنظیمات:"
+
+#: ../modules/cdisplay_proof.c:318
+msgid "_Black Point Compensation"
+msgstr "جبران نقطهٔ _تاریک"
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr "انتخاب کنندهٔ رنگ CMYK"
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/colorsel_cmyk.c:148
+msgid "_C"
+msgstr "C (_ف)"
+
+#. Magenta
+#: ../modules/colorsel_cmyk.c:150
+msgid "_M"
+msgstr "M (_س)"
+
+#. Yellow
+#: ../modules/colorsel_cmyk.c:152
+msgid "_Y"
+msgstr "Y (_ز)"
+
+#. Key (Black)
+#: ../modules/colorsel_cmyk.c:154
+msgid "_K"
+msgstr "K (_ه‍)"
+
+#: ../modules/colorsel_cmyk.c:158
+msgid "Cyan"
+msgstr "فیروزه‌ای"
+
+#: ../modules/colorsel_cmyk.c:159
+msgid "Magenta"
+msgstr "سرخابی"
+
+#: ../modules/colorsel_cmyk.c:160
+msgid "Yellow"
+msgstr "زرد"
+
+#: ../modules/colorsel_cmyk.c:161
+msgid "Black"
+msgstr "سیاه"
+
+#: ../modules/colorsel_cmyk.c:195
+#, fuzzy
+msgid "Black _pullout:"
+msgstr "_کسر سیاه:"
+
+#: ../modules/colorsel_cmyk.c:212
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "درصد رنگ سیاهی که از جوهرهای رنگی کسر می‌شود."
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr "انتخاب‌گر رنگ مثلثی به سبک نقاش"
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr "مثلثی"
+
+#: ../modules/colorsel_water.c:84
+msgid "Watercolor style color selector"
+msgstr "انتخاب‌گر رنگ به سبک آبرنگ"
+
+#: ../modules/colorsel_water.c:150
+msgid "Watercolor"
+msgstr "آبرنگ"
+
+#: ../modules/colorsel_water.c:213
+msgid "Pressure"
+msgstr "فشار"
+
+#: ../modules/controller_linux_input.c:58
+msgid "Button 0"
+msgstr "دکمهٔ ۰"
+
+#: ../modules/controller_linux_input.c:59
+msgid "Button 1"
+msgstr "دکمهٔ ۱"
+
+#: ../modules/controller_linux_input.c:60
+msgid "Button 2"
+msgstr "دکمهٔ ۲"
+
+#: ../modules/controller_linux_input.c:61
+msgid "Button 3"
+msgstr "دکمهٔ ۳"
+
+#: ../modules/controller_linux_input.c:62
+msgid "Button 4"
+msgstr "دکمهٔ ۴"
+
+#: ../modules/controller_linux_input.c:63
+msgid "Button 5"
+msgstr "دکمهٔ ۵"
+
+#: ../modules/controller_linux_input.c:64
+msgid "Button 6"
+msgstr "دکمهٔ ۶"
+
+#: ../modules/controller_linux_input.c:65
+msgid "Button 7"
+msgstr "دکمهٔ ۷"
+
+#: ../modules/controller_linux_input.c:66
+msgid "Button 8"
+msgstr "دکمهٔ ۸"
+
+#: ../modules/controller_linux_input.c:67
+msgid "Button 9"
+msgstr "دکمهٔ ۹"
+
+#: ../modules/controller_linux_input.c:68
+msgid "Button Mouse"
+msgstr "دکمهٔ موشی"
+
+#: ../modules/controller_linux_input.c:69
+msgid "Button Left"
+msgstr "دکمهٔ چپ"
+
+#: ../modules/controller_linux_input.c:70
+msgid "Button Right"
+msgstr "دکمهٔ راست"
+
+#: ../modules/controller_linux_input.c:71
+msgid "Button Middle"
+msgstr "دکمهٔ وسط"
+
+#: ../modules/controller_linux_input.c:72
+msgid "Button Side"
+msgstr "دکمهٔ کناری"
+
+#: ../modules/controller_linux_input.c:73
+msgid "Button Extra"
+msgstr "دکمهٔ اضافی"
+
+#: ../modules/controller_linux_input.c:74
+msgid "Button Forward"
+msgstr "دکمهٔ جلو"
+
+#: ../modules/controller_linux_input.c:75
+msgid "Button Back"
+msgstr "دکمهٔ عقب"
+
+#: ../modules/controller_linux_input.c:76
+msgid "Button Task"
+msgstr "تکلیف دکمه"
+
+#: ../modules/controller_linux_input.c:78
+msgid "Button Wheel"
+msgstr "دکمهٔ چرخی"
+
+#: ../modules/controller_linux_input.c:81
+msgid "Button Gear Down"
+msgstr "دکمهٔ دندهٔ سنگین‌تر"
+
+#: ../modules/controller_linux_input.c:84
+msgid "Button Gear Up"
+msgstr "دکمهٔ دندهٔ سبک‌تر"
+
+#: ../modules/controller_linux_input.c:90
+#: ../modules/controller_dx_dinput.c:469
+msgid "X Move Left"
+msgstr "حرکت به چپ X"
+
+#: ../modules/controller_linux_input.c:91
+#: ../modules/controller_dx_dinput.c:472
+msgid "X Move Right"
+msgstr "حرکت به راست X"
+
+#: ../modules/controller_linux_input.c:92
+#: ../modules/controller_dx_dinput.c:478
+msgid "Y Move Away"
+msgstr "دور شدن Y"
+
+#: ../modules/controller_linux_input.c:93
+#: ../modules/controller_dx_dinput.c:481
+msgid "Y Move Near"
+msgstr "نزدیک شدن Y"
+
+#: ../modules/controller_linux_input.c:94
+#: ../modules/controller_dx_dinput.c:487
+msgid "Z Move Up"
+msgstr "بالا رفتن Z"
+
+#: ../modules/controller_linux_input.c:95
+#: ../modules/controller_dx_dinput.c:490
+msgid "Z Move Down"
+msgstr "پایین رفتن Z"
+
+#: ../modules/controller_linux_input.c:97
+#: ../modules/controller_dx_dinput.c:496
+msgid "X Axis Tilt Away"
+msgstr "انحراف دوری محور X"
+
+#: ../modules/controller_linux_input.c:98
+#: ../modules/controller_dx_dinput.c:499
+msgid "X Axis Tilt Near"
+msgstr "انحراف نزدیکی محور X"
+
+#: ../modules/controller_linux_input.c:99
+#: ../modules/controller_dx_dinput.c:505
+msgid "Y Axis Tilt Right"
+msgstr "انحراف به راست محور Y"
+
+#: ../modules/controller_linux_input.c:100
+#: ../modules/controller_dx_dinput.c:508
+msgid "Y Axis Tilt Left"
+msgstr "انحراف به چپ محور Y"
+
+#: ../modules/controller_linux_input.c:101
+#: ../modules/controller_dx_dinput.c:514
+msgid "Z Axis Turn Left"
+msgstr "چرخش سمت چپ محور Z"
+
+#: ../modules/controller_linux_input.c:102
+#: ../modules/controller_dx_dinput.c:517
+msgid "Z Axis Turn Right"
+msgstr "چرخش سمت راست محور Z"
+
+#: ../modules/controller_linux_input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr "گردش به عقب دکمهٔ چرخی افقی"
+
+#: ../modules/controller_linux_input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr "گردش به جلو دکمهٔ چرخی افقی"
+
+#: ../modules/controller_linux_input.c:106
+#, fuzzy
+msgid "Dial Turn Left"
+msgstr "چرخش به چپ دکمهٔ چرخی"
+
+#: ../modules/controller_linux_input.c:107
+#, fuzzy
+msgid "Dial Turn Right"
+msgstr "چرخش به راست دکمهٔ چرخی"
+
+#: ../modules/controller_linux_input.c:108
+msgid "Wheel Turn Left"
+msgstr "چرخش به چپ دکمهٔ چرخی"
+
+#: ../modules/controller_linux_input.c:109
+msgid "Wheel Turn Right"
+msgstr "چرخش به راست دکمهٔ چرخی"
+
+#: ../modules/controller_linux_input.c:179
+msgid "Linux input event controller"
+msgstr "کنترل‌گر رویداد ورودی لینوکس"
+
+#: ../modules/controller_linux_input.c:249
+#: ../modules/controller_dx_dinput.c:227 ../modules/controller_midi.c:245
+msgid "Device:"
+msgstr "دستگاه:"
+
+#: ../modules/controller_linux_input.c:250
+msgid "The name of the device to read Linux Input events from."
+msgstr "نام دستگاهی که رویدادهای ورودی لینوکس از آن خوانده می‌شود."
+
+#: ../modules/controller_linux_input.c:261
+msgid "Linux Input"
+msgstr "ورودی لینوکس"
+
+#: ../modules/controller_linux_input.c:539
+msgid "Linux Input Events"
+msgstr "رویدادهای ورودی لینوکس"
+
+#: ../modules/controller_linux_input.c:551
+#: ../modules/controller_dx_dinput.c:1122 ../modules/controller_midi.c:533
+msgid "No device configured"
+msgstr "دستگاهی پیکربندی نشده است"
+
+#: ../modules/controller_linux_input.c:577 ../modules/controller_midi.c:482
+#: ../modules/controller_midi.c:508
+#, c-format
+msgid "Reading from %s"
+msgstr "در حال خواندن از %s"
+
+#: ../modules/controller_linux_input.c:595
+#: ../modules/controller_linux_input.c:649 ../modules/controller_midi.c:464
+#: ../modules/controller_midi.c:525 ../modules/controller_midi.c:596
+#, c-format
+msgid "Device not available: %s"
+msgstr "دستگاه موجود نیست: %s"
+
+#: ../modules/controller_linux_input.c:614
+#: ../modules/controller_dx_dinput.c:1147
+msgid "Device not available"
+msgstr "دستگاه موجود نیست"
+
+#: ../modules/controller_linux_input.c:658 ../modules/controller_midi.c:605
+msgid "End of file"
+msgstr "پایان پرونده"
+
+#: ../modules/controller_dx_dinput.c:157
+#, fuzzy
+msgid "DirectX DirectInput event controller"
+msgstr "کنترل‌گر رویداد ورودی لینوکس"
+
+#: ../modules/controller_dx_dinput.c:228
+#, fuzzy
+msgid "The device to read DirectInput events from."
+msgstr "نام دستگاهی که رویدادهای ورودی لینوکس از آن خوانده می‌شود."
+
+#: ../modules/controller_dx_dinput.c:237
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:446
+#, fuzzy, c-format
+msgid "Button %d"
+msgstr "دکمهٔ ۹"
+
+#: ../modules/controller_dx_dinput.c:449
+#, fuzzy, c-format
+msgid "Button %d Press"
+msgstr "دکمهٔ کناری"
+
+#: ../modules/controller_dx_dinput.c:452
+#, fuzzy, c-format
+msgid "Button %d Release"
+msgstr "دکمهٔ وسط"
+
+#: ../modules/controller_dx_dinput.c:528
+#, c-format
+msgid "Slider %d Increase"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:531
+#, c-format
+msgid "Slider %d Decrease"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:541
+#, c-format
+msgid "POV %d X View"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:544
+#, c-format
+msgid "POV %d Y View"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:547
+#, c-format
+msgid "POV %d Return"
+msgstr ""
+
+#: ../modules/controller_dx_dinput.c:1111
+#, fuzzy
+msgid "DirectInput Events"
+msgstr "رویدادهای ورودی لینوکس"
+
+#: ../modules/controller_midi.c:167
+msgid "MIDI event controller"
+msgstr "کنترل‌گر رویداد MIDI"
+
+#: ../modules/controller_midi.c:236
+msgid "The name of the device to read MIDI events from."
+msgstr "نام دستگاهی که رویدادهای MIDI از آن خوانده می‌شود."
+
+#: ../modules/controller_midi.c:239
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "برای استفاده از ترتیب‌سنج ALSA، وارد کنید «alsa»."
+
+#: ../modules/controller_midi.c:254
+msgid "Channel:"
+msgstr "کانال:"
+
+#: ../modules/controller_midi.c:255
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"کانال MIDI برای خواندن رویدادها. برای خواندن از تمام کانال‌های MIDI وارد کنید "
+"-۱"
+
+#: ../modules/controller_midi.c:259
+msgid "MIDI"
+msgstr ""
+
+#: ../modules/controller_midi.c:383
+#, c-format
+msgid "Note %02x on"
+msgstr ""
+
+#: ../modules/controller_midi.c:386
+#, c-format
+msgid "Note %02x off"
+msgstr ""
+
+#: ../modules/controller_midi.c:389
+#, c-format
+msgid "Controller %03d"
+msgstr "کنترل‌گر %I03d"
+
+#: ../modules/controller_midi.c:436
+msgid "MIDI Events"
+msgstr "رویدادهای MIDI"
+
+#: ../modules/controller_midi.c:454
+msgid "PICMAN"
+msgstr "گیمپ"
+
+#: ../modules/controller_midi.c:456
+msgid "PICMAN MIDI Input Controller"
+msgstr "کنترلر ورودی MIDI گیمپ"
+
+#~ msgid "Backward"
+#~ msgstr "عقب"
+
+#~ msgid "pixels/%s"
+#~ msgstr "نقطه/%s"
+
+#~ msgid "Loading module: '%s'\n"
+#~ msgstr "در حال بار کردن پیمانه: «%s»\n"
+
+#~ msgid "Skipping module: '%s'\n"
+#~ msgstr "در حال گذشتن از پیمانه« «%s»\n"

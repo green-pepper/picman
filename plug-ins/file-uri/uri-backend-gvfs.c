@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * URI plug-in, GIO/GVfs backend
- * Copyright (C) 2008  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 
 #include <gio/gio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "uri-backend.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 typedef enum
@@ -43,7 +43,7 @@ static gchar    * get_protocols          (void);
 static gboolean   copy_uri               (const gchar  *src_uri,
                                           const gchar  *dest_uri,
                                           Mode          mode,
-                                          GimpRunMode   run_mode,
+                                          PicmanRunMode   run_mode,
                                           GError      **error);
 static gboolean   mount_enclosing_volume (GFile        *file,
                                           GError      **error);
@@ -54,12 +54,12 @@ static gchar *supported_protocols = NULL;
 gboolean
 uri_backend_init (const gchar  *plugin_name,
                   gboolean      run,
-                  GimpRunMode   run_mode,
+                  PicmanRunMode   run_mode,
                   GError      **error)
 {
-  if (run_mode == GIMP_RUN_INTERACTIVE)
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
     {
-      gimp_ui_init (plugin_name, FALSE);
+      picman_ui_init (plugin_name, FALSE);
     }
 
   return TRUE;
@@ -103,7 +103,7 @@ uri_backend_get_save_protocols (void)
 gboolean
 uri_backend_load_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   gchar *dest_uri = g_filename_to_uri (tmpname, NULL, error);
@@ -123,7 +123,7 @@ uri_backend_load_image (const gchar  *uri,
 gboolean
 uri_backend_save_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   gchar *src_uri = g_filename_to_uri (tmpname, NULL, error);
@@ -142,7 +142,7 @@ uri_backend_save_image (const gchar  *uri,
 
 gchar *
 uri_backend_map_image (const gchar  *uri,
-                       GimpRunMode   run_mode)
+                       PicmanRunMode   run_mode)
 {
   GFile    *file    = g_file_new_for_uri (uri);
   gchar    *path    = NULL;
@@ -151,7 +151,7 @@ uri_backend_map_image (const gchar  *uri,
   if (! file)
     return NULL;
 
-  if (run_mode == GIMP_RUN_INTERACTIVE)
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
     {
       GError *error = NULL;
 
@@ -241,8 +241,8 @@ uri_progress_callback (goffset  current_num_bytes,
           g_assert_not_reached ();
         }
 
-      gimp_progress_set_text_printf (format, done, total);
-      gimp_progress_update ((gdouble) current_num_bytes /
+      picman_progress_set_text_printf (format, done, total);
+      picman_progress_update ((gdouble) current_num_bytes /
                             (gdouble) total_num_bytes);
 
       g_free (total);
@@ -267,8 +267,8 @@ uri_progress_callback (goffset  current_num_bytes,
           g_assert_not_reached ();
         }
 
-      gimp_progress_set_text_printf (format, done);
-      gimp_progress_pulse ();
+      picman_progress_set_text_printf (format, done);
+      picman_progress_pulse ();
 
       g_free (done);
     }
@@ -306,7 +306,7 @@ static gboolean
 copy_uri (const gchar  *src_uri,
           const gchar  *dest_uri,
           Mode          mode,
-          GimpRunMode   run_mode,
+          PicmanRunMode   run_mode,
           GError      **error)
 {
   GFile       *src_file;
@@ -314,7 +314,7 @@ copy_uri (const gchar  *src_uri,
   UriProgress  progress = { 0, };
   gboolean     success;
 
-  gimp_progress_init (_("Connecting to server"));
+  picman_progress_init (_("Connecting to server"));
 
   progress.mode = mode;
 
@@ -324,10 +324,10 @@ copy_uri (const gchar  *src_uri,
   success = g_file_copy (src_file, dest_file, G_FILE_COPY_OVERWRITE, NULL,
                          uri_progress_callback, &progress,
                          error);
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   if (! success &&
-      run_mode == GIMP_RUN_INTERACTIVE &&
+      run_mode == PICMAN_RUN_INTERACTIVE &&
       (*error)->domain == G_IO_ERROR   &&
       (*error)->code   == G_IO_ERROR_NOT_MOUNTED)
     {

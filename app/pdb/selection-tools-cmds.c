@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,36 +25,36 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpchannel-select.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-by_color_select_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+by_color_select_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpRGB color;
+  PicmanDrawable *drawable;
+  PicmanRGB color;
   gint32 threshold;
   gint32 operation;
   gboolean antialias;
@@ -62,25 +62,25 @@ by_color_select_invoker (GimpProcedure         *procedure,
   gdouble feather_radius;
   gboolean sample_merged;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  gimp_value_get_rgb (gimp_value_array_index (args, 1), &color);
-  threshold = g_value_get_int (gimp_value_array_index (args, 2));
-  operation = g_value_get_enum (gimp_value_array_index (args, 3));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 4));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 5));
-  feather_radius = g_value_get_double (gimp_value_array_index (args, 6));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 7));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  picman_value_get_rgb (picman_value_array_index (args, 1), &color);
+  threshold = g_value_get_int (picman_value_array_index (args, 2));
+  operation = g_value_get_enum (picman_value_array_index (args, 3));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 4));
+  feather = g_value_get_boolean (picman_value_array_index (args, 5));
+  feather_radius = g_value_get_double (picman_value_array_index (args, 6));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 7));
 
   if (success)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      gimp_channel_select_by_color (gimp_image_get_mask (image), drawable,
+      picman_channel_select_by_color (picman_image_get_mask (image), drawable,
                                     sample_merged,
                                     &color,
                                     threshold / 255.0,
                                     FALSE /* don't select transparent */,
-                                    GIMP_SELECT_CRITERION_COMPOSITE,
+                                    PICMAN_SELECT_CRITERION_COMPOSITE,
                                     operation,
                                     antialias,
                                     feather,
@@ -88,21 +88,21 @@ by_color_select_invoker (GimpProcedure         *procedure,
                                     feather_radius);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-by_color_select_full_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+by_color_select_full_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpRGB color;
+  PicmanDrawable *drawable;
+  PicmanRGB color;
   gint32 threshold;
   gint32 operation;
   gboolean antialias;
@@ -113,23 +113,23 @@ by_color_select_full_invoker (GimpProcedure         *procedure,
   gboolean select_transparent;
   gint32 select_criterion;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  gimp_value_get_rgb (gimp_value_array_index (args, 1), &color);
-  threshold = g_value_get_int (gimp_value_array_index (args, 2));
-  operation = g_value_get_enum (gimp_value_array_index (args, 3));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 4));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 5));
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 6));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 7));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 8));
-  select_transparent = g_value_get_boolean (gimp_value_array_index (args, 9));
-  select_criterion = g_value_get_enum (gimp_value_array_index (args, 10));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  picman_value_get_rgb (picman_value_array_index (args, 1), &color);
+  threshold = g_value_get_int (picman_value_array_index (args, 2));
+  operation = g_value_get_enum (picman_value_array_index (args, 3));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 4));
+  feather = g_value_get_boolean (picman_value_array_index (args, 5));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 6));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 7));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 8));
+  select_transparent = g_value_get_boolean (picman_value_array_index (args, 9));
+  select_criterion = g_value_get_enum (picman_value_array_index (args, 10));
 
   if (success)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      gimp_channel_select_by_color (gimp_image_get_mask (image), drawable,
+      picman_channel_select_by_color (picman_image_get_mask (image), drawable,
                                     sample_merged,
                                     &color,
                                     threshold / 255.0,
@@ -142,20 +142,20 @@ by_color_select_full_invoker (GimpProcedure         *procedure,
                                     feather_radius_y);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-ellipse_select_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+ellipse_select_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gdouble x;
   gdouble y;
   gdouble width;
@@ -165,19 +165,19 @@ ellipse_select_invoker (GimpProcedure         *procedure,
   gboolean feather;
   gdouble feather_radius;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 1));
-  y = g_value_get_double (gimp_value_array_index (args, 2));
-  width = g_value_get_double (gimp_value_array_index (args, 3));
-  height = g_value_get_double (gimp_value_array_index (args, 4));
-  operation = g_value_get_enum (gimp_value_array_index (args, 5));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 6));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 7));
-  feather_radius = g_value_get_double (gimp_value_array_index (args, 8));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  x = g_value_get_double (picman_value_array_index (args, 1));
+  y = g_value_get_double (picman_value_array_index (args, 2));
+  width = g_value_get_double (picman_value_array_index (args, 3));
+  height = g_value_get_double (picman_value_array_index (args, 4));
+  operation = g_value_get_enum (picman_value_array_index (args, 5));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 6));
+  feather = g_value_get_boolean (picman_value_array_index (args, 7));
+  feather_radius = g_value_get_double (picman_value_array_index (args, 8));
 
   if (success)
     {
-      gimp_channel_select_ellipse (gimp_image_get_mask (image),
+      picman_channel_select_ellipse (picman_image_get_mask (image),
                                    (gint) x, (gint) y,
                                    (gint) width, (gint) height,
                                    operation,
@@ -188,20 +188,20 @@ ellipse_select_invoker (GimpProcedure         *procedure,
                                    TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-free_select_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+free_select_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gint32 num_segs;
   const gdouble *segs;
   gint32 operation;
@@ -209,20 +209,20 @@ free_select_invoker (GimpProcedure         *procedure,
   gboolean feather;
   gdouble feather_radius;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  num_segs = g_value_get_int (gimp_value_array_index (args, 1));
-  segs = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
-  operation = g_value_get_enum (gimp_value_array_index (args, 3));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 4));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 5));
-  feather_radius = g_value_get_double (gimp_value_array_index (args, 6));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  num_segs = g_value_get_int (picman_value_array_index (args, 1));
+  segs = picman_value_get_floatarray (picman_value_array_index (args, 2));
+  operation = g_value_get_enum (picman_value_array_index (args, 3));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 4));
+  feather = g_value_get_boolean (picman_value_array_index (args, 5));
+  feather_radius = g_value_get_double (picman_value_array_index (args, 6));
 
   if (success)
     {
-      gimp_channel_select_polygon (gimp_image_get_mask (image),
+      picman_channel_select_polygon (picman_image_get_mask (image),
                                    _("Free Select"),
                                    num_segs / 2,
-                                   (GimpVector2 *) segs,
+                                   (PicmanVector2 *) segs,
                                    operation,
                                    antialias,
                                    feather,
@@ -231,20 +231,20 @@ free_select_invoker (GimpProcedure         *procedure,
                                    TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-fuzzy_select_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+fuzzy_select_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble x;
   gdouble y;
   gint32 threshold;
@@ -254,27 +254,27 @@ fuzzy_select_invoker (GimpProcedure         *procedure,
   gdouble feather_radius;
   gboolean sample_merged;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 1));
-  y = g_value_get_double (gimp_value_array_index (args, 2));
-  threshold = g_value_get_int (gimp_value_array_index (args, 3));
-  operation = g_value_get_enum (gimp_value_array_index (args, 4));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 5));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 6));
-  feather_radius = g_value_get_double (gimp_value_array_index (args, 7));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 8));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  x = g_value_get_double (picman_value_array_index (args, 1));
+  y = g_value_get_double (picman_value_array_index (args, 2));
+  threshold = g_value_get_int (picman_value_array_index (args, 3));
+  operation = g_value_get_enum (picman_value_array_index (args, 4));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 5));
+  feather = g_value_get_boolean (picman_value_array_index (args, 6));
+  feather_radius = g_value_get_double (picman_value_array_index (args, 7));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 8));
 
   if (success)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      gimp_channel_select_fuzzy (gimp_image_get_mask (image),
+      picman_channel_select_fuzzy (picman_image_get_mask (image),
                                  drawable,
                                  sample_merged,
                                  x, y,
                                  threshold / 255.0,
                                  FALSE /* don't select transparent */,
-                                 GIMP_SELECT_CRITERION_COMPOSITE,
+                                 PICMAN_SELECT_CRITERION_COMPOSITE,
                                  operation,
                                  antialias,
                                  feather,
@@ -282,20 +282,20 @@ fuzzy_select_invoker (GimpProcedure         *procedure,
                                  feather_radius);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-fuzzy_select_full_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+fuzzy_select_full_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble x;
   gdouble y;
   gint32 threshold;
@@ -308,24 +308,24 @@ fuzzy_select_full_invoker (GimpProcedure         *procedure,
   gboolean select_transparent;
   gint32 select_criterion;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 1));
-  y = g_value_get_double (gimp_value_array_index (args, 2));
-  threshold = g_value_get_int (gimp_value_array_index (args, 3));
-  operation = g_value_get_enum (gimp_value_array_index (args, 4));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 5));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 6));
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 7));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 8));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 9));
-  select_transparent = g_value_get_boolean (gimp_value_array_index (args, 10));
-  select_criterion = g_value_get_enum (gimp_value_array_index (args, 11));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  x = g_value_get_double (picman_value_array_index (args, 1));
+  y = g_value_get_double (picman_value_array_index (args, 2));
+  threshold = g_value_get_int (picman_value_array_index (args, 3));
+  operation = g_value_get_enum (picman_value_array_index (args, 4));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 5));
+  feather = g_value_get_boolean (picman_value_array_index (args, 6));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 7));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 8));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 9));
+  select_transparent = g_value_get_boolean (picman_value_array_index (args, 10));
+  select_criterion = g_value_get_enum (picman_value_array_index (args, 11));
 
   if (success)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      gimp_channel_select_fuzzy (gimp_image_get_mask (image),
+      picman_channel_select_fuzzy (picman_image_get_mask (image),
                                  drawable,
                                  sample_merged,
                                  x, y,
@@ -339,20 +339,20 @@ fuzzy_select_full_invoker (GimpProcedure         *procedure,
                                  feather_radius_y);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-rect_select_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+rect_select_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gdouble x;
   gdouble y;
   gdouble width;
@@ -361,18 +361,18 @@ rect_select_invoker (GimpProcedure         *procedure,
   gboolean feather;
   gdouble feather_radius;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 1));
-  y = g_value_get_double (gimp_value_array_index (args, 2));
-  width = g_value_get_double (gimp_value_array_index (args, 3));
-  height = g_value_get_double (gimp_value_array_index (args, 4));
-  operation = g_value_get_enum (gimp_value_array_index (args, 5));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 6));
-  feather_radius = g_value_get_double (gimp_value_array_index (args, 7));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  x = g_value_get_double (picman_value_array_index (args, 1));
+  y = g_value_get_double (picman_value_array_index (args, 2));
+  width = g_value_get_double (picman_value_array_index (args, 3));
+  height = g_value_get_double (picman_value_array_index (args, 4));
+  operation = g_value_get_enum (picman_value_array_index (args, 5));
+  feather = g_value_get_boolean (picman_value_array_index (args, 6));
+  feather_radius = g_value_get_double (picman_value_array_index (args, 7));
 
   if (success)
     {
-      gimp_channel_select_rectangle (gimp_image_get_mask (image),
+      picman_channel_select_rectangle (picman_image_get_mask (image),
                                      (gint) x, (gint) y,
                                      (gint) width, (gint) height,
                                      operation,
@@ -382,20 +382,20 @@ rect_select_invoker (GimpProcedure         *procedure,
                                      TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-round_rect_select_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+round_rect_select_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gdouble x;
   gdouble y;
   gdouble width;
@@ -408,22 +408,22 @@ round_rect_select_invoker (GimpProcedure         *procedure,
   gdouble feather_radius_x;
   gdouble feather_radius_y;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 1));
-  y = g_value_get_double (gimp_value_array_index (args, 2));
-  width = g_value_get_double (gimp_value_array_index (args, 3));
-  height = g_value_get_double (gimp_value_array_index (args, 4));
-  corner_radius_x = g_value_get_double (gimp_value_array_index (args, 5));
-  corner_radius_y = g_value_get_double (gimp_value_array_index (args, 6));
-  operation = g_value_get_enum (gimp_value_array_index (args, 7));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 8));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 9));
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 10));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 11));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  x = g_value_get_double (picman_value_array_index (args, 1));
+  y = g_value_get_double (picman_value_array_index (args, 2));
+  width = g_value_get_double (picman_value_array_index (args, 3));
+  height = g_value_get_double (picman_value_array_index (args, 4));
+  corner_radius_x = g_value_get_double (picman_value_array_index (args, 5));
+  corner_radius_y = g_value_get_double (picman_value_array_index (args, 6));
+  operation = g_value_get_enum (picman_value_array_index (args, 7));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 8));
+  feather = g_value_get_boolean (picman_value_array_index (args, 9));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 10));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 11));
 
   if (success)
     {
-      gimp_channel_select_round_rect (gimp_image_get_mask (image),
+      picman_channel_select_round_rect (picman_image_get_mask (image),
                                       (gint) x, (gint) y,
                                       (gint) width, (gint) height,
                                       corner_radius_x,
@@ -436,615 +436,615 @@ round_rect_select_invoker (GimpProcedure         *procedure,
                                       TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_selection_tools_procs (GimpPDB *pdb)
+register_selection_tools_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-by-color-select
+   * picman-by-color-select
    */
-  procedure = gimp_procedure_new (by_color_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-by-color-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-by-color-select",
-                                     "Deprecated: Use 'gimp-image-select-color' instead.",
-                                     "Deprecated: Use 'gimp-image-select-color' instead.",
+  procedure = picman_procedure_new (by_color_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-by-color-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-by-color-select",
+                                     "Deprecated: Use 'picman-image-select-color' instead.",
+                                     "Deprecated: Use 'picman-image-select-color' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-select-color");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                     "picman-image-select-color");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("color",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("color",
                                                     "color",
                                                     "The color to select",
                                                     FALSE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("threshold",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("threshold",
                                                       "threshold",
                                                       "Threshold in intensity levels",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius",
                                                     "feather radius",
                                                     "Radius for feather operation",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-by-color-select-full
+   * picman-by-color-select-full
    */
-  procedure = gimp_procedure_new (by_color_select_full_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-by-color-select-full");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-by-color-select-full",
-                                     "Deprecated: Use 'gimp-image-select-color' instead.",
-                                     "Deprecated: Use 'gimp-image-select-color' instead.",
+  procedure = picman_procedure_new (by_color_select_full_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-by-color-select-full");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-by-color-select-full",
+                                     "Deprecated: Use 'picman-image-select-color' instead.",
+                                     "Deprecated: Use 'picman-image-select-color' instead.",
                                      "David Gowers",
                                      "David Gowers",
                                      "2006",
-                                     "gimp-image-select-color");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                     "picman-image-select-color");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("color",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("color",
                                                     "color",
                                                     "The color to select",
                                                     FALSE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("threshold",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("threshold",
                                                       "threshold",
                                                       "Threshold in intensity levels",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "Radius for feather operation in X direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "Radius for feather operation in Y direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("select-transparent",
                                                      "select transparent",
                                                      "Whether to consider transparent pixels for selection. If TRUE, transparency is considered as a unique selectable color.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("select-criterion",
                                                   "select criterion",
                                                   "The criterion used to determine color similarity. SELECT_CRITERION_COMPOSITE is the standard choice.",
-                                                  GIMP_TYPE_SELECT_CRITERION,
-                                                  GIMP_SELECT_CRITERION_COMPOSITE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_SELECT_CRITERION,
+                                                  PICMAN_SELECT_CRITERION_COMPOSITE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-ellipse-select
+   * picman-ellipse-select
    */
-  procedure = gimp_procedure_new (ellipse_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-ellipse-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-ellipse-select",
-                                     "Deprecated: Use 'gimp-image-select-ellipse' instead.",
-                                     "Deprecated: Use 'gimp-image-select-ellipse' instead.",
+  procedure = picman_procedure_new (ellipse_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-ellipse-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-ellipse-select",
+                                     "Deprecated: Use 'picman-image-select-ellipse' instead.",
+                                     "Deprecated: Use 'picman-image-select-ellipse' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-select-ellipse");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-select-ellipse");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "x coordinate of upper-left corner of ellipse bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "y coordinate of upper-left corner of ellipse bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("width",
                                                     "width",
                                                     "The width of the ellipse",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("height",
                                                     "height",
                                                     "The height of the ellipse",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius",
                                                     "feather radius",
                                                     "Radius for feather operation",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-free-select
+   * picman-free-select
    */
-  procedure = gimp_procedure_new (free_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-free-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-free-select",
-                                     "Deprecated: Use 'gimp-image-select-polygon' instead.",
-                                     "Deprecated: Use 'gimp-image-select-polygon' instead.",
+  procedure = picman_procedure_new (free_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-free-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-free-select",
+                                     "Deprecated: Use 'picman-image-select-polygon' instead.",
+                                     "Deprecated: Use 'picman-image-select-polygon' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-select-polygon");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-select-polygon");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-segs",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-segs",
                                                       "num segs",
                                                       "Number of points (count 1 coordinate as two points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("segs",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("segs",
                                                             "segs",
                                                             "Array of points: { p1.x, p1.y, p2.x, p2.y, ..., pn.x, pn.y}",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius",
                                                     "feather radius",
                                                     "Radius for feather operation",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-fuzzy-select
+   * picman-fuzzy-select
    */
-  procedure = gimp_procedure_new (fuzzy_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-fuzzy-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-fuzzy-select",
-                                     "Deprecated: Use 'gimp-image-select-contiguous-color' instead.",
-                                     "Deprecated: Use 'gimp-image-select-contiguous-color' instead.",
+  procedure = picman_procedure_new (fuzzy_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-fuzzy-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-fuzzy-select",
+                                     "Deprecated: Use 'picman-image-select-contiguous-color' instead.",
+                                     "Deprecated: Use 'picman-image-select-contiguous-color' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-select-contiguous-color");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                     "picman-image-select-contiguous-color");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "x coordinate of initial seed fill point: (image coordinates)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "y coordinate of initial seed fill point: (image coordinates)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("threshold",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("threshold",
                                                       "threshold",
                                                       "Threshold in intensity levels",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius",
                                                     "feather radius",
                                                     "Radius for feather operation",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-fuzzy-select-full
+   * picman-fuzzy-select-full
    */
-  procedure = gimp_procedure_new (fuzzy_select_full_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-fuzzy-select-full");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-fuzzy-select-full",
-                                     "Deprecated: Use 'gimp-image-select-contiguous-color' instead.",
-                                     "Deprecated: Use 'gimp-image-select-contiguous-color' instead.",
+  procedure = picman_procedure_new (fuzzy_select_full_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-fuzzy-select-full");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-fuzzy-select-full",
+                                     "Deprecated: Use 'picman-image-select-contiguous-color' instead.",
+                                     "Deprecated: Use 'picman-image-select-contiguous-color' instead.",
                                      "David Gowers",
                                      "David Gowers",
                                      "2006",
-                                     "gimp-image-select-contiguous-color");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                     "picman-image-select-contiguous-color");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "x coordinate of initial seed fill point: (image coordinates)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "y coordinate of initial seed fill point: (image coordinates)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("threshold",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("threshold",
                                                       "threshold",
                                                       "Threshold in intensity levels",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "Radius for feather operation in X direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "Radius for feather operation in Y direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("select-transparent",
                                                      "select transparent",
                                                      "Whether to consider transparent pixels for selection. If TRUE, transparency is considered as a unique selectable color.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("select-criterion",
                                                   "select criterion",
                                                   "The criterion used to determine color similarity. SELECT_CRITERION_COMPOSITE is the standard choice.",
-                                                  GIMP_TYPE_SELECT_CRITERION,
-                                                  GIMP_SELECT_CRITERION_COMPOSITE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_SELECT_CRITERION,
+                                                  PICMAN_SELECT_CRITERION_COMPOSITE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-rect-select
+   * picman-rect-select
    */
-  procedure = gimp_procedure_new (rect_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-rect-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-rect-select",
-                                     "Deprecated: Use 'gimp-image-select-rectangle' instead.",
-                                     "Deprecated: Use 'gimp-image-select-rectangle' instead.",
+  procedure = picman_procedure_new (rect_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-rect-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-rect-select",
+                                     "Deprecated: Use 'picman-image-select-rectangle' instead.",
+                                     "Deprecated: Use 'picman-image-select-rectangle' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-select-rectangle");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-select-rectangle");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "x coordinate of upper-left corner of rectangle",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "y coordinate of upper-left corner of rectangle",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("width",
                                                     "width",
                                                     "The width of the rectangle",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("height",
                                                     "height",
                                                     "The height of the rectangle",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius",
                                                     "feather radius",
                                                     "Radius for feather operation",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-round-rect-select
+   * picman-round-rect-select
    */
-  procedure = gimp_procedure_new (round_rect_select_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-round-rect-select");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-round-rect-select",
-                                     "Deprecated: Use 'gimp-image-select-round-rectangle' instead.",
-                                     "Deprecated: Use 'gimp-image-select-round-rectangle' instead.",
+  procedure = picman_procedure_new (round_rect_select_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-round-rect-select");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-round-rect-select",
+                                     "Deprecated: Use 'picman-image-select-round-rectangle' instead.",
+                                     "Deprecated: Use 'picman-image-select-round-rectangle' instead.",
                                      "Martin Nordholts",
                                      "Martin Nordholts",
                                      "2006",
-                                     "gimp-image-select-round-rectangle");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-select-round-rectangle");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "x coordinate of upper-left corner of rectangle",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "y coordinate of upper-left corner of rectangle",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("width",
                                                     "width",
                                                     "The width of the rectangle",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("height",
                                                     "height",
                                                     "The height of the rectangle",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("corner-radius-x",
                                                     "corner radius x",
                                                     "The corner radius in X direction",
-                                                    0, GIMP_MAX_IMAGE_SIZE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    0, PICMAN_MAX_IMAGE_SIZE, 0,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("corner-radius-y",
                                                     "corner radius y",
                                                     "The corner radius in Y direction",
-                                                    0, GIMP_MAX_IMAGE_SIZE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    0, PICMAN_MAX_IMAGE_SIZE, 0,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("operation",
                                                   "operation",
                                                   "The selection operation",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather option for selections",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "Radius for feather operation in X direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "Radius for feather operation in Y direction",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

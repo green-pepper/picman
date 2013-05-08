@@ -1,4 +1,4 @@
-/* vpropagate.c -- This is a plug-in for GIMP (1.0's API)
+/* vpropagate.c -- This is a plug-in for PICMAN (1.0's API)
  * Author: Shuji Narazaki <narazaki@InetQ.or.jp>
  * Time-stamp: <2000-01-09 15:50:46 yasuhiro>
  * Version: 0.89a
@@ -35,17 +35,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define VPROPAGATE_PROC      "plug-in-vpropagate"
 #define ERODE_PROC           "plug-in-erode"
 #define DILATE_PROC          "plug-in-dilate"
 #define PLUG_IN_BINARY       "value-propagate"
-#define PLUG_IN_ROLE         "gimp-value-propagate"
+#define PLUG_IN_ROLE         "picman-value-propagate"
 #define PLUG_IN_IMAGE_TYPES  "RGB*, GRAY*"
 
 #define VP_RGB          (1 << 0)
@@ -61,15 +61,15 @@
 static void         query                      (void);
 static void         run                        (const gchar       *name,
                                                 gint               nparams,
-                                                const GimpParam   *param,
+                                                const PicmanParam   *param,
                                                 gint              *nreturn_vals,
-                                                GimpParam        **return_vals);
+                                                PicmanParam        **return_vals);
 
-static GimpPDBStatusType  value_propagate      (GimpDrawable  *drawable);
-static void         value_propagate_body       (GimpDrawable  *drawable,
-                                                GimpPreview   *preview);
-static gboolean     vpropagate_dialog          (GimpDrawable  *drawable);
-static void         prepare_row                (GimpPixelRgn  *pixel_rgn,
+static PicmanPDBStatusType  value_propagate      (PicmanDrawable  *drawable);
+static void         value_propagate_body       (PicmanDrawable  *drawable,
+                                                PicmanPreview   *preview);
+static gboolean     vpropagate_dialog          (PicmanDrawable  *drawable);
+static void         prepare_row                (PicmanPixelRgn  *pixel_rgn,
                                                 guchar        *data,
                                                 gint           x,
                                                 gint           y,
@@ -86,50 +86,50 @@ static GtkWidget *  gtk_table_add_toggle       (GtkWidget     *table,
                                                 gint          *value);
 
 static int          value_difference_check  (guchar *, guchar *, int);
-static void         set_value               (GimpImageType,
+static void         set_value               (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         initialize_white        (GimpImageType,
+static void         initialize_white        (PicmanImageType,
                                              int, guchar *, guchar *,
                                              void **);
-static void         propagate_white         (GimpImageType,
+static void         propagate_white         (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         initialize_black        (GimpImageType,
+static void         initialize_black        (PicmanImageType,
                                              int, guchar *, guchar *,
                                              void **);
-static void         propagate_black         (GimpImageType,
+static void         propagate_black         (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         initialize_middle       (GimpImageType,
+static void         initialize_middle       (PicmanImageType,
                                              int, guchar *, guchar *,
                                              void **);
-static void         propagate_middle        (GimpImageType,
+static void         propagate_middle        (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         set_middle_to_peak      (GimpImageType,
+static void         set_middle_to_peak      (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         set_foreground_to_peak  (GimpImageType,
+static void         set_foreground_to_peak  (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         initialize_foreground   (GimpImageType,
+static void         initialize_foreground   (PicmanImageType,
                                              int, guchar *, guchar *,
                                              void **);
-static void         initialize_background   (GimpImageType,
+static void         initialize_background   (PicmanImageType,
                                              int, guchar *, guchar *,
                                              void **);
-static void         propagate_a_color       (GimpImageType,
+static void         propagate_a_color       (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         propagate_opaque        (GimpImageType,
+static void         propagate_opaque        (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
-static void         propagate_transparent   (GimpImageType,
+static void         propagate_transparent   (PicmanImageType,
                                              int, guchar *, guchar *, guchar *,
                                              void *);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -177,9 +177,9 @@ typedef struct
 {
   gint    applicable_image_type;
   gchar  *name;
-  void  (*initializer) (GimpImageType, gint, guchar *, guchar *, gpointer *);
-  void  (*updater) (GimpImageType, gint, guchar *, guchar *, guchar *, gpointer);
-  void  (*finalizer) (GimpImageType, gint, guchar *, guchar *, guchar *, gpointer);
+  void  (*initializer) (PicmanImageType, gint, guchar *, guchar *, gpointer *);
+  void  (*updater) (PicmanImageType, gint, guchar *, guchar *, guchar *, gpointer);
+  void  (*finalizer) (PicmanImageType, gint, guchar *, guchar *, guchar *, gpointer);
 } ModeParam;
 
 #define num_mode 8
@@ -216,20 +216,20 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",            "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",               "Input image (not used)" },
-    { GIMP_PDB_DRAWABLE, "drawable",            "Input drawable" },
-    { GIMP_PDB_INT32,    "propagate-mode",      "propagate 0:white, 1:black, 2:middle value 3:foreground to peak, 4:foreground, 5:background, 6:opaque, 7:transparent" },
-    { GIMP_PDB_INT32,    "propagating-channel", "channels which values are propagated" },
-    { GIMP_PDB_FLOAT,    "propagating-rate",    "0.0 <= propagatating_rate <= 1.0" },
-    { GIMP_PDB_INT32,    "direction-mask",      "0 <= direction-mask <= 15" },
-    { GIMP_PDB_INT32,    "lower-limit",         "0 <= lower-limit <= 255" },
-    { GIMP_PDB_INT32,    "upper-limit",         "0 <= upper-limit <= 255" }
+    { PICMAN_PDB_INT32,    "run-mode",            "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",               "Input image (not used)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",            "Input drawable" },
+    { PICMAN_PDB_INT32,    "propagate-mode",      "propagate 0:white, 1:black, 2:middle value 3:foreground to peak, 4:foreground, 5:background, 6:opaque, 7:transparent" },
+    { PICMAN_PDB_INT32,    "propagating-channel", "channels which values are propagated" },
+    { PICMAN_PDB_FLOAT,    "propagating-rate",    "0.0 <= propagatating_rate <= 1.0" },
+    { PICMAN_PDB_INT32,    "direction-mask",      "0 <= direction-mask <= 15" },
+    { PICMAN_PDB_INT32,    "lower-limit",         "0 <= lower-limit <= 255" },
+    { PICMAN_PDB_INT32,    "upper-limit",         "0 <= upper-limit <= 255" }
   };
 
-  gimp_install_procedure (VPROPAGATE_PROC,
+  picman_install_procedure (VPROPAGATE_PROC,
                           N_("Propagate certain colors to neighboring pixels"),
                           "Propagate values of the layer",
                           "Shuji Narazaki (narazaki@InetQ.or.jp)",
@@ -237,11 +237,11 @@ query (void)
                           "1996-1997",
                           N_("_Value Propagate..."),
                           PLUG_IN_IMAGE_TYPES,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_install_procedure (ERODE_PROC,
+  picman_install_procedure (ERODE_PROC,
                           N_("Shrink lighter areas of the image"),
                           "Erode image",
                           "Shuji Narazaki (narazaki@InetQ.or.jp)",
@@ -249,11 +249,11 @@ query (void)
                           "1996-1997",
                           N_("E_rode"),
                           PLUG_IN_IMAGE_TYPES,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_install_procedure (DILATE_PROC,
+  picman_install_procedure (DILATE_PROC,
                           N_("Grow lighter areas of the image"),
                           "Dilate image",
                           "Shuji Narazaki (narazaki@InetQ.or.jp)",
@@ -261,44 +261,44 @@ query (void)
                           "1996-1997",
                           N_("_Dilate"),
                           PLUG_IN_IMAGE_TYPES,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (VPROPAGATE_PROC, "<Image>/Filters/Distorts");
-  gimp_plugin_menu_register (ERODE_PROC,      "<Image>/Filters/Generic");
-  gimp_plugin_menu_register (DILATE_PROC,     "<Image>/Filters/Generic");
+  picman_plugin_menu_register (VPROPAGATE_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (ERODE_PROC,      "<Image>/Filters/Generic");
+  picman_plugin_menu_register (DILATE_PROC,     "<Image>/Filters/Generic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
 
   run_mode = param[0].data.d_int32;
-  drawable = gimp_drawable_get (param[2].data.d_int32);
+  drawable = picman_drawable_get (param[2].data.d_int32);
 
   INIT_I18N ();
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       if (strcmp (name, VPROPAGATE_PROC) == 0)
         {
-          gimp_get_data (VPROPAGATE_PROC, &vpvals);
+          picman_get_data (VPROPAGATE_PROC, &vpvals);
           /* building the values of dialog variables from vpvals. */
           propagate_alpha =
             (vpvals.propagating_channel & PROPAGATING_ALPHA) ? TRUE : FALSE;
@@ -331,7 +331,7 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (strcmp (name, VPROPAGATE_PROC) == 0)
         {
           vpvals.propagate_mode      = param[3].data.d_int32;
@@ -357,59 +357,59 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (name, &vpvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (name, &vpvals);
       break;
     }
 
   status = value_propagate (drawable);
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (name, &vpvals, sizeof (VPValueType));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (name, &vpvals, sizeof (VPValueType));
     }
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
 /* registered function entry */
-static GimpPDBStatusType
-value_propagate (GimpDrawable *drawable)
+static PicmanPDBStatusType
+value_propagate (PicmanDrawable *drawable)
 {
   /* check the validness of parameters */
   if (!(vpvals.propagating_channel & (PROPAGATING_VALUE | PROPAGATING_ALPHA)))
     {
-      /* gimp_message ("No channel selected."); */
-      return GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("No channel selected."); */
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
   if (vpvals.direction_mask == 0)
     {
-      /* gimp_message ("No direction selected."); */
-      return GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("No direction selected."); */
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
   if ((vpvals.lower_limit < 0) || (vpvals.lower_limit > 255) ||
        (vpvals.upper_limit < 0) || (vpvals.upper_limit > 255) ||
        (vpvals.upper_limit < vpvals.lower_limit))
     {
-      /* gimp_message ("Limit values are not valid."); */
-      return GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("Limit values are not valid."); */
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
   value_propagate_body (drawable, NULL);
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 static void
-value_propagate_body (GimpDrawable *drawable,
-                      GimpPreview  *preview)
+value_propagate_body (PicmanDrawable *drawable,
+                      PicmanPreview  *preview)
 {
-  GimpImageType  dtype;
+  PicmanImageType  dtype;
   ModeParam      operation;
-  GimpPixelRgn   srcRgn, destRgn;
+  PicmanPixelRgn   srcRgn, destRgn;
   guchar        *here, *best, *dest;
   guchar        *dest_row, *prev_row, *cur_row, *next_row;
   guchar        *pr, *cr, *nr, *swap;
@@ -417,7 +417,7 @@ value_propagate_body (GimpDrawable *drawable,
   gint           begx, begy, endx, endy, x, y, dx;
   gint           left_index, right_index, up_index, down_index;
   gpointer       tmp;
-  GimpRGB        foreground;
+  PicmanRGB        foreground;
 
   /* calculate neighbors' indexes */
   left_index  = (vpvals.direction_mask & (1 << Left2Right)) ? -1 : 0;
@@ -427,21 +427,21 @@ value_propagate_body (GimpDrawable *drawable,
   operation   = modes[vpvals.propagate_mode];
   tmp         = NULL;
 
-  dtype = gimp_drawable_type (drawable->drawable_id);
+  dtype = picman_drawable_type (drawable->drawable_id);
   bytes = drawable->bpp;
 
   /* Here I use the algorithm of blur.c */
   if (preview)
     {
-       gimp_preview_get_position (preview, &begx, &begy);
-       gimp_preview_get_size (preview, &width, &height);
+       picman_preview_get_position (preview, &begx, &begy);
+       picman_preview_get_size (preview, &width, &height);
 
        endx = begx + width;
        endy = begy + height;
     }
   else
     {
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &begx, &begy, &width, &height))
         return;
 
@@ -449,17 +449,17 @@ value_propagate_body (GimpDrawable *drawable,
       endy = begy + height;
     }
 
-  gimp_tile_cache_ntiles (2 * ((width) / gimp_tile_width () + 1));
+  picman_tile_cache_ntiles (2 * ((width) / picman_tile_width () + 1));
 
   prev_row = g_new (guchar, (width + 2) * bytes);
   cur_row  = g_new (guchar, (width + 2) * bytes);
   next_row = g_new (guchar, (width + 2) * bytes);
   dest_row = g_new (guchar, width * bytes);
 
-  gimp_pixel_rgn_init (&srcRgn, drawable,
+  picman_pixel_rgn_init (&srcRgn, drawable,
                        begx, begy, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&destRgn, drawable,
+  picman_pixel_rgn_init (&destRgn, drawable,
                        begx, begy, width, height,
                        (preview == NULL), TRUE);
 
@@ -473,10 +473,10 @@ value_propagate_body (GimpDrawable *drawable,
   best = g_new (guchar, bytes);
 
   if (!preview)
-    gimp_progress_init (_("Value Propagate"));
+    picman_progress_init (_("Value Propagate"));
 
-  gimp_context_get_foreground (&foreground);
-  gimp_rgb_get_uchar (&foreground, fore+0, fore+1, fore+2);
+  picman_context_get_foreground (&foreground);
+  picman_rgb_get_uchar (&foreground, fore+0, fore+1, fore+2);
 
   /* start real job */
   for (y = begy ; y < endy ; y++)
@@ -512,7 +512,7 @@ value_propagate_body (GimpDrawable *drawable,
         }
 
       /* now store destline to destRgn */
-      gimp_pixel_rgn_set_row (&destRgn, dest_row, begx, y, endx - begx);
+      picman_pixel_rgn_set_row (&destRgn, dest_row, begx, y, endx - begx);
 
       /* shift the row pointers  */
       swap = pr;
@@ -522,26 +522,26 @@ value_propagate_body (GimpDrawable *drawable,
 
 
       if (((y % 16) == 0) && !preview)
-        gimp_progress_update ((gdouble) y / (gdouble) (endy - begy));
+        picman_progress_update ((gdouble) y / (gdouble) (endy - begy));
     }
 
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &destRgn);
     }
   else
     {
       /*  update the region  */
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, begx, begy, endx-begx, endy-begy);
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, begx, begy, endx-begx, endy-begy);
     }
 }
 
 static void
-prepare_row (GimpPixelRgn *pixel_rgn,
+prepare_row (PicmanPixelRgn *pixel_rgn,
              guchar       *data,
              gint          x,
              gint          y,
@@ -550,11 +550,11 @@ prepare_row (GimpPixelRgn *pixel_rgn,
   gint b;
 
   if (y <= 0)
-    gimp_pixel_rgn_get_row (pixel_rgn, data, x, (y + 1), w);
+    picman_pixel_rgn_get_row (pixel_rgn, data, x, (y + 1), w);
   else if (y >= pixel_rgn->h)
-    gimp_pixel_rgn_get_row (pixel_rgn, data, x, (y - 1), w);
+    picman_pixel_rgn_get_row (pixel_rgn, data, x, (y - 1), w);
   else
-    gimp_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
+    picman_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
 
   /*  Fill in edge pixels  */
   for (b = 0; b < pixel_rgn->bpp; b++)
@@ -565,7 +565,7 @@ prepare_row (GimpPixelRgn *pixel_rgn,
 }
 
 static void
-set_value (GimpImageType  dtype,
+set_value (PicmanImageType  dtype,
            gint           bytes,
            guchar        *best,
            guchar        *here,
@@ -578,17 +578,17 @@ set_value (GimpImageType  dtype,
 
   switch (dtype)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       value_chs = 3;
       break;
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       value_chs = 3;
       alpha = 3;
       break;
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       value_chs = 1;
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       value_chs = 1;
       alpha = 1;
       break;
@@ -633,7 +633,7 @@ value_difference_check (guchar *pos1,
 
 /* mothods for each mode */
 static void
-initialize_white (GimpImageType   dtype,
+initialize_white (PicmanImageType   dtype,
                   gint            bytes,
                   guchar         *best,
                   guchar         *here,
@@ -642,16 +642,16 @@ initialize_white (GimpImageType   dtype,
 
   switch (dtype)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       if (*tmp == NULL)
         *tmp = (void *) g_new (gfloat, 1);
       **(float **)tmp = channel_mask[0] * here[0] * here[0]
                      + channel_mask[1] * here[1] * here[1]
                      + channel_mask[2] * here[2] * here[2];
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       break;
     default:
       break;
@@ -659,7 +659,7 @@ initialize_white (GimpImageType   dtype,
 }
 
 static void
-propagate_white (GimpImageType  dtype,
+propagate_white (PicmanImageType  dtype,
                  gint           bytes,
                  guchar        *orig,
                  guchar        *here,
@@ -670,8 +670,8 @@ propagate_white (GimpImageType  dtype,
 
   switch (dtype)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       v_here = channel_mask[0] * here[0] * here[0]
                      + channel_mask[1] * here[1] * here[1]
                      + channel_mask[2] * here[2] * here[2];
@@ -681,8 +681,8 @@ propagate_white (GimpImageType  dtype,
           memcpy(best, here, 3 * sizeof(guchar)); /* alpha channel holds old value */
         }
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       if (*best < *here && value_difference_check(orig, here, 1))
         *best = *here;
       break;
@@ -692,7 +692,7 @@ propagate_white (GimpImageType  dtype,
 }
 
 static void
-initialize_black (GimpImageType   dtype,
+initialize_black (PicmanImageType   dtype,
                   gint            channels,
                   guchar         *best,
                   guchar         *here,
@@ -700,16 +700,16 @@ initialize_black (GimpImageType   dtype,
 {
   switch (dtype)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       if (*tmp == NULL)
         *tmp = (void *) g_new (gfloat, 1);
       **(float **)tmp = (channel_mask[0] * here[0] * here[0]
                      + channel_mask[1] * here[1] * here[1]
                      + channel_mask[2] * here[2] * here[2]);
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       break;
     default:
       break;
@@ -717,7 +717,7 @@ initialize_black (GimpImageType   dtype,
 }
 
 static void
-propagate_black (GimpImageType  image_type,
+propagate_black (PicmanImageType  image_type,
                  gint           channels,
                  guchar        *orig,
                  guchar        *here,
@@ -728,8 +728,8 @@ propagate_black (GimpImageType  image_type,
 
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       v_here = (channel_mask[0] * here[0] * here[0]
                      + channel_mask[1] * here[1] * here[1]
                      + channel_mask[2] * here[2] * here[2]);
@@ -739,8 +739,8 @@ propagate_black (GimpImageType  image_type,
           memcpy (best, here, 3 * sizeof(guchar)); /* alpha channel holds old value */
         }
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       if (*here < *best && value_difference_check(orig, here, 1))
         *best = *here;
       break;
@@ -761,7 +761,7 @@ typedef struct
 } MiddlePacket;
 
 static void
-initialize_middle (GimpImageType   image_type,
+initialize_middle (PicmanImageType   image_type,
                    gint            channels,
                    guchar         *best,
                    guchar         *here,
@@ -777,14 +777,14 @@ initialize_middle (GimpImageType   image_type,
     data->min[index] = data->max[index] = here[index];
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       data->original_value = (channel_mask[0] * here[0] * here[0]
                                    + channel_mask[1] * here[1] * here[1]
                                    + channel_mask[2] * here[2] * here[2]);
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       data->original_value = *here;
       break;
     default:
@@ -795,7 +795,7 @@ initialize_middle (GimpImageType   image_type,
 }
 
 static void
-propagate_middle (GimpImageType  image_type,
+propagate_middle (PicmanImageType  image_type,
                   gint           channels,
                   guchar        *orig,
                   guchar        *here,
@@ -809,8 +809,8 @@ propagate_middle (GimpImageType  image_type,
 
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       v_here = (channel_mask[0] * here[0] * here[0]
                      + channel_mask[1] * here[1] * here[1]
                      + channel_mask[2] * here[2] * here[2]);
@@ -827,8 +827,8 @@ propagate_middle (GimpImageType  image_type,
           data->max_modified = 1;
         }
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       if ((*here <= data->min[0]) && value_difference_check(orig, here, 1))
         {
           data->min[0] = *here;
@@ -846,7 +846,7 @@ propagate_middle (GimpImageType  image_type,
 }
 
 static void
-set_middle_to_peak (GimpImageType  image_type,
+set_middle_to_peak (PicmanImageType  image_type,
                     gint           channels,
                     guchar        *here,
                     guchar        *best,
@@ -869,17 +869,17 @@ set_middle_to_peak (GimpImageType  image_type,
 
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       value_chs = 3;
       break;
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       value_chs = 3;
       alpha = 3;
       break;
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       value_chs = 1;
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       value_chs = 1;
       alpha = 1;
       break;
@@ -905,7 +905,7 @@ set_middle_to_peak (GimpImageType  image_type,
 }
 
 static void
-set_foreground_to_peak (GimpImageType  image_type,
+set_foreground_to_peak (PicmanImageType  image_type,
                         gint           channels,
                         guchar        *here,
                         guchar        *best,
@@ -927,16 +927,16 @@ set_foreground_to_peak (GimpImageType  image_type,
 
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       value_chs = 3;
       break;
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       value_chs = 3;
       break;
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       value_chs = 1;
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       value_chs = 1;
       break;
     default:
@@ -953,45 +953,45 @@ set_foreground_to_peak (GimpImageType  image_type,
 }
 
 static void
-initialize_foreground (GimpImageType   image_type,
+initialize_foreground (PicmanImageType   image_type,
                        gint            channels,
                        guchar         *here,
                        guchar         *best,
                        void          **tmp)
 {
-  GimpRGB  foreground;
+  PicmanRGB  foreground;
   guchar  *ch;
 
   if (*tmp == NULL)
     {
       *tmp = (void *) g_new (guchar, 3);
       ch = (guchar *)*tmp;
-      gimp_context_get_foreground (&foreground);
-      gimp_rgb_get_uchar (&foreground, &ch[0], &ch[1], &ch[2]);
+      picman_context_get_foreground (&foreground);
+      picman_rgb_get_uchar (&foreground, &ch[0], &ch[1], &ch[2]);
     }
 }
 
 static void
-initialize_background (GimpImageType   image_type,
+initialize_background (PicmanImageType   image_type,
                        gint            channels,
                        guchar         *here,
                        guchar         *best,
                        void          **tmp)
 {
-  GimpRGB  background;
+  PicmanRGB  background;
   guchar  *ch;
 
   if (*tmp == NULL)
     {
       *tmp = (void *) g_new (guchar, 3);
       ch = (guchar *)*tmp;
-      gimp_context_get_background (&background);
-      gimp_rgb_get_uchar (&background, &ch[0], &ch[1], &ch[2]);
+      picman_context_get_background (&background);
+      picman_rgb_get_uchar (&background, &ch[0], &ch[1], &ch[2]);
     }
 }
 
 static void
-propagate_a_color (GimpImageType  image_type,
+propagate_a_color (PicmanImageType  image_type,
                    gint           channels,
                    guchar        *orig,
                    guchar        *here,
@@ -1002,16 +1002,16 @@ propagate_a_color (GimpImageType  image_type,
 
   switch (image_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       if (here[0] == fg[0] && here[1] == fg[1] && here[2] == fg[2] &&
           value_difference_check(orig, here, 3))
         {
           memcpy (best, here, 3 * sizeof(guchar)); /* alpha channel holds old value */
         }
       break;
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       break;
     default:
       break;
@@ -1019,7 +1019,7 @@ propagate_a_color (GimpImageType  image_type,
 }
 
 static void
-propagate_opaque (GimpImageType  image_type,
+propagate_opaque (PicmanImageType  image_type,
                   gint           channels,
                   guchar        *orig,
                   guchar        *here,
@@ -1028,11 +1028,11 @@ propagate_opaque (GimpImageType  image_type,
 {
   switch (image_type)
     {
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       if (best[3] < here[3] && value_difference_check(orig, here, 3))
         memcpy(best, here, channels * sizeof(guchar));
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       if (best[1] < here[1] && value_difference_check(orig, here, 1))
         memcpy(best, here, channels * sizeof(guchar));
       break;
@@ -1042,7 +1042,7 @@ propagate_opaque (GimpImageType  image_type,
 }
 
 static void
-propagate_transparent (GimpImageType  image_type,
+propagate_transparent (PicmanImageType  image_type,
                        gint           channels,
                        guchar        *orig,
                        guchar        *here,
@@ -1051,11 +1051,11 @@ propagate_transparent (GimpImageType  image_type,
 {
   switch (image_type)
     {
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       if (here[3] < best[3] && value_difference_check(orig, here, 3))
         memcpy(best, here, channels * sizeof(guchar));
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       if (here[1] < best[1] && value_difference_check(orig, here, 1))
         memcpy(best, here, channels * sizeof(guchar));
       break;
@@ -1067,7 +1067,7 @@ propagate_transparent (GimpImageType  image_type,
 /* dialog stuff */
 
 static gboolean
-vpropagate_dialog (GimpDrawable *drawable)
+vpropagate_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -1081,11 +1081,11 @@ vpropagate_dialog (GimpDrawable *drawable)
   gint       index = 0;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Value Propagate"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Value Propagate"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, VPROPAGATE_PROC,
+                            picman_standard_help_func, VPROPAGATE_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1097,7 +1097,7 @@ vpropagate_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1105,7 +1105,7 @@ vpropagate_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -1118,7 +1118,7 @@ vpropagate_dialog (GimpDrawable *drawable)
   gtk_widget_show (hbox);
 
   /* Propagate Mode */
-  frame = gimp_frame_new (_("Mode"));
+  frame = picman_frame_new (_("Mode"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1135,14 +1135,14 @@ vpropagate_dialog (GimpDrawable *drawable)
       gtk_box_pack_start (GTK_BOX (toggle_vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      g_object_set_data (G_OBJECT (button), "gimp-item-data",
+      g_object_set_data (G_OBJECT (button), "picman-item-data",
                          GINT_TO_POINTER (index));
 
       g_signal_connect (button, "toggled",
-                        G_CALLBACK (gimp_radio_button_update),
+                        G_CALLBACK (picman_radio_button_update),
                         &vpvals.propagate_mode);
       g_signal_connect_swapped (button, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button),
@@ -1150,7 +1150,7 @@ vpropagate_dialog (GimpDrawable *drawable)
     }
 
   /* Parameter settings */
-  frame = gimp_frame_new (_("Propagate"));
+  frame = picman_frame_new (_("Propagate"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1162,40 +1162,40 @@ vpropagate_dialog (GimpDrawable *drawable)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("Lower t_hreshold:"), SCALE_WIDTH, 4,
                               vpvals.lower_limit, 0, 255, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &vpvals.lower_limit);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Upper threshold:"), SCALE_WIDTH, 4,
                               vpvals.upper_limit, 0, 255, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &vpvals.upper_limit);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Propagating rate:"), SCALE_WIDTH, 4,
                               vpvals.propagating_rate, 0, 1, 0.01, 0.1, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vpvals.propagating_rate);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_add_toggle (table, _("To l_eft"), 0, 1, 4,
@@ -1211,7 +1211,7 @@ vpropagate_dialog (GimpDrawable *drawable)
                         G_CALLBACK (vpropagate_toggle_button_update),
                         &direction_mask_vec[Top2Bottom]);
 
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     {
       GtkWidget *toggle;
 
@@ -1221,7 +1221,7 @@ vpropagate_dialog (GimpDrawable *drawable)
                               G_CALLBACK (vpropagate_toggle_button_update),
                               &propagate_alpha);
 
-      if (gimp_layer_get_lock_alpha (drawable->drawable_id))
+      if (picman_layer_get_lock_alpha (drawable->drawable_id))
         {
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), 0);
           gtk_widget_set_sensitive (toggle, FALSE);
@@ -1234,7 +1234,7 @@ vpropagate_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {
@@ -1259,7 +1259,7 @@ vpropagate_toggle_button_update (GtkWidget *widget,
 {
   gint i, result;
 
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
 
   for (i = result = 0; i < 4; i++)
     result |= (direction_mask_vec[i] ? 1 : 0) << i;
@@ -1267,7 +1267,7 @@ vpropagate_toggle_button_update (GtkWidget *widget,
 
   vpvals.propagating_channel = ((propagate_alpha ? PROPAGATING_ALPHA : 0) |
                                 (propagate_value ? PROPAGATING_VALUE : 0));
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static GtkWidget *

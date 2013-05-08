@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,30 +27,30 @@
 G_BEGIN_DECLS
 
 
-typedef struct _GimpTool                     GimpTool;
-typedef struct _GimpToolControl              GimpToolControl;
+typedef struct _PicmanTool                     PicmanTool;
+typedef struct _PicmanToolControl              PicmanToolControl;
 
-typedef struct _GimpBrushTool                GimpBrushTool;
-typedef struct _GimpColorTool                GimpColorTool;
-typedef struct _GimpDrawTool                 GimpDrawTool;
-typedef struct _GimpForegroundSelectToolUndo GimpForegroundSelectToolUndo;
-typedef struct _GimpImageMapTool             GimpImageMapTool;
-typedef struct _GimpPaintTool                GimpPaintTool;
-typedef struct _GimpTransformTool            GimpTransformTool;
-typedef struct _GimpTransformToolUndo        GimpTransformToolUndo;
+typedef struct _PicmanBrushTool                PicmanBrushTool;
+typedef struct _PicmanColorTool                PicmanColorTool;
+typedef struct _PicmanDrawTool                 PicmanDrawTool;
+typedef struct _PicmanForegroundSelectToolUndo PicmanForegroundSelectToolUndo;
+typedef struct _PicmanImageMapTool             PicmanImageMapTool;
+typedef struct _PicmanPaintTool                PicmanPaintTool;
+typedef struct _PicmanTransformTool            PicmanTransformTool;
+typedef struct _PicmanTransformToolUndo        PicmanTransformToolUndo;
 
-typedef struct _GimpColorOptions             GimpColorOptions;
-typedef struct _GimpImageMapOptions          GimpImageMapOptions;
+typedef struct _PicmanColorOptions             PicmanColorOptions;
+typedef struct _PicmanImageMapOptions          PicmanImageMapOptions;
 
 
 /*  functions  */
 
-typedef GtkWidget * (* GimpToolOptionsGUIFunc) (GimpToolOptions *tool_options);
+typedef GtkWidget * (* PicmanToolOptionsGUIFunc) (PicmanToolOptions *tool_options);
 
-typedef void (* GimpToolRegisterCallback) (GType                     tool_type,
+typedef void (* PicmanToolRegisterCallback) (GType                     tool_type,
                                            GType                     tool_option_type,
-                                           GimpToolOptionsGUIFunc    options_gui_func,
-                                           GimpContextPropMask       context_props,
+                                           PicmanToolOptionsGUIFunc    options_gui_func,
+                                           PicmanContextPropMask       context_props,
                                            const gchar              *identifier,
                                            const gchar              *blurb,
                                            const gchar              *help,
@@ -61,7 +61,7 @@ typedef void (* GimpToolRegisterCallback) (GType                     tool_type,
                                            const gchar              *stock_id,
                                            gpointer                  register_data);
 
-typedef void (* GimpToolRegisterFunc)     (GimpToolRegisterCallback  callback,
+typedef void (* PicmanToolRegisterFunc)     (PicmanToolRegisterCallback  callback,
                                            gpointer                  register_data);
 
 

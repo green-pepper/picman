@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
-# GIMP - The GNU Image Manipulation Program
-# Copyright (C) 1999-2003 Manish Singh <yosh@gimp.org>
+# PICMAN - The GNU Image Manipulation Program
+# Copyright (C) 1999-2003 Manish Singh <yosh@picman.org>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ use lib $srcdir;
 require 'enums.pl';
 require 'util.pl';
 
-*enums = \%Gimp::CodeGen::enums::enums;
+*enums = \%Picman::CodeGen::enums::enums;
 
-*write_file = \&Gimp::CodeGen::util::write_file;
-*FILE_EXT   = \$Gimp::CodeGen::util::FILE_EXT;
+*write_file = \&Picman::CodeGen::util::write_file;
+*FILE_EXT   = \$Picman::CodeGen::util::FILE_EXT;
 
-my $enumfile = "$builddir/libgimp/gimpenums.h$FILE_EXT";
+my $enumfile = "$builddir/libpicman/picmanenums.h$FILE_EXT";
 open ENUMFILE, "> $enumfile" or die "Can't open $enumfile: $!\n";
 
 print ENUMFILE <<'LGPL';
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -58,7 +58,7 @@ print ENUMFILE <<'LGPL';
 
 LGPL
 
-my $guard = "__GIMP_ENUMS_H__";
+my $guard = "__PICMAN_ENUMS_H__";
 print ENUMFILE <<HEADER;
 #ifndef $guard
 #define $guard
@@ -68,14 +68,14 @@ G_BEGIN_DECLS
 HEADER
 
 foreach (sort keys %enums) {
-    if (! ($enums{$_}->{header} =~ /libgimp/)) {
+    if (! ($enums{$_}->{header} =~ /libpicman/)) {
         my $gtype = $func = $_;
 
-	for ($gtype) { s/Gimp//; s/([A-Z][^A-Z]+)/\U$1\E_/g; s/_$// }
-	for ($func) { s/Gimp//; s/([A-Z][^A-Z]+)/\L$1\E_/g; s/_$// }
+	for ($gtype) { s/Picman//; s/([A-Z][^A-Z]+)/\U$1\E_/g; s/_$// }
+	for ($func) { s/Picman//; s/([A-Z][^A-Z]+)/\L$1\E_/g; s/_$// }
 
-	print ENUMFILE "\n#define GIMP_TYPE_$gtype (gimp_$func\_get_type ())\n\n";
-	print ENUMFILE "GType gimp_$func\_get_type (void) G_GNUC_CONST;\n\n";
+	print ENUMFILE "\n#define PICMAN_TYPE_$gtype (picman_$func\_get_type ())\n\n";
+	print ENUMFILE "GType picman_$func\_get_type (void) G_GNUC_CONST;\n\n";
 	print ENUMFILE "typedef enum\n{\n";
 
 	my $enum = $enums{$_}; my $body = "";
@@ -96,9 +96,9 @@ foreach (sort keys %enums) {
 
 print ENUMFILE <<HEADER;
 
-void           gimp_enums_init           (void);
+void           picman_enums_init           (void);
 
-const gchar ** gimp_enums_get_type_names (gint *n_type_names);
+const gchar ** picman_enums_get_type_names (gint *n_type_names);
 
 
 G_END_DECLS
@@ -107,29 +107,29 @@ G_END_DECLS
 HEADER
 
 close ENUMFILE;
-&write_file($enumfile, "$destdir/libgimp");
+&write_file($enumfile, "$destdir/libpicman");
 
-$enumfile = "$builddir/libgimp/gimpenums.c.tail$FILE_EXT";
+$enumfile = "$builddir/libpicman/picmanenums.c.tail$FILE_EXT";
 open ENUMFILE, "> $enumfile" or die "Can't open $enumfile: $!\n";
 
 print ENUMFILE <<CODE;
 
-typedef GType (* GimpGetTypeFunc) (void);
+typedef GType (* PicmanGetTypeFunc) (void);
 
-static const GimpGetTypeFunc get_type_funcs[] =
+static const PicmanGetTypeFunc get_type_funcs[] =
 {
 CODE
 
 my $first = 1;
 foreach (sort keys %enums) {
-    if (! ($_ =~ /GimpUnit/)) {
+    if (! ($_ =~ /PicmanUnit/)) {
 	my $enum = $enums{$_};
 	my $func = $_;
 
-	for ($func) { s/Gimp//; s/PDB/Pdb/; s/([A-Z][^A-Z]+)/\L$1\E_/g; s/_$// }
+	for ($func) { s/Picman//; s/PDB/Pdb/; s/([A-Z][^A-Z]+)/\L$1\E_/g; s/_$// }
 
 	print ENUMFILE ",\n" unless $first;
-	print ENUMFILE "  gimp_$func\_get_type";
+	print ENUMFILE "  picman_$func\_get_type";
 
 	$first = 0;
     }
@@ -145,7 +145,7 @@ CODE
 
 $first = 1;
 foreach (sort keys %enums) {
-    if (! ($_ =~ /GimpUnit/)) {
+    if (! ($_ =~ /PicmanUnit/)) {
 	my $enum = $enums{$_};
 	my $gtype = $_;
 
@@ -163,20 +163,20 @@ print ENUMFILE <<CODE;
 static gboolean enums_initialized = FALSE;
 
 /**
- * gimp_enums_init:
+ * picman_enums_init:
  *
  * This function makes sure all the enum types are registered
  * with the #GType system. This is intended for use by language
- * bindings that need the symbols early, before gimp_main is run.
+ * bindings that need the symbols early, before picman_main is run.
  * It's not necessary for plug-ins to call this directly, because
  * the normal plug-in initialization code will handle it implicitly.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_enums_init (void)
+picman_enums_init (void)
 {
-  const GimpGetTypeFunc *funcs = get_type_funcs;
+  const PicmanGetTypeFunc *funcs = get_type_funcs;
   gint                   i;
 
   if (enums_initialized)
@@ -193,18 +193,18 @@ gimp_enums_init (void)
 }
 
 /**
- * gimp_enums_get_type_names:
+ * picman_enums_get_type_names:
  * \@n_type_names: return location for the number of names
  *
- * This function gives access to the list of enums registered by libgimp.
+ * This function gives access to the list of enums registered by libpicman.
  * The returned array is static and must not be modified.
  *
  * Return value: an array with type names
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar **
-gimp_enums_get_type_names (gint *n_type_names)
+picman_enums_get_type_names (gint *n_type_names)
 {
   g_return_val_if_fail (n_type_names != NULL, NULL);
 
@@ -215,4 +215,4 @@ gimp_enums_get_type_names (gint *n_type_names)
 CODE
 
 close ENUMFILE;
-&write_file($enumfile, "$destdir/libgimp");
+&write_file($enumfile, "$destdir/libpicman");

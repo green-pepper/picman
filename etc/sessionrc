@@ -1,46 +1,46 @@
-# GIMP sessionrc
+# PICMAN sessionrc
 # 
 # This file takes session-specific info (that is info, you want to keep
-# between two GIMP sessions). You are not supposed to edit it manually, but
+# between two PICMAN sessions). You are not supposed to edit it manually, but
 # of course you can do. The sessionrc will be entirely rewritten every time
-# you quit GIMP. If this file isn't found, defaults are used.
+# you quit PICMAN. If this file isn't found, defaults are used.
 
-(session-info "dock" "gimp-toolbox-window"
+(session-info "dock" "picman-toolbox-window"
     (position 0 0)
     (size 170 820)
     (open-on-exit)
-    (gimp-toolbox
+    (picman-toolbox
         (book
-            (dockable "gimp-tool-options"
+            (dockable "picman-tool-options"
                 (tab-style automatic)))))
-(session-info "dock" "gimp-dock-window"
+(session-info "dock" "picman-dock-window"
     (position -0 0)
     (size 210 820)
     (open-on-exit)
-    (gimp-dock
+    (picman-dock
         (book
-            (dockable "gimp-layer-list"
+            (dockable "picman-layer-list"
                 (tab-style automatic))
-            (dockable "gimp-channel-list"
+            (dockable "picman-channel-list"
                 (tab-style automatic))
-            (dockable "gimp-vectors-list"
+            (dockable "picman-vectors-list"
                 (tab-style automatic))
-            (dockable "gimp-undo-history"
+            (dockable "picman-undo-history"
                 (tab-style automatic)))
         (book
             (position 420)
-            (dockable "gimp-brush-grid"
+            (dockable "picman-brush-grid"
                 (tab-style automatic))
-            (dockable "gimp-pattern-grid"
+            (dockable "picman-pattern-grid"
                 (tab-style automatic))
-            (dockable "gimp-gradient-list"
+            (dockable "picman-gradient-list"
                 (tab-style automatic)))))
 (session-info "toplevel"
-    (factory-entry "gimp-empty-image-window")
+    (factory-entry "picman-empty-image-window")
     (position 410 370)
     (size 620 200))
 (session-info "toplevel"
-    (factory-entry "gimp-single-image-window")
+    (factory-entry "picman-single-image-window")
     (position 160 70)
     (size 1140 780))
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,426 +25,426 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimptempbuf.h"
-#include "plug-in/gimpplugin-context.h"
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmancontainer.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmantempbuf.h"
+#include "plug-in/picmanplugin-context.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimppdbcontext.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanpdbcontext.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-context_push_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_push_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in && plug_in->open)
-    success = gimp_plug_in_context_push (plug_in);
+    success = picman_plug_in_context_push (plug_in);
   else
     success = FALSE;
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_pop_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+context_pop_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in && plug_in->open)
-    success = gimp_plug_in_context_pop (plug_in);
+    success = picman_plug_in_context_pop (plug_in);
   else
     success = FALSE;
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_set_defaults_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_defaults_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
-    gimp_config_reset (GIMP_CONFIG (context));
+    picman_config_reset (PICMAN_CONFIG (context));
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-context_list_paint_methods_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_list_paint_methods_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 num_paint_methods = 0;
   gchar **paint_methods = NULL;
 
-  paint_methods = gimp_container_get_name_array (gimp->paint_info_list,
+  paint_methods = picman_container_get_name_array (picman->paint_info_list,
                                                  &num_paint_methods);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
 
-  g_value_set_int (gimp_value_array_index (return_vals, 1), num_paint_methods);
-  gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), paint_methods, num_paint_methods);
+  g_value_set_int (picman_value_array_index (return_vals, 1), num_paint_methods);
+  picman_value_take_stringarray (picman_value_array_index (return_vals, 2), paint_methods, num_paint_methods);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_get_paint_method_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_paint_method_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpPaintInfo *paint_info = gimp_context_get_paint_info (context);
+  PicmanPaintInfo *paint_info = picman_context_get_paint_info (context);
 
   if (paint_info)
-    name = g_strdup (gimp_object_get_name (paint_info));
+    name = g_strdup (picman_object_get_name (paint_info));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_paint_method_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_paint_method_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintInfo *paint_info = gimp_pdb_get_paint_info (gimp, name, error);
+      PicmanPaintInfo *paint_info = picman_pdb_get_paint_info (picman, name, error);
 
       if (paint_info)
-        gimp_context_set_paint_info (context, paint_info);
+        picman_context_set_paint_info (context, paint_info);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_foreground_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_foreground_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
-  GimpValueArray *return_vals;
-  GimpRGB foreground = { 0.0, 0.0, 0.0, 1.0 };
+  PicmanValueArray *return_vals;
+  PicmanRGB foreground = { 0.0, 0.0, 0.0, 1.0 };
 
-  gimp_context_get_foreground (context, &foreground);
-  gimp_rgb_set_alpha (&foreground, 1.0);
+  picman_context_get_foreground (context, &foreground);
+  picman_rgb_set_alpha (&foreground, 1.0);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  gimp_value_set_rgb (gimp_value_array_index (return_vals, 1), &foreground);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  picman_value_set_rgb (picman_value_array_index (return_vals, 1), &foreground);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_foreground_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_foreground_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpRGB foreground;
+  PicmanRGB foreground;
 
-  gimp_value_get_rgb (gimp_value_array_index (args, 0), &foreground);
+  picman_value_get_rgb (picman_value_array_index (args, 0), &foreground);
 
   if (success)
     {
-      gimp_rgb_set_alpha (&foreground, 1.0);
-      gimp_context_set_foreground (context, &foreground);
+      picman_rgb_set_alpha (&foreground, 1.0);
+      picman_context_set_foreground (context, &foreground);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_background_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_background_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
-  GimpValueArray *return_vals;
-  GimpRGB background = { 0.0, 0.0, 0.0, 1.0 };
+  PicmanValueArray *return_vals;
+  PicmanRGB background = { 0.0, 0.0, 0.0, 1.0 };
 
-  gimp_context_get_background (context, &background);
-  gimp_rgb_set_alpha (&background, 1.0);
+  picman_context_get_background (context, &background);
+  picman_rgb_set_alpha (&background, 1.0);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  gimp_value_set_rgb (gimp_value_array_index (return_vals, 1), &background);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  picman_value_set_rgb (picman_value_array_index (return_vals, 1), &background);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_background_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_background_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpRGB background;
+  PicmanRGB background;
 
-  gimp_value_get_rgb (gimp_value_array_index (args, 0), &background);
+  picman_value_get_rgb (picman_value_array_index (args, 0), &background);
 
   if (success)
     {
-      gimp_rgb_set_alpha (&background, 1.0);
-      gimp_context_set_background (context, &background);
+      picman_rgb_set_alpha (&background, 1.0);
+      picman_context_set_background (context, &background);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_set_default_colors_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_default_colors_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
-  gimp_context_set_default_colors (context);
+  picman_context_set_default_colors (context);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-context_swap_colors_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_swap_colors_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
-  gimp_context_swap_colors (context);
+  picman_context_swap_colors (context);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-context_get_opacity_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_opacity_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble opacity = 0.0;
 
-  opacity = gimp_context_get_opacity (context) * 100.0;
+  opacity = picman_context_get_opacity (context) * 100.0;
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_double (gimp_value_array_index (return_vals, 1), opacity);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_double (picman_value_array_index (return_vals, 1), opacity);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_opacity_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_opacity_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   gdouble opacity;
 
-  opacity = g_value_get_double (gimp_value_array_index (args, 0));
+  opacity = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp_context_set_opacity (context, opacity / 100.0);
+      picman_context_set_opacity (context, opacity / 100.0);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_paint_mode_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_paint_mode_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 paint_mode = 0;
 
-  paint_mode = gimp_context_get_paint_mode (context);
+  paint_mode = picman_context_get_paint_mode (context);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), paint_mode);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), paint_mode);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_paint_mode_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_paint_mode_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
   gint32 paint_mode;
 
-  paint_mode = g_value_get_enum (gimp_value_array_index (args, 0));
+  paint_mode = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp_context_set_paint_mode (context, paint_mode);
+      picman_context_set_paint_mode (context, paint_mode);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_brush_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_brush_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpBrush *brush = gimp_context_get_brush (context);
+  PicmanBrush *brush = picman_context_get_brush (context);
 
   if (brush)
-    name = g_strdup (gimp_object_get_name (brush));
+    name = g_strdup (picman_object_get_name (brush));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_brush_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_brush_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
-        gimp_context_set_brush (context, brush);
+        picman_context_set_brush (context, brush);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_brush_size_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_brush_size_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble size = 0.0;
 
   /* all options should have the same value, so pick a random one */
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-paintbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-paintbrush");
 
   if (options)
     g_object_get (options,
@@ -453,34 +453,34 @@ context_get_brush_size_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), size);
+    g_value_set_double (picman_value_array_index (return_vals, 1), size);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_brush_size_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_brush_size_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
   gdouble size;
 
-  size = g_value_get_double (gimp_value_array_index (args, 0));
+  size = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
       GList *options;
       GList *list;
 
-      options = gimp_pdb_context_get_brush_options (GIMP_PDB_CONTEXT (context));
+      options = picman_pdb_context_get_brush_options (PICMAN_PDB_CONTEXT (context));
 
       for (list = options; list; list = g_list_next (list))
         g_object_set (list->data,
@@ -490,33 +490,33 @@ context_set_brush_size_invoker (GimpProcedure         *procedure,
       g_list_free (options);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_set_brush_default_size_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_brush_default_size_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpBrush *brush = gimp_context_get_brush (context);
+  PicmanBrush *brush = picman_context_get_brush (context);
 
   if (brush)
     {
       GList *options;
       GList *list;
 
-      options = gimp_pdb_context_get_brush_options (GIMP_PDB_CONTEXT (context));
+      options = picman_pdb_context_get_brush_options (PICMAN_PDB_CONTEXT (context));
 
       for (list = options; list; list = g_list_next (list))
         g_object_set (list->data,
                       "brush-size",
-                      (gdouble) MAX (gimp_temp_buf_get_width  (brush->mask),
-                                     gimp_temp_buf_get_height (brush->mask)),
+                      (gdouble) MAX (picman_temp_buf_get_width  (brush->mask),
+                                     picman_temp_buf_get_height (brush->mask)),
                       NULL);
 
       g_list_free (options);
@@ -526,26 +526,26 @@ context_set_brush_default_size_invoker (GimpProcedure         *procedure,
       success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_brush_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_brush_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble aspect = 0.0;
 
   /* all options should have the same value, so pick a random one */
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-paintbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-paintbrush");
 
   if (options)
     g_object_get (options,
@@ -554,34 +554,34 @@ context_get_brush_aspect_ratio_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), aspect);
+    g_value_set_double (picman_value_array_index (return_vals, 1), aspect);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_brush_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_brush_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
   gboolean success = TRUE;
   gdouble aspect;
 
-  aspect = g_value_get_double (gimp_value_array_index (args, 0));
+  aspect = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
       GList *options;
       GList *list;
 
-      options = gimp_pdb_context_get_brush_options (GIMP_PDB_CONTEXT (context));
+      options = picman_pdb_context_get_brush_options (PICMAN_PDB_CONTEXT (context));
 
       for (list = options; list; list = g_list_next (list))
         g_object_set (list->data,
@@ -591,26 +591,26 @@ context_set_brush_aspect_ratio_invoker (GimpProcedure         *procedure,
       g_list_free (options);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_brush_angle_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_brush_angle_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble angle = 0.0;
 
   /* all options should have the same value, so pick a random one */
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-paintbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-paintbrush");
 
   if (options)
     g_object_get (options,
@@ -619,34 +619,34 @@ context_get_brush_angle_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), angle);
+    g_value_set_double (picman_value_array_index (return_vals, 1), angle);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_brush_angle_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_brush_angle_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
   gdouble angle;
 
-  angle = g_value_get_double (gimp_value_array_index (args, 0));
+  angle = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
       GList *options;
       GList *list;
 
-      options = gimp_pdb_context_get_brush_options (GIMP_PDB_CONTEXT (context));
+      options = picman_pdb_context_get_brush_options (PICMAN_PDB_CONTEXT (context));
 
       for (list = options; list; list = g_list_next (list))
         g_object_set (list->data,
@@ -656,318 +656,318 @@ context_set_brush_angle_invoker (GimpProcedure         *procedure,
       g_list_free (options);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_dynamics_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_dynamics_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpDynamics *dynamics = gimp_context_get_dynamics (context);
+  PicmanDynamics *dynamics = picman_context_get_dynamics (context);
 
   if (dynamics)
-    name = g_strdup (gimp_object_get_name (dynamics));
+    name = g_strdup (picman_object_get_name (dynamics));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_dynamics_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_dynamics_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpDynamics *dynamics = gimp_pdb_get_dynamics (gimp, name, FALSE, error);
+      PicmanDynamics *dynamics = picman_pdb_get_dynamics (picman, name, FALSE, error);
 
       if (dynamics)
-        gimp_context_set_dynamics (context, dynamics);
+        picman_context_set_dynamics (context, dynamics);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_pattern_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_pattern_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpPattern *pattern = gimp_context_get_pattern (context);
+  PicmanPattern *pattern = picman_context_get_pattern (context);
 
   if (pattern)
-    name = g_strdup (gimp_object_get_name (pattern));
+    name = g_strdup (picman_object_get_name (pattern));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_pattern_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_pattern_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPattern *pattern = gimp_pdb_get_pattern (gimp, name, error);
+      PicmanPattern *pattern = picman_pdb_get_pattern (picman, name, error);
 
       if (pattern)
-        gimp_context_set_pattern (context, pattern);
+        picman_context_set_pattern (context, pattern);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_gradient_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_gradient_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpGradient *gradient = gimp_context_get_gradient (context);
+  PicmanGradient *gradient = picman_context_get_gradient (context);
 
   if (gradient)
-    name = g_strdup (gimp_object_get_name (gradient));
+    name = g_strdup (picman_object_get_name (gradient));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_gradient_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_gradient_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+      PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
       if (gradient)
-        gimp_context_set_gradient (context, gradient);
+        picman_context_set_gradient (context, gradient);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_palette_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_palette_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpPalette *palette = gimp_context_get_palette (context);
+  PicmanPalette *palette = picman_context_get_palette (context);
 
   if (palette)
-    name = g_strdup (gimp_object_get_name (palette));
+    name = g_strdup (picman_object_get_name (palette));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_palette_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_palette_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPalette *palette = gimp_pdb_get_palette (gimp, name, FALSE, error);
+      PicmanPalette *palette = picman_pdb_get_palette (picman, name, FALSE, error);
 
       if (palette)
-        gimp_context_set_palette (context, palette);
+        picman_context_set_palette (context, palette);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_font_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_font_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *name = NULL;
 
-  GimpFont *font = gimp_context_get_font (context);
+  PicmanFont *font = picman_context_get_font (context);
 
   if (font)
-    name = g_strdup (gimp_object_get_name (font));
+    name = g_strdup (picman_object_get_name (font));
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_font_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_font_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpFont *font = gimp_pdb_get_font (gimp, name, error);
+      PicmanFont *font = picman_pdb_get_font (picman, name, error);
 
       if (font)
-        gimp_context_set_font (context, font);
+        picman_context_set_font (context, font);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_antialias_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_antialias_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gboolean antialias = FALSE;
 
   g_object_get (context,
                 "antialias", &antialias,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), antialias);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), antialias);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_antialias_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_antialias_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
   gboolean antialias;
 
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 0));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -976,43 +976,43 @@ context_set_antialias_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_feather_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_feather_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gboolean feather = FALSE;
 
   g_object_get (context,
                 "feather", &feather,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), feather);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), feather);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_feather_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_feather_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   gboolean feather;
 
-  feather = g_value_get_boolean (gimp_value_array_index (args, 0));
+  feather = g_value_get_boolean (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1021,19 +1021,19 @@ context_set_feather_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_feather_radius_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_feather_radius_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble feather_radius_x = 0.0;
   gdouble feather_radius_y = 0.0;
 
@@ -1042,28 +1042,28 @@ context_get_feather_radius_invoker (GimpProcedure         *procedure,
                 "feather-radius-y", &feather_radius_y,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
 
-  g_value_set_double (gimp_value_array_index (return_vals, 1), feather_radius_x);
-  g_value_set_double (gimp_value_array_index (return_vals, 2), feather_radius_y);
+  g_value_set_double (picman_value_array_index (return_vals, 1), feather_radius_x);
+  g_value_set_double (picman_value_array_index (return_vals, 2), feather_radius_y);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_feather_radius_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_feather_radius_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
   gdouble feather_radius_x;
   gdouble feather_radius_y;
 
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 0));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 1));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 0));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
@@ -1073,43 +1073,43 @@ context_set_feather_radius_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_sample_merged_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_sample_merged_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gboolean sample_merged = FALSE;
 
   g_object_get (context,
                 "sample-merged", &sample_merged,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), sample_merged);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), sample_merged);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_sample_merged_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_sample_merged_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
   gboolean sample_merged;
 
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 0));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1118,43 +1118,43 @@ context_set_sample_merged_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_sample_criterion_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_sample_criterion_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 sample_criterion = 0;
 
   g_object_get (context,
                 "sample-criterion", &sample_criterion,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), sample_criterion);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), sample_criterion);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_sample_criterion_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_sample_criterion_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
   gboolean success = TRUE;
   gint32 sample_criterion;
 
-  sample_criterion = g_value_get_enum (gimp_value_array_index (args, 0));
+  sample_criterion = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1163,43 +1163,43 @@ context_set_sample_criterion_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_sample_threshold_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_sample_threshold_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble sample_threshold = 0.0;
 
   g_object_get (context,
                 "sample-threshold", &sample_threshold,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_double (gimp_value_array_index (return_vals, 1), sample_threshold);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_double (picman_value_array_index (return_vals, 1), sample_threshold);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_sample_threshold_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_sample_threshold_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
   gboolean success = TRUE;
   gdouble sample_threshold;
 
-  sample_threshold = g_value_get_double (gimp_value_array_index (args, 0));
+  sample_threshold = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1208,19 +1208,19 @@ context_set_sample_threshold_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_sample_threshold_int_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_sample_threshold_int_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 sample_threshold = 0;
 
   gdouble threshold;
@@ -1231,24 +1231,24 @@ context_get_sample_threshold_int_invoker (GimpProcedure         *procedure,
 
   sample_threshold = (gint) (threshold * 255.99);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_int (gimp_value_array_index (return_vals, 1), sample_threshold);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_int (picman_value_array_index (return_vals, 1), sample_threshold);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_sample_threshold_int_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_sample_threshold_int_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
   gint32 sample_threshold;
 
-  sample_threshold = g_value_get_int (gimp_value_array_index (args, 0));
+  sample_threshold = g_value_get_int (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1257,43 +1257,43 @@ context_set_sample_threshold_int_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_sample_transparent_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_sample_transparent_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gboolean sample_transparent = FALSE;
 
   g_object_get (context,
                 "sample-transparent", &sample_transparent,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), sample_transparent);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), sample_transparent);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_sample_transparent_invoker (GimpProcedure         *procedure,
-                                        Gimp                  *gimp,
-                                        GimpContext           *context,
-                                        GimpProgress          *progress,
-                                        const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_sample_transparent_invoker (PicmanProcedure         *procedure,
+                                        Picman                  *picman,
+                                        PicmanContext           *context,
+                                        PicmanProgress          *progress,
+                                        const PicmanValueArray  *args,
                                         GError               **error)
 {
   gboolean success = TRUE;
   gboolean sample_transparent;
 
-  sample_transparent = g_value_get_boolean (gimp_value_array_index (args, 0));
+  sample_transparent = g_value_get_boolean (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1302,43 +1302,43 @@ context_set_sample_transparent_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_interpolation_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_interpolation_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 interpolation = 0;
 
   g_object_get (context,
                 "interpolation", &interpolation,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), interpolation);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), interpolation);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_interpolation_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_interpolation_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
   gint32 interpolation;
 
-  interpolation = g_value_get_enum (gimp_value_array_index (args, 0));
+  interpolation = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1347,43 +1347,43 @@ context_set_interpolation_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_transform_direction_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_transform_direction_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 transform_direction = 0;
 
   g_object_get (context,
                 "transform-direction", &transform_direction,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), transform_direction);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), transform_direction);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_transform_direction_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_transform_direction_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
   gint32 transform_direction;
 
-  transform_direction = g_value_get_enum (gimp_value_array_index (args, 0));
+  transform_direction = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1392,43 +1392,43 @@ context_set_transform_direction_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_transform_resize_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_transform_resize_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 transform_resize = 0;
 
   g_object_get (context,
                 "transform-resize", &transform_resize,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), transform_resize);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), transform_resize);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_transform_resize_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_transform_resize_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
   gboolean success = TRUE;
   gint32 transform_resize;
 
-  transform_resize = g_value_get_enum (gimp_value_array_index (args, 0));
+  transform_resize = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1437,43 +1437,43 @@ context_set_transform_resize_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_transform_recursion_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_transform_recursion_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 transform_recursion = 0;
 
   g_object_get (context,
                 "transform-recursion", &transform_recursion,
                 NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_int (gimp_value_array_index (return_vals, 1), transform_recursion);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_int (picman_value_array_index (return_vals, 1), transform_recursion);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_transform_recursion_invoker (GimpProcedure         *procedure,
-                                         Gimp                  *gimp,
-                                         GimpContext           *context,
-                                         GimpProgress          *progress,
-                                         const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_transform_recursion_invoker (PicmanProcedure         *procedure,
+                                         Picman                  *picman,
+                                         PicmanContext           *context,
+                                         PicmanProgress          *progress,
+                                         const PicmanValueArray  *args,
                                          GError               **error)
 {
   gboolean success = TRUE;
   gint32 transform_recursion;
 
-  transform_recursion = g_value_get_int (gimp_value_array_index (args, 0));
+  transform_recursion = g_value_get_int (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -1482,25 +1482,25 @@ context_set_transform_recursion_invoker (GimpProcedure         *procedure,
                     NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_size_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_size_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble size = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1509,33 +1509,33 @@ context_get_ink_size_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), size);
+    g_value_set_double (picman_value_array_index (return_vals, 1), size);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_size_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_size_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
   gdouble size;
 
-  size = g_value_get_double (gimp_value_array_index (args, 0));
+  size = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1545,25 +1545,25 @@ context_set_ink_size_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_angle_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_angle_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble angle = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1572,33 +1572,33 @@ context_get_ink_angle_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), angle);
+    g_value_set_double (picman_value_array_index (return_vals, 1), angle);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_angle_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_angle_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
   gdouble angle;
 
-  angle = g_value_get_double (gimp_value_array_index (args, 0));
+  angle = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1608,25 +1608,25 @@ context_set_ink_angle_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_size_sensitivity_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_size_sensitivity_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble size = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1635,33 +1635,33 @@ context_get_ink_size_sensitivity_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), size);
+    g_value_set_double (picman_value_array_index (return_vals, 1), size);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_size_sensitivity_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_size_sensitivity_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
   gdouble size;
 
-  size = g_value_get_double (gimp_value_array_index (args, 0));
+  size = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1671,25 +1671,25 @@ context_set_ink_size_sensitivity_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_tilt_sensitivity_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_tilt_sensitivity_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble tilt = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1698,33 +1698,33 @@ context_get_ink_tilt_sensitivity_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), tilt);
+    g_value_set_double (picman_value_array_index (return_vals, 1), tilt);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_tilt_sensitivity_invoker (GimpProcedure         *procedure,
-                                          Gimp                  *gimp,
-                                          GimpContext           *context,
-                                          GimpProgress          *progress,
-                                          const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_tilt_sensitivity_invoker (PicmanProcedure         *procedure,
+                                          Picman                  *picman,
+                                          PicmanContext           *context,
+                                          PicmanProgress          *progress,
+                                          const PicmanValueArray  *args,
                                           GError               **error)
 {
   gboolean success = TRUE;
   gdouble tilt;
 
-  tilt = g_value_get_double (gimp_value_array_index (args, 0));
+  tilt = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1734,25 +1734,25 @@ context_set_ink_tilt_sensitivity_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_speed_sensitivity_invoker (GimpProcedure         *procedure,
-                                           Gimp                  *gimp,
-                                           GimpContext           *context,
-                                           GimpProgress          *progress,
-                                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_speed_sensitivity_invoker (PicmanProcedure         *procedure,
+                                           Picman                  *picman,
+                                           PicmanContext           *context,
+                                           PicmanProgress          *progress,
+                                           const PicmanValueArray  *args,
                                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble speed = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1761,33 +1761,33 @@ context_get_ink_speed_sensitivity_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), speed);
+    g_value_set_double (picman_value_array_index (return_vals, 1), speed);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_speed_sensitivity_invoker (GimpProcedure         *procedure,
-                                           Gimp                  *gimp,
-                                           GimpContext           *context,
-                                           GimpProgress          *progress,
-                                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_speed_sensitivity_invoker (PicmanProcedure         *procedure,
+                                           Picman                  *picman,
+                                           PicmanContext           *context,
+                                           PicmanProgress          *progress,
+                                           const PicmanValueArray  *args,
                                            GError               **error)
 {
   gboolean success = TRUE;
   gdouble speed;
 
-  speed = g_value_get_double (gimp_value_array_index (args, 0));
+  speed = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1797,25 +1797,25 @@ context_set_ink_speed_sensitivity_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_blob_type_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_blob_type_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 type = 0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1824,33 +1824,33 @@ context_get_ink_blob_type_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), type);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), type);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_blob_type_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_blob_type_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
   gint32 type;
 
-  type = g_value_get_enum (gimp_value_array_index (args, 0));
+  type = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1860,25 +1860,25 @@ context_set_ink_blob_type_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_blob_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                           Gimp                  *gimp,
-                                           GimpContext           *context,
-                                           GimpProgress          *progress,
-                                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_blob_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                           Picman                  *picman,
+                                           PicmanContext           *context,
+                                           PicmanProgress          *progress,
+                                           const PicmanValueArray  *args,
                                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble aspect = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     g_object_get (options,
@@ -1887,33 +1887,33 @@ context_get_ink_blob_aspect_ratio_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), aspect);
+    g_value_set_double (picman_value_array_index (return_vals, 1), aspect);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_blob_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                           Gimp                  *gimp,
-                                           GimpContext           *context,
-                                           GimpProgress          *progress,
-                                           const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_blob_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                           Picman                  *picman,
+                                           PicmanContext           *context,
+                                           PicmanProgress          *progress,
+                                           const PicmanValueArray  *args,
                                            GError               **error)
 {
   gboolean success = TRUE;
   gdouble aspect;
 
-  aspect = g_value_get_double (gimp_value_array_index (args, 0));
+  aspect = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1923,25 +1923,25 @@ context_set_ink_blob_aspect_ratio_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-context_get_ink_blob_angle_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_get_ink_blob_angle_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gdouble angle = 0.0;
 
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-ink");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-ink");
 
   if (options)
     {
@@ -1953,33 +1953,33 @@ context_get_ink_blob_angle_invoker (GimpProcedure         *procedure,
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), angle);
+    g_value_set_double (picman_value_array_index (return_vals, 1), angle);
 
   return return_vals;
 }
 
-static GimpValueArray *
-context_set_ink_blob_angle_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+context_set_ink_blob_angle_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
   gdouble angle;
 
-  angle = g_value_get_double (gimp_value_array_index (args, 0));
+  angle = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-ink");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-ink");
 
       if (options)
         g_object_set (options,
@@ -1989,1748 +1989,1748 @@ context_set_ink_blob_angle_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_context_procs (GimpPDB *pdb)
+register_context_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-context-push
+   * picman-context-push
    */
-  procedure = gimp_procedure_new (context_push_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-push");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-push",
+  procedure = picman_procedure_new (context_push_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-push");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-push",
                                      "Pushes a context to the top of the plug-in's context stack.",
-                                     "This procedure creates a new context by copying the current context. This copy becomes the new current context for the calling plug-in until it is popped again using 'gimp-context-pop'.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "This procedure creates a new context by copying the current context. This copy becomes the new current context for the calling plug-in until it is popped again using 'picman-context-pop'.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-pop
+   * picman-context-pop
    */
-  procedure = gimp_procedure_new (context_pop_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-pop");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-pop",
+  procedure = picman_procedure_new (context_pop_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-pop");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-pop",
                                      "Pops the topmost context from the plug-in's context stack.",
-                                     "This procedure removes the topmost context from the plug-in's context stack. The context that was active before the corresponding call to 'gimp-context-push' becomes the new current context of the plug-in.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "This procedure removes the topmost context from the plug-in's context stack. The context that was active before the corresponding call to 'picman-context-push' becomes the new current context of the plug-in.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-defaults
+   * picman-context-set-defaults
    */
-  procedure = gimp_procedure_new (context_set_defaults_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-defaults");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-defaults",
+  procedure = picman_procedure_new (context_set_defaults_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-defaults");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-defaults",
                                      "Reset context settings to their default values.",
                                      "This procedure resets context settings used by various procedures to their default value. This procedure will usually be called after a context push so that a script which calls procedures affected by context settings will not be affected by changes in the global context.",
                                      "Kevin Cozens <kcozens@svn.gnome.org>",
                                      "Kevin Cozens",
                                      "2011",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-list-paint-methods
+   * picman-context-list-paint-methods
    */
-  procedure = gimp_procedure_new (context_list_paint_methods_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-list-paint-methods");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-list-paint-methods",
+  procedure = picman_procedure_new (context_list_paint_methods_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-list-paint-methods");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-list-paint-methods",
                                      "Lists the available paint methods.",
-                                     "This procedure lists the names of the available paint methods. Any of the results can be used for 'gimp-context-set-paint-method'.",
+                                     "This procedure lists the names of the available paint methods. Any of the results can be used for 'picman-context-set-paint-method'.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-paint-methods",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-paint-methods",
                                                           "num paint methods",
                                                           "The number of the available paint methods",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("paint-methods",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("paint-methods",
                                                                  "paint methods",
                                                                  "The names of the available paint methods",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-paint-method
+   * picman-context-get-paint-method
    */
-  procedure = gimp_procedure_new (context_get_paint_method_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-paint-method");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-paint-method",
+  procedure = picman_procedure_new (context_get_paint_method_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-paint-method");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-paint-method",
                                      "Retrieve the currently active paint method.",
                                      "This procedure returns the name of the currently active paint method.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active paint method",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-paint-method
+   * picman-context-set-paint-method
    */
-  procedure = gimp_procedure_new (context_set_paint_method_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-paint-method");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-paint-method",
+  procedure = picman_procedure_new (context_set_paint_method_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-paint-method");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-paint-method",
                                      "Set the specified paint method as the active paint method.",
                                      "This procedure allows the active paint method to be set by specifying its name. The name is simply a string which corresponds to one of the names of the available paint methods. If there is no matching method found, this procedure will return an error. Otherwise, the specified method becomes active and will be used in all subsequent paint operations.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the paint method",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-foreground
+   * picman-context-get-foreground
    */
-  procedure = gimp_procedure_new (context_get_foreground_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-foreground");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-foreground",
-                                     "Get the current GIMP foreground color.",
-                                     "This procedure returns the current GIMP foreground color. The foreground color is used in a variety of tools such as paint tools, blending, and bucket fill.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_get_foreground_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-foreground");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-foreground",
+                                     "Get the current PICMAN foreground color.",
+                                     "This procedure returns the current PICMAN foreground color. The foreground color is used in a variety of tools such as paint tools, blending, and bucket fill.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_rgb ("foreground",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_rgb ("foreground",
                                                         "foreground",
                                                         "The foreground color",
                                                         FALSE,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-foreground
+   * picman-context-set-foreground
    */
-  procedure = gimp_procedure_new (context_set_foreground_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-foreground");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-foreground",
-                                     "Set the current GIMP foreground color.",
-                                     "This procedure sets the current GIMP foreground color. After this is set, operations which use foreground such as paint tools, blending, and bucket fill will use the new value.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_set_foreground_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-foreground");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-foreground",
+                                     "Set the current PICMAN foreground color.",
+                                     "This procedure sets the current PICMAN foreground color. After this is set, operations which use foreground such as paint tools, blending, and bucket fill will use the new value.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("foreground",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("foreground",
                                                     "foreground",
                                                     "The foreground color",
                                                     FALSE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-background
+   * picman-context-get-background
    */
-  procedure = gimp_procedure_new (context_get_background_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-background");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-background",
-                                     "Get the current GIMP background color.",
-                                     "This procedure returns the current GIMP background color. The background color is used in a variety of tools such as blending, erasing (with non-alpha images), and image filling.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_get_background_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-background");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-background",
+                                     "Get the current PICMAN background color.",
+                                     "This procedure returns the current PICMAN background color. The background color is used in a variety of tools such as blending, erasing (with non-alpha images), and image filling.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_rgb ("background",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_rgb ("background",
                                                         "background",
                                                         "The background color",
                                                         FALSE,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-background
+   * picman-context-set-background
    */
-  procedure = gimp_procedure_new (context_set_background_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-background");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-background",
-                                     "Set the current GIMP background color.",
-                                     "This procedure sets the current GIMP background color. After this is set, operations which use background such as blending, filling images, clearing, and erasing (in non-alpha images) will use the new value.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_set_background_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-background");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-background",
+                                     "Set the current PICMAN background color.",
+                                     "This procedure sets the current PICMAN background color. After this is set, operations which use background such as blending, filling images, clearing, and erasing (in non-alpha images) will use the new value.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("background",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("background",
                                                     "background",
                                                     "The background color",
                                                     FALSE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-default-colors
+   * picman-context-set-default-colors
    */
-  procedure = gimp_procedure_new (context_set_default_colors_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-default-colors");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-default-colors",
-                                     "Set the current GIMP foreground and background colors to black and white.",
-                                     "This procedure sets the current GIMP foreground and background colors to their initial default values, black and white.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_set_default_colors_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-default-colors");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-default-colors",
+                                     "Set the current PICMAN foreground and background colors to black and white.",
+                                     "This procedure sets the current PICMAN foreground and background colors to their initial default values, black and white.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-swap-colors
+   * picman-context-swap-colors
    */
-  procedure = gimp_procedure_new (context_swap_colors_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-swap-colors");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-swap-colors",
-                                     "Swap the current GIMP foreground and background colors.",
-                                     "This procedure swaps the current GIMP foreground and background colors, so that the new foreground color becomes the old background color and vice versa.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (context_swap_colors_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-swap-colors");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-swap-colors",
+                                     "Swap the current PICMAN foreground and background colors.",
+                                     "This procedure swaps the current PICMAN foreground and background colors, so that the new foreground color becomes the old background color and vice versa.",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-opacity
+   * picman-context-get-opacity
    */
-  procedure = gimp_procedure_new (context_get_opacity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-opacity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-opacity",
+  procedure = picman_procedure_new (context_get_opacity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-opacity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-opacity",
                                      "Get the opacity.",
                                      "This procedure returns the opacity setting. The return value is a floating point number between 0 and 100.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("opacity",
                                                         "opacity",
                                                         "The opacity",
                                                         0, 100, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-opacity
+   * picman-context-set-opacity
    */
-  procedure = gimp_procedure_new (context_set_opacity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-opacity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-opacity",
+  procedure = picman_procedure_new (context_set_opacity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-opacity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-opacity",
                                      "Set the opacity.",
                                      "This procedure modifies the opacity setting. The value should be a floating point number between 0 and 100.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The opacity",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-paint-mode
+   * picman-context-get-paint-mode
    */
-  procedure = gimp_procedure_new (context_get_paint_mode_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-paint-mode");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-paint-mode",
+  procedure = picman_procedure_new (context_get_paint_mode_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-paint-mode");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-paint-mode",
                                      "Get the paint mode.",
                                      "This procedure returns the paint-mode setting. The return value is an integer which corresponds to the values listed in the argument description.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("paint-mode",
                                                       "paint mode",
                                                       "The paint mode",
-                                                      GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                      GIMP_NORMAL_MODE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                      PICMAN_NORMAL_MODE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-paint-mode
+   * picman-context-set-paint-mode
    */
-  procedure = gimp_procedure_new (context_set_paint_mode_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-paint-mode");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-paint-mode",
+  procedure = picman_procedure_new (context_set_paint_mode_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-paint-mode");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-paint-mode",
                                      "Set the paint mode.",
                                      "This procedure modifies the paint_mode setting.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("paint-mode",
                                                   "paint mode",
                                                   "The paint mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-brush
+   * picman-context-get-brush
    */
-  procedure = gimp_procedure_new (context_get_brush_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-brush");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-brush",
+  procedure = picman_procedure_new (context_get_brush_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-brush");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-brush",
                                      "Retrieve the currently active brush.",
                                      "This procedure returns the name of the currently active brush. All paint operations and stroke operations use this brush to control the application of paint to the image.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active brush",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-brush
+   * picman-context-set-brush
    */
-  procedure = gimp_procedure_new (context_set_brush_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-brush");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-brush",
+  procedure = picman_procedure_new (context_set_brush_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-brush");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-brush",
                                      "Set the specified brush as the active brush.",
                                      "This procedure allows the active brush to be set by specifying its name. The name is simply a string which corresponds to one of the names of the installed brushes. If there is no matching brush found, this procedure will return an error. Otherwise, the specified brush becomes active and will be used in all subsequent paint operations.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the brush",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-brush-size
+   * picman-context-get-brush-size
    */
-  procedure = gimp_procedure_new (context_get_brush_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-brush-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-brush-size",
+  procedure = picman_procedure_new (context_get_brush_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-brush-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-brush-size",
                                      "Get brush size in pixels.",
                                      "Get the brush size in pixels for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("size",
                                                         "size",
                                                         "brush size in pixels",
                                                         0, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-brush-size
+   * picman-context-set-brush-size
    */
-  procedure = gimp_procedure_new (context_set_brush_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-brush-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-brush-size",
+  procedure = picman_procedure_new (context_set_brush_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-brush-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-brush-size",
                                      "Set brush size in pixels.",
                                      "Set the brush size in pixels for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "brush size in pixels",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-brush-default-size
+   * picman-context-set-brush-default-size
    */
-  procedure = gimp_procedure_new (context_set_brush_default_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-brush-default-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-brush-default-size",
+  procedure = picman_procedure_new (context_set_brush_default_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-brush-default-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-brush-default-size",
                                      "Set brush size to its default.",
                                      "Set the brush size to the default (max of width and height) for paintbrush, airbrush, or pencil tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-brush-aspect-ratio
+   * picman-context-get-brush-aspect-ratio
    */
-  procedure = gimp_procedure_new (context_get_brush_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-brush-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-brush-aspect-ratio",
+  procedure = picman_procedure_new (context_get_brush_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-brush-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-brush-aspect-ratio",
                                      "Get brush aspect ratio.",
                                      "Set the aspect ratio for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("aspect",
                                                         "aspect",
                                                         "aspect ratio",
                                                         -20, 20, -20,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-brush-aspect-ratio
+   * picman-context-set-brush-aspect-ratio
    */
-  procedure = gimp_procedure_new (context_set_brush_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-brush-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-brush-aspect-ratio",
+  procedure = picman_procedure_new (context_set_brush_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-brush-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-brush-aspect-ratio",
                                      "Set brush aspect ratio.",
                                      "Set the aspect ratio for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("aspect",
                                                     "aspect",
                                                     "aspect ratio",
                                                     -20, 20, -20,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-brush-angle
+   * picman-context-get-brush-angle
    */
-  procedure = gimp_procedure_new (context_get_brush_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-brush-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-brush-angle",
+  procedure = picman_procedure_new (context_get_brush_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-brush-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-brush-angle",
                                      "Get brush angle in degrees.",
                                      "Set the angle in degrees for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("angle",
                                                         "angle",
                                                         "angle in degrees",
                                                         -180, 180, -180,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-brush-angle
+   * picman-context-set-brush-angle
    */
-  procedure = gimp_procedure_new (context_set_brush_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-brush-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-brush-angle",
+  procedure = picman_procedure_new (context_set_brush_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-brush-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-brush-angle",
                                      "Set brush angle in degrees.",
                                      "Set the angle in degrees for brush based paint tools.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "angle in degrees",
                                                     -180, 180, -180,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-dynamics
+   * picman-context-get-dynamics
    */
-  procedure = gimp_procedure_new (context_get_dynamics_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-dynamics");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-dynamics",
+  procedure = picman_procedure_new (context_get_dynamics_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-dynamics");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-dynamics",
                                      "Retrieve the currently active paint dynamics.",
                                      "This procedure returns the name of the currently active paint dynamics. All paint operations and stroke operations use this paint dynamics to control the application of paint to the image.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active paint dynamics",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-dynamics
+   * picman-context-set-dynamics
    */
-  procedure = gimp_procedure_new (context_set_dynamics_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-dynamics");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-dynamics",
+  procedure = picman_procedure_new (context_set_dynamics_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-dynamics");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-dynamics",
                                      "Set the specified paint dynamics as the active paint dynamics.",
                                      "This procedure allows the active paint dynamics to be set by specifying its name. The name is simply a string which corresponds to one of the names of the installed paint dynamics. If there is no matching paint dynamics found, this procedure will return an error. Otherwise, the specified paint dynamics becomes active and will be used in all subsequent paint operations.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the paint dynamics",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-pattern
+   * picman-context-get-pattern
    */
-  procedure = gimp_procedure_new (context_get_pattern_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-pattern");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-pattern",
+  procedure = picman_procedure_new (context_get_pattern_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-pattern");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-pattern",
                                      "Retrieve the currently active pattern.",
                                      "This procedure returns name of the the currently active pattern. All clone and bucket-fill operations with patterns will use this pattern to control the application of paint to the image.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active pattern",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-pattern
+   * picman-context-set-pattern
    */
-  procedure = gimp_procedure_new (context_set_pattern_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-pattern");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-pattern",
+  procedure = picman_procedure_new (context_set_pattern_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-pattern");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-pattern",
                                      "Set the specified pattern as the active pattern.",
                                      "This procedure allows the active pattern to be set by specifying its name. The name is simply a string which corresponds to one of the names of the installed patterns. If there is no matching pattern found, this procedure will return an error. Otherwise, the specified pattern becomes active and will be used in all subsequent paint operations.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the pattern",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-gradient
+   * picman-context-get-gradient
    */
-  procedure = gimp_procedure_new (context_get_gradient_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-gradient");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-gradient",
+  procedure = picman_procedure_new (context_get_gradient_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-gradient");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-gradient",
                                      "Retrieve the currently active gradient.",
                                      "This procedure returns the name of the currently active gradient.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active gradient",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-gradient
+   * picman-context-set-gradient
    */
-  procedure = gimp_procedure_new (context_set_gradient_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-gradient");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-gradient",
+  procedure = picman_procedure_new (context_set_gradient_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-gradient");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-gradient",
                                      "Sets the specified gradient as the active gradient.",
                                      "This procedure lets you set the specified gradient as the active or \"current\" one. The name is simply a string which corresponds to one of the loaded gradients. If no matching gradient is found, this procedure will return an error. Otherwise, the specified gradient will become active and will be used for subsequent custom gradient operations.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the gradient",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-palette
+   * picman-context-get-palette
    */
-  procedure = gimp_procedure_new (context_get_palette_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-palette");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-palette",
+  procedure = picman_procedure_new (context_get_palette_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-palette");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-palette",
                                      "Retrieve the currently active palette.",
                                      "This procedure returns the name of the the currently active palette.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active palette",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-palette
+   * picman-context-set-palette
    */
-  procedure = gimp_procedure_new (context_set_palette_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-palette");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-palette",
+  procedure = picman_procedure_new (context_set_palette_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-palette");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-palette",
                                      "Set the specified palette as the active palette.",
                                      "This procedure allows the active palette to be set by specifying its name. The name is simply a string which corresponds to one of the names of the installed palettes. If no matching palette is found, this procedure will return an error. Otherwise, the specified palette becomes active and will be used in all subsequent palette operations.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the palette",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-font
+   * picman-context-get-font
    */
-  procedure = gimp_procedure_new (context_get_font_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-font");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-font",
+  procedure = picman_procedure_new (context_get_font_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-font");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-font",
                                      "Retrieve the currently active font.",
                                      "This procedure returns the name of the currently active font.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the active font",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-font
+   * picman-context-set-font
    */
-  procedure = gimp_procedure_new (context_set_font_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-font");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-font",
+  procedure = picman_procedure_new (context_set_font_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-font");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-font",
                                      "Set the specified font as the active font.",
                                      "This procedure allows the active font to be set by specifying its name. The name is simply a string which corresponds to one of the names of the installed fonts. If no matching font is found, this procedure will return an error. Otherwise, the specified font becomes active and will be used in all subsequent font operations.",
-                                     "Michael Natterer <mitch@gimp.org> & Sven Neumann <sven@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org> & Sven Neumann <sven@picman.org>",
                                      "Michael Natterer & Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the font",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-antialias
+   * picman-context-get-antialias
    */
-  procedure = gimp_procedure_new (context_get_antialias_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-antialias");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-antialias",
+  procedure = picman_procedure_new (context_get_antialias_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-antialias");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-antialias",
                                      "Get the antialias setting.",
                                      "This procedure returns the antialias setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("antialias",
                                                          "antialias",
                                                          "The antialias setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-antialias
+   * picman-context-set-antialias
    */
-  procedure = gimp_procedure_new (context_set_antialias_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-antialias");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-antialias",
+  procedure = picman_procedure_new (context_set_antialias_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-antialias");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-antialias",
                                      "Set the antialias setting.",
-                                     "This procedure modifies the antialias setting. If antialiasing is turned on, the edges of selected region will contain intermediate values which give the appearance of a sharper, less pixelized edge. This should be set as TRUE most of the time unless a binary-only selection is wanted. This settings affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color', 'gimp-image-select-round-rectangle', 'gimp-image-select-ellipse', 'gimp-image-select-polygon', 'gimp-image-select-item'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the antialias setting. If antialiasing is turned on, the edges of selected region will contain intermediate values which give the appearance of a sharper, less pixelized edge. This should be set as TRUE most of the time unless a binary-only selection is wanted. This settings affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color', 'picman-image-select-round-rectangle', 'picman-image-select-ellipse', 'picman-image-select-polygon', 'picman-image-select-item'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "The antialias setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-feather
+   * picman-context-get-feather
    */
-  procedure = gimp_procedure_new (context_get_feather_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-feather");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-feather",
+  procedure = picman_procedure_new (context_get_feather_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-feather");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-feather",
                                      "Get the feather setting.",
                                      "This procedure returns the feather setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("feather",
                                                          "feather",
                                                          "The feather setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-feather
+   * picman-context-set-feather
    */
-  procedure = gimp_procedure_new (context_set_feather_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-feather");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-feather",
+  procedure = picman_procedure_new (context_set_feather_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-feather");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-feather",
                                      "Set the feather setting.",
-                                     "This procedure modifies the feather setting. If the feather option is enabled, selections will be blurred before combining. The blur is a gaussian blur; its radii can be controlled using 'gimp-context-set-feather-radius'. This setting affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color', 'gimp-image-select-rectangle', 'gimp-image-select-round-rectangle', 'gimp-image-select-ellipse', 'gimp-image-select-polygon', 'gimp-image-select-item'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the feather setting. If the feather option is enabled, selections will be blurred before combining. The blur is a gaussian blur; its radii can be controlled using 'picman-context-set-feather-radius'. This setting affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color', 'picman-image-select-rectangle', 'picman-image-select-round-rectangle', 'picman-image-select-ellipse', 'picman-image-select-polygon', 'picman-image-select-item'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "The feather setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-feather-radius
+   * picman-context-get-feather-radius
    */
-  procedure = gimp_procedure_new (context_get_feather_radius_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-feather-radius");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-feather-radius",
+  procedure = picman_procedure_new (context_get_feather_radius_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-feather-radius");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-feather-radius",
                                      "Get the feather radius setting.",
                                      "This procedure returns the feather radius setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("feather-radius-x",
                                                         "feather radius x",
                                                         "The horizontal feather radius",
                                                         0, 1000, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("feather-radius-y",
                                                         "feather radius y",
                                                         "The vertical feather radius",
                                                         0, 1000, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-feather-radius
+   * picman-context-set-feather-radius
    */
-  procedure = gimp_procedure_new (context_set_feather_radius_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-feather-radius");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-feather-radius",
+  procedure = picman_procedure_new (context_set_feather_radius_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-feather-radius");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-feather-radius",
                                      "Set the feather radius setting.",
-                                     "This procedure modifies the feather radius setting. This setting affects all procedures that are affected by 'gimp-context-set-feather'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the feather radius setting. This setting affects all procedures that are affected by 'picman-context-set-feather'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "The horizontal feather radius",
                                                     0, 1000, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "The vertical feather radius",
                                                     0, 1000, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-sample-merged
+   * picman-context-get-sample-merged
    */
-  procedure = gimp_procedure_new (context_get_sample_merged_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-sample-merged");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-sample-merged",
+  procedure = picman_procedure_new (context_get_sample_merged_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-sample-merged");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-sample-merged",
                                      "Get the sample merged setting.",
                                      "This procedure returns the sample merged setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("sample-merged",
                                                          "sample merged",
                                                          "The sample merged setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-sample-merged
+   * picman-context-set-sample-merged
    */
-  procedure = gimp_procedure_new (context_set_sample_merged_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-sample-merged");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-sample-merged",
+  procedure = picman_procedure_new (context_set_sample_merged_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-sample-merged");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-sample-merged",
                                      "Set the sample merged setting.",
-                                     "This procedure modifies the sample merged setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls whether the pixel data from the specified drawable is used ('sample-merged' is FALSE), or the pixel data from the composite image ('sample-merged' is TRUE. This is equivalent to sampling for colors after merging all visible layers). This setting affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the sample merged setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls whether the pixel data from the specified drawable is used ('sample-merged' is FALSE), or the pixel data from the composite image ('sample-merged' is TRUE. This is equivalent to sampling for colors after merging all visible layers). This setting affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "The sample merged setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-sample-criterion
+   * picman-context-get-sample-criterion
    */
-  procedure = gimp_procedure_new (context_get_sample_criterion_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-sample-criterion");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-sample-criterion",
+  procedure = picman_procedure_new (context_get_sample_criterion_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-sample-criterion");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-sample-criterion",
                                      "Get the sample criterion setting.",
                                      "This procedure returns the sample criterion setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("sample-criterion",
                                                       "sample criterion",
                                                       "The sample criterion setting",
-                                                      GIMP_TYPE_SELECT_CRITERION,
-                                                      GIMP_SELECT_CRITERION_COMPOSITE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_SELECT_CRITERION,
+                                                      PICMAN_SELECT_CRITERION_COMPOSITE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-sample-criterion
+   * picman-context-set-sample-criterion
    */
-  procedure = gimp_procedure_new (context_set_sample_criterion_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-sample-criterion");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-sample-criterion",
+  procedure = picman_procedure_new (context_set_sample_criterion_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-sample-criterion");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-sample-criterion",
                                      "Set the sample criterion setting.",
-                                     "This procedure modifies the sample criterion setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls how color similarity is determined. SELECT_CRITERION_COMPOSITE is the default value. This setting affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the sample criterion setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls how color similarity is determined. SELECT_CRITERION_COMPOSITE is the default value. This setting affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("sample-criterion",
                                                   "sample criterion",
                                                   "The sample criterion setting",
-                                                  GIMP_TYPE_SELECT_CRITERION,
-                                                  GIMP_SELECT_CRITERION_COMPOSITE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_SELECT_CRITERION,
+                                                  PICMAN_SELECT_CRITERION_COMPOSITE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-sample-threshold
+   * picman-context-get-sample-threshold
    */
-  procedure = gimp_procedure_new (context_get_sample_threshold_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-sample-threshold");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-sample-threshold",
+  procedure = picman_procedure_new (context_get_sample_threshold_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-sample-threshold");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-sample-threshold",
                                      "Get the sample threshold setting.",
                                      "This procedure returns the sample threshold setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("sample-threshold",
                                                         "sample threshold",
                                                         "The sample threshold setting",
                                                         0.0, 1.0, 0.0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-sample-threshold
+   * picman-context-set-sample-threshold
    */
-  procedure = gimp_procedure_new (context_set_sample_threshold_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-sample-threshold");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-sample-threshold",
+  procedure = picman_procedure_new (context_set_sample_threshold_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-sample-threshold");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-sample-threshold",
                                      "Set the sample threshold setting.",
-                                     "This procedure modifies the sample threshold setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls what is \"sufficiently close\" to be considered a similar color. If the sample threshold has not been set explicitly, the default threshold set in gimprc will be used. This setting affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the sample threshold setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls what is \"sufficiently close\" to be considered a similar color. If the sample threshold has not been set explicitly, the default threshold set in picmanrc will be used. This setting affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("sample-threshold",
                                                     "sample threshold",
                                                     "The sample threshold setting",
                                                     0.0, 1.0, 0.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-sample-threshold-int
+   * picman-context-get-sample-threshold-int
    */
-  procedure = gimp_procedure_new (context_get_sample_threshold_int_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-sample-threshold-int");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-sample-threshold-int",
+  procedure = picman_procedure_new (context_get_sample_threshold_int_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-sample-threshold-int");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-sample-threshold-int",
                                      "Get the sample threshold setting as an integer value.",
-                                     "This procedure returns the sample threshold setting as an integer value. See 'gimp-context-get-sample-threshold'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure returns the sample threshold setting as an integer value. See 'picman-context-get-sample-threshold'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("sample-threshold",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("sample-threshold",
                                                           "sample threshold",
                                                           "The sample threshold setting",
                                                           0, 255, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-sample-threshold-int
+   * picman-context-set-sample-threshold-int
    */
-  procedure = gimp_procedure_new (context_set_sample_threshold_int_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-sample-threshold-int");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-sample-threshold-int",
+  procedure = picman_procedure_new (context_set_sample_threshold_int_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-sample-threshold-int");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-sample-threshold-int",
                                      "Set the sample threshold setting as an integer value.",
-                                     "This procedure modifies the sample threshold setting as an integer value. See 'gimp-context-set-sample-threshold'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the sample threshold setting as an integer value. See 'picman-context-set-sample-threshold'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("sample-threshold",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("sample-threshold",
                                                       "sample threshold",
                                                       "The sample threshold setting",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-sample-transparent
+   * picman-context-get-sample-transparent
    */
-  procedure = gimp_procedure_new (context_get_sample_transparent_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-sample-transparent");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-sample-transparent",
+  procedure = picman_procedure_new (context_get_sample_transparent_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-sample-transparent");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-sample-transparent",
                                      "Get the sample transparent setting.",
                                      "This procedure returns the sample transparent setting.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("sample-transparent",
                                                          "sample transparent",
                                                          "The sample transparent setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-sample-transparent
+   * picman-context-set-sample-transparent
    */
-  procedure = gimp_procedure_new (context_set_sample_transparent_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-sample-transparent");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-sample-transparent",
+  procedure = picman_procedure_new (context_set_sample_transparent_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-sample-transparent");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-sample-transparent",
                                      "Set the sample transparent setting.",
-                                     "This procedure modifies the sample transparent setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls whether transparency is considered to be a unique selectable color. When this setting is TRUE, transparent areas can be selected or filled. This setting affects the following procedures: 'gimp-image-select-color', 'gimp-image-select-contiguous-color'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the sample transparent setting. If an operation depends on the colors of the pixels present in a drawable, like when doing a seed fill, this setting controls whether transparency is considered to be a unique selectable color. When this setting is TRUE, transparent areas can be selected or filled. This setting affects the following procedures: 'picman-image-select-color', 'picman-image-select-contiguous-color'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-transparent",
                                                      "sample transparent",
                                                      "The sample transparent setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-interpolation
+   * picman-context-get-interpolation
    */
-  procedure = gimp_procedure_new (context_get_interpolation_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-interpolation");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-interpolation",
+  procedure = picman_procedure_new (context_get_interpolation_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-interpolation");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-interpolation",
                                      "Get the interpolation type.",
-                                     "This procedure returns the interpolation setting. The return value is an integer which corresponds to the values listed in the argument description. If the interpolation has not been set explicitly by 'gimp-context-set-interpolation', the default interpolation set in gimprc will be used.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure returns the interpolation setting. The return value is an integer which corresponds to the values listed in the argument description. If the interpolation has not been set explicitly by 'picman-context-set-interpolation', the default interpolation set in picmanrc will be used.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("interpolation",
                                                       "interpolation",
                                                       "The interpolation type",
-                                                      GIMP_TYPE_INTERPOLATION_TYPE,
-                                                      GIMP_INTERPOLATION_NONE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_INTERPOLATION_TYPE,
+                                                      PICMAN_INTERPOLATION_NONE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-interpolation
+   * picman-context-set-interpolation
    */
-  procedure = gimp_procedure_new (context_set_interpolation_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-interpolation");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-interpolation",
+  procedure = picman_procedure_new (context_set_interpolation_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-interpolation");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-interpolation",
                                      "Set the interpolation type.",
-                                     "This procedure modifies the interpolation setting. This setting affects affects the following procedures: 'gimp-item-transform-flip', 'gimp-item-transform-perspective', 'gimp-item-transform-rotate', 'gimp-item-transform-scale', 'gimp-item-transform-shear', 'gimp-item-transform-2d', 'gimp-item-transform-matrix', 'gimp-image-scale', 'gimp-layer-scale'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the interpolation setting. This setting affects affects the following procedures: 'picman-item-transform-flip', 'picman-item-transform-perspective', 'picman-item-transform-rotate', 'picman-item-transform-scale', 'picman-item-transform-shear', 'picman-item-transform-2d', 'picman-item-transform-matrix', 'picman-image-scale', 'picman-layer-scale'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("interpolation",
                                                   "interpolation",
                                                   "The interpolation type",
-                                                  GIMP_TYPE_INTERPOLATION_TYPE,
-                                                  GIMP_INTERPOLATION_NONE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_INTERPOLATION_TYPE,
+                                                  PICMAN_INTERPOLATION_NONE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-transform-direction
+   * picman-context-get-transform-direction
    */
-  procedure = gimp_procedure_new (context_get_transform_direction_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-transform-direction");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-transform-direction",
+  procedure = picman_procedure_new (context_get_transform_direction_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-transform-direction");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-transform-direction",
                                      "Get the transform direction.",
                                      "This procedure returns the transform direction. The return value is an integer which corresponds to the values listed in the argument description.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("transform-direction",
                                                       "transform direction",
                                                       "The transform direction",
-                                                      GIMP_TYPE_TRANSFORM_DIRECTION,
-                                                      GIMP_TRANSFORM_FORWARD,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_TRANSFORM_DIRECTION,
+                                                      PICMAN_TRANSFORM_FORWARD,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-transform-direction
+   * picman-context-set-transform-direction
    */
-  procedure = gimp_procedure_new (context_set_transform_direction_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-transform-direction");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-transform-direction",
+  procedure = picman_procedure_new (context_set_transform_direction_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-transform-direction");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-transform-direction",
                                      "Set the transform direction.",
-                                     "This procedure modifies the transform direction setting. This setting affects affects the following procedures: 'gimp-item-transform-flip', 'gimp-item-transform-perspective', 'gimp-item-transform-rotate', 'gimp-item-transform-scale', 'gimp-item-transform-shear', 'gimp-item-transform-2d', 'gimp-item-transform-matrix'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the transform direction setting. This setting affects affects the following procedures: 'picman-item-transform-flip', 'picman-item-transform-perspective', 'picman-item-transform-rotate', 'picman-item-transform-scale', 'picman-item-transform-shear', 'picman-item-transform-2d', 'picman-item-transform-matrix'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("transform-direction",
                                                   "transform direction",
                                                   "The transform direction",
-                                                  GIMP_TYPE_TRANSFORM_DIRECTION,
-                                                  GIMP_TRANSFORM_FORWARD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_TRANSFORM_DIRECTION,
+                                                  PICMAN_TRANSFORM_FORWARD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-transform-resize
+   * picman-context-get-transform-resize
    */
-  procedure = gimp_procedure_new (context_get_transform_resize_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-transform-resize");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-transform-resize",
+  procedure = picman_procedure_new (context_get_transform_resize_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-transform-resize");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-transform-resize",
                                      "Get the transform resize type.",
                                      "This procedure returns the transform resize setting. The return value is an integer which corresponds to the values listed in the argument description.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("transform-resize",
                                                       "transform resize",
                                                       "The transform resize type",
-                                                      GIMP_TYPE_TRANSFORM_RESIZE,
-                                                      GIMP_TRANSFORM_RESIZE_ADJUST,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_TRANSFORM_RESIZE,
+                                                      PICMAN_TRANSFORM_RESIZE_ADJUST,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-transform-resize
+   * picman-context-set-transform-resize
    */
-  procedure = gimp_procedure_new (context_set_transform_resize_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-transform-resize");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-transform-resize",
+  procedure = picman_procedure_new (context_set_transform_resize_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-transform-resize");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-transform-resize",
                                      "Set the transform resize type.",
-                                     "This procedure modifies the transform resize setting. When transforming pixels, if the result of a transform operation has a different size than the original area, this setting determines how the resulting area is sized. This setting affects affects the following procedures: 'gimp-item-transform-flip', 'gimp-item-transform-flip-simple', 'gimp-item-transform-perspective', 'gimp-item-transform-rotate', 'gimp-item-transform-rotate-simple', 'gimp-item-transform-scale', 'gimp-item-transform-shear', 'gimp-item-transform-2d', 'gimp-item-transform-matrix'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the transform resize setting. When transforming pixels, if the result of a transform operation has a different size than the original area, this setting determines how the resulting area is sized. This setting affects affects the following procedures: 'picman-item-transform-flip', 'picman-item-transform-flip-simple', 'picman-item-transform-perspective', 'picman-item-transform-rotate', 'picman-item-transform-rotate-simple', 'picman-item-transform-scale', 'picman-item-transform-shear', 'picman-item-transform-2d', 'picman-item-transform-matrix'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("transform-resize",
                                                   "transform resize",
                                                   "The transform resize type",
-                                                  GIMP_TYPE_TRANSFORM_RESIZE,
-                                                  GIMP_TRANSFORM_RESIZE_ADJUST,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_TRANSFORM_RESIZE,
+                                                  PICMAN_TRANSFORM_RESIZE_ADJUST,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-transform-recursion
+   * picman-context-get-transform-recursion
    */
-  procedure = gimp_procedure_new (context_get_transform_recursion_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-transform-recursion");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-transform-recursion",
+  procedure = picman_procedure_new (context_get_transform_recursion_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-transform-recursion");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-transform-recursion",
                                      "Get the transform supersampling recursion.",
                                      "This procedure returns the transform supersampling recursion level.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("transform-recursion",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("transform-recursion",
                                                           "transform recursion",
                                                           "The transform recursion level",
                                                           1, G_MAXINT32, 1,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-transform-recursion
+   * picman-context-set-transform-recursion
    */
-  procedure = gimp_procedure_new (context_set_transform_recursion_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-transform-recursion");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-transform-recursion",
+  procedure = picman_procedure_new (context_set_transform_recursion_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-transform-recursion");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-transform-recursion",
                                      "Set the transform supersampling recursion.",
-                                     "This procedure modifies the transform supersampling recursion level setting. Whether or not a transformation does supersampling is determined by the interplolation type. The recursion level defaults to 3, which is a nice default value. This setting affects affects the following procedures: 'gimp-item-transform-flip', 'gimp-item-transform-perspective', 'gimp-item-transform-rotate', 'gimp-item-transform-scale', 'gimp-item-transform-shear', 'gimp-item-transform-2d', 'gimp-item-transform-matrix'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure modifies the transform supersampling recursion level setting. Whether or not a transformation does supersampling is determined by the interplolation type. The recursion level defaults to 3, which is a nice default value. This setting affects affects the following procedures: 'picman-item-transform-flip', 'picman-item-transform-perspective', 'picman-item-transform-rotate', 'picman-item-transform-scale', 'picman-item-transform-shear', 'picman-item-transform-2d', 'picman-item-transform-matrix'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("transform-recursion",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("transform-recursion",
                                                       "transform recursion",
                                                       "The transform recursion level",
                                                       1, G_MAXINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-size
+   * picman-context-get-ink-size
    */
-  procedure = gimp_procedure_new (context_get_ink_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-size",
+  procedure = picman_procedure_new (context_get_ink_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-size",
                                      "Get ink blob size in pixels.",
                                      "Get the ink blob size in pixels for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("size",
                                                         "size",
                                                         "ink blob size in pixels",
                                                         0, 200, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-size
+   * picman-context-set-ink-size
    */
-  procedure = gimp_procedure_new (context_set_ink_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-size",
+  procedure = picman_procedure_new (context_set_ink_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-size",
                                      "Set ink blob size in pixels.",
                                      "Set the ink blob size in pixels for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "ink blob size in pixels",
                                                     0, 200, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-angle
+   * picman-context-get-ink-angle
    */
-  procedure = gimp_procedure_new (context_get_ink_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-angle",
+  procedure = picman_procedure_new (context_get_ink_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-angle",
                                      "Get ink angle in degrees.",
                                      "Get the ink angle in degrees for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("angle",
                                                         "angle",
                                                         "ink angle in degrees",
                                                         -90, 90, -90,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-angle
+   * picman-context-set-ink-angle
    */
-  procedure = gimp_procedure_new (context_set_ink_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-angle",
+  procedure = picman_procedure_new (context_set_ink_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-angle",
                                      "Set ink angle in degrees.",
                                      "Set the ink angle in degrees for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "ink angle in degrees",
                                                     -90, 90, -90,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-size-sensitivity
+   * picman-context-get-ink-size-sensitivity
    */
-  procedure = gimp_procedure_new (context_get_ink_size_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-size-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-size-sensitivity",
+  procedure = picman_procedure_new (context_get_ink_size_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-size-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-size-sensitivity",
                                      "Get ink size sensitivity.",
                                      "Get the ink size sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("size",
                                                         "size",
                                                         "ink size sensitivity",
                                                         0, 1, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-size-sensitivity
+   * picman-context-set-ink-size-sensitivity
    */
-  procedure = gimp_procedure_new (context_set_ink_size_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-size-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-size-sensitivity",
+  procedure = picman_procedure_new (context_set_ink_size_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-size-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-size-sensitivity",
                                      "Set ink size sensitivity.",
                                      "Set the ink size sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "ink size sensitivity",
                                                     0, 1, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-tilt-sensitivity
+   * picman-context-get-ink-tilt-sensitivity
    */
-  procedure = gimp_procedure_new (context_get_ink_tilt_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-tilt-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-tilt-sensitivity",
+  procedure = picman_procedure_new (context_get_ink_tilt_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-tilt-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-tilt-sensitivity",
                                      "Get ink tilt sensitivity.",
                                      "Get the ink tilt sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("tilt",
                                                         "tilt",
                                                         "ink tilt sensitivity",
                                                         0, 1, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-tilt-sensitivity
+   * picman-context-set-ink-tilt-sensitivity
    */
-  procedure = gimp_procedure_new (context_set_ink_tilt_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-tilt-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-tilt-sensitivity",
+  procedure = picman_procedure_new (context_set_ink_tilt_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-tilt-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-tilt-sensitivity",
                                      "Set ink tilt sensitivity.",
                                      "Set the ink tilt sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("tilt",
                                                     "tilt",
                                                     "ink tilt sensitivity",
                                                     0, 1, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-speed-sensitivity
+   * picman-context-get-ink-speed-sensitivity
    */
-  procedure = gimp_procedure_new (context_get_ink_speed_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-speed-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-speed-sensitivity",
+  procedure = picman_procedure_new (context_get_ink_speed_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-speed-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-speed-sensitivity",
                                      "Get ink speed sensitivity.",
                                      "Get the ink speed sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("speed",
                                                         "speed",
                                                         "ink speed sensitivity",
                                                         0, 1, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-speed-sensitivity
+   * picman-context-set-ink-speed-sensitivity
    */
-  procedure = gimp_procedure_new (context_set_ink_speed_sensitivity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-speed-sensitivity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-speed-sensitivity",
+  procedure = picman_procedure_new (context_set_ink_speed_sensitivity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-speed-sensitivity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-speed-sensitivity",
                                      "Set ink speed sensitivity.",
                                      "Set the ink speed sensitivity for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("speed",
                                                     "speed",
                                                     "ink speed sensitivity",
                                                     0, 1, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-blob-type
+   * picman-context-get-ink-blob-type
    */
-  procedure = gimp_procedure_new (context_get_ink_blob_type_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-blob-type");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-blob-type",
+  procedure = picman_procedure_new (context_get_ink_blob_type_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-blob-type");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-blob-type",
                                      "Get ink blob type.",
                                      "Get the ink blob type for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("type",
                                                       "type",
                                                       "Ink blob type",
-                                                      GIMP_TYPE_INK_BLOB_TYPE,
-                                                      GIMP_INK_BLOB_TYPE_CIRCLE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_INK_BLOB_TYPE,
+                                                      PICMAN_INK_BLOB_TYPE_CIRCLE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-blob-type
+   * picman-context-set-ink-blob-type
    */
-  procedure = gimp_procedure_new (context_set_ink_blob_type_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-blob-type");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-blob-type",
+  procedure = picman_procedure_new (context_set_ink_blob_type_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-blob-type");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-blob-type",
                                      "Set ink blob type.",
                                      "Set the ink blob type for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("type",
                                                   "type",
                                                   "Ink blob type",
-                                                  GIMP_TYPE_INK_BLOB_TYPE,
-                                                  GIMP_INK_BLOB_TYPE_CIRCLE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_INK_BLOB_TYPE,
+                                                  PICMAN_INK_BLOB_TYPE_CIRCLE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-blob-aspect-ratio
+   * picman-context-get-ink-blob-aspect-ratio
    */
-  procedure = gimp_procedure_new (context_get_ink_blob_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-blob-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-blob-aspect-ratio",
+  procedure = picman_procedure_new (context_get_ink_blob_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-blob-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-blob-aspect-ratio",
                                      "Get ink blob aspect ratio.",
                                      "Get the ink blob aspect ratio for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("aspect",
                                                         "aspect",
                                                         "ink blob aspect ratio",
                                                         1, 10, 1,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-blob-aspect-ratio
+   * picman-context-set-ink-blob-aspect-ratio
    */
-  procedure = gimp_procedure_new (context_set_ink_blob_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-blob-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-blob-aspect-ratio",
+  procedure = picman_procedure_new (context_set_ink_blob_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-blob-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-blob-aspect-ratio",
                                      "Set ink blob aspect ratio.",
                                      "Set the ink blob aspect ratio for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("aspect",
                                                     "aspect",
                                                     "ink blob aspect ratio",
                                                     1, 10, 1,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-get-ink-blob-angle
+   * picman-context-get-ink-blob-angle
    */
-  procedure = gimp_procedure_new (context_get_ink_blob_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-get-ink-blob-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-get-ink-blob-angle",
+  procedure = picman_procedure_new (context_get_ink_blob_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-get-ink-blob-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-get-ink-blob-angle",
                                      "Get ink blob angle in degrees.",
                                      "Get the ink blob angle in degrees for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("angle",
                                                         "angle",
                                                         "ink blob angle in degrees",
                                                         -180, 180, -180,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-context-set-ink-blob-angle
+   * picman-context-set-ink-blob-angle
    */
-  procedure = gimp_procedure_new (context_set_ink_blob_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-context-set-ink-blob-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-context-set-ink-blob-angle",
+  procedure = picman_procedure_new (context_set_ink_blob_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-context-set-ink-blob-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-context-set-ink-blob-angle",
                                      "Set ink blob angle in degrees.",
                                      "Set the ink blob angle in degrees for ink tool.",
                                      "Ed Swartz",
                                      "Ed Swartz",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "ink blob angle in degrees",
                                                     -180, 180, -180,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,13 +25,13 @@ struct _VectorsImportDialog
 {
   GtkWidget *dialog;
 
-  GimpImage *image;
+  PicmanImage *image;
   gboolean    merge_vectors;
   gboolean    scale_vectors;
 };
 
 
-VectorsImportDialog * vectors_import_dialog_new (GimpImage *image,
+VectorsImportDialog * vectors_import_dialog_new (PicmanImage *image,
                                                  GtkWidget *parent,
                                                  gboolean   merge_vectors,
                                                  gboolean   scale_vectors);

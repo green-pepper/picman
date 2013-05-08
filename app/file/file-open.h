@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * file-open.h
@@ -21,21 +21,21 @@
 #define __FILE_OPEN_H__
 
 
-GimpImage * file_open_image                 (Gimp                *gimp,
-                                             GimpContext         *context,
-                                             GimpProgress        *progress,
+PicmanImage * file_open_image                 (Picman                *picman,
+                                             PicmanContext         *context,
+                                             PicmanProgress        *progress,
                                              const gchar         *uri,
                                              const gchar         *entered_filename,
                                              gboolean             as_new,
-                                             GimpPlugInProcedure *file_proc,
-                                             GimpRunMode          run_mode,
-                                             GimpPDBStatusType   *status,
+                                             PicmanPlugInProcedure *file_proc,
+                                             PicmanRunMode          run_mode,
+                                             PicmanPDBStatusType   *status,
                                              const gchar        **mime_type,
                                              GError             **error);
 
-GimpImage * file_open_thumbnail             (Gimp                *gimp,
-                                             GimpContext         *context,
-                                             GimpProgress        *progress,
+PicmanImage * file_open_thumbnail             (Picman                *picman,
+                                             PicmanContext         *context,
+                                             PicmanProgress        *progress,
                                              const gchar         *uri,
                                              gint                 size,
                                              const gchar        **mime_type,
@@ -44,36 +44,36 @@ GimpImage * file_open_thumbnail             (Gimp                *gimp,
                                              const Babl         **format,
                                              gint                *num_layers,
                                              GError             **error);
-GimpImage * file_open_with_display          (Gimp                *gimp,
-                                             GimpContext         *context,
-                                             GimpProgress        *progress,
+PicmanImage * file_open_with_display          (Picman                *picman,
+                                             PicmanContext         *context,
+                                             PicmanProgress        *progress,
                                              const gchar         *uri,
                                              gboolean             as_new,
-                                             GimpPDBStatusType   *status,
+                                             PicmanPDBStatusType   *status,
                                              GError             **error);
 
-GimpImage * file_open_with_proc_and_display (Gimp                *gimp,
-                                             GimpContext         *context,
-                                             GimpProgress        *progress,
+PicmanImage * file_open_with_proc_and_display (Picman                *picman,
+                                             PicmanContext         *context,
+                                             PicmanProgress        *progress,
                                              const gchar         *uri,
                                              const gchar         *entered_filename,
                                              gboolean             as_new,
-                                             GimpPlugInProcedure *file_proc,
-                                             GimpPDBStatusType   *status,
+                                             PicmanPlugInProcedure *file_proc,
+                                             PicmanPDBStatusType   *status,
                                              GError             **error);
 
-GList     * file_open_layers                (Gimp                *gimp,
-                                             GimpContext         *context,
-                                             GimpProgress        *progress,
-                                             GimpImage           *dest_image,
+GList     * file_open_layers                (Picman                *picman,
+                                             PicmanContext         *context,
+                                             PicmanProgress        *progress,
+                                             PicmanImage           *dest_image,
                                              gboolean             merge_visible,
                                              const gchar         *uri,
-                                             GimpRunMode          run_mode,
-                                             GimpPlugInProcedure *file_proc,
-                                             GimpPDBStatusType   *status,
+                                             PicmanRunMode          run_mode,
+                                             PicmanPlugInProcedure *file_proc,
+                                             PicmanPDBStatusType   *status,
                                              GError             **error);
 
-gboolean    file_open_from_command_line     (Gimp                *gimp,
+gboolean    file_open_from_command_line     (Picman                *picman,
                                              const gchar         *filename,
                                              gboolean             as_new);
 

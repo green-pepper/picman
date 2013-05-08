@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Decompose plug-in (C) 1997 Peter Kirchgessner
@@ -31,10 +31,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /* cbrt() is a GNU extension, which C99 accepted */
 #if !defined (__GLIBC__) && !(defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
@@ -45,7 +45,7 @@
 #define PLUG_IN_PROC      "plug-in-decompose"
 #define PLUG_IN_PROC_REG  "plug-in-decompose-registered"
 #define PLUG_IN_BINARY    "decompose"
-#define PLUG_IN_ROLE      "gimp-decompose"
+#define PLUG_IN_ROLE      "picman-decompose"
 
 
 /* Declare local functions
@@ -53,9 +53,9 @@
 static void    query            (void);
 static void    run              (const gchar        *name,
                                  gint                nparams,
-                                 const GimpParam    *param,
+                                 const PicmanParam    *param,
                                  gint               *nreturn_vals,
-                                 GimpParam         **return_vals);
+                                 PicmanParam         **return_vals);
 
 static gint32  decompose        (gint32              image_id,
                                  gint32              drawable_ID,
@@ -67,20 +67,20 @@ static gint32  create_new_image (const gchar        *filename,
                                  const gchar        *layername,
                                  guint               width,
                                  guint               height,
-                                 GimpImageBaseType   type,
+                                 PicmanImageBaseType   type,
                                  gdouble             xres,
                                  gdouble             yres,
                                  gint32             *layer_ID,
-                                 GimpDrawable      **drawable,
-                                 GimpPixelRgn       *pixel_rgn);
+                                 PicmanDrawable      **drawable,
+                                 PicmanPixelRgn       *pixel_rgn);
 static gint32  create_new_layer (gint32              image_ID,
                                  gint                position,
                                  const gchar        *layername,
                                  guint               width,
                                  guint               height,
-                                 GimpImageBaseType   type,
-                                 GimpDrawable      **drawable,
-                                 GimpPixelRgn       *pixel_rgn);
+                                 PicmanImageBaseType   type,
+                                 PicmanDrawable      **drawable,
+                                 PicmanPixelRgn       *pixel_rgn);
 
 static void transfer_registration_color (const guchar *src,
                                          gint bpp, gint numpix, guchar **dst,
@@ -251,7 +251,7 @@ typedef struct
   gboolean  use_registration;
 } DecoVals;
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -266,7 +266,7 @@ static DecoVals decovals =
   FALSE     /* use registration color */
 };
 
-static GimpRunMode run_mode;
+static PicmanRunMode run_mode;
 
 
 MAIN ()
@@ -274,20 +274,20 @@ MAIN ()
 static void
 query (void)
 {
-  static GimpParamDef args[] =
+  static PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",          "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable",       "Input drawable"               },
-    { GIMP_PDB_STRING,   "decompose-type", NULL                           },
-    { GIMP_PDB_INT32,    "layers-mode",    "Create channels as layers in a single image" }
+    { PICMAN_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",          "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable",       "Input drawable"               },
+    { PICMAN_PDB_STRING,   "decompose-type", NULL                           },
+    { PICMAN_PDB_INT32,    "layers-mode",    "Create channels as layers in a single image" }
   };
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "new-image", "Output gray image" },
-    { GIMP_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" },
-    { GIMP_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" },
-    { GIMP_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" }
+    { PICMAN_PDB_IMAGE, "new-image", "Output gray image" },
+    { PICMAN_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" },
+    { PICMAN_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" },
+    { PICMAN_PDB_IMAGE, "new-image", "Output gray image (N/A for single channel extract)" }
   };
 
   GString *type_desc;
@@ -308,7 +308,7 @@ query (void)
 
   args[3].description = type_desc->str;
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Decompose an image into separate colorspace components"),
                           "This function creates new gray images with "
                           "different channel information in each of them",
@@ -317,12 +317,12 @@ query (void)
                           "1997",
                           N_("_Decompose..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_install_procedure (PLUG_IN_PROC_REG,
+  picman_install_procedure (PLUG_IN_PROC_REG,
                           N_("Decompose an image into separate colorspace components"),
                           "This function creates new gray images with "
                           "different channel information in each of them. "
@@ -335,12 +335,12 @@ query (void)
                           "1997",
                           N_("_Decompose..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC_REG, "<Image>/Colors/Components");
+  picman_plugin_menu_register (PLUG_IN_PROC_REG, "<Image>/Colors/Components");
 
   g_string_free (type_desc, TRUE);
 }
@@ -348,12 +348,12 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[MAX_EXTRACT_IMAGES + 1];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[MAX_EXTRACT_IMAGES + 1];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
   gint32            num_images;
   gint32            image_ID_extract[MAX_EXTRACT_IMAGES];
   gint32            layer_ID_extract[MAX_EXTRACT_IMAGES];
@@ -371,31 +371,31 @@ run (const gchar      *name,
   *nreturn_vals = MAX_EXTRACT_IMAGES+1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   for (j = 0; j < MAX_EXTRACT_IMAGES; j++)
     {
-      values[j+1].type         = GIMP_PDB_IMAGE;
+      values[j+1].type         = PICMAN_PDB_IMAGE;
       values[j+1].data.d_int32 = -1;
     }
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &decovals);
+      picman_get_data (PLUG_IN_PROC, &decovals);
 
       /*  First acquire information with a dialog  */
       if (! decompose_dialog ())
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 4 && nparams != 5 && nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -408,9 +408,9 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &decovals);
+      picman_get_data (PLUG_IN_PROC, &decovals);
       break;
 
     default:
@@ -418,15 +418,15 @@ run (const gchar      *name,
     }
 
   /*  Make sure that the drawable is RGB color  */
-  if (gimp_drawable_type_with_alpha (layer) != GIMP_RGBA_IMAGE)
+  if (picman_drawable_type_with_alpha (layer) != PICMAN_RGBA_IMAGE)
     {
       g_message ("Can only work on RGB images.");
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Decomposing"));
+      picman_progress_init (_("Decomposing"));
 
       num_images = decompose (image_ID, layer,
                               decovals.extract_type,
@@ -436,7 +436,7 @@ run (const gchar      *name,
 
       if (num_images <= 0)
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
       else
         {
@@ -451,28 +451,28 @@ run (const gchar      *name,
 
           for (j = 0; j < num_images; j++)
             {
-              GimpParasite *parasite;
+              PicmanParasite *parasite;
 
               values[j+1].data.d_int32 = image_ID_extract[j];
 
-              gimp_image_undo_enable (image_ID_extract[j]);
-              gimp_image_clean_all (image_ID_extract[j]);
+              picman_image_undo_enable (image_ID_extract[j]);
+              picman_image_clean_all (image_ID_extract[j]);
 
-              parasite = gimp_parasite_new ("decompose-data",
+              parasite = picman_parasite_new ("decompose-data",
                                             0, data->len + 1, data->str);
-              gimp_image_attach_parasite (image_ID_extract[j], parasite);
-              gimp_parasite_free (parasite);
+              picman_image_attach_parasite (image_ID_extract[j], parasite);
+              picman_parasite_free (parasite);
 
-              if (run_mode != GIMP_RUN_NONINTERACTIVE)
-                gimp_display_new (image_ID_extract[j]);
+              if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+                picman_display_new (image_ID_extract[j]);
             }
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &decovals, sizeof (DecoVals));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &decovals, sizeof (DecoVals));
         }
 
-      gimp_progress_end ();
+      picman_progress_end ();
     }
 
   values[0].data.d_status = status;
@@ -497,10 +497,10 @@ decompose (gint32       image_ID,
   gchar        *filename;
   guchar       *src;
   guchar       *dst[MAX_EXTRACT_IMAGES];
-  GimpDrawable *drawable_src;
-  GimpDrawable *drawable_dst[MAX_EXTRACT_IMAGES];
-  GimpPixelRgn  pixel_rgn_src;
-  GimpPixelRgn  pixel_rgn_dst[MAX_EXTRACT_IMAGES];
+  PicmanDrawable *drawable_src;
+  PicmanDrawable *drawable_dst[MAX_EXTRACT_IMAGES];
+  PicmanPixelRgn  pixel_rgn_src;
+  PicmanPixelRgn  pixel_rgn_dst[MAX_EXTRACT_IMAGES];
 
   extract_idx = -1;   /* Search extract type */
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
@@ -515,7 +515,7 @@ decompose (gint32       image_ID,
     return -1;
 
   /* Check structure of source image */
-  drawable_src = gimp_drawable_get (drawable_ID);
+  drawable_src = picman_drawable_get (drawable_ID);
   if (drawable_src->bpp < 3)
     {
       g_message ("Not an RGB image.");
@@ -523,7 +523,7 @@ decompose (gint32       image_ID,
     }
   if ((extract[extract_idx].extract_fun == extract_alpha ||
        extract[extract_idx].extract_fun == extract_rgba) &&
-      (!gimp_drawable_has_alpha (drawable_ID)))
+      (!picman_drawable_has_alpha (drawable_ID)))
     {
       g_message ("No alpha channel available.");
       return -1;
@@ -532,8 +532,8 @@ decompose (gint32       image_ID,
   width  = drawable_src->width;
   height = drawable_src->height;
 
-  tile_height = gimp_tile_height ();
-  gimp_pixel_rgn_init (&pixel_rgn_src, drawable_src, 0, 0, width, height,
+  tile_height = picman_tile_height ();
+  picman_pixel_rgn_init (&pixel_rgn_src, drawable_src, 0, 0, width, height,
                        FALSE, FALSE);
 
   /* allocate a buffer for retrieving information from the src pixel region  */
@@ -551,7 +551,7 @@ decompose (gint32       image_ID,
       gchar   *extension;
       gdouble  xres, yres;
 
-      fname = gimp_image_get_filename (image_ID);
+      fname = picman_image_get_filename (image_ID);
 
       if (fname)
         {
@@ -590,7 +590,7 @@ decompose (gint32       image_ID,
           filename = g_strdup (gettext (extract[extract_idx].channel_name[j]));
         }
 
-      gimp_image_get_resolution (image_ID, &xres, &yres);
+      picman_image_get_resolution (image_ID, &xres, &yres);
 
       if (decovals.as_layers)
         {
@@ -598,21 +598,21 @@ decompose (gint32       image_ID,
 
           if (j == 0)
             image_ID_dst[j] = create_new_image (filename, layername,
-                                                width, height, GIMP_GRAY,
+                                                width, height, PICMAN_GRAY,
                                                 xres, yres,
                                                 layer_ID_dst + j,
                                                 drawable_dst + j,
                                                 pixel_rgn_dst + j);
           else
             layer_ID_dst[j] = create_new_layer (image_ID_dst[0], j, layername,
-                                                width, height, GIMP_GRAY,
+                                                width, height, PICMAN_GRAY,
                                                 drawable_dst + j,
                                                 pixel_rgn_dst + j);
         }
       else
         {
           image_ID_dst[j] = create_new_image (filename, NULL,
-                                              width, height, GIMP_GRAY,
+                                              width, height, PICMAN_GRAY,
                                               xres, yres,
                                               layer_ID_dst + j,
                                               drawable_dst + j,
@@ -629,7 +629,7 @@ decompose (gint32       image_ID,
     {
       /* Get source pixel region */
       scan_lines = (i+tile_height-1 < height) ? tile_height : (height-i);
-      gimp_pixel_rgn_get_rect (&pixel_rgn_src, src, 0, i, width, scan_lines);
+      picman_pixel_rgn_get_rect (&pixel_rgn_src, src, 0, i, width, scan_lines);
 
       /* Extract the channel information */
       extract[extract_idx].extract_fun (src, drawable_src->bpp, scan_lines*width,
@@ -642,27 +642,27 @@ decompose (gint32       image_ID,
 
       /* Set destination pixel regions */
       for (j = 0; j < num_layers; j++)
-        gimp_pixel_rgn_set_rect (&(pixel_rgn_dst[j]), dst[j], 0, i, width,
+        picman_pixel_rgn_set_rect (&(pixel_rgn_dst[j]), dst[j], 0, i, width,
                                  scan_lines);
       i += scan_lines;
 
-      gimp_progress_update ((gdouble) i / (gdouble) height);
+      picman_progress_update ((gdouble) i / (gdouble) height);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (src);
 
   for (j = 0; j < num_layers; j++)
     {
-      gimp_drawable_detach (drawable_dst[j]);
-      gimp_drawable_update (layer_ID_dst[j], 0, 0,
-                            gimp_drawable_width (layer_ID_dst[j]),
-                            gimp_drawable_height (layer_ID_dst[j]));
-      gimp_layer_add_alpha (layer_ID_dst[j]);
+      picman_drawable_detach (drawable_dst[j]);
+      picman_drawable_update (layer_ID_dst[j], 0, 0,
+                            picman_drawable_width (layer_ID_dst[j]),
+                            picman_drawable_height (layer_ID_dst[j]));
+      picman_layer_add_alpha (layer_ID_dst[j]);
       g_free (dst[j]);
     }
 
-  gimp_drawable_detach (drawable_src);
+  picman_drawable_detach (drawable_src);
 
   *nlayers = num_layers;
 
@@ -676,20 +676,20 @@ create_new_image (const gchar        *filename,
                   const gchar        *layername,
                   guint               width,
                   guint               height,
-                  GimpImageBaseType   type,
+                  PicmanImageBaseType   type,
                   gdouble             xres,
                   gdouble             yres,
                   gint32             *layer_ID,
-                  GimpDrawable      **drawable,
-                  GimpPixelRgn       *pixel_rgn)
+                  PicmanDrawable      **drawable,
+                  PicmanPixelRgn       *pixel_rgn)
 {
   gint32 image_ID;
 
-  image_ID = gimp_image_new (width, height, type);
+  image_ID = picman_image_new (width, height, type);
 
-  gimp_image_undo_disable (image_ID);
-  gimp_image_set_filename (image_ID, filename);
-  gimp_image_set_resolution (image_ID, xres, yres);
+  picman_image_undo_disable (image_ID);
+  picman_image_set_filename (image_ID, filename);
+  picman_image_set_resolution (image_ID, xres, yres);
 
   *layer_ID = create_new_layer (image_ID, 0,
                                 layername, width, height, type,
@@ -705,35 +705,35 @@ create_new_layer (gint32              image_ID,
                   const gchar        *layername,
                   guint               width,
                   guint               height,
-                  GimpImageBaseType   type,
-                  GimpDrawable      **drawable,
-                  GimpPixelRgn       *pixel_rgn)
+                  PicmanImageBaseType   type,
+                  PicmanDrawable      **drawable,
+                  PicmanPixelRgn       *pixel_rgn)
 {
   gint32        layer_ID;
-  GimpImageType gdtype = GIMP_RGB_IMAGE;
+  PicmanImageType gdtype = PICMAN_RGB_IMAGE;
 
   switch (type)
     {
-    case GIMP_RGB:
-      gdtype = GIMP_RGB_IMAGE;
+    case PICMAN_RGB:
+      gdtype = PICMAN_RGB_IMAGE;
       break;
-    case GIMP_GRAY:
-      gdtype = GIMP_GRAY_IMAGE;
+    case PICMAN_GRAY:
+      gdtype = PICMAN_GRAY_IMAGE;
       break;
-    case GIMP_INDEXED:
-      gdtype = GIMP_INDEXED_IMAGE;
+    case PICMAN_INDEXED:
+      gdtype = PICMAN_INDEXED_IMAGE;
       break;
     }
 
   if (!layername)
     layername = _("Background");
 
-  layer_ID = gimp_layer_new (image_ID, layername, width, height,
-                             gdtype, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, layer_ID, -1, position);
+  layer_ID = picman_layer_new (image_ID, layername, width, height,
+                             gdtype, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, layer_ID, -1, position);
 
-  *drawable = gimp_drawable_get (layer_ID);
-  gimp_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
+  *drawable = picman_drawable_get (layer_ID);
+  picman_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
                        (*drawable)->height, TRUE, FALSE);
 
   return layer_ID;
@@ -752,11 +752,11 @@ transfer_registration_color (const guchar  *src,
   guchar *dsts[4];
   register gint count = numpix;
   gint channel;
-  GimpRGB color;
+  PicmanRGB color;
   guchar red, green, blue;
 
-  gimp_context_get_foreground (&color);
-  gimp_rgb_get_uchar (&color, &red, &green, &blue);
+  picman_context_get_foreground (&color);
+  picman_rgb_get_uchar (&color, &red, &green, &blue);
 
   for (channel = 0; channel < num_channels; channel++)
     dsts[channel] = dst[channel];
@@ -930,7 +930,7 @@ extract_hsv (const guchar  *src,
 
   while (count-- > 0)
     {
-      gimp_rgb_to_hsv4 (rgb_src, &hue, &sat, &val);
+      picman_rgb_to_hsv4 (rgb_src, &hue, &sat, &val);
       *hue_dst++ = (guchar) (hue * 255.999);
       *sat_dst++ = (guchar) (sat * 255.999);
       *val_dst++ = (guchar) (val * 255.999);
@@ -952,7 +952,7 @@ extract_hue (const guchar  *src,
 
   while (count-- > 0)
     {
-      gimp_rgb_to_hsv4 (rgb_src, &hue, &dummy, &dummy);
+      picman_rgb_to_hsv4 (rgb_src, &hue, &dummy, &dummy);
       *hue_dst++ = (guchar) (hue * 255.999);
       rgb_src += offset;
     }
@@ -972,7 +972,7 @@ extract_sat (const guchar  *src,
 
   while (count-- > 0)
     {
-      gimp_rgb_to_hsv4 (rgb_src, &dummy, &sat, &dummy);
+      picman_rgb_to_hsv4 (rgb_src, &dummy, &sat, &dummy);
       *sat_dst++ = (guchar) (sat * 255.999);
       rgb_src += offset;
     }
@@ -992,7 +992,7 @@ extract_val (const guchar  *src,
 
   while (count-- > 0)
     {
-      gimp_rgb_to_hsv4 (rgb_src, &dummy, &dummy, &val);
+      picman_rgb_to_hsv4 (rgb_src, &dummy, &dummy, &val);
       *val_dst++ = (guchar) (val * 255.999);
       rgb_src += offset;
     }
@@ -1013,11 +1013,11 @@ extract_hsl (const guchar  *src,
 
   while (count-- > 0)
     {
-      GimpRGB rgb;
-      GimpHSL hsl;
+      PicmanRGB rgb;
+      PicmanHSL hsl;
 
-      gimp_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
+      picman_rgb_to_hsl (&rgb, &hsl);
 
       *hue_dst++ = (guchar) (hsl.h * 255.999);
       *sat_dst++ = (guchar) (hsl.s * 255.999);
@@ -1040,11 +1040,11 @@ extract_huel (const guchar  *src,
 
   while (count-- > 0)
     {
-      GimpRGB rgb;
-      GimpHSL hsl;
+      PicmanRGB rgb;
+      PicmanHSL hsl;
 
-      gimp_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
+      picman_rgb_to_hsl (&rgb, &hsl);
 
       *hue_dst++ = (guchar) (hsl.h * 255.999);
       rgb_src += offset;
@@ -1064,11 +1064,11 @@ extract_satl (const guchar  *src,
 
   while (count-- > 0)
     {
-      GimpRGB rgb;
-      GimpHSL hsl;
+      PicmanRGB rgb;
+      PicmanHSL hsl;
 
-      gimp_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
+      picman_rgb_to_hsl (&rgb, &hsl);
 
       *sat_dst++ = (guchar) (hsl.s * 255.999);
       rgb_src += offset;
@@ -1088,11 +1088,11 @@ extract_lightness (const guchar  *src,
 
   while (count-- > 0)
     {
-      GimpRGB rgb;
-      GimpHSL hsl;
+      PicmanRGB rgb;
+      PicmanHSL hsl;
 
-      gimp_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_set_uchar (&rgb, rgb_src[0], rgb_src[1], rgb_src[2]);
+      picman_rgb_to_hsl (&rgb, &hsl);
       *lum_dst++ = (guchar) (hsl.l * 255.999);
       rgb_src += offset;
     }
@@ -1166,22 +1166,22 @@ extract_cmyk (const guchar  *src,
   register guchar *yellow_dst = dst[2];
   register guchar *black_dst = dst[3];
   register gint count = numpix, offset = bpp-3;
-  GimpCMYK gcmyk;
+  PicmanCMYK gcmyk;
 
-  gimp_cmyk_set (&gcmyk, 0, 0, 0, 0);
+  picman_cmyk_set (&gcmyk, 0, 0, 0, 0);
 
   while (count-- > 0)
     {
-      GimpRGB grgb;
+      PicmanRGB grgb;
       guchar  r, g, b;
 
       r = *rgb_src++;
       g = *rgb_src++;
       b = *rgb_src++;
 
-      gimp_rgb_set_uchar (&grgb, r,g,b);
-      gimp_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
-      gimp_cmyk_get_uchar (&gcmyk,
+      picman_rgb_set_uchar (&grgb, r,g,b);
+      picman_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
+      picman_cmyk_get_uchar (&gcmyk,
                            cyan_dst++, magenta_dst++, yellow_dst++,
                            black_dst++);
 
@@ -1199,22 +1199,22 @@ extract_cyank (const guchar  *src,
   register const guchar *rgb_src = src;
   register guchar *cyan_dst = dst[0];
   register gint count = numpix, offset = bpp-3;
-  GimpCMYK gcmyk;
+  PicmanCMYK gcmyk;
 
-  gimp_cmyk_set(&gcmyk, 0, 0, 0, 0);
+  picman_cmyk_set(&gcmyk, 0, 0, 0, 0);
 
   while (count-- > 0)
     {
-      GimpRGB grgb;
+      PicmanRGB grgb;
       guchar  r, g, b;
 
       r = *rgb_src++;
       g = *rgb_src++;
       b = *rgb_src++;
 
-      gimp_rgb_set_uchar (&grgb, r,g,b);
-      gimp_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
-      gimp_cmyk_get_uchar (&gcmyk, cyan_dst++, NULL, NULL, NULL);
+      picman_rgb_set_uchar (&grgb, r,g,b);
+      picman_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
+      picman_cmyk_get_uchar (&gcmyk, cyan_dst++, NULL, NULL, NULL);
 
       rgb_src += offset;
     }
@@ -1230,22 +1230,22 @@ extract_magentak (const guchar  *src,
   register const guchar *rgb_src = src;
   register guchar *magenta_dst = dst[0];
   register gint count = numpix, offset = bpp-3;
-  GimpCMYK gcmyk;
+  PicmanCMYK gcmyk;
 
-  gimp_cmyk_set(&gcmyk, 0, 0, 0, 0);
+  picman_cmyk_set(&gcmyk, 0, 0, 0, 0);
 
   while (count-- > 0)
     {
-      GimpRGB grgb;
+      PicmanRGB grgb;
       guchar  r, g, b;
 
       r = *rgb_src++;
       g = *rgb_src++;
       b = *rgb_src++;
 
-      gimp_rgb_set_uchar (&grgb, r,g,b);
-      gimp_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
-      gimp_cmyk_get_uchar (&gcmyk, NULL, magenta_dst++, NULL, NULL);
+      picman_rgb_set_uchar (&grgb, r,g,b);
+      picman_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
+      picman_cmyk_get_uchar (&gcmyk, NULL, magenta_dst++, NULL, NULL);
 
       rgb_src += offset;
     }
@@ -1262,22 +1262,22 @@ extract_yellowk (const guchar  *src,
   register const guchar *rgb_src = src;
   register guchar *yellow_dst = dst[0];
   register gint count = numpix, offset = bpp-3;
-  GimpCMYK gcmyk;
+  PicmanCMYK gcmyk;
 
-  gimp_cmyk_set(&gcmyk, 0, 0, 0, 0);
+  picman_cmyk_set(&gcmyk, 0, 0, 0, 0);
 
   while (count-- > 0)
     {
-      GimpRGB grgb;
+      PicmanRGB grgb;
       guchar  r, g, b;
 
       r = *rgb_src++;
       g = *rgb_src++;
       b = *rgb_src++;
 
-      gimp_rgb_set_uchar (&grgb, r,g,b);
-      gimp_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
-      gimp_cmyk_get_uchar (&gcmyk, NULL, NULL, yellow_dst++, NULL);
+      picman_rgb_set_uchar (&grgb, r,g,b);
+      picman_rgb_to_cmyk (&grgb, 1.0, &gcmyk);
+      picman_cmyk_get_uchar (&gcmyk, NULL, NULL, yellow_dst++, NULL);
 
       rgb_src += offset;
     }
@@ -1488,11 +1488,11 @@ decompose_dialog (void)
         }
     }
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Decompose"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Decompose"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1505,7 +1505,7 @@ decompose_dialog (void)
                                            -1);
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1513,7 +1513,7 @@ decompose_dialog (void)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  frame = gimp_frame_new (_("Extract Channels"));
+  frame = picman_frame_new (_("Extract Channels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1530,7 +1530,7 @@ decompose_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
     {
       if (extract[j].dialog)
@@ -1542,9 +1542,9 @@ decompose_dialog (void)
             if (*l == '-' || *l == '_')
               *l = ' ';
 
-          gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (combo),
-                                     GIMP_INT_STORE_LABEL, label,
-                                     GIMP_INT_STORE_VALUE, j,
+          picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (combo),
+                                     PICMAN_INT_STORE_LABEL, label,
+                                     PICMAN_INT_STORE_VALUE, j,
                                      -1);
           g_free (label);
         }
@@ -1555,9 +1555,9 @@ decompose_dialog (void)
 
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               extract_idx,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &extract_idx);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Decompose to layers"));
@@ -1567,12 +1567,12 @@ decompose_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &decovals.as_layers);
 
   toggle =
     gtk_check_button_new_with_mnemonic (_("_Foreground as registration color"));
-  gimp_help_set_help_data (toggle, _("Pixels in the foreground color will "
+  picman_help_set_help_data (toggle, _("Pixels in the foreground color will "
                                      "appear black in all output images.  "
                                      "This can be used for things like crop "
                                      "marks that have to show up on all "
@@ -1583,12 +1583,12 @@ decompose_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &decovals.use_registration);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

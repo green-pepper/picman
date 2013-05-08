@@ -1,4 +1,4 @@
-/* CSource - GIMP Plugin to dump image data in RGB(A) format for C source
+/* CSource - PICMAN Plugin to dump image data in RGB(A) format for C source
  * Copyright (C) 1999 Tim Janik
  *
  * This program is free software: you can redistribute it and/or
@@ -25,15 +25,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC      "file-csource-save"
 #define PLUG_IN_BINARY "file-csource"
-#define PLUG_IN_ROLE   "gimp-file-csource"
+#define PLUG_IN_ROLE   "picman-file-csource"
 
 
 typedef struct
@@ -54,9 +54,9 @@ typedef struct
 static void     query           (void);
 static void     run             (const gchar      *name,
                                  gint              nparams,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nreturn_vals,
-                                 GimpParam       **return_vals);
+                                 PicmanParam       **return_vals);
 
 static gboolean save_image      (Config           *config,
                                  gint32            image_ID,
@@ -65,7 +65,7 @@ static gboolean save_image      (Config           *config,
 static gboolean run_save_dialog (Config           *config);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -76,7 +76,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
 static Config config =
 {
   NULL,         /* file_name */
-  "gimp_image", /* prefixed_name */
+  "picman_image", /* prefixed_name */
   NULL,         /* comment */
   FALSE,        /* use_comment */
   TRUE,         /* glib_types */
@@ -94,16 +94,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Dump image data in RGB(A) format for C source",
                           "CSource cannot be run non-interactively.",
                           "Tim Janik",
@@ -111,25 +111,25 @@ query (void)
                           "1999",
                           N_("C source code"),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "text/x-csrc");
-  gimp_register_save_handler (SAVE_PROC, "c", "");
+  picman_register_file_handler_mime (SAVE_PROC, "text/x-csrc");
+  picman_register_save_handler (SAVE_PROC, "c", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -140,45 +140,45 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
-  if (run_mode == GIMP_RUN_INTERACTIVE &&
+  if (run_mode == PICMAN_RUN_INTERACTIVE &&
       strcmp (name, SAVE_PROC) == 0)
     {
       gint32         image_ID    = param[1].data.d_int32;
       gint32         drawable_ID = param[2].data.d_int32;
-      GimpParasite  *parasite;
+      PicmanParasite  *parasite;
       gchar         *x;
-      GimpImageType  drawable_type = gimp_drawable_type (drawable_ID);
+      PicmanImageType  drawable_type = picman_drawable_type (drawable_ID);
 
-      gimp_get_data (SAVE_PROC, &config);
-      config.prefixed_name = "gimp_image";
+      picman_get_data (SAVE_PROC, &config);
+      config.prefixed_name = "picman_image";
       config.comment       = NULL;
 
       config.file_name = param[3].data.d_string;
-      config.alpha = (drawable_type == GIMP_RGBA_IMAGE ||
-                      drawable_type == GIMP_GRAYA_IMAGE ||
-                      drawable_type == GIMP_INDEXEDA_IMAGE);
+      config.alpha = (drawable_type == PICMAN_RGBA_IMAGE ||
+                      drawable_type == PICMAN_GRAYA_IMAGE ||
+                      drawable_type == PICMAN_INDEXEDA_IMAGE);
 
-      parasite = gimp_image_get_parasite (image_ID, "gimp-comment");
+      parasite = picman_image_get_parasite (image_ID, "picman-comment");
       if (parasite)
         {
-          config.comment = g_strndup (gimp_parasite_data (parasite),
-                                      gimp_parasite_data_size (parasite));
-          gimp_parasite_free (parasite);
+          config.comment = g_strndup (picman_parasite_data (parasite),
+                                      picman_parasite_data_size (parasite));
+          picman_parasite_free (parasite);
         }
       x = config.comment;
 
-      gimp_ui_init (PLUG_IN_BINARY, FALSE);
+      picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-      export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                  GIMP_EXPORT_CAN_HANDLE_RGB |
-                                  GIMP_EXPORT_CAN_HANDLE_ALPHA);
+      export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                  PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                  PICMAN_EXPORT_CAN_HANDLE_ALPHA);
 
-      if (export == GIMP_EXPORT_CANCEL)
+      if (export == PICMAN_EXPORT_CANCEL)
         {
-          values[0].data.d_status = GIMP_PDB_CANCEL;
+          values[0].data.d_status = PICMAN_PDB_CANCEL;
           return;
         }
 
@@ -189,46 +189,46 @@ run (const gchar      *name,
             {
               if (!config.comment || !config.comment[0])
                 {
-                  gimp_image_detach_parasite (image_ID, "gimp-comment");
+                  picman_image_detach_parasite (image_ID, "picman-comment");
                 }
               else
                 {
-                  parasite = gimp_parasite_new ("gimp-comment",
-                                                GIMP_PARASITE_PERSISTENT,
+                  parasite = picman_parasite_new ("picman-comment",
+                                                PICMAN_PARASITE_PERSISTENT,
                                                 strlen (config.comment) + 1,
                                                 config.comment);
-                  gimp_image_attach_parasite (image_ID, parasite);
-                  gimp_parasite_free (parasite);
+                  picman_image_attach_parasite (image_ID, parasite);
+                  picman_parasite_free (parasite);
                 }
             }
 
           if (! save_image (&config, image_ID, drawable_ID, &error))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
 
               if (error)
                 {
                   *nreturn_vals = 2;
-                  values[1].type          = GIMP_PDB_STRING;
+                  values[1].type          = PICMAN_PDB_STRING;
                   values[1].data.d_string = error->message;
                 }
             }
           else
             {
-              gimp_set_data (SAVE_PROC, &config, sizeof (config));
+              picman_set_data (SAVE_PROC, &config, sizeof (config));
             }
         }
       else
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   values[0].data.d_status = status;
@@ -392,7 +392,7 @@ save_image (Config  *config,
 {
   GeglBuffer    *buffer;
   FILE          *fp;
-  GimpImageType  drawable_type = gimp_drawable_type (drawable_ID);
+  PicmanImageType  drawable_type = picman_drawable_type (drawable_ID);
   gchar         *s_uint_8, *s_uint, *s_char, *s_null;
   guint          c;
   gchar         *macro_name;
@@ -409,17 +409,17 @@ save_image (Config  *config,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (config->file_name),
+                   picman_filename_to_utf8 (config->file_name),
                    g_strerror (errno));
       return FALSE;
     }
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
   width  = gegl_buffer_get_width  (buffer);
   height = gegl_buffer_get_height (buffer);
 
-  drawable_bpp = gimp_drawable_bpp (drawable_ID);
+  drawable_bpp = picman_drawable_bpp (drawable_ID);
 
   bpp = config->rgb565 ? 2 : (config->alpha ? 4 : 3);
   n_bytes = width * height * bpp;
@@ -443,7 +443,7 @@ save_image (Config  *config,
               guint8 *d = data + x * drawable_bpp;
               guint8 r, g, b;
               gushort rgb16;
-              gdouble alpha = drawable_type == GIMP_RGBA_IMAGE ? d[3] : 0xff;
+              gdouble alpha = drawable_type == PICMAN_RGBA_IMAGE ? d[3] : 0xff;
 
               alpha *= config->opacity / 25500.0;
               r = (0.5 + alpha * (gdouble) d[0]);
@@ -462,7 +462,7 @@ save_image (Config  *config,
           for (x = 0; x < width; x++)
             {
               guint8 *d = data + x * drawable_bpp;
-              gdouble alpha = drawable_type == GIMP_RGBA_IMAGE ? d[3] : 0xff;
+              gdouble alpha = drawable_type == PICMAN_RGBA_IMAGE ? d[3] : 0xff;
 
               alpha *= config->opacity / 100.0;
               *(p++) = d[0];
@@ -476,7 +476,7 @@ save_image (Config  *config,
           for (x = 0; x < width; x++)
             {
               guint8 *d = data + x * drawable_bpp;
-              gdouble alpha = drawable_type == GIMP_RGBA_IMAGE ? d[3] : 0xff;
+              gdouble alpha = drawable_type == PICMAN_RGBA_IMAGE ? d[3] : 0xff;
 
               alpha *= config->opacity / 25500.0;
               *(p++) = 0.5 + alpha * (gdouble) d[0];
@@ -531,7 +531,7 @@ save_image (Config  *config,
 
   basename = g_path_get_basename (config->file_name);
 
-  fprintf (fp, "/* GIMP %s C-Source image dump %s(%s) */\n\n",
+  fprintf (fp, "/* PICMAN %s C-Source image dump %s(%s) */\n\n",
            config->alpha ? "RGBA" : "RGB",
            config->use_rle ? "1-byte-run-length-encoded " : "",
            basename);
@@ -653,8 +653,8 @@ save_image (Config  *config,
     }
   switch (drawable_type)
     {
-    case GIMP_RGB_IMAGE:
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       do
         c = save_uchar (fp, c, *(img_buffer++), config);
       while (img_buffer < img_buffer_end);
@@ -682,7 +682,7 @@ rgb565_toggle_button_update (GtkWidget *toggle,
   GtkWidget *widget;
   gboolean   active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (toggle));
 
-  gimp_toggle_button_update (toggle, data);
+  picman_toggle_button_update (toggle, data);
 
   widget = g_object_get_data (G_OBJECT (toggle), "set-insensitive-1");
   if (widget)
@@ -707,11 +707,11 @@ run_save_dialog (Config *config)
   GtkObject *adj;
   gboolean   run;
 
-  dialog = gimp_export_dialog_new (_("C-Source"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("C-Source"), PLUG_IN_BINARY, SAVE_PROC);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
@@ -724,7 +724,7 @@ run_save_dialog (Config *config)
   /* Prefixed Name
    */
   prefixed_name = gtk_entry_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Prefixed name:"), 0.0, 0.5,
                              prefixed_name, 1, FALSE);
   gtk_entry_set_text (GTK_ENTRY (prefixed_name),
@@ -733,7 +733,7 @@ run_save_dialog (Config *config)
   /* Comment Entry
    */
   centry = gtk_entry_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Co_mment:"), 0.0, 0.5,
                              centry, 1, FALSE);
   gtk_entry_set_text (GTK_ENTRY (centry),
@@ -748,7 +748,7 @@ run_save_dialog (Config *config)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &config->use_comment);
 
   /* GLib types
@@ -760,7 +760,7 @@ run_save_dialog (Config *config)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &config->glib_types);
 
   /* Use Macros
@@ -773,7 +773,7 @@ run_save_dialog (Config *config)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &config->use_macros);
 
   /* Use RLE
@@ -786,7 +786,7 @@ run_save_dialog (Config *config)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &config->use_rle);
 
   /* Alpha
@@ -799,7 +799,7 @@ run_save_dialog (Config *config)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &config->alpha);
 
   /* RGB-565
@@ -826,18 +826,18 @@ run_save_dialog (Config *config)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("Op_acity:"), 100, 0,
                               config->opacity, 0, 100, 1, 10, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config->opacity);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {

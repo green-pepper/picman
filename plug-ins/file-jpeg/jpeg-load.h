@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #define __JPEG_LOAD_H__
 
 gint32 load_image           (const gchar  *filename,
-                             GimpRunMode   runmode,
+                             PicmanRunMode   runmode,
                              gboolean      preview,
                              GError      **error);
 
@@ -29,7 +29,7 @@ gint32 load_image           (const gchar  *filename,
 gint32 load_thumbnail_image (const gchar   *filename,
                              gint          *width,
                              gint          *height,
-                             GimpImageType *type,
+                             PicmanImageType *type,
                              GError       **error);
 
 #endif /* HAVE_LIBEXIF */

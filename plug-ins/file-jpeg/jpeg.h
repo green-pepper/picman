@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 #define LOAD_THUMB_PROC "file-jpeg-load-thumb"
 #define SAVE_PROC       "file-jpeg-save"
 #define PLUG_IN_BINARY  "file-jpeg"
-#define PLUG_IN_ROLE    "gimp-file-jpeg"
+#define PLUG_IN_ROLE    "picman-file-jpeg"
 
 /* headers used in some APPn markers */
 #define JPEG_APP_HEADER_EXIF "Exif\0\0"
@@ -53,7 +53,7 @@ typedef enum
 
 extern gint32 volatile  preview_image_ID;
 extern gint32           preview_layer_ID;
-extern GimpDrawable    *drawable_global;
+extern PicmanDrawable    *drawable_global;
 extern gboolean         undo_touched;
 extern gboolean         load_interactive;
 extern gint32           display_ID;

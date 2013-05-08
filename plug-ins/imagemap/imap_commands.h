@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -36,8 +36,8 @@ Command_t *cut_object_command_new(Object_t *obj);
 Command_t *delete_command_new(ObjectList_t *list, Object_t *obj);
 Command_t *delete_point_command_new(Object_t *obj, GdkPoint *point);
 Command_t *edit_object_command_new(Object_t *obj);
-Command_t *gimp_guides_command_new(ObjectList_t *list,
-                                   GimpDrawable *_drawable);
+Command_t *picman_guides_command_new(ObjectList_t *list,
+                                   PicmanDrawable *_drawable);
 Command_t *guides_command_new(ObjectList_t *list);
 Command_t *insert_point_command_new(Object_t *obj, gint x, gint y, gint edge);
 Command_t *move_down_command_new(ObjectList_t *list);

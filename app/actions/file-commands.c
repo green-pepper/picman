@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,42 +22,42 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimpprogress.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanprogress.h"
+#include "core/picmantemplate.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
 #include "file/file-open.h"
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 #include "file/file-utils.h"
-#include "file/gimp-file.h"
+#include "file/picman-file.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpfiledialog.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanfiledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplay-foreach.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplay-foreach.h"
 
 #include "dialogs/file-save-dialog.h"
 
 #include "actions.h"
 #include "file-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define REVERT_DATA_KEY "revert-confirm-dialog"
@@ -65,32 +65,32 @@
 
 /*  local function prototypes  */
 
-static void     file_open_dialog_show        (Gimp                *gimp,
+static void     file_open_dialog_show        (Picman                *picman,
                                               GtkWidget           *parent,
                                               const gchar         *title,
-                                              GimpImage           *image,
+                                              PicmanImage           *image,
                                               const gchar         *uri,
                                               gboolean             open_as_layers);
-static void     file_save_dialog_show        (Gimp                *gimp,
-                                              GimpImage           *image,
+static void     file_save_dialog_show        (Picman                *picman,
+                                              PicmanImage           *image,
                                               GtkWidget           *parent,
                                               const gchar         *title,
                                               gboolean             save_a_copy,
                                               gboolean             close_after_saving,
-                                              GimpDisplay         *display);
-static void     file_export_dialog_show      (Gimp                *gimp,
-                                              GimpImage           *image,
+                                              PicmanDisplay         *display);
+static void     file_export_dialog_show      (Picman                *picman,
+                                              PicmanImage           *image,
                                               GtkWidget           *parent);
 static void     file_save_dialog_destroyed   (GtkWidget           *dialog,
-                                              GimpImage           *image);
+                                              PicmanImage           *image);
 static void     file_export_dialog_destroyed (GtkWidget           *dialog,
-                                              GimpImage           *image);
+                                              PicmanImage           *image);
 static void     file_new_template_callback   (GtkWidget           *widget,
                                               const gchar         *name,
                                               gpointer             data);
 static void     file_revert_confirm_response (GtkWidget           *dialog,
                                               gint                 response_id,
-                                              GimpDisplay         *display);
+                                              PicmanDisplay         *display);
 
 
 
@@ -101,15 +101,15 @@ void
 file_open_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  Gimp        *gimp;
+  Picman        *picman;
   GtkWidget   *widget;
-  GimpImage   *image;
-  return_if_no_gimp (gimp, data);
+  PicmanImage   *image;
+  return_if_no_picman (picman, data);
   return_if_no_widget (widget, data);
 
   image = action_data_get_image (data);
 
-  file_open_dialog_show (gimp, widget,
+  file_open_dialog_show (picman, widget,
                          _("Open Image"),
                          image, NULL, FALSE);
 }
@@ -118,19 +118,19 @@ void
 file_open_as_layers_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  Gimp        *gimp;
+  Picman        *picman;
   GtkWidget   *widget;
-  GimpDisplay *display;
-  GimpImage   *image = NULL;
-  return_if_no_gimp (gimp, data);
+  PicmanDisplay *display;
+  PicmanImage   *image = NULL;
+  return_if_no_picman (picman, data);
   return_if_no_widget (widget, data);
 
   display = action_data_get_display (data);
 
   if (display)
-    image = gimp_display_get_image (display);
+    image = picman_display_get_image (display);
 
-  file_open_dialog_show (gimp, widget,
+  file_open_dialog_show (picman, widget,
                          _("Open Image as Layers"),
                          image, NULL, TRUE);
 }
@@ -142,10 +142,10 @@ file_open_location_cmd_callback (GtkAction *action,
   GtkWidget *widget;
   return_if_no_widget (widget, data);
 
-  gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                   gtk_widget_get_screen (widget),
                                   NULL /*ui_manager*/,
-                                  "gimp-file-open-location-dialog", -1, TRUE);
+                                  "picman-file-open-location-dialog", -1, TRUE);
 }
 
 void
@@ -153,45 +153,45 @@ file_open_recent_cmd_callback (GtkAction *action,
                                gint       value,
                                gpointer   data)
 {
-  Gimp          *gimp;
-  GimpImagefile *imagefile;
+  Picman          *picman;
+  PicmanImagefile *imagefile;
   gint           num_entries;
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
 
-  num_entries = gimp_container_get_n_children (gimp->documents);
+  num_entries = picman_container_get_n_children (picman->documents);
 
   if (value >= num_entries)
     return;
 
-  imagefile = (GimpImagefile *)
-    gimp_container_get_child_by_index (gimp->documents, value);
+  imagefile = (PicmanImagefile *)
+    picman_container_get_child_by_index (picman->documents, value);
 
   if (imagefile)
     {
-      GimpDisplay       *display;
-      GimpProgress      *progress;
-      GimpImage         *image;
-      GimpPDBStatusType  status;
+      PicmanDisplay       *display;
+      PicmanProgress      *progress;
+      PicmanImage         *image;
+      PicmanPDBStatusType  status;
       GError            *error = NULL;
       return_if_no_display (display, data);
 
       g_object_ref (display);
       g_object_ref (imagefile);
 
-      progress = gimp_display_get_image (display) ?
-                 NULL : GIMP_PROGRESS (display);
+      progress = picman_display_get_image (display) ?
+                 NULL : PICMAN_PROGRESS (display);
 
-      image = file_open_with_display (gimp, action_data_get_context (data),
+      image = file_open_with_display (picman, action_data_get_context (data),
                                       progress,
-                                      gimp_object_get_name (imagefile), FALSE,
+                                      picman_object_get_name (imagefile), FALSE,
                                       &status, &error);
 
-      if (! image && status != GIMP_PDB_CANCEL)
+      if (! image && status != PICMAN_PDB_CANCEL)
         {
           gchar *filename =
-            file_utils_uri_display_name (gimp_object_get_name (imagefile));
+            file_utils_uri_display_name (picman_object_get_name (imagefile));
 
-          gimp_message (gimp, G_OBJECT (display), GIMP_MESSAGE_ERROR,
+          picman_message (picman, G_OBJECT (display), PICMAN_MESSAGE_ERROR,
                         _("Opening '%s' failed:\n\n%s"),
                         filename, error->message);
           g_clear_error (&error);
@@ -209,50 +209,50 @@ file_save_cmd_callback (GtkAction *action,
                         gint       value,
                         gpointer   data)
 {
-  Gimp         *gimp;
-  GimpDisplay  *display;
-  GimpImage    *image;
+  Picman         *picman;
+  PicmanDisplay  *display;
+  PicmanImage    *image;
   GtkWidget    *widget;
-  GimpSaveMode  save_mode;
+  PicmanSaveMode  save_mode;
   const gchar  *uri;
   gboolean      saved = FALSE;
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  save_mode = (GimpSaveMode) value;
+  save_mode = (PicmanSaveMode) value;
 
-  if (! gimp_image_get_active_drawable (image))
+  if (! picman_image_get_active_drawable (image))
     return;
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
 
   switch (save_mode)
     {
-    case GIMP_SAVE_MODE_SAVE:
-    case GIMP_SAVE_MODE_SAVE_AND_CLOSE:
+    case PICMAN_SAVE_MODE_SAVE:
+    case PICMAN_SAVE_MODE_SAVE_AND_CLOSE:
       /*  Only save if the image has been modified, or if it is new.  */
-      if ((gimp_image_is_dirty (image) ||
-           ! GIMP_GUI_CONFIG (image->gimp->config)->trust_dirty_flag) ||
+      if ((picman_image_is_dirty (image) ||
+           ! PICMAN_GUI_CONFIG (image->picman->config)->trust_dirty_flag) ||
           uri == NULL)
         {
-          GimpPlugInProcedure *save_proc = gimp_image_get_save_proc (image);
+          PicmanPlugInProcedure *save_proc = picman_image_get_save_proc (image);
 
           if (uri && ! save_proc)
             {
               save_proc =
-                file_procedure_find (image->gimp->plug_in_manager->save_procs,
+                file_procedure_find (image->picman->plug_in_manager->save_procs,
                                      uri, NULL);
             }
 
           if (uri && save_proc)
             {
-              saved = file_save_dialog_save_image (GIMP_PROGRESS (display),
-                                                   gimp, image, uri,
+              saved = file_save_dialog_save_image (PICMAN_PROGRESS (display),
+                                                   picman, image, uri,
                                                    save_proc,
-                                                   GIMP_RUN_WITH_LAST_VALS,
+                                                   PICMAN_RUN_WITH_LAST_VALS,
                                                    TRUE, FALSE, FALSE, TRUE);
               break;
             }
@@ -261,52 +261,52 @@ file_save_cmd_callback (GtkAction *action,
         }
       else
         {
-          gimp_message_literal (image->gimp,
-				G_OBJECT (display), GIMP_MESSAGE_INFO,
+          picman_message_literal (image->picman,
+				G_OBJECT (display), PICMAN_MESSAGE_INFO,
 				_("No changes need to be saved"));
           saved = TRUE;
           break;
         }
 
-    case GIMP_SAVE_MODE_SAVE_AS:
-      file_save_dialog_show (gimp, image, widget,
+    case PICMAN_SAVE_MODE_SAVE_AS:
+      file_save_dialog_show (picman, image, widget,
                              _("Save Image"), FALSE,
-                             save_mode == GIMP_SAVE_MODE_SAVE_AND_CLOSE, display);
+                             save_mode == PICMAN_SAVE_MODE_SAVE_AND_CLOSE, display);
       break;
 
-    case GIMP_SAVE_MODE_SAVE_A_COPY:
-      file_save_dialog_show (gimp, image, widget,
+    case PICMAN_SAVE_MODE_SAVE_A_COPY:
+      file_save_dialog_show (picman, image, widget,
                              _("Save a Copy of the Image"), TRUE,
                              FALSE, display);
       break;
 
-    case GIMP_SAVE_MODE_EXPORT:
-      file_export_dialog_show (gimp, image, widget);
+    case PICMAN_SAVE_MODE_EXPORT:
+      file_export_dialog_show (picman, image, widget);
       break;
 
-    case GIMP_SAVE_MODE_EXPORT_TO:
-    case GIMP_SAVE_MODE_OVERWRITE:
+    case PICMAN_SAVE_MODE_EXPORT_TO:
+    case PICMAN_SAVE_MODE_OVERWRITE:
       {
         const gchar         *uri = NULL;
-        GimpPlugInProcedure *export_proc;
+        PicmanPlugInProcedure *export_proc;
         gboolean             overwrite;
 
-        if (save_mode == GIMP_SAVE_MODE_EXPORT_TO)
+        if (save_mode == PICMAN_SAVE_MODE_EXPORT_TO)
           {
-            uri = gimp_image_get_exported_uri (image);
+            uri = picman_image_get_exported_uri (image);
 
             if (! uri)
               {
                 /* Behave as if Export... was invoked */
-                file_export_dialog_show (gimp, image, widget);
+                file_export_dialog_show (picman, image, widget);
                 break;
               }
 
             overwrite = FALSE;
           }
-        else if (save_mode == GIMP_SAVE_MODE_OVERWRITE)
+        else if (save_mode == PICMAN_SAVE_MODE_OVERWRITE)
           {
-            uri = gimp_image_get_imported_uri (image);
+            uri = picman_image_get_imported_uri (image);
 
             overwrite = TRUE;
           }
@@ -314,7 +314,7 @@ file_save_cmd_callback (GtkAction *action,
         if (uri)
           {
             export_proc =
-              file_procedure_find (image->gimp->plug_in_manager->export_procs,
+              file_procedure_find (image->picman->plug_in_manager->export_procs,
                                    uri, NULL);
           }
 
@@ -324,15 +324,15 @@ file_save_cmd_callback (GtkAction *action,
 
             /* The memory that 'uri' points to can be freed by
                file_save_dialog_save_image(), when it eventually calls
-               gimp_image_set_imported_uri() to reset the imported uri,
+               picman_image_set_imported_uri() to reset the imported uri,
                resulting in garbage. So make a duplicate of it here. */
 
             uri_copy = g_strdup (uri);
 
-            saved = file_save_dialog_save_image (GIMP_PROGRESS (display),
-                                                 gimp, image, uri_copy,
+            saved = file_save_dialog_save_image (PICMAN_PROGRESS (display),
+                                                 picman, image, uri_copy,
                                                  export_proc,
-                                                 GIMP_RUN_WITH_LAST_VALS,
+                                                 PICMAN_RUN_WITH_LAST_VALS,
                                                  FALSE,
                                                  overwrite, ! overwrite,
                                                  TRUE);
@@ -342,11 +342,11 @@ file_save_cmd_callback (GtkAction *action,
       break;
     }
 
-  if (save_mode == GIMP_SAVE_MODE_SAVE_AND_CLOSE &&
+  if (save_mode == PICMAN_SAVE_MODE_SAVE_AND_CLOSE &&
       saved &&
-      ! gimp_image_is_dirty (image))
+      ! picman_image_is_dirty (image))
     {
-      gimp_display_close (display);
+      picman_display_close (display);
     }
 }
 
@@ -354,17 +354,17 @@ void
 file_create_template_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpDisplay *display;
-  GimpImage   *image;
+  PicmanDisplay *display;
+  PicmanImage   *image;
   GtkWidget   *dialog;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  dialog = gimp_query_string_box (_("Create New Template"),
-                                  GTK_WIDGET (gimp_display_get_shell (display)),
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_FILE_CREATE_TEMPLATE,
+  dialog = picman_query_string_box (_("Create New Template"),
+                                  GTK_WIDGET (picman_display_get_shell (display)),
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_FILE_CREATE_TEMPLATE,
                                   _("Enter a name for this template"),
                                   NULL,
                                   G_OBJECT (image), "disconnect",
@@ -376,25 +376,25 @@ void
 file_revert_cmd_callback (GtkAction *action,
                           gpointer   data)
 {
-  GimpDisplay *display;
-  GimpImage   *image;
+  PicmanDisplay *display;
+  PicmanImage   *image;
   GtkWidget   *dialog;
   const gchar *uri;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
 
   if (! uri)
-    uri = gimp_image_get_imported_uri (image);
+    uri = picman_image_get_imported_uri (image);
 
   dialog = g_object_get_data (G_OBJECT (image), REVERT_DATA_KEY);
 
   if (! uri)
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (display), GIMP_MESSAGE_ERROR,
+      picman_message_literal (image->picman,
+			    G_OBJECT (display), PICMAN_MESSAGE_ERROR,
 			    _("Revert failed. "
 			      "No file name associated with this image."));
     }
@@ -407,10 +407,10 @@ file_revert_cmd_callback (GtkAction *action,
       gchar *filename;
 
       dialog =
-        gimp_message_dialog_new (_("Revert Image"), GTK_STOCK_REVERT_TO_SAVED,
-                                 GTK_WIDGET (gimp_display_get_shell (display)),
+        picman_message_dialog_new (_("Revert Image"), GTK_STOCK_REVERT_TO_SAVED,
+                                 GTK_WIDGET (picman_display_get_shell (display)),
                                  0,
-                                 gimp_standard_help_func, GIMP_HELP_FILE_REVERT,
+                                 picman_standard_help_func, PICMAN_HELP_FILE_REVERT,
 
                                  GTK_STOCK_CANCEL,          GTK_RESPONSE_CANCEL,
                                  GTK_STOCK_REVERT_TO_SAVED, GTK_RESPONSE_OK,
@@ -432,13 +432,13 @@ file_revert_cmd_callback (GtkAction *action,
 
       filename = file_utils_uri_display_name (uri);
 
-      gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+      picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                          _("Revert '%s' to '%s'?"),
-                                         gimp_image_get_display_name (image),
+                                         picman_image_get_display_name (image),
                                          filename);
       g_free (filename);
 
-      gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+      picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                  _("By reverting the image to the state saved "
                                    "on disk, you will lose all changes, "
                                    "including all undo information."));
@@ -453,21 +453,21 @@ void
 file_close_all_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  Gimp *gimp;
-  return_if_no_gimp (gimp, data);
+  Picman *picman;
+  return_if_no_picman (picman, data);
 
-  if (! gimp_displays_dirty (gimp))
+  if (! picman_displays_dirty (picman))
     {
-      gimp_displays_close (gimp);
+      picman_displays_close (picman);
     }
   else
     {
       GtkWidget *widget;
       return_if_no_widget (widget, data);
 
-      gimp_dialog_factory_dialog_raise (gimp_dialog_factory_get_singleton (),
+      picman_dialog_factory_dialog_raise (picman_dialog_factory_get_singleton (),
                                         gtk_widget_get_screen (widget),
-                                        "gimp-close-all-dialog", -1);
+                                        "picman-close-all-dialog", -1);
     }
 }
 
@@ -475,18 +475,18 @@ void
 file_quit_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  Gimp *gimp;
-  return_if_no_gimp (gimp, data);
+  Picman *picman;
+  return_if_no_picman (picman, data);
 
-  gimp_exit (gimp, FALSE);
+  picman_exit (picman, FALSE);
 }
 
 void
-file_file_open_dialog (Gimp        *gimp,
+file_file_open_dialog (Picman        *picman,
                        const gchar *uri,
                        GtkWidget   *parent)
 {
-  file_open_dialog_show (gimp, parent,
+  file_open_dialog_show (picman, parent,
                          _("Open Image"),
                          NULL, uri, FALSE);
 }
@@ -495,35 +495,35 @@ file_file_open_dialog (Gimp        *gimp,
 /*  private functions  */
 
 static void
-file_open_dialog_show (Gimp        *gimp,
+file_open_dialog_show (Picman        *picman,
                        GtkWidget   *parent,
                        const gchar *title,
-                       GimpImage   *image,
+                       PicmanImage   *image,
                        const gchar *uri,
                        gboolean     open_as_layers)
 {
   GtkWidget *dialog;
 
-  dialog = gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+  dialog = picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                            gtk_widget_get_screen (parent),
                                            NULL /*ui_manager*/,
-                                           "gimp-file-open-dialog", -1, FALSE);
+                                           "picman-file-open-dialog", -1, FALSE);
 
   if (dialog)
     {
       if (! uri && image)
-        uri = gimp_image_get_uri (image);
+        uri = picman_image_get_uri (image);
 
       if (! uri)
-        uri = g_object_get_data (G_OBJECT (gimp), GIMP_FILE_OPEN_LAST_URI_KEY);
+        uri = g_object_get_data (G_OBJECT (picman), PICMAN_FILE_OPEN_LAST_URI_KEY);
 
       if (uri)
         gtk_file_chooser_set_uri (GTK_FILE_CHOOSER (dialog), uri);
-      else if (gimp->default_folder)
+      else if (picman->default_folder)
         gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog),
-                                                 gimp->default_folder);
+                                                 picman->default_folder);
 
-      gimp_file_dialog_set_open_image (GIMP_FILE_DIALOG (dialog),
+      picman_file_dialog_set_open_image (PICMAN_FILE_DIALOG (dialog),
                                        image, open_as_layers);
 
       gtk_window_set_transient_for (GTK_WINDOW (dialog),
@@ -534,24 +534,24 @@ file_open_dialog_show (Gimp        *gimp,
 }
 
 static void
-file_save_dialog_show (Gimp        *gimp,
-                       GimpImage   *image,
+file_save_dialog_show (Picman        *picman,
+                       PicmanImage   *image,
                        GtkWidget   *parent,
                        const gchar *title,
                        gboolean     save_a_copy,
                        gboolean     close_after_saving,
-                       GimpDisplay *display)
+                       PicmanDisplay *display)
 {
   GtkWidget *dialog;
 
-  dialog = g_object_get_data (G_OBJECT (image), "gimp-file-save-dialog");
+  dialog = g_object_get_data (G_OBJECT (image), "picman-file-save-dialog");
 
   if (! dialog)
     {
-      dialog = gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+      dialog = picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                                gtk_widget_get_screen (parent),
                                                NULL /*ui_manager*/,
-                                               "gimp-file-save-dialog",
+                                               "picman-file-save-dialog",
                                                -1, FALSE);
 
       if (dialog)
@@ -560,7 +560,7 @@ file_save_dialog_show (Gimp        *gimp,
                                         GTK_WINDOW (gtk_widget_get_toplevel (parent)));
 
           g_object_set_data_full (G_OBJECT (image),
-                                  "gimp-file-save-dialog", dialog,
+                                  "picman-file-save-dialog", dialog,
                                   (GDestroyNotify) gtk_widget_destroy);
           g_signal_connect (dialog, "destroy",
                             G_CALLBACK (file_save_dialog_destroyed),
@@ -572,9 +572,9 @@ file_save_dialog_show (Gimp        *gimp,
     {
       gtk_window_set_title (GTK_WINDOW (dialog), title);
 
-      gimp_file_dialog_set_save_image (GIMP_FILE_DIALOG (dialog),
-                                       gimp, image, save_a_copy, FALSE,
-                                       close_after_saving, GIMP_OBJECT (display));
+      picman_file_dialog_set_save_image (PICMAN_FILE_DIALOG (dialog),
+                                       picman, image, save_a_copy, FALSE,
+                                       close_after_saving, PICMAN_OBJECT (display));
 
       gtk_window_present (GTK_WINDOW (dialog));
     }
@@ -582,27 +582,27 @@ file_save_dialog_show (Gimp        *gimp,
 
 static void
 file_save_dialog_destroyed (GtkWidget *dialog,
-                            GimpImage *image)
+                            PicmanImage *image)
 {
-  if (GIMP_FILE_DIALOG (dialog)->image == image)
-    g_object_set_data (G_OBJECT (image), "gimp-file-save-dialog", NULL);
+  if (PICMAN_FILE_DIALOG (dialog)->image == image)
+    g_object_set_data (G_OBJECT (image), "picman-file-save-dialog", NULL);
 }
 
 static void
-file_export_dialog_show (Gimp      *gimp,
-                         GimpImage *image,
+file_export_dialog_show (Picman      *picman,
+                         PicmanImage *image,
                          GtkWidget *parent)
 {
   GtkWidget *dialog;
 
-  dialog = g_object_get_data (G_OBJECT (image), "gimp-file-export-dialog");
+  dialog = g_object_get_data (G_OBJECT (image), "picman-file-export-dialog");
 
   if (! dialog)
     {
-      dialog = gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+      dialog = picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                                gtk_widget_get_screen (parent),
                                                NULL /*ui_manager*/,
-                                               "gimp-file-export-dialog",
+                                               "picman-file-export-dialog",
                                                -1, FALSE);
 
       if (dialog)
@@ -611,7 +611,7 @@ file_export_dialog_show (Gimp      *gimp,
                                         GTK_WINDOW (gtk_widget_get_toplevel (parent)));
 
           g_object_set_data_full (G_OBJECT (image),
-                                  "gimp-file-export-dialog", dialog,
+                                  "picman-file-export-dialog", dialog,
                                   (GDestroyNotify) gtk_widget_destroy);
           g_signal_connect (dialog, "destroy",
                             G_CALLBACK (file_export_dialog_destroyed),
@@ -621,8 +621,8 @@ file_export_dialog_show (Gimp      *gimp,
 
   if (dialog)
     {
-      gimp_file_dialog_set_save_image (GIMP_FILE_DIALOG (dialog),
-                                       gimp,
+      picman_file_dialog_set_save_image (PICMAN_FILE_DIALOG (dialog),
+                                       picman,
                                        image,
                                        FALSE,
                                        TRUE,
@@ -635,10 +635,10 @@ file_export_dialog_show (Gimp      *gimp,
 
 static void
 file_export_dialog_destroyed (GtkWidget *dialog,
-                              GimpImage *image)
+                              PicmanImage *image)
 {
-  if (GIMP_FILE_DIALOG (dialog)->image == image)
-    g_object_set_data (G_OBJECT (image), "gimp-file-export-dialog", NULL);
+  if (PICMAN_FILE_DIALOG (dialog)->image == image)
+    g_object_set_data (G_OBJECT (image), "picman-file-export-dialog", NULL);
 }
 
 static void
@@ -646,26 +646,26 @@ file_new_template_callback (GtkWidget   *widget,
                             const gchar *name,
                             gpointer     data)
 {
-  GimpTemplate *template;
-  GimpImage    *image;
+  PicmanTemplate *template;
+  PicmanImage    *image;
 
-  image = (GimpImage *) data;
+  image = (PicmanImage *) data;
 
   if (! (name && strlen (name)))
     name = _("(Unnamed Template)");
 
-  template = gimp_template_new (name);
-  gimp_template_set_from_image (template, image);
-  gimp_container_add (image->gimp->templates, GIMP_OBJECT (template));
+  template = picman_template_new (name);
+  picman_template_set_from_image (template, image);
+  picman_container_add (image->picman->templates, PICMAN_OBJECT (template));
   g_object_unref (template);
 }
 
 static void
 file_revert_confirm_response (GtkWidget   *dialog,
                               gint         response_id,
-                              GimpDisplay *display)
+                              PicmanDisplay *display)
 {
-  GimpImage *old_image = gimp_display_get_image (display);
+  PicmanImage *old_image = picman_display_get_image (display);
 
   gtk_widget_destroy (dialog);
 
@@ -673,36 +673,36 @@ file_revert_confirm_response (GtkWidget   *dialog,
 
   if (response_id == GTK_RESPONSE_OK)
     {
-      Gimp              *gimp = old_image->gimp;
-      GimpImage         *new_image;
+      Picman              *picman = old_image->picman;
+      PicmanImage         *new_image;
       const gchar       *uri;
-      GimpPDBStatusType  status;
+      PicmanPDBStatusType  status;
       GError            *error = NULL;
 
-      uri = gimp_image_get_uri (old_image);
+      uri = picman_image_get_uri (old_image);
 
       if (! uri)
-        uri = gimp_image_get_imported_uri (old_image);
+        uri = picman_image_get_imported_uri (old_image);
 
-      new_image = file_open_image (gimp, gimp_get_user_context (gimp),
-                                   GIMP_PROGRESS (display),
+      new_image = file_open_image (picman, picman_get_user_context (picman),
+                                   PICMAN_PROGRESS (display),
                                    uri, uri, FALSE, NULL,
-                                   GIMP_RUN_INTERACTIVE,
+                                   PICMAN_RUN_INTERACTIVE,
                                    &status, NULL, &error);
 
       if (new_image)
         {
-          gimp_displays_reconnect (gimp, old_image, new_image);
-          gimp_image_flush (new_image);
+          picman_displays_reconnect (picman, old_image, new_image);
+          picman_image_flush (new_image);
 
           /*  the displays own the image now  */
           g_object_unref (new_image);
         }
-      else if (status != GIMP_PDB_CANCEL)
+      else if (status != PICMAN_PDB_CANCEL)
         {
           gchar *filename = file_utils_uri_display_name (uri);
 
-          gimp_message (gimp, G_OBJECT (display), GIMP_MESSAGE_ERROR,
+          picman_message (picman, G_OBJECT (display), PICMAN_MESSAGE_ERROR,
                         _("Reverting to '%s' failed:\n\n%s"),
                         filename, error->message);
           g_clear_error (&error);

@@ -16,6 +16,6 @@ extern GtkWidget *spin_dir_z;
 /* Externally visible functions */
 /* ============================ */
 
-gboolean main_dialog (GimpDrawable *drawable);
+gboolean main_dialog (PicmanDrawable *drawable);
 
 #endif  /* __LIGHTING_UI_H__ */

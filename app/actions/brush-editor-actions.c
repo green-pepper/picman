@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,65 +20,65 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpbrusheditor.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanbrusheditor.h"
 
 #include "brush-editor-actions.h"
 #include "data-editor-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry brush_editor_actions[] =
+static const PicmanActionEntry brush_editor_actions[] =
 {
-  { "brush-editor-popup", GIMP_STOCK_BRUSH,
+  { "brush-editor-popup", PICMAN_STOCK_BRUSH,
     NC_("brush-editor-action", "Brush Editor Menu"), NULL, NULL, NULL,
-    GIMP_HELP_BRUSH_EDITOR_DIALOG }
+    PICMAN_HELP_BRUSH_EDITOR_DIALOG }
 };
 
-static const GimpToggleActionEntry brush_editor_toggle_actions[] =
+static const PicmanToggleActionEntry brush_editor_toggle_actions[] =
 {
-  { "brush-editor-edit-active", GIMP_STOCK_LINKED,
+  { "brush-editor-edit-active", PICMAN_STOCK_LINKED,
     NC_("brush-editor-action", "Edit Active Brush"), NULL, NULL,
     G_CALLBACK (data_editor_edit_active_cmd_callback),
     FALSE,
-    GIMP_HELP_BRUSH_EDITOR_EDIT_ACTIVE }
+    PICMAN_HELP_BRUSH_EDITOR_EDIT_ACTIVE }
 };
 
 
 void
-brush_editor_actions_setup (GimpActionGroup *group)
+brush_editor_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "brush-editor-action",
+  picman_action_group_add_actions (group, "brush-editor-action",
                                  brush_editor_actions,
                                  G_N_ELEMENTS (brush_editor_actions));
 
-  gimp_action_group_add_toggle_actions (group, "brush-editor-action",
+  picman_action_group_add_toggle_actions (group, "brush-editor-action",
                                         brush_editor_toggle_actions,
                                         G_N_ELEMENTS (brush_editor_toggle_actions));
 }
 
 void
-brush_editor_actions_update (GimpActionGroup *group,
+brush_editor_actions_update (PicmanActionGroup *group,
                              gpointer         user_data)
 {
-  GimpDataEditor  *data_editor = GIMP_DATA_EDITOR (user_data);
+  PicmanDataEditor  *data_editor = PICMAN_DATA_EDITOR (user_data);
   gboolean         edit_active = FALSE;
 
-  edit_active = gimp_data_editor_get_edit_active (data_editor);
+  edit_active = picman_data_editor_get_edit_active (data_editor);
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_ACTIVE ("brush-editor-edit-active", edit_active);
 

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-XCF\"
+	-DG_LOG_DOMAIN=\"Picman-XCF\"
 
 INCLUDES = \
 	-I$(top_builddir)	\

@@ -2,17 +2,17 @@ GEGL Porting Plan
 =================
 
 This file describes a detailed plan for how we will integrate GEGL
-into GIMP. Please update it with your own ideas and findings.
+into PICMAN. Please update it with your own ideas and findings.
 
-Porting GIMP to GEGL will be a multi-stage process. On a high level,
+Porting PICMAN to GEGL will be a multi-stage process. On a high level,
 the stages are:
 
 Stages:
 =======
 
- 1. Implement GIMP's 8 bpc code with GEGL data structures
- 2. Gradually port GIMP's 8 bpc code to 32 bpc
- 3. Once the GIMP base layer (almost) only knows 32 bpc and GEGL, add
+ 1. Implement PICMAN's 8 bpc code with GEGL data structures
+ 2. Gradually port PICMAN's 8 bpc code to 32 bpc
+ 3. Once the PICMAN base layer (almost) only knows 32 bpc and GEGL, add
     goodies like adjustment layers and layer effects on top
 
 

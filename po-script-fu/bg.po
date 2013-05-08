@@ -1,12 +1,12 @@
-# Bulgarian translation of gimp-script-fu po-file.
+# Bulgarian translation of picman-script-fu po-file.
 # Copyright (C) 2005, 2006, 2007 Free Software Foundation, Inc.
-# This file is distributed under the same license as the GIMP package.
+# This file is distributed under the same license as the PICMAN package.
 # Alexander Shopov <ash@contact.bg>, 2005.
 # Victor Dachev <vdachev@gmail.com>, 2005, 2006, 2007.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu trunk\n"
+"Project-Id-Version: picman-script-fu trunk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-07-27 16:38+0300\n"
 "PO-Revision-Date: 2007-06-20 12:39+0300\n"
@@ -150,8 +150,8 @@ msgid "_Start Server..."
 msgstr "_Включване на сървъра..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP онлайн"
+msgid "_PICMAN Online"
+msgstr "_PICMAN онлайн"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -198,8 +198,8 @@ msgid "_Beveled Pattern"
 msgstr "_Заоблена шарка"
 
 #: ../plug-ins/script-fu/script-fu.c:325
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:328
 msgid "Alpha to _Logo"
@@ -302,8 +302,8 @@ msgstr "Стойности по подразбиране за картата н�
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:6
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:7
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:7
@@ -342,8 +342,8 @@ msgstr "Шрифт"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:7
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:8
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -419,8 +419,8 @@ msgstr "Радиус на замъгляване за сянката"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:10
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:7
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:13
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:17
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:18
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:10
@@ -459,7 +459,7 @@ msgstr "3_D Truchet..."
 #: ../plug-ins/script-fu/scripts/comic-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:2
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:2
@@ -677,8 +677,8 @@ msgstr "Подложка"
 #: ../plug-ins/script-fu/scripts/beveled-button.scm.h:10
 #: ../plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:8
 #: ../plug-ins/script-fu/scripts/blended-logo.scm.h:18
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:14
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:18
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:18
 #: ../plug-ins/script-fu/scripts/i26-gunya2.scm.h:8
 #: ../plug-ins/script-fu/scripts/news-text.scm.h:11
 #: ../plug-ins/script-fu/scripts/pupi-button.scm.h:14
@@ -825,7 +825,7 @@ msgid "Create a beveled pattern hrule for webpages"
 msgstr "Създаване·на·заоблена хоризонтална лента·с·шарка·за·уеб·страници"
 
 #: ../plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-example.scm.h:4
 #: ../plug-ins/script-fu/scripts/mkbrush.scm.h:7
 #: ../plug-ins/script-fu/scripts/swirltile.scm.h:7
@@ -909,7 +909,7 @@ msgstr "Прозрачен цвят за рисуване"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Преливка"
 
@@ -1390,17 +1390,17 @@ msgstr "Радиус на замъгляването"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Цвят"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Offset X"
 msgstr "Отместване по хоризонтал"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "Offset Y"
 msgstr "Отместване по вертикал"
 
@@ -1622,106 +1622,106 @@ msgstr "Височина на сянката (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Размита граница..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr "Автоматично отрязване"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:2
-msgid "Create an image of a large header using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:2
+msgid "Create an image of a large header using the picman.org webpage theme"
 msgstr ""
 "Създаване на изображение на голяма заглавка, използвайки темата на сайта "
-"gimp.org"
+"picman.org"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-msgid "Create an image of a small header using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:3
+msgid "Create an image of a small header using the picman.org webpage theme"
 msgstr ""
-"Създаване на изображение на малка заглавка, използвайки темата на сайта gimp."
+"Създаване на изображение на малка заглавка, използвайки темата на сайта picman."
 "org"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:4
 msgid "Dark color"
 msgstr "Тъмен цвят"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:7
 #: ../plug-ins/script-fu/scripts/xach-effect.scm.h:9
 msgid "Highlight color"
 msgstr "Светъл цвят"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Index image"
 msgstr "Индексиране на цветовете"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:10
 msgid "Number of colors"
 msgstr "Брой цветове"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:13
 msgid "Remove background"
 msgstr "Премахване на фона"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:14
 msgid "Select-by-color threshold"
 msgstr "Чувствителност на избора по цвят"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Shadow color"
 msgstr "Цвят на сянката"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:15
 msgid "_Big Header..."
 msgstr "_Голямо заглавие..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:16
 msgid "_Small Header..."
 msgstr "_Малко заглавие..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:2
 msgid ""
-"Create an image of a Tube Button Label Header using the gimp.org webpage "
+"Create an image of a Tube Button Label Header using the picman.org webpage "
 "theme"
 msgstr ""
-"Създаване изображение на заоблен бутон, използвайки темата на сайта gimp.org"
+"Създаване изображение на заоблен бутон, използвайки темата на сайта picman.org"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:3
-msgid "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:3
+msgid "Create an image of a Tube Button Label using the picman.org webpage theme"
 msgstr ""
-"Създаване на изображение на заоблен бутон, използвайки темата на сайта gimp."
+"Създаване на изображение на заоблен бутон, използвайки темата на сайта picman."
 "org"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:4
 msgid ""
-"Create an image of a second level Tube Button Label using the gimp.org "
+"Create an image of a second level Tube Button Label using the picman.org "
 "webpage theme"
 msgstr ""
 "Създаване на изображение на заоблен бутон от второ ниво, използвайки темата "
-"на сайта gimp.org"
+"на сайта picman.org"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:5
 msgid ""
-"Create an image of a third level Tube Button Label using the gimp.org "
+"Create an image of a third level Tube Button Label using the picman.org "
 "webpage theme"
 msgstr ""
 "Създаване на изображение на заоблен бутон от трето ниво, използвайки темата "
-"на сайта gimp.org"
+"на сайта picman.org"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "T_ube Sub-Button Label..."
 msgstr "_Преглед на под долния етикет..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:19
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:19
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr "Преглед на под _долния етикет..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:20
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:20
 msgid "_General Tube Labels..."
 msgstr "_Общи етикети на прегледа..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:21
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:21
 msgid "_Tube Button Label..."
 msgstr "Преглед на долния етикет..."
 
@@ -2474,130 +2474,130 @@ msgstr "Обръщане от ляво на дясно"
 msgid "_Spinning Globe..."
 msgstr "_Въртящ се глобус"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid ""
 "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "Рисува спирографики, епитрохоиди и криви на Лисажу към текущия слой"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Спрей"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Четка"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Кръг"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Цветови метод"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Епитрохоида"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Рамка"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Преливка: превъртане Sawtooth"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Преливка:·превъртащ се·триъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Шестоъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Размер на дупките"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Вътрешни зъби"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Лисажу"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Ръб (пиксели)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Външни зъби"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Молив"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Петоъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Десетоъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Седмоъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Осмоъкълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Деветоъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Генериране на Спиро..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Форма"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Плътен цвят"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Спирографика"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Квадрат"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Начален ъгъл"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Инструмент"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Триъгълник"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Тип"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
 msgstr "_Спирогимп..."
 
 #: ../plug-ins/script-fu/scripts/starburst-logo.scm.h:2
@@ -2892,8 +2892,8 @@ msgid "_Weave..."
 msgstr "_Вълна..."
 
 #: ../plug-ins/script-fu/scripts/web-browser.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Отметка към сайта на GIMP"
+msgid "Bookmark to the PICMAN web site"
+msgstr "Отметка към сайта на PICMAN"
 
 #: ../plug-ins/script-fu/scripts/web-browser.scm.h:2
 msgid "Bookmark to the user manual"

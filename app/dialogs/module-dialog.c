@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * module-dialog.c
- * (C) 1999 Austin Donnelly <austin@gimp.org>
- * (C) 2008 Sven Neumann <sven@gimp.org>
+ * (C) 1999 Austin Donnelly <austin@picman.org>
+ * (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,20 +23,20 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-modules.h"
+#include "core/picman.h"
+#include "core/picman-modules.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "module-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_REFRESH  1
@@ -61,9 +61,9 @@ enum
 
 typedef struct
 {
-  Gimp         *gimp;
+  Picman         *picman;
 
-  GimpModule   *selected;
+  PicmanModule   *selected;
   GtkListStore *list;
 
   GtkWidget    *hint;
@@ -88,14 +88,14 @@ static void   dialog_enabled_toggled  (GtkCellRendererToggle *celltoggle,
                                        ModuleDialog          *dialog);
 static void   make_list_item          (gpointer               data,
                                        gpointer               user_data);
-static void   dialog_info_add         (GimpModuleDB          *db,
-                                       GimpModule            *module,
+static void   dialog_info_add         (PicmanModuleDB          *db,
+                                       PicmanModule            *module,
                                        ModuleDialog          *dialog);
-static void   dialog_info_remove      (GimpModuleDB          *db,
-                                       GimpModule            *module,
+static void   dialog_info_remove      (PicmanModuleDB          *db,
+                                       PicmanModule            *module,
                                        ModuleDialog          *dialog);
-static void   dialog_info_update      (GimpModuleDB          *db,
-                                       GimpModule            *module,
+static void   dialog_info_update      (PicmanModuleDB          *db,
+                                       PicmanModule            *module,
                                        ModuleDialog          *dialog);
 static void   dialog_info_init        (ModuleDialog          *dialog,
                                        GtkWidget             *table);
@@ -104,7 +104,7 @@ static void   dialog_info_init        (ModuleDialog          *dialog,
 /*  public functions  */
 
 GtkWidget *
-module_dialog_new (Gimp *gimp)
+module_dialog_new (Picman *picman)
 {
   GtkWidget         *shell;
   GtkWidget         *vbox;
@@ -117,15 +117,15 @@ module_dialog_new (Gimp *gimp)
   GtkTreeViewColumn *col;
   GtkCellRenderer   *rend;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   dialog = g_slice_new0 (ModuleDialog);
 
-  dialog->gimp = gimp;
+  dialog->picman = picman;
 
-  shell = gimp_dialog_new (_("Module Manager"),
-                           "gimp-modules", NULL, 0,
-                           gimp_standard_help_func, GIMP_HELP_MODULE_DIALOG,
+  shell = picman_dialog_new (_("Module Manager"),
+                           "picman-modules", NULL, 0,
+                           picman_standard_help_func, PICMAN_HELP_MODULE_DIALOG,
 
                            GTK_STOCK_REFRESH, RESPONSE_REFRESH,
                            GTK_STOCK_CLOSE,   GTK_RESPONSE_CLOSE,
@@ -147,11 +147,11 @@ module_dialog_new (Gimp *gimp)
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  dialog->hint = gimp_hint_box_new (_("You will have to restart GIMP "
+  dialog->hint = picman_hint_box_new (_("You will have to restart PICMAN "
                                       "for the changes to take effect."));
   gtk_box_pack_start (GTK_BOX (vbox), dialog->hint, FALSE, FALSE, 0);
 
-  if (gimp->write_modulerc)
+  if (picman->write_modulerc)
     gtk_widget_show (dialog->hint);
 
   sw = gtk_scrolled_window_new (NULL, NULL);
@@ -167,13 +167,13 @@ module_dialog_new (Gimp *gimp)
   dialog->list = gtk_list_store_new (N_COLUMNS,
                                      G_TYPE_STRING,
                                      G_TYPE_BOOLEAN,
-                                     GIMP_TYPE_MODULE);
+                                     PICMAN_TYPE_MODULE);
   view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (dialog->list));
   g_object_unref (dialog->list);
 
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
-  g_list_foreach (gimp->module_db->modules, make_list_item, dialog);
+  g_list_foreach (picman->module_db->modules, make_list_item, dialog);
 
   rend = gtk_cell_renderer_toggle_new ();
 
@@ -204,7 +204,7 @@ module_dialog_new (Gimp *gimp)
   dialog->error_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_pack_start (GTK_BOX (vbox), dialog->error_box, FALSE, FALSE, 0);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_WARNING, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_WARNING, GTK_ICON_SIZE_BUTTON);
   gtk_box_pack_start (GTK_BOX (dialog->error_box), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -216,7 +216,7 @@ module_dialog_new (Gimp *gimp)
 
   dialog_info_init (dialog, dialog->table);
 
-  dialog_info_update (gimp->module_db, dialog->selected, dialog);
+  dialog_info_update (picman->module_db, dialog->selected, dialog);
 
   sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
@@ -227,16 +227,16 @@ module_dialog_new (Gimp *gimp)
   if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (dialog->list), &iter))
     gtk_tree_selection_select_iter (sel, &iter);
 
-  /* hook the GimpModuleDB signals so we can refresh the display
+  /* hook the PicmanModuleDB signals so we can refresh the display
    * appropriately.
    */
-  g_signal_connect (gimp->module_db, "add",
+  g_signal_connect (picman->module_db, "add",
                     G_CALLBACK (dialog_info_add),
                     dialog);
-  g_signal_connect (gimp->module_db, "remove",
+  g_signal_connect (picman->module_db, "remove",
                     G_CALLBACK (dialog_info_remove),
                     dialog);
-  g_signal_connect (gimp->module_db, "module-modified",
+  g_signal_connect (picman->module_db, "module-modified",
                     G_CALLBACK (dialog_info_update),
                     dialog);
 
@@ -256,7 +256,7 @@ dialog_response (GtkWidget    *widget,
                  ModuleDialog *dialog)
 {
   if (response_id == RESPONSE_REFRESH)
-    gimp_modules_refresh (dialog->gimp);
+    picman_modules_refresh (dialog->picman);
   else
     gtk_widget_destroy (widget);
 }
@@ -265,13 +265,13 @@ static void
 dialog_destroy_callback (GtkWidget    *widget,
                          ModuleDialog *dialog)
 {
-  g_signal_handlers_disconnect_by_func (dialog->gimp->module_db,
+  g_signal_handlers_disconnect_by_func (dialog->picman->module_db,
                                         dialog_info_add,
                                         dialog);
-  g_signal_handlers_disconnect_by_func (dialog->gimp->module_db,
+  g_signal_handlers_disconnect_by_func (dialog->picman->module_db,
                                         dialog_info_remove,
                                         dialog);
-  g_signal_handlers_disconnect_by_func (dialog->gimp->module_db,
+  g_signal_handlers_disconnect_by_func (dialog->picman->module_db,
                                         dialog_info_update,
                                         dialog);
 
@@ -286,7 +286,7 @@ dialog_select_callback (GtkTreeSelection *sel,
 
   if (gtk_tree_selection_get_selected (sel, NULL, &iter))
     {
-      GimpModule *module;
+      PicmanModule *module;
 
       gtk_tree_model_get (GTK_TREE_MODEL (dialog->list), &iter,
                           COLUMN_MODULE, &module, -1);
@@ -299,7 +299,7 @@ dialog_select_callback (GtkTreeSelection *sel,
 
       dialog->selected = module;
 
-      dialog_info_update (dialog->gimp->module_db, dialog->selected, dialog);
+      dialog_info_update (dialog->picman->module_db, dialog->selected, dialog);
     }
 }
 
@@ -310,7 +310,7 @@ dialog_enabled_toggled (GtkCellRendererToggle *celltoggle,
 {
   GtkTreePath *path;
   GtkTreeIter  iter;
-  GimpModule  *module = NULL;
+  PicmanModule  *module = NULL;
 
   path = gtk_tree_path_new_from_string (path_string);
 
@@ -328,10 +328,10 @@ dialog_enabled_toggled (GtkCellRendererToggle *celltoggle,
 
   if (module)
     {
-      gimp_module_set_load_inhibit (module, ! module->load_inhibit);
+      picman_module_set_load_inhibit (module, ! module->load_inhibit);
       g_object_unref (module);
 
-      dialog->gimp->write_modulerc = TRUE;
+      dialog->picman->write_modulerc = TRUE;
       gtk_widget_show (dialog->hint);
    }
 }
@@ -339,12 +339,12 @@ dialog_enabled_toggled (GtkCellRendererToggle *celltoggle,
 static void
 dialog_list_item_update (ModuleDialog *dialog,
                          GtkTreeIter  *iter,
-                         GimpModule   *module)
+                         PicmanModule   *module)
 {
   gtk_list_store_set (dialog->list, iter,
                       COLUMN_NAME,   (module->info ?
                                       gettext (module->info->purpose) :
-                                      gimp_filename_to_utf8 (module->filename)),
+                                      picman_filename_to_utf8 (module->filename)),
                       COLUMN_ENABLED, ! module->load_inhibit,
                       COLUMN_MODULE,  module,
                       -1);
@@ -354,7 +354,7 @@ static void
 make_list_item (gpointer data,
                 gpointer user_data)
 {
-  GimpModule   *module = data;
+  PicmanModule   *module = data;
   ModuleDialog *dialog = user_data;
   GtkTreeIter   iter;
 
@@ -367,16 +367,16 @@ make_list_item (gpointer data,
 }
 
 static void
-dialog_info_add (GimpModuleDB *db,
-                 GimpModule   *module,
+dialog_info_add (PicmanModuleDB *db,
+                 PicmanModule   *module,
                  ModuleDialog *dialog)
 {
   make_list_item (module, dialog);
 }
 
 static void
-dialog_info_remove (GimpModuleDB *db,
-                    GimpModule   *module,
+dialog_info_remove (PicmanModuleDB *db,
+                    PicmanModule   *module,
                     ModuleDialog *dialog)
 {
   GtkTreeIter  iter;
@@ -388,7 +388,7 @@ dialog_info_remove (GimpModuleDB *db,
 
   do
     {
-      GimpModule  *this;
+      PicmanModule  *this;
 
       gtk_tree_model_get (GTK_TREE_MODEL (dialog->list), &iter,
                           COLUMN_MODULE, &this,
@@ -410,8 +410,8 @@ dialog_info_remove (GimpModuleDB *db,
 }
 
 static void
-dialog_info_update (GimpModuleDB *db,
-                    GimpModule   *module,
+dialog_info_update (PicmanModuleDB *db,
+                    PicmanModule   *module,
                     ModuleDialog *dialog)
 {
   GtkTreeModel *model           = GTK_TREE_MODEL (dialog->list);
@@ -426,7 +426,7 @@ dialog_info_update (GimpModuleDB *db,
        iter_valid;
        iter_valid = gtk_tree_model_iter_next (model, &iter))
     {
-      GimpModule *this;
+      PicmanModule *this;
 
       gtk_tree_model_get (model, &iter,
                           COLUMN_MODULE, &this,
@@ -479,7 +479,7 @@ dialog_info_update (GimpModuleDB *db,
   g_free (location);
 
   /* Show errors */
-  show_error = (module->state == GIMP_MODULE_STATE_ERROR &&
+  show_error = (module->state == PICMAN_MODULE_STATE_ERROR &&
                 module->last_module_error);
   gtk_label_set_text (GTK_LABEL (dialog->error_label),
                       show_error ? module->last_module_error : NULL);

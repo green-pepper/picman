@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,31 +20,31 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "text/gimptextlayer.h"
+#include "text/picmantextlayer.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimptexteditor.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmantexteditor.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
-#include "tools/gimptool.h"
-#include "tools/gimptexttool.h"
+#include "tools/picmantool.h"
+#include "tools/picmantexttool.h"
 
 #include "text-tool-actions.h"
 #include "text-tool-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry text_tool_actions[] =
+static const PicmanActionEntry text_tool_actions[] =
 {
   { "text-tool-popup", NULL,
     NC_("text-tool-action", "Text Tool Menu"), NULL, NULL, NULL,
@@ -85,14 +85,14 @@ static const GimpActionEntry text_tool_actions[] =
     G_CALLBACK (text_tool_clear_cmd_callback),
     NULL },
 
-  { "text-tool-text-to-path", GIMP_STOCK_PATH,
+  { "text-tool-text-to-path", PICMAN_STOCK_PATH,
     NC_("text-tool-action", "_Path from Text"), "",
     NC_("text-tool-action",
         "Create a path from the outlines of the current text"),
     G_CALLBACK (text_tool_text_to_path_cmd_callback),
     NULL },
 
-  { "text-tool-text-along-path", GIMP_STOCK_PATH,
+  { "text-tool-text-along-path", PICMAN_STOCK_PATH,
     NC_("text-tool-action", "Text _along Path"), "",
     NC_("text-tool-action",
         "Bend the text along the currently active path"),
@@ -100,35 +100,35 @@ static const GimpActionEntry text_tool_actions[] =
     NULL }
 };
 
-static const GimpRadioActionEntry text_tool_direction_actions[] =
+static const PicmanRadioActionEntry text_tool_direction_actions[] =
 {
-  { "text-tool-direction-ltr", GIMP_STOCK_TEXT_DIR_LTR,
+  { "text-tool-direction-ltr", PICMAN_STOCK_TEXT_DIR_LTR,
     NC_("text-tool-action", "From left to right"), NULL, NULL,
-    GIMP_TEXT_DIRECTION_LTR,
+    PICMAN_TEXT_DIRECTION_LTR,
     NULL },
 
-  { "text-tool-direction-rtl", GIMP_STOCK_TEXT_DIR_RTL,
+  { "text-tool-direction-rtl", PICMAN_STOCK_TEXT_DIR_RTL,
     NC_("text-tool-action", "From right to left"), NULL, NULL,
-    GIMP_TEXT_DIRECTION_RTL,
+    PICMAN_TEXT_DIRECTION_RTL,
     NULL }
 };
 
 
 #define SET_HIDE_EMPTY(action,condition) \
-        gimp_action_group_set_action_hide_empty (group, action, (condition) != 0)
+        picman_action_group_set_action_hide_empty (group, action, (condition) != 0)
 
 void
-text_tool_actions_setup (GimpActionGroup *group)
+text_tool_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "text-tool-action",
+  picman_action_group_add_actions (group, "text-tool-action",
                                  text_tool_actions,
                                  G_N_ELEMENTS (text_tool_actions));
 
-  gimp_action_group_add_radio_actions (group, "text-tool-action",
+  picman_action_group_add_radio_actions (group, "text-tool-action",
                                        text_tool_direction_actions,
                                        G_N_ELEMENTS (text_tool_direction_actions),
                                        NULL,
-                                       GIMP_TEXT_DIRECTION_LTR,
+                                       PICMAN_TEXT_DIRECTION_LTR,
                                        G_CALLBACK (text_tool_direction_cmd_callback));
 
   SET_HIDE_EMPTY ("text-tool-input-methods-menu", FALSE);
@@ -141,15 +141,15 @@ text_tool_actions_setup (GimpActionGroup *group)
  * will need to be added.
  */
 void
-text_tool_actions_update (GimpActionGroup *group,
+text_tool_actions_update (PicmanActionGroup *group,
                           gpointer         data)
 {
-  GimpTextTool     *text_tool  = GIMP_TEXT_TOOL (data);
-  GimpDisplay      *display    = GIMP_TOOL (text_tool)->display;
-  GimpImage        *image      = gimp_display_get_image (display);
-  GimpLayer        *layer;
-  GimpVectors      *vectors;
-  GimpDisplayShell *shell;
+  PicmanTextTool     *text_tool  = PICMAN_TEXT_TOOL (data);
+  PicmanDisplay      *display    = PICMAN_TOOL (text_tool)->display;
+  PicmanImage        *image      = picman_display_get_image (display);
+  PicmanLayer        *layer;
+  PicmanVectors      *vectors;
+  PicmanDisplayShell *shell;
   GtkClipboard     *clipboard;
   gboolean          text_layer = FALSE;
   gboolean          text_sel   = FALSE;   /* some text is selected        */
@@ -157,17 +157,17 @@ text_tool_actions_update (GimpActionGroup *group,
   gboolean          input_method_menu;
   gboolean          unicode_menu;
 
-  layer = gimp_image_get_active_layer (image);
+  layer = picman_image_get_active_layer (image);
 
   if (layer)
-    text_layer = gimp_item_is_text_layer (GIMP_ITEM (layer));
+    text_layer = picman_item_is_text_layer (PICMAN_ITEM (layer));
 
-  vectors = gimp_image_get_active_vectors (image);
+  vectors = picman_image_get_active_vectors (image);
 
-  text_sel = gimp_text_tool_get_has_text_selection (text_tool);
+  text_sel = picman_text_tool_get_has_text_selection (text_tool);
 
   /* see whether there is text available for pasting */
-  shell = gimp_display_get_shell (display);
+  shell = picman_display_get_shell (display);
   clipboard = gtk_widget_get_clipboard (shell->canvas,
                                         GDK_SELECTION_CLIPBOARD);
   clip = gtk_clipboard_wait_is_text_available (clipboard);
@@ -178,11 +178,11 @@ text_tool_actions_update (GimpActionGroup *group,
                 NULL);
 
 #define SET_VISIBLE(action,condition) \
-        gimp_action_group_set_action_visible (group, action, (condition) != 0)
+        picman_action_group_set_action_visible (group, action, (condition) != 0)
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_SENSITIVE ("text-tool-cut",             text_sel);
   SET_SENSITIVE ("text-tool-copy",            text_sel);

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * PNM reading and writing code Copyright (C) 1996 Erik Nygren
  *
@@ -29,16 +29,16 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-dicom-load"
 #define SAVE_PROC      "file-dicom-save"
 #define PLUG_IN_BINARY "file-dicom"
-#define PLUG_IN_ROLE   "gimp-file-dicom"
+#define PLUG_IN_ROLE   "picman-file-dicom"
 
 
 /* A lot of Dicom images are wrongly encoded. By guessing the endian
@@ -63,9 +63,9 @@ typedef struct _DicomInfo
 static void      query                 (void);
 static void      run                   (const gchar      *name,
                                         gint              nparams,
-                                        const GimpParam  *param,
+                                        const PicmanParam  *param,
                                         gint             *nreturn_vals,
-                                        GimpParam       **return_vals);
+                                        PicmanParam       **return_vals);
 static gint32    load_image            (const gchar      *filename,
                                         GError          **error);
 static gboolean  save_image            (const gchar      *filename,
@@ -93,7 +93,7 @@ static gboolean  write_group_to_file   (FILE             *DICOM,
                                         GByteArray       *group_stream);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -106,27 +106,27 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to load" }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,    "image",        "Output image" }
-  };
-
-  static const GimpParamDef save_args[] =
-  {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save" },
+    { PICMAN_PDB_IMAGE,    "image",        "Output image" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  static const PicmanParamDef save_args[] =
+  {
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save" },
+  };
+
+  picman_install_procedure (LOAD_PROC,
                           "loads files of the dicom file format",
                           "Load a file in the DICOM standard format."
                           "The standard is defined at "
@@ -138,19 +138,19 @@ query (void)
                           "2003",
                           N_("DICOM image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-dcm");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-dcm");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "dcm,dicom",
                                     "",
                                     "128,string,DICM"
                                     );
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Save file in the DICOM file format",
                           "Save an image in the medical standard DICOM image "
                           "formats. The standard is defined at "
@@ -164,27 +164,27 @@ query (void)
                           N_("Digital Imaging and Communications in "
                              "Medicine image"),
                           "RGB, GRAY",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-dcm");
-  gimp_register_save_handler (SAVE_PROC, "dcm,dicom", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-dcm");
+  picman_register_save_handler (SAVE_PROC, "dcm,dicom", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -194,8 +194,8 @@ run (const gchar      *name,
 
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -205,17 +205,17 @@ run (const gchar      *name,
         {
           *nreturn_vals = 2;
 
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
 
           if (error)
             {
               *nreturn_vals = 2;
-              values[1].type          = GIMP_PDB_STRING;
+              values[1].type          = PICMAN_PDB_STRING;
               values[1].data.d_string = error->message;
             }
         }
@@ -227,16 +227,16 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY);
-          if (export == GIMP_EXPORT_CANCEL)
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -247,44 +247,44 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams != 5)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (! save_image (param[3].data.d_string, image_ID, drawable_ID,
                             &error))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
 
               if (error)
                 {
                   *nreturn_vals = 2;
-                  values[1].type          = GIMP_PDB_STRING;
+                  values[1].type          = PICMAN_PDB_STRING;
                   values[1].data.d_string = error->message;
                 }
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   values[0].data.d_status = status;
@@ -292,7 +292,7 @@ run (const gchar      *name,
 
 /**
  * add_parasites_to_image:
- * @data:      pointer to a GimpParasite to be attached to the image
+ * @data:      pointer to a PicmanParasite to be attached to the image
  *             specified by @user_data.
  * @user_data: pointer to the image_ID to which parasite @data should
  *             be added.
@@ -303,11 +303,11 @@ static void
 add_parasites_to_image (gpointer data,
                         gpointer user_data)
 {
-  GimpParasite *parasite = (GimpParasite *) data;
+  PicmanParasite *parasite = (PicmanParasite *) data;
   gint32       *image_ID = (gint32 *) user_data;
 
-  gimp_image_attach_parasite (*image_ID, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (*image_ID, parasite);
+  picman_parasite_free (parasite);
 }
 
 static gint32
@@ -338,12 +338,12 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /* allocate the necessary structures */
   dicominfo = g_new0 (DicomInfo, 1);
@@ -356,7 +356,7 @@ load_image (const gchar  *filename,
     {
       g_message ("'%s' is a PAPYRUS DICOM file.\n"
                  "This plug-in does not support this type yet.",
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       g_free (dicominfo);
       fclose (DICOM);
       return -1;
@@ -367,7 +367,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a DICOM file."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       g_free (dicominfo);
       fclose (DICOM);
       return -1;
@@ -473,8 +473,8 @@ load_image (const gchar  *filename,
       if (element_length >= (G_MAXUINT - 6))
         {
           g_message ("'%s' seems to have an incorrect value field length.",
-                     gimp_filename_to_utf8 (filename));
-          gimp_quit ();
+                     picman_filename_to_utf8 (filename));
+          picman_quit ();
         }
 
       /* Read contents. Allocate a bit more to make room for casts to int
@@ -545,14 +545,14 @@ load_image (const gchar  *filename,
       else
         {
           /* save this element to a parasite for later writing */
-          GimpParasite *parasite;
+          PicmanParasite *parasite;
           gchar         pname[255];
 
-          /* all elements are retrievable using gimp_get_parasite_list() */
+          /* all elements are retrievable using picman_get_parasite_list() */
           g_snprintf (pname, sizeof (pname),
                       "dcm/%04x-%04x-%s", group_word, element_word, value_rep);
-          if ((parasite = gimp_parasite_new (pname,
-                                             GIMP_PARASITE_PERSISTENT,
+          if ((parasite = picman_parasite_new (pname,
+                                             PICMAN_PARASITE_PERSISTENT,
                                              element_length, value)))
             {
               /*
@@ -573,23 +573,23 @@ load_image (const gchar  *filename,
 
   if ((bpp != 8) && (bpp != 16))
     {
-      g_message ("'%s' has a bpp of %d which GIMP cannot handle.",
-                 gimp_filename_to_utf8 (filename), bpp);
-      gimp_quit ();
+      g_message ("'%s' has a bpp of %d which PICMAN cannot handle.",
+                 picman_filename_to_utf8 (filename), bpp);
+      picman_quit ();
     }
 
-  if ((width > GIMP_MAX_IMAGE_SIZE) || (height > GIMP_MAX_IMAGE_SIZE))
+  if ((width > PICMAN_MAX_IMAGE_SIZE) || (height > PICMAN_MAX_IMAGE_SIZE))
     {
-      g_message ("'%s' has a larger image size (%d x %d) than GIMP can handle.",
-                 gimp_filename_to_utf8 (filename), width, height);
-      gimp_quit ();
+      g_message ("'%s' has a larger image size (%d x %d) than PICMAN can handle.",
+                 picman_filename_to_utf8 (filename), width, height);
+      picman_quit ();
     }
 
   if (samples_per_pixel > 3)
     {
-      g_message ("'%s' has samples per pixel of %d which GIMP cannot handle.",
-                 gimp_filename_to_utf8 (filename), samples_per_pixel);
-      gimp_quit ();
+      g_message ("'%s' has samples per pixel of %d which PICMAN cannot handle.",
+                 picman_filename_to_utf8 (filename), samples_per_pixel);
+      picman_quit ();
     }
 
   dicominfo->width  = width;
@@ -604,19 +604,19 @@ load_image (const gchar  *filename,
 
   /* Create a new image of the proper size and associate the filename with it.
    */
-  image_ID = gimp_image_new (dicominfo->width, dicominfo->height,
+  image_ID = picman_image_new (dicominfo->width, dicominfo->height,
                              (dicominfo->samples_per_pixel >= 3 ?
-                              GIMP_RGB : GIMP_GRAY));
-  gimp_image_set_filename (image_ID, filename);
+                              PICMAN_RGB : PICMAN_GRAY));
+  picman_image_set_filename (image_ID, filename);
 
-  layer_ID = gimp_layer_new (image_ID, _("Background"),
+  layer_ID = picman_layer_new (image_ID, _("Background"),
                              dicominfo->width, dicominfo->height,
                              (dicominfo->samples_per_pixel >= 3 ?
-                              GIMP_RGB_IMAGE : GIMP_GRAY_IMAGE),
-                             100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
+                              PICMAN_RGB_IMAGE : PICMAN_GRAY_IMAGE),
+                             100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
 
-  buffer = gimp_drawable_get_buffer (layer_ID);
+  buffer = picman_drawable_get_buffer (layer_ID);
 
 #if GUESS_ENDIAN
   if (bpp == 16)
@@ -671,7 +671,7 @@ dicom_loader (guint8     *pix_buffer,
         buf16[pix_idx] = g_htons (buf16[pix_idx]) >> shift;
     }
 
-  data = g_malloc (gimp_tile_height () * width * samples_per_pixel);
+  data = g_malloc (picman_tile_height () * width * samples_per_pixel);
 
   for (row_idx = 0; row_idx < height; )
     {
@@ -682,7 +682,7 @@ dicom_loader (guint8     *pix_buffer,
       gint    i;
 
       start = row_idx;
-      end   = row_idx + gimp_tile_height ();
+      end   = row_idx + picman_tile_height ();
       end   = MIN (end, height);
 
       scanlines = end - start;
@@ -753,12 +753,12 @@ dicom_loader (guint8     *pix_buffer,
 
       row_idx += scanlines;
 
-      gimp_progress_update ((gdouble) row_idx / (gdouble) height);
+      picman_progress_update ((gdouble) row_idx / (gdouble) height);
     }
 
   g_free (data);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 }
 
 
@@ -1036,11 +1036,11 @@ static GSList *
 dicom_get_elements_list (gint32 image_ID)
 {
   GSList        *elements = NULL;
-  GimpParasite  *parasite;
+  PicmanParasite  *parasite;
   gchar        **parasites = NULL;
   gint           count = 0;
 
-  parasites = gimp_image_get_parasite_list (image_ID, &count);
+  parasites = picman_image_get_parasite_list (image_ID, &count);
 
   if (parasites && count > 0)
     {
@@ -1050,7 +1050,7 @@ dicom_get_elements_list (gint32 image_ID)
         {
           if (strncmp (parasites[i], "dcm", 3) == 0)
             {
-              parasite = gimp_image_get_parasite (image_ID, parasites[i]);
+              parasite = picman_image_get_parasite (image_ID, parasites[i]);
 
               if (parasite)
                 {
@@ -1113,8 +1113,8 @@ dicom_get_elements_list (gint32 image_ID)
                    */
                   if (group_word > 0 && element_word > 0)
                     {
-                      const guint8 *val = gimp_parasite_data (parasite);
-                      const guint   len = gimp_parasite_data_size (parasite);
+                      const guint8 *val = picman_parasite_data (parasite);
+                      const guint   len = picman_parasite_data_size (parasite);
 
                       /* and add the dicom element, asking to have
                          it's value copied for later garbage collection */
@@ -1124,7 +1124,7 @@ dicom_get_elements_list (gint32 image_ID)
                                                          value_rep, len, val);
                     }
 
-                  gimp_parasite_free (parasite);
+                  picman_parasite_free (parasite);
                 }
             }
         }
@@ -1137,7 +1137,7 @@ dicom_get_elements_list (gint32 image_ID)
 }
 
 /**
- * dicom_remove_gimp_specified_elements:
+ * dicom_remove_picman_specified_elements:
  * @elements:  GSList to remove elements from
  * @samples_per_pixel: samples per pixel of the image to be written.
  *                     if set to %3 the planar configuration for color images
@@ -1148,7 +1148,7 @@ dicom_get_elements_list (gint32 image_ID)
  * Return value: the new head of @elements
 **/
 static GSList *
-dicom_remove_gimp_specified_elements (GSList *elements,
+dicom_remove_picman_specified_elements (GSList *elements,
                                       gint samples_per_pixel)
 {
   DICOMELEMENT remove[] = {
@@ -1222,7 +1222,7 @@ dicom_ensure_required_elements_present (GSList *elements,
       strlen ("1.2.840.10008.1.2.1"), (guint8 *) "1.2.840.10008.1.2.1"},
     /* 0002, 0013 - Implementation version name */
     { 0x0002, 0x0013, "SH",
-      strlen ("GIMP Dicom Plugin 1.0"), (guint8 *) "GIMP Dicom Plugin 1.0" },
+      strlen ("PICMAN Dicom Plugin 1.0"), (guint8 *) "PICMAN Dicom Plugin 1.0" },
     /* Identifying group */
     /* Study date */
     { 0x0008, 0x0020, "DA",
@@ -1290,7 +1290,7 @@ save_image (const gchar  *filename,
             GError      **error)
 {
   FILE          *DICOM;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   GeglBuffer    *buffer;
   const Babl    *format;
   gint           width;
@@ -1308,10 +1308,10 @@ save_image (const gchar  *filename,
   guint16        eight = 8;
   guchar        *src = NULL;
 
-  drawable_type = gimp_drawable_type (drawable_ID);
+  drawable_type = picman_drawable_type (drawable_ID);
 
   /*  Make sure we're not saving an image with an alpha channel  */
-  if (gimp_drawable_has_alpha (drawable_ID))
+  if (picman_drawable_has_alpha (drawable_ID))
     {
       g_message (_("Cannot save images with alpha channel."));
       return FALSE;
@@ -1319,13 +1319,13 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       format = babl_format ("Y' u8");
       samples_per_pixel = 1;
       photometric_interp = "MONOCHROME2";
       break;
 
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       format = babl_format ("R'G'B' u8");
       samples_per_pixel = 3;
       photometric_interp = "RGB";
@@ -1349,11 +1349,11 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
   width  = gegl_buffer_get_width  (buffer);
   height = gegl_buffer_get_height (buffer);
@@ -1383,7 +1383,7 @@ save_image (const gchar  *filename,
   /*
    * Set value of custom elements
    */
-  elements = dicom_remove_gimp_specified_elements (elements,samples_per_pixel);
+  elements = dicom_remove_picman_specified_elements (elements,samples_per_pixel);
 
   /* Image presentation group */
   group = 0x0028;

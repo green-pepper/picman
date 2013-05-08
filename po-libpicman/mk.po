@@ -1,0 +1,1919 @@
+# translation of picman-libpicman.HEAD.po to
+# Macedonian translation of picman-libpicman
+# Courtesy of mkde team (http://mkde.sourceforge.net/) -- 2004.
+#
+# This file is distributed under the same license as the picman-libpicman package.
+#
+# Maintainer: Владимир Стефанов <vladoboss@mt.net.mk>
+#
+#
+# Vladimir Stefanov <vladoboss@mt.net.mk>, 2005, 2006.
+# Vladimir Stefanov <vladoboss@gmail.com>, 2006.
+# Jovan Naumovski <jovan@lugola.net>, 2006.
+# Blagoj <kapsarovb@on.net.mk>, 2007.
+# Marko <mark0d0da@gmail.com>, 2007.
+# Marko Doda <marko@lugola.net>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-09-05 07:32+0000\n"
+"PO-Revision-Date: 2008-10-06 22:52+1000\n"
+"Last-Translator: Marko Doda <marko@lugola.net>\n"
+"Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural= n==1 || n%10==1 ? 0 : 1\n"
+"X-Generator: Lokalize 0.2\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1044
+msgid "success"
+msgstr "успех"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1048
+msgid "execution error"
+msgstr "грешка при извршување"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1052
+msgid "calling error"
+msgstr "грешка при повикување"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1056
+msgid "cancelled"
+msgstr "откажано"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "Избор на _четки"
+
+#: ../libpicman/picmanbrushselectbutton.c:913
+#: ../libpicman/picmanpatternselectbutton.c:714
+msgid "_Browse..."
+msgstr "_Пребарај..."
+
+#: ../libpicman/picmanexport.c:217 ../libpicman/picmanexport.c:253
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s додатокот неможе да ги сработи слоевите"
+
+#: ../libpicman/picmanexport.c:218 ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "Спој ги видливите слоеви"
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"%s додатокот неможе да го сработи израмнувањето, големината и провидноста на "
+"слоевите"
+
+#: ../libpicman/picmanexport.c:235 ../libpicman/picmanexport.c:244
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr ""
+"%s додатокот може да ги сработи слоевите само како слајдови од анимација"
+
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "Зачувај како анимација"
+
+#: ../libpicman/picmanexport.c:245 ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "Израмнета слика"
+
+#: ../libpicman/picmanexport.c:262
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s додатокот неможе да работи со провидноста"
+
+#: ../libpicman/picmanexport.c:271
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s додатокот не може да работи со маски на слоевите"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "Примени маска на нивото"
+
+#: ../libpicman/picmanexport.c:280
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s додатокот може да работи само со RGB слики"
+
+#: ../libpicman/picmanexport.c:281 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "Префрли во RGB"
+
+#: ../libpicman/picmanexport.c:289
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s додатокот може да работи само со сиво нијансирани слики"
+
+#: ../libpicman/picmanexport.c:290 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "Префрли во сиво нијансирано"
+
+#: ../libpicman/picmanexport.c:298
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s додатокот може да ракува само со индексирани слики"
+
+#: ../libpicman/picmanexport.c:299 ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Префрлете во индексирани со користење на стандардните подесувања\n"
+"(Сторете го тоа рачно за да го наштимате резултатот)"
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "%s додатокот може да работи со индексирани слики (во две бои)"
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Претвори ги во индексирани со користење на стандардните bitmap подесувања\n"
+"(Направете го тоа рачно за да го наштимате резултатот)"
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s додатокот може да работи со RGB или сиво нијансирани слики"
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s додатокот може да работи само со RGB или индексирани слики"
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+"%s додатокот може да работи само со сиво нијансирани или индексирани слики"
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s додатокот зависи од вредноста на невидливоста (alpha)"
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "Додај алфа канал"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "Потврди зачувување"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "Потврди"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "Извези датотека"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "_Игнорирај"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "_Извези"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Вашата слика треба да ја извезете пред да биде зачувана како %s од следниве "
+"причини:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr "Извозното претворање нема да ја измени вашата оригинална слика."
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Вие ќе ја зачувате маската на нивото како %s.\n"
+"Ова нема да ги зачува видливите слоеви."
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Ви сте во тек да го зачувате каналот (зачуваната селекција) како %s.\n"
+"Ова нема да ги зачува видливите слоеви."
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "Избор на фонт"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "Санс"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "Избор на нијансирање"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(Празно)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "Избор на палета"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "Избор на парче-повторувања"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "по име"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "по опис"
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "по помош"
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "по автор"
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "по авторски права"
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "по датум"
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "по тип"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "Барам"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "Пребарувам по име"
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "Пребарувам по опис"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "Пребарувам според помош"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "Пребарувам по автор"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "Пребарувам по авторски права"
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "Пребарувам по датум"
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "Пребарувам по тип"
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d Процедура"
+msgstr[1] "%d Процедури"
+msgstr[2] "%d Процедури"
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "Нема совпаѓања за вашето барање"
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d процедура се совпадна со вашето барање"
+msgstr[1] "%d процедури се совпаднаа со вашето барање"
+msgstr[2] "%d процедури се совпаднаа со вашето барање"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516 ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "Нема совпаѓања"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr "Параметри"
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "Повратни вредности"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "Дополнителна информација"
+
+#: ../libpicman/picmanprocview.c:209
+msgid "Author:"
+msgstr "Автор:"
+
+#: ../libpicman/picmanprocview.c:221
+msgid "Date:"
+msgstr "Дата:"
+
+#: ../libpicman/picmanprocview.c:233
+msgid "Copyright:"
+msgstr "Авторски права:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "процент"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_White (full opacity)"
+msgstr "_Бела (потполна непровидност)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "_Black (full transparency)"
+msgstr "_Црна (потполно провидна)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "Layer's _alpha channel"
+msgstr "_Алфа канал на слојот"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Transfer layer's alpha channel"
+msgstr "_Пренеси го алфа каналот на слојот"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Selection"
+msgstr "_Селекција"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "_Grayscale copy of layer"
+msgstr "_Копија на слојот во сиви тонови"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgid "C_hannel"
+msgstr "_Канал:"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (RGB)"
+msgstr "Боја на четка во боја на позадина (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to BG (HSV)"
+msgstr "Боја на четка во боја на позадина (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "FG to transparent"
+msgstr "Боја на четката во провидна"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgid "Custom gradient"
+msgstr "Сопствен прелив"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "FG color fill"
+msgstr "Пополнување со тековната боја"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "BG color fill"
+msgstr "Пополнување со бојата на позадината"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgid "Pattern fill"
+msgstr "Пополнување од шаблон"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Add to the current selection"
+msgstr "Додај во тековната селекција"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Subtract from the current selection"
+msgstr "Исфрли од тековната селекција"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Replace the current selection"
+msgstr "Замени ја тековната селекција"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgid "Intersect with the current selection"
+msgstr "Пресек со тековната селекција"
+
+#: ../libpicmanbase/picmanbaseenums.c:163 ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "Црвена"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "Зелена"
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "Сина"
+
+#: ../libpicmanbase/picmanbaseenums.c:166
+msgid "Gray"
+msgstr "Сива"
+
+#: ../libpicmanbase/picmanbaseenums.c:167 ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed"
+msgstr "Индексирано"
+
+#: ../libpicmanbase/picmanbaseenums.c:168 ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "Алфа"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Small"
+msgstr "Мал"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Medium"
+msgstr "Среден"
+
+#: ../libpicmanbase/picmanbaseenums.c:199
+msgid "Large"
+msgstr "Голем"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Light checks"
+msgstr "Проверка на светло"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Mid-tone checks"
+msgstr "Проверка на средни тонови"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Dark checks"
+msgstr "Проверка на темни тонови"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "White only"
+msgstr "Само бело"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Gray only"
+msgstr "Само сиво"
+
+#: ../libpicmanbase/picmanbaseenums.c:236
+msgid "Black only"
+msgstr "Само црно"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Image"
+msgstr "Слика"
+
+#: ../libpicmanbase/picmanbaseenums.c:265
+msgid "Pattern"
+msgstr "Парче-повторувања"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Lightness"
+msgstr "Осветленост"
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Luminosity"
+msgstr "Јачина на светло"
+
+#: ../libpicmanbase/picmanbaseenums.c:296
+msgid "Average"
+msgstr "Просечно"
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Dodge"
+msgstr "Симни"
+
+#: ../libpicmanbase/picmanbaseenums.c:325
+msgid "Burn"
+msgstr "Спали"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "gradient|Linear"
+msgstr "Линеарно"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Bi-linear"
+msgstr "Билинеарно"
+
+#: ../libpicmanbase/picmanbaseenums.c:391
+msgid "Radial"
+msgstr "Радијално"
+
+#: ../libpicmanbase/picmanbaseenums.c:392 ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "Квадрат"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (sym)"
+msgstr "Конусна (симетрична)"
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Conical (asym)"
+msgstr "Конусна (асиметрична)"
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (angular)"
+msgstr "Обликувана (аголно)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (spherical)"
+msgstr "Обликувана (сферично)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Shaped (dimpled)"
+msgstr "Обликувана (со помош на дупчиња)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (cw)"
+msgstr "Спирала (во насока на стрелките на часовникот)"
+
+#: ../libpicmanbase/picmanbaseenums.c:399
+msgid "Spiral (ccw)"
+msgstr "Спирала (обратно од стрелките на часовникот)"
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (dots)"
+msgstr "Пресеци (точки)"
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Intersections (crosshairs)"
+msgstr "Пресеци (крстови)"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Dashed"
+msgstr "Со црти"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Double dashed"
+msgstr "Со дупли црти"
+
+#: ../libpicmanbase/picmanbaseenums.c:434
+msgid "Solid"
+msgstr "Цврсто"
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Stock ID"
+msgstr "Испорачана Ид."
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Inline pixbuf"
+msgstr "Вградена слика"
+
+#: ../libpicmanbase/picmanbaseenums.c:465
+msgid "Image file"
+msgstr "Големина на слика"
+
+#: ../libpicmanbase/picmanbaseenums.c:494
+msgid "RGB color"
+msgstr "RGB боја"
+
+#: ../libpicmanbase/picmanbaseenums.c:495 ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale"
+msgstr "Сиво нијансирано"
+
+#: ../libpicmanbase/picmanbaseenums.c:496
+msgid "Indexed color"
+msgstr "Индексирана боја"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "RGB-alpha"
+msgstr "RGB-алфа"
+
+#: ../libpicmanbase/picmanbaseenums.c:531
+msgid "Grayscale-alpha"
+msgstr "Сиво нијансирано-алфа"
+
+#: ../libpicmanbase/picmanbaseenums.c:533
+msgid "Indexed-alpha"
+msgstr "Индексирано-алфа"
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|None"
+msgstr "Ништо"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "interpolation|Linear"
+msgstr "Линеарно"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Cubic"
+msgstr "Кубен"
+
+#: ../libpicmanbase/picmanbaseenums.c:566
+msgid "Sinc (Lanczos3)"
+msgstr "Рамни (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Constant"
+msgstr "Константно"
+
+#: ../libpicmanbase/picmanbaseenums.c:595
+msgid "Incremental"
+msgstr "Инкрементално"
+
+#: ../libpicmanbase/picmanbaseenums.c:624 ../modules/display-filter-lcms.c:191
+msgid "None"
+msgstr "Ништо"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Sawtooth wave"
+msgstr "Тестераст бран"
+
+#: ../libpicmanbase/picmanbaseenums.c:626
+msgid "Triangular wave"
+msgstr "Триаголен бран"
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run interactively"
+msgstr "Изврши интерактивно"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run non-interactively"
+msgstr "Изврши неинтерактивно"
+
+#: ../libpicmanbase/picmanbaseenums.c:657
+msgid "Run with last used values"
+msgstr "Изврши со последно користените вредности"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Pixels"
+msgstr "Точки"
+
+#: ../libpicmanbase/picmanbaseenums.c:686
+msgid "Points"
+msgstr "Точки"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Shadows"
+msgstr "Сенки"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Midtones"
+msgstr "Средни тонови"
+
+#: ../libpicmanbase/picmanbaseenums.c:717
+msgid "Highlights"
+msgstr "Нагласено"
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Normal (Forward)"
+msgstr "Нормализирај (Напред)"
+
+#: ../libpicmanbase/picmanbaseenums.c:746
+msgid "Corrective (Backward)"
+msgstr "Исправи (Назад)"
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Adjust"
+msgstr "Помести"
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Clip"
+msgstr "Држач"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop to result"
+msgstr "Исечи до резултатот"
+
+#: ../libpicmanbase/picmanbaseenums.c:779
+msgid "Crop with aspect"
+msgstr "Исечи од око"
+
+#: ../libpicmanbase/picmanbaseenums.c:909
+msgid "Internal PICMAN procedure"
+msgstr "Внатрешна PICMAN процедура"
+
+#: ../libpicmanbase/picmanbaseenums.c:910
+msgid "PICMAN Plug-In"
+msgstr "PICMAN додаток"
+
+#: ../libpicmanbase/picmanbaseenums.c:911
+msgid "PICMAN Extension"
+msgstr "PICMAN проширување"
+
+#: ../libpicmanbase/picmanbaseenums.c:912
+msgid "Temporary Procedure"
+msgstr "Привремена процедура"
+
+#: ../libpicmanbase/picmanbaseenums.c:1074
+msgid "From left to right"
+msgstr "Од лево кон десно"
+
+#: ../libpicmanbase/picmanbaseenums.c:1075
+msgid "From right to left"
+msgstr "Од десно кон лево"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgid "Left justified"
+msgstr "Лево е оправдано"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgid "Right justified"
+msgstr "Десно е оправдано"
+
+#: ../libpicmanbase/picmanbaseenums.c:1107
+msgid "Centered"
+msgstr "_Центрирано"
+
+#: ../libpicmanbase/picmanbaseenums.c:1108
+msgid "Filled"
+msgstr "Пополнето"
+
+#: ../libpicmanbase/picmanutils.c:170 ../libpicmanbase/picmanutils.c:175
+#: ../modules/display-filter-lcms.c:183
+#: ../modules/color-selector-cmyk-lcms.c:407
+#: ../modules/color-selector-cmyk-lcms.c:413
+msgid "(invalid UTF-8 string)"
+msgstr "(неисправна UTF-8 нишка)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "Mode of operation for color management."
+msgstr "Режим на операцијата за управување со бои."
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid "The color profile of your (primary) monitor."
+msgstr "Профил на бои на вашиот (примарен) монитор."
+
+#: ../libpicmanconfig/picmancolorconfig.c:46
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Кога е овозможено, PICMAN ќе проба да го користи профилот за приказ на бои од "
+"системот за прозорци. Конфигурираниот профил на боја од мониторот тогаш се "
+"користи како резерва."
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The default RGB working space color profile."
+msgstr "Основен RGB профил на бои за работна површина."
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "CMYK профил на бои користен за префрлање помеѓу RGB и CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+"Профил на бои користен за симулирање на печатената верзија (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid "Sets how colors are mapped for your display."
+msgstr "Подесува како се боите мапирани за вашиот приказ."
+
+#: ../libpicmanconfig/picmancolorconfig.c:58
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Подесува како боите се претворени од RGB работна површина до уредот за "
+"симулирање печат."
+
+#: ../libpicmanconfig/picmancolorconfig.c:61
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Кога е вклучена, симулацијата за печатење ќе ги означи боите кои не можат да "
+"се прикажат во одбраното поле на бои."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+"Бојата која ќе се користи за обележување на бои кои се надвор од опсег."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr "Без управување со бои"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr "Приказ на управувањето на бои"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr "Симулација на печатење"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr "Чулно"
+
+# лоше
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr "Релативно колориметриски"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "Заситеност"
+
+# гадно
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr "Апсолутно колориметриски"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:97
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "вредноста за изразот %s не е исправен UTF-8 збор"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:436
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+"очекуваниот одговор од типот „да“ или „не“ за логичкиот израз  %s, добиен ' %"
+"s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:510
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "неисправна вредност „%s“ за  %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:525
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "неисправна вредност „%ld“ за изразот %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:594
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "при обработка на изразот „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:474
+#: ../libpicmanconfig/picmanconfig-iface.c:487 ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "фатална грешка при раздвојувањето"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Не можам да го раширам ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:78
+#: ../libpicmanconfig/picmanconfigwriter.c:693
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Грешка при запишувањето во „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:136
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Не успеав да направам привремена датотека за „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:149
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Неможев да го отворам „%s“ за пишување: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:674
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Грешка при запишувањето во привремената датотека за „%s“: %s\n"
+"Оригиналната датотека не е дирана."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:682
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Грешка при запишувањето во привремената датотека за „%s“: %s\n"
+"Датотека не е  направена."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:711
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Не можев да направам „%s“: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:255
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "Неправилен UTF-8 збор"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Грешка при обработката на „%s“ во %d. редот: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:153 ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280 ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Грешка при вчитувањето на модулот '%s': %s"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "Грешка на модулот"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr "Вчитан"
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr "Неуспешно вчитување"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr "Не е вчитано"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:123
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Не можам да одредам валиден home директориум.\n"
+"Малите сликички наместо тоа ќе бидат зачувани папката за привремени датотеки "
+"(%s)."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:247 ../libpicmanthumb/picmanthumb-utils.c:315
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Неуспешно креирање на директориумот со сликички '%s'."
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Сликичката не содржи Thumb::URl запис"
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Не можев да создадам смален приказ за %s: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "_Барај:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "Боја на ис_цртување"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "Боја на _позадината"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr "_Црна"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "Б_ела"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:144
+msgid "Select color profile from disk..."
+msgstr "Избери профил на боја од диск..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Ниедно"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr "Размери"
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "Тековно:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "Старо:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Хексадецимално обележување на боја како што се користи во HTML и CSS.  Овој "
+"запис исто така прифаќа и CSS имиња на бои."
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr "HTML _обележување:"
+
+#: ../libpicmanwidgets/picmanhelpui.c:420
+msgid "Press F1 for more help"
+msgstr "Притиснете F1 за повеќе помош"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr "Отворете го избирачот на датотеки за да ги прелистате вашите папки"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr "Отворете го избирачот на датотеки за да ги прелистате вашите датотеки"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "Одберете директориум"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "Изберете датотека"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr "Килобајти"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr "Мегабајти"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr "Гигабајти"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1166
+msgid "Nothing selected"
+msgstr "Ништо не е изберено"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "Изберете _се"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr "_Опсег на изборот:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr "Отвори _страници како"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "Страна 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:508
+#: ../libpicmanwidgets/picmanpageselector.c:744
+#, c-format
+msgid "Page %d"
+msgstr "Страна %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "One page selected"
+msgstr "Изберена е една страница"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+#: ../libpicmanwidgets/picmanpageselector.c:1182
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "Изберена е %d страница"
+msgstr[1] "Изберени се %d страници"
+msgstr[2] "Изберени се %d страници"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "Записливо"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "Папка"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Кликнете на капалката, потоа кликнете на боја било каде на вашиот екран за "
+"да ја одберете таа боја."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr "Провери големина"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr "Провери стил"
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "Пре_глед"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1860
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Ова поле за внесување на текст е ограничено на %d карактер."
+msgstr[1] "Ова поле за внесување на текст е ограничено на %d карактери."
+msgstr[2] "Ова поле за внесување на текст е ограничено на %d карактери."
+
+#: ../libpicmanwidgets/picmanstock.c:112
+msgid "Anchor"
+msgstr "Врска"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "C_enter"
+msgstr "_Центар"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "_Duplicate"
+msgstr "_Дупликат"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Edit"
+msgstr "_Уреди"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "Linked"
+msgstr "Поврзано"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Paste as New"
+msgstr "Вметни како нова слика"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste Into"
+msgstr "Вметни во"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "_Reset"
+msgstr "_Повторно постави"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "Visible"
+msgstr "Видливо"
+
+#: ../libpicmanwidgets/picmanstock.c:156 ../libpicmanwidgets/picmanstock.c:160
+msgid "_Stroke"
+msgstr "_Исцртај"
+
+#: ../libpicmanwidgets/picmanstock.c:172
+msgid "L_etter Spacing"
+msgstr "Размак помеѓу _буквите"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_ine Spacing"
+msgstr "Размак на _редовите"
+
+#: ../libpicmanwidgets/picmanstock.c:189
+msgid "_Resize"
+msgstr "_Смени големина"
+
+#: ../libpicmanwidgets/picmanstock.c:190 ../libpicmanwidgets/picmanstock.c:320
+msgid "_Scale"
+msgstr "_Смени пропорционално"
+
+#: ../libpicmanwidgets/picmanstock.c:296
+msgid "Cr_op"
+msgstr "Исе_чи"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "_Transform"
+msgstr "_Трансформирај"
+
+#: ../libpicmanwidgets/picmanstock.c:319
+msgid "_Rotate"
+msgstr "_Ротирај"
+
+#: ../libpicmanwidgets/picmanstock.c:321
+msgid "_Shear"
+msgstr "_Дели"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "Уште..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:581
+msgid "Unit Selection"
+msgstr "Избор на единица"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:629
+msgid "Unit"
+msgstr "Единица"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:633
+msgid "Factor"
+msgstr "Фактор"
+
+#: ../libpicmanwidgets/picmanwidgets.c:511
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Употребете ја оваа вредност за семе за случајно генериран број - ова Ви "
+"овозможува да ја повторувате зададената \"случајна\" операција"
+
+#: ../libpicmanwidgets/picmanwidgets.c:515
+msgid "_New Seed"
+msgstr "_Ново семе"
+
+#: ../libpicmanwidgets/picmanwidgets.c:528
+msgid "Seed random number generator with a generated random number"
+msgstr "Семе на случајно генерираниот број со генерираниот случаен број"
+
+#: ../libpicmanwidgets/picmanwidgets.c:532
+msgid "_Randomize"
+msgstr "_Случајно"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "Портрет"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "Пејсаж"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "Нијанса"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "Заситеност"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "Вредност"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "Слоеви"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "Слики"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "Зголеми"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "Намали"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Протанопиа (неосетливост на црвено)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Деутеранопија (неосетливост на зелено)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Тиранопиа (неосетливост на сино)"
+
+#: ../modules/display-filter-color-blind.c:198
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Филтер за симулирање на оскудност (Brettel-Vienot-Mollon алгоритам)"
+
+#: ../modules/display-filter-color-blind.c:261
+msgid "Color Deficient Vision"
+msgstr "Поглед со оскудни бои"
+
+#: ../modules/display-filter-color-blind.c:483
+msgid "Color _deficiency type:"
+msgstr "Тип на _оштетеност на бојата:"
+
+#: ../modules/display-filter-gamma.c:90
+msgid "Gamma color display filter"
+msgstr "Екрански филтер на гама боја"
+
+#: ../modules/display-filter-gamma.c:129
+msgid "Gamma"
+msgstr "Гама"
+
+#: ../modules/display-filter-gamma.c:232
+msgid "_Gamma:"
+msgstr "_Гама:"
+
+#: ../modules/display-filter-high-contrast.c:90
+msgid "High Contrast color display filter"
+msgstr "Екрански филтер на боја со висок контраст"
+
+#: ../modules/display-filter-high-contrast.c:129
+msgid "Contrast"
+msgstr "Контраст"
+
+#: ../modules/display-filter-high-contrast.c:232
+msgid "Contrast c_ycles:"
+msgstr "_Циклуси на контрастот:"
+
+#: ../modules/display-filter-lcms.c:102
+msgid "Color management display filter using ICC color profiles"
+msgstr "Филтер на управувањето на бои која користи ICC профили на боја"
+
+#: ../modules/display-filter-lcms.c:134
+msgid "Color Management"
+msgstr "Управување со бои"
+
+#: ../modules/display-filter-lcms.c:212
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Овој филтер ги зема конфигурациите од секцијата за управување со бои во "
+"дијалогот за преференции."
+
+#: ../modules/display-filter-lcms.c:226
+msgid "Mode of operation:"
+msgstr "Режим на операции:"
+
+#: ../modules/display-filter-lcms.c:233
+msgid "Image profile:"
+msgstr "Профил на слика"
+
+#: ../modules/display-filter-lcms.c:241
+msgid "Monitor profile:"
+msgstr "Профил на мониторот:"
+
+#: ../modules/display-filter-lcms.c:249
+msgid "Print simulation profile:"
+msgstr "Профил на симулирање на печатење:"
+
+#: ../modules/display-filter-proof.c:97
+msgid "Color proof filter using ICC color profile"
+msgstr "Филтер на пробата во боји која користи ICC профил на боја"
+
+#: ../modules/display-filter-proof.c:145
+msgid "Color Proof"
+msgstr "Проба во боја"
+
+#: ../modules/display-filter-proof.c:311
+msgid "Choose an ICC Color Profile"
+msgstr "Изберете ICC профил на боја"
+
+#: ../modules/display-filter-proof.c:338
+msgid "All files (*.*)"
+msgstr "Сите датотеки (*.*)"
+
+#: ../modules/display-filter-proof.c:343
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC профил на боја (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:401
+msgid "_Profile:"
+msgstr "_Профил:"
+
+#: ../modules/display-filter-proof.c:407
+msgid "_Intent:"
+msgstr "_Намера:"
+
+#: ../modules/display-filter-proof.c:412
+msgid "_Black Point Compensation"
+msgstr "Замена за _црну точка"
+
+#: ../modules/color-selector-cmyk.c:71
+msgid "CMYK color selector"
+msgstr "Избор на CMYK боја"
+
+#: ../modules/color-selector-cmyk.c:102
+#: ../modules/color-selector-cmyk-lcms.c:150
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk.c:125
+#: ../modules/color-selector-cmyk-lcms.c:169
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk.c:127
+#: ../modules/color-selector-cmyk-lcms.c:171
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk.c:129
+#: ../modules/color-selector-cmyk-lcms.c:173
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk.c:131
+#: ../modules/color-selector-cmyk-lcms.c:175
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk.c:135
+#: ../modules/color-selector-cmyk-lcms.c:179
+msgid "Cyan"
+msgstr "Цијан"
+
+#: ../modules/color-selector-cmyk.c:136
+#: ../modules/color-selector-cmyk-lcms.c:180
+msgid "Magenta"
+msgstr "Магента"
+
+#: ../modules/color-selector-cmyk.c:137
+#: ../modules/color-selector-cmyk-lcms.c:181
+msgid "Yellow"
+msgstr "Жолта"
+
+#: ../modules/color-selector-cmyk.c:138
+#: ../modules/color-selector-cmyk-lcms.c:182
+msgid "Black"
+msgstr "Црна"
+
+#: ../modules/color-selector-cmyk.c:172
+msgid "Black _pullout:"
+msgstr "Из_влекување на црна:"
+
+#: ../modules/color-selector-cmyk.c:189
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Процент на црна боја која треба да се извлече од обоените мастила."
+
+#: ../modules/color-selector-cmyk-lcms.c:87
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK одбирач на бои (кој користи профил на бојата)"
+
+#: ../modules/color-selector-cmyk-lcms.c:395
+msgid "Profile: (none)"
+msgstr "Профил: (нема)"
+
+#: ../modules/color-selector-cmyk-lcms.c:416
+#, c-format
+msgid "Profile: %s"
+msgstr "Профил: %s"
+
+#: ../modules/color-selector-water.c:82
+msgid "Watercolor style color selector"
+msgstr "Избирач на боја во стил на водени бои"
+
+#: ../modules/color-selector-water.c:118
+msgid "Watercolor"
+msgstr "Водена боја"
+
+#: ../modules/color-selector-water.c:186
+msgid "Pressure"
+msgstr "Притисок"
+
+#: ../modules/color-selector-wheel.c:98
+msgid "HSV color wheel"
+msgstr "HSV тркало за боја"
+
+#: ../modules/color-selector-wheel.c:129
+msgid "Wheel"
+msgstr "Тркало"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 0"
+msgstr "Копче 0"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 1"
+msgstr "Копче 1"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 2"
+msgstr "Копче 2"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 3"
+msgstr "Копче 3"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 4"
+msgstr "Копче 4"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 5"
+msgstr "Копче 5"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 6"
+msgstr "Копче 6"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 7"
+msgstr "Копче 7"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 8"
+msgstr "Копче 8"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button 9"
+msgstr "Копче 9"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Mouse"
+msgstr "Копче на глушецот"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Left"
+msgstr "Лево копче"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Right"
+msgstr "Десно копче"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Middle"
+msgstr "Средно копче"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Side"
+msgstr "Странично копче"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Extra"
+msgstr "Екстра копче"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Forward"
+msgstr "Копче за напред"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Back"
+msgstr "Копче назад"
+
+#: ../modules/controller-linux-input.c:76
+msgid "Button Task"
+msgstr "Копче задача"
+
+#: ../modules/controller-linux-input.c:78
+msgid "Button Wheel"
+msgstr "Тркалце"
+
+#: ../modules/controller-linux-input.c:81
+msgid "Button Gear Down"
+msgstr "Копче запчаник надоле"
+
+#: ../modules/controller-linux-input.c:84
+msgid "Button Gear Up"
+msgstr "Копче запчаник нагоре"
+
+#: ../modules/controller-linux-input.c:90
+#: ../modules/controller-dx-dinput.c:443
+msgid "X Move Left"
+msgstr "Помести по X лево"
+
+#: ../modules/controller-linux-input.c:91
+#: ../modules/controller-dx-dinput.c:446
+msgid "X Move Right"
+msgstr "Помести по X десно"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Forward"
+msgstr "Помести по Y напред"
+
+#: ../modules/controller-linux-input.c:93
+msgid "Y Move Back"
+msgstr "Помести по Y назад"
+
+#: ../modules/controller-linux-input.c:94
+#: ../modules/controller-dx-dinput.c:461
+msgid "Z Move Up"
+msgstr "Помести нагоре по Z"
+
+#: ../modules/controller-linux-input.c:95
+#: ../modules/controller-dx-dinput.c:464
+msgid "Z Move Down"
+msgstr "Помести надоле по Z"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Forward"
+msgstr "По X оска турни напред"
+
+#: ../modules/controller-linux-input.c:98
+msgid "X Axis Tilt Back"
+msgstr "По X оска турни назад"
+
+#: ../modules/controller-linux-input.c:99
+#: ../modules/controller-dx-dinput.c:479
+msgid "Y Axis Tilt Right"
+msgstr "По Y оска турни десно"
+
+#: ../modules/controller-linux-input.c:100
+#: ../modules/controller-dx-dinput.c:482
+msgid "Y Axis Tilt Left"
+msgstr "По Y оска турни лево"
+
+#: ../modules/controller-linux-input.c:101
+#: ../modules/controller-dx-dinput.c:488
+msgid "Z Axis Turn Left"
+msgstr "По Z оска турни лево"
+
+#: ../modules/controller-linux-input.c:102
+#: ../modules/controller-dx-dinput.c:491
+msgid "Z Axis Turn Right"
+msgstr "По Z оска турни десно"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr "Хоризонтално со тркалцето турни назад"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Хоризонтално со тркалцето турни напред"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Left"
+msgstr "Бирај заврти налево"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Dial Turn Right"
+msgstr "Бирај заврти надесно"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Left"
+msgstr "Вртење на тркалцето кон лево"
+
+#: ../modules/controller-linux-input.c:109
+msgid "Wheel Turn Right"
+msgstr "Вртење на тркалцето кон десно"
+
+#: ../modules/controller-linux-input.c:178
+msgid "Linux input event controller"
+msgstr "Линукс контролер за влезни настани"
+
+#: ../modules/controller-linux-input.c:218
+#: ../modules/controller-dx-dinput.c:196 ../modules/controller-midi.c:212
+msgid "Device:"
+msgstr "Уред:"
+
+#: ../modules/controller-linux-input.c:219
+msgid "The name of the device to read Linux Input events from."
+msgstr "Името на уредот од кој Линукс ќе ги чита влезните настани."
+
+#: ../modules/controller-linux-input.c:230
+msgid "Linux Input"
+msgstr "Линукс влез"
+
+#: ../modules/controller-linux-input.c:513
+msgid "Linux Input Events"
+msgstr "Линукс влезни настани"
+
+#: ../modules/controller-linux-input.c:525
+#: ../modules/controller-dx-dinput.c:1095 ../modules/controller-midi.c:505
+msgid "No device configured"
+msgstr "Нема конфигуриран уред"
+
+#: ../modules/controller-linux-input.c:551 ../modules/controller-midi.c:454
+#: ../modules/controller-midi.c:480
+#, c-format
+msgid "Reading from %s"
+msgstr "Читам од %s"
+
+#: ../modules/controller-linux-input.c:569
+#: ../modules/controller-linux-input.c:623 ../modules/controller-midi.c:436
+#: ../modules/controller-midi.c:497 ../modules/controller-midi.c:568
+#, c-format
+msgid "Device not available: %s"
+msgstr "Уредот не е достапен: %s"
+
+#: ../modules/controller-linux-input.c:588
+#: ../modules/controller-dx-dinput.c:1120
+msgid "Device not available"
+msgstr "Уредот не е достапен: %s "
+
+#: ../modules/controller-linux-input.c:632 ../modules/controller-midi.c:577
+msgid "End of file"
+msgstr "Крај на датотеката"
+
+#: ../modules/controller-dx-dinput.c:156
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX Директен внес за контрола на акција"
+
+#: ../modules/controller-dx-dinput.c:197
+msgid "The device to read DirectInput events from."
+msgstr "Уредот да може да прочита од директениот внес за акции"
+
+#: ../modules/controller-dx-dinput.c:206
+msgid "DirectX DirectInput"
+msgstr "DirectX директен внес"
+
+#: ../modules/controller-dx-dinput.c:420
+#, c-format
+msgid "Button %d"
+msgstr "Копче %d"
+
+#: ../modules/controller-dx-dinput.c:423
+#, c-format
+msgid "Button %d Press"
+msgstr "Копче %d стисни"
+
+#: ../modules/controller-dx-dinput.c:426
+#, c-format
+msgid "Button %d Release"
+msgstr "Копче %d пушти"
+
+#: ../modules/controller-dx-dinput.c:452
+msgid "Y Move Away"
+msgstr "По Y поместување далеку"
+
+#: ../modules/controller-dx-dinput.c:455
+msgid "Y Move Near"
+msgstr "По Y поместување блиску"
+
+#: ../modules/controller-dx-dinput.c:470
+msgid "X Axis Tilt Away"
+msgstr "По X оска турни далеку"
+
+#: ../modules/controller-dx-dinput.c:473
+msgid "X Axis Tilt Near"
+msgstr "По X оска турни блиску"
+
+#: ../modules/controller-dx-dinput.c:502
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Зголеми %d лизгач"
+
+#: ../modules/controller-dx-dinput.c:505
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Намали %d лизгач"
+
+#: ../modules/controller-dx-dinput.c:515
+#, c-format
+msgid "POV %d X View"
+msgstr "ТНГ %d X Видик"
+
+#: ../modules/controller-dx-dinput.c:518
+#, c-format
+msgid "POV %d Y View"
+msgstr "ТНГ %d Y Видик "
+
+#: ../modules/controller-dx-dinput.c:521
+#, c-format
+msgid "POV %d Return"
+msgstr "ТНГ %d Врати"
+
+#: ../modules/controller-dx-dinput.c:1084
+msgid "DirectInput Events"
+msgstr "Акции од директниот внес"
+
+#: ../modules/controller-midi.c:164
+msgid "MIDI event controller"
+msgstr "MIDI контролер на акција"
+
+#: ../modules/controller-midi.c:203
+msgid "The name of the device to read MIDI events from."
+msgstr "Името на уредот од кој MIDI ќе ги чита акциите."
+
+#: ../modules/controller-midi.c:206
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Внесете 'alsa' за да го користите ALSA секвенцерот."
+
+#: ../modules/controller-midi.c:221
+msgid "Channel:"
+msgstr "Канал:"
+
+#: ../modules/controller-midi.c:222
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"MIDI канал од кој ќе се читаат настаните. Поставете на -1 за да читате од "
+"сите MIDI канали."
+
+#: ../modules/controller-midi.c:226
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:355
+#, c-format
+msgid "Note %02x on"
+msgstr "Нота %02x вклучена"
+
+#: ../modules/controller-midi.c:358
+#, c-format
+msgid "Note %02x off"
+msgstr "Нота %02x исклучена"
+
+#: ../modules/controller-midi.c:361
+#, c-format
+msgid "Controller %03d"
+msgstr "Контролер %03d"
+
+#: ../modules/controller-midi.c:408
+msgid "MIDI Events"
+msgstr "MIDI настани"
+
+#: ../modules/controller-midi.c:426
+msgid "PICMAN"
+msgstr "Гимп"
+
+#: ../modules/controller-midi.c:428
+msgid "PICMAN MIDI Input Controller"
+msgstr "Гимп MIDI контролер на настани"
+
+# bug: plural-forms
+#~ msgid "%d Byte"
+#~ msgid_plural "%d Bytes"
+#~ msgstr[0] "%d Бајт"
+#~ msgstr[1] "%d Бајти"
+#~ msgstr[2] "%d Бајтови"
+
+#~ msgid "%.2f KB"
+#~ msgstr "%.2f KB"
+
+#~ msgid "%.1f KB"
+#~ msgstr "%.1f KB"
+
+#~ msgid "%d KB"
+#~ msgstr "%d KB"
+
+#~ msgid "%.2f MB"
+#~ msgstr "%.2f MB"
+
+#~ msgid "%.1f MB"
+#~ msgstr "%.1f MB"
+
+#~ msgid "%d MB"
+#~ msgstr "%d MB"
+
+#~ msgid "%.2f GB"
+#~ msgstr "%.2f GB"
+
+#~ msgid "%.1f GB"
+#~ msgstr "%.1f GB"
+
+#~ msgid "%d GB"
+#~ msgstr "%d GB"
+
+#~ msgid "profile|None"
+#~ msgstr "профил|Нема"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "Одбирач на триаголникот со бои во сликарски стил"
+
+#~ msgid "Triangle"
+#~ msgstr "Триаголник"
+

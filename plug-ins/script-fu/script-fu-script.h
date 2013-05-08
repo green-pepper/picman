@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ SFScript * script_fu_script_new                     (const gchar     *name,
 void       script_fu_script_free                    (SFScript        *script);
 
 void       script_fu_script_install_proc            (SFScript        *script,
-                                                     GimpRunProc      run_proc);
+                                                     PicmanRunProc      run_proc);
 void       script_fu_script_uninstall_proc          (SFScript        *script);
 
 gchar    * script_fu_script_get_title               (SFScript        *script);
@@ -39,11 +39,11 @@ void       script_fu_script_reset                   (SFScript        *script,
 
 gint       script_fu_script_collect_standard_args   (SFScript        *script,
                                                      gint             n_params,
-                                                     const GimpParam *params);
+                                                     const PicmanParam *params);
 
 gchar    * script_fu_script_get_command             (SFScript        *script);
 gchar    * script_fu_script_get_command_from_params (SFScript        *script,
-                                                     const GimpParam *params);
+                                                     const PicmanParam *params);
 
 
 #endif /*  __SCRIPT_FU_SCRIPT__  */

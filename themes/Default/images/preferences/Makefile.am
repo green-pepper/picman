@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-themedatadir = $(gimpdatadir)/themes/Default/images/preferences
+themedatadir = $(picmandatadir)/themes/Default/images/preferences
 
 PREFS_IMAGES = \
 	color-management-22.png		\

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * vectors-types.h
- * Copyright (C) 2002 Simon Budig  <simon@gimp.org>
+ * Copyright (C) 2002 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@
 #include "vectors/vectors-enums.h"
 
 
-typedef struct _GimpAnchor          GimpAnchor;
+typedef struct _PicmanAnchor          PicmanAnchor;
 
-typedef struct _GimpVectors         GimpVectors;
-typedef struct _GimpVectorsUndo     GimpVectorsUndo;
-typedef struct _GimpVectorsModUndo  GimpVectorsModUndo;
-typedef struct _GimpVectorsPropUndo GimpVectorsPropUndo;
-typedef struct _GimpStroke          GimpStroke;
-typedef struct _GimpBezierStroke    GimpBezierStroke;
+typedef struct _PicmanVectors         PicmanVectors;
+typedef struct _PicmanVectorsUndo     PicmanVectorsUndo;
+typedef struct _PicmanVectorsModUndo  PicmanVectorsModUndo;
+typedef struct _PicmanVectorsPropUndo PicmanVectorsPropUndo;
+typedef struct _PicmanStroke          PicmanStroke;
+typedef struct _PicmanBezierStroke    PicmanBezierStroke;
 
 
 #endif /* __VECTORS_TYPES_H__ */

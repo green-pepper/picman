@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,26 +24,26 @@
 #include "display/display-enums.h"
 
 
-typedef struct _GimpCanvas               GimpCanvas;
-typedef struct _GimpCanvasGroup          GimpCanvasGroup;
-typedef struct _GimpCanvasItem           GimpCanvasItem;
+typedef struct _PicmanCanvas               PicmanCanvas;
+typedef struct _PicmanCanvasGroup          PicmanCanvasGroup;
+typedef struct _PicmanCanvasItem           PicmanCanvasItem;
 
-typedef struct _GimpDisplay              GimpDisplay;
-typedef struct _GimpDisplayShell         GimpDisplayShell;
-typedef struct _GimpMotionBuffer         GimpMotionBuffer;
+typedef struct _PicmanDisplay              PicmanDisplay;
+typedef struct _PicmanDisplayShell         PicmanDisplayShell;
+typedef struct _PicmanMotionBuffer         PicmanMotionBuffer;
 
-typedef struct _GimpImageWindow          GimpImageWindow;
-typedef struct _GimpMultiWindowStrategy  GimpMultiWindowStrategy;
-typedef struct _GimpSingleWindowStrategy GimpSingleWindowStrategy;
+typedef struct _PicmanImageWindow          PicmanImageWindow;
+typedef struct _PicmanMultiWindowStrategy  PicmanMultiWindowStrategy;
+typedef struct _PicmanSingleWindowStrategy PicmanSingleWindowStrategy;
 
-typedef struct _GimpCursorView           GimpCursorView;
-typedef struct _GimpNavigationEditor     GimpNavigationEditor;
-typedef struct _GimpScaleComboBox        GimpScaleComboBox;
-typedef struct _GimpStatusbar            GimpStatusbar;
+typedef struct _PicmanCursorView           PicmanCursorView;
+typedef struct _PicmanNavigationEditor     PicmanNavigationEditor;
+typedef struct _PicmanScaleComboBox        PicmanScaleComboBox;
+typedef struct _PicmanStatusbar            PicmanStatusbar;
 
-typedef struct _GimpToolDialog           GimpToolDialog;
+typedef struct _PicmanToolDialog           PicmanToolDialog;
 
-typedef struct _GimpDisplayXfer          GimpDisplayXfer;
+typedef struct _PicmanDisplayXfer          PicmanDisplayXfer;
 typedef struct _Selection                Selection;
 
 

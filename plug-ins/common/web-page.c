@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,17 +23,17 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include <webkit/webkit.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /* Defines */
 #define PLUG_IN_PROC   "plug-in-web-page"
 #define PLUG_IN_BINARY "web-page"
-#define PLUG_IN_ROLE   "gimp-web-page"
+#define PLUG_IN_ROLE   "picman-web-page"
 #define MAX_URL_LEN    2048
 
 typedef struct
@@ -57,15 +57,15 @@ typedef struct
 static void     query           (void);
 static void     run             (const gchar      *name,
                                  gint              nparams,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nreturn_vals,
-                                 GimpParam       **return_vals);
+                                 PicmanParam       **return_vals);
 static gboolean webpage_dialog  (void);
 static gint32   webpage_capture (void);
 
 
 /* Global Variables */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -81,20 +81,20 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "url",       "URL of the webpage to screenshot"                             },
-    { GIMP_PDB_INT32,  "width",     "The width of the screenshot (in pixels)"                      },
-    { GIMP_PDB_INT32,  "font-size", "The font size to use in the page (in pt)"                     }
+    { PICMAN_PDB_INT32,  "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "url",       "URL of the webpage to screenshot"                             },
+    { PICMAN_PDB_INT32,  "width",     "The width of the screenshot (in pixels)"                      },
+    { PICMAN_PDB_INT32,  "font-size", "The font size to use in the page (in pt)"                     }
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an image of a webpage"),
                           "The plug-in allows you to take a screenshot "
                           "of a webpage.",
@@ -103,38 +103,38 @@ query (void)
                           "2011",
                           N_("From _Webpage..."),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
 }
 
 static void
 run (const gchar      *name,
      gint             nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpRunMode        run_mode = param[0].data.d_int32;
-  GimpPDBStatusType  status   = GIMP_PDB_EXECUTION_ERROR;
+  PicmanRunMode        run_mode = param[0].data.d_int32;
+  PicmanPDBStatusType  status   = PICMAN_PDB_EXECUTION_ERROR;
   gint32             image_id = -1;
-  static GimpParam   values[2];
-  WebpageSaveVals    save = {"http://www.gimp.org/", 1024, 12};
+  static PicmanParam   values[2];
+  WebpageSaveVals    save = {"http://www.picman.org/", 1024, 12};
 
   INIT_I18N ();
 
   /* initialize the return of the status */
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
 
   /* MUST call this before any RSVG funcs */
   g_type_init ();
 
-  gimp_get_data (PLUG_IN_PROC, &save);
+  picman_get_data (PLUG_IN_PROC, &save);
 
   webpagevals.url = g_strdup (save.url);
   webpagevals.width = save.width;
@@ -143,41 +143,41 @@ run (const gchar      *name,
   /* how are we running today? */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       if (webpage_dialog ())
-        status = GIMP_PDB_SUCCESS;
+        status = PICMAN_PDB_SUCCESS;
       else
-        status = GIMP_PDB_CANCEL;
+        status = PICMAN_PDB_CANCEL;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* This is currently not supported. */
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       webpagevals.url = param[1].data.d_string;
       webpagevals.width = param[2].data.d_int32;
       webpagevals.font_size = param[3].data.d_int32;
-      status = GIMP_PDB_SUCCESS;
+      status = PICMAN_PDB_SUCCESS;
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       image_id = webpage_capture ();
 
       if (image_id == -1)
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
 
           if (webpagevals.error)
             {
               *nreturn_vals = 2;
 
-              values[1].type = GIMP_PDB_STRING;
+              values[1].type = PICMAN_PDB_STRING;
               values[1].data.d_string = webpagevals.error->message;
             }
         }
@@ -196,14 +196,14 @@ run (const gchar      *name,
               memset (save.url, 0, MAX_URL_LEN);
             }
 
-          gimp_set_data (PLUG_IN_PROC, &save, sizeof save);
+          picman_set_data (PLUG_IN_PROC, &save, sizeof save);
 
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_display_new (image_id);
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_display_new (image_id);
 
           *nreturn_vals = 2;
 
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_id;
         }
     }
@@ -228,11 +228,11 @@ webpage_dialog (void)
   gint status;
   gboolean ret = FALSE;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Create from webpage"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Create from webpage"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             _("_Create"),     GTK_RESPONSE_OK,
@@ -243,7 +243,7 @@ webpage_dialog (void)
                                            GTK_RESPONSE_OK,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
@@ -255,7 +255,7 @@ webpage_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_WEB, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_WEB, GTK_ICON_SIZE_BUTTON);
   gtk_box_pack_start (GTK_BOX (vbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -293,7 +293,7 @@ webpage_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new (&adjustment, webpagevals.width,
+  spinbutton = picman_spin_button_new (&adjustment, webpagevals.width,
                                      1, 8192,
                                      1, 10, 0, 1, 0);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
@@ -312,7 +312,7 @@ webpage_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_int_combo_box_new (_("Huge"), 16,
+  combo = picman_int_combo_box_new (_("Huge"), 16,
                                   _("Large"), 14,
                                   C_("web-page", "Default"), 12,
                                   _("Small"), 10,
@@ -332,14 +332,14 @@ webpage_dialog (void)
       active = 12;
     }
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), active);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), active);
 
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   gtk_widget_show (combo);
 
   g_object_unref (sizegroup);
 
-  status = gimp_dialog_run (GIMP_DIALOG (dialog));
+  status = picman_dialog_run (PICMAN_DIALOG (dialog));
   if (status == GTK_RESPONSE_OK)
     {
       g_free (webpagevals.url);
@@ -348,7 +348,7 @@ webpage_dialog (void)
       webpagevals.width = (gint) gtk_adjustment_get_value
         (GTK_ADJUSTMENT (adjustment));
 
-      gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (combo),
                                      &webpagevals.font_size);
 
       ret = TRUE;
@@ -373,7 +373,7 @@ notify_progress_cb (WebKitWebView  *view,
 
   if ((progress - old_progress) > 0.01)
     {
-      gimp_progress_update (progress);
+      picman_progress_update (progress);
       old_progress = progress;
     }
 }
@@ -480,12 +480,12 @@ webpage_capture (void)
   gtk_widget_set_size_request (view, webpagevals.width, -1);
   gtk_container_add (GTK_CONTAINER (window), view);
 
-  /* Append "GIMP/<GIMP_VERSION>" to the user agent string */
+  /* Append "PICMAN/<PICMAN_VERSION>" to the user agent string */
   settings = webkit_web_view_get_settings (WEBKIT_WEB_VIEW (view));
   g_object_get (settings,
                 "user-agent", &ua_old,
                 NULL);
-  ua = g_strdup_printf ("%s GIMP/%s", ua_old, GIMP_VERSION);
+  ua = g_strdup_printf ("%s PICMAN/%s", ua_old, PICMAN_VERSION);
   g_object_set (settings,
                 "user-agent", ua,
                 NULL);
@@ -507,7 +507,7 @@ webpage_capture (void)
                     G_CALLBACK (notify_load_status_cb),
                     window);
 
-  gimp_progress_init_printf (_("Downloading webpage '%s'"), webpagevals.url);
+  picman_progress_init_printf (_("Downloading webpage '%s'"), webpagevals.url);
 
   webkit_web_view_open (WEBKIT_WEB_VIEW (view),
                         webpagevals.url);
@@ -516,7 +516,7 @@ webpage_capture (void)
 
   gtk_widget_destroy (window);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   if (webpagevals.pixbuf)
     {
@@ -524,24 +524,24 @@ webpage_capture (void)
       gint height;
       gint32 layer;
 
-      gimp_progress_init_printf (_("Transferring webpage image for '%s'"),
+      picman_progress_init_printf (_("Transferring webpage image for '%s'"),
                                  webpagevals.url);
 
       width  = gdk_pixbuf_get_width (webpagevals.pixbuf);
       height = gdk_pixbuf_get_height (webpagevals.pixbuf);
 
-      image = gimp_image_new (width, height, GIMP_RGB);
+      image = picman_image_new (width, height, PICMAN_RGB);
 
-      gimp_image_undo_disable (image);
-      layer = gimp_layer_new_from_pixbuf (image, _("Webpage"), webpagevals.pixbuf,
-                                          100, GIMP_NORMAL_MODE, 0.0, 1.0);
-      gimp_image_insert_layer (image, layer, -1, 0);
-      gimp_image_undo_enable (image);
+      picman_image_undo_disable (image);
+      layer = picman_layer_new_from_pixbuf (image, _("Webpage"), webpagevals.pixbuf,
+                                          100, PICMAN_NORMAL_MODE, 0.0, 1.0);
+      picman_image_insert_layer (image, layer, -1, 0);
+      picman_image_undo_enable (image);
 
       g_object_unref (webpagevals.pixbuf);
       webpagevals.pixbuf = NULL;
 
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
     }
 
   return image;

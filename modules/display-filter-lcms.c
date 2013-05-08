@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,14 +38,14 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 #define CDISPLAY_TYPE_LCMS            (cdisplay_lcms_get_type ())
@@ -60,14 +60,14 @@ typedef struct _CdisplayLcmsClass CdisplayLcmsClass;
 
 struct _CdisplayLcms
 {
-  GimpColorDisplay  parent_instance;
+  PicmanColorDisplay  parent_instance;
 
   cmsHTRANSFORM     transform;
 };
 
 struct _CdisplayLcmsClass
 {
-  GimpColorDisplayClass parent_instance;
+  PicmanColorDisplayClass parent_instance;
 };
 
 
@@ -75,10 +75,10 @@ GType               cdisplay_lcms_get_type             (void);
 
 static void         cdisplay_lcms_finalize             (GObject           *object);
 
-static GtkWidget  * cdisplay_lcms_configure            (GimpColorDisplay  *display);
-static void         cdisplay_lcms_convert_surface      (GimpColorDisplay  *display,
+static GtkWidget  * cdisplay_lcms_configure            (PicmanColorDisplay  *display);
+static void         cdisplay_lcms_convert_surface      (PicmanColorDisplay  *display,
                                                         cairo_surface_t   *surface);
-static void         cdisplay_lcms_changed              (GimpColorDisplay  *display);
+static void         cdisplay_lcms_changed              (PicmanColorDisplay  *display);
 
 static cmsHPROFILE  cdisplay_lcms_get_rgb_profile      (CdisplayLcms      *lcms);
 static cmsHPROFILE  cdisplay_lcms_get_display_profile  (CdisplayLcms      *lcms);
@@ -95,9 +95,9 @@ static void         cdisplay_lcms_notify_profile       (GObject           *confi
                                                         CdisplayLcms      *lcms);
 
 
-static const GimpModuleInfo cdisplay_lcms_info =
+static const PicmanModuleInfo cdisplay_lcms_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("Color management display filter using ICC color profiles"),
   "Sven Neumann",
   "v0.3",
@@ -106,16 +106,16 @@ static const GimpModuleInfo cdisplay_lcms_info =
 };
 
 G_DEFINE_DYNAMIC_TYPE (CdisplayLcms, cdisplay_lcms,
-                       GIMP_TYPE_COLOR_DISPLAY)
+                       PICMAN_TYPE_COLOR_DISPLAY)
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &cdisplay_lcms_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   cdisplay_lcms_register_type (module);
 
@@ -126,13 +126,13 @@ static void
 cdisplay_lcms_class_init (CdisplayLcmsClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpColorDisplayClass *display_class = GIMP_COLOR_DISPLAY_CLASS (klass);
+  PicmanColorDisplayClass *display_class = PICMAN_COLOR_DISPLAY_CLASS (klass);
 
   object_class->finalize         = cdisplay_lcms_finalize;
 
   display_class->name            = _("Color Management");
-  display_class->help_id         = "gimp-colordisplay-lcms";
-  display_class->stock_id        = GIMP_STOCK_DISPLAY_FILTER_LCMS;
+  display_class->help_id         = "picman-colordisplay-lcms";
+  display_class->stock_id        = PICMAN_STOCK_DISPLAY_FILTER_LCMS;
 
   display_class->configure       = cdisplay_lcms_configure;
   display_class->convert_surface = cdisplay_lcms_convert_surface;
@@ -242,10 +242,10 @@ cdisplay_lcms_profile_get_info (cmsHPROFILE   profile,
 }
 
 static GtkWidget *
-cdisplay_lcms_configure (GimpColorDisplay *display)
+cdisplay_lcms_configure (PicmanColorDisplay *display)
 {
   CdisplayLcms *lcms   = CDISPLAY_LCMS (display);
-  GObject      *config = G_OBJECT (gimp_color_display_get_config (display));
+  GObject      *config = G_OBJECT (picman_color_display_get_config (display));
   GtkWidget    *vbox;
   GtkWidget    *hint;
   GtkWidget    *table;
@@ -257,7 +257,7 @@ cdisplay_lcms_configure (GimpColorDisplay *display)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
 
-  hint = gimp_hint_box_new (_("This filter takes its configuration "
+  hint = picman_hint_box_new (_("This filter takes its configuration "
                               "from the Color Management section "
                               "in the Preferences dialog."));
   gtk_box_pack_start (GTK_BOX (vbox), hint, FALSE, FALSE, 0);
@@ -272,7 +272,7 @@ cdisplay_lcms_configure (GimpColorDisplay *display)
 
   cdisplay_lcms_attach_labelled (GTK_TABLE (table), row++,
                                  _("Mode of operation:"),
-                                 gimp_prop_enum_label_new (config, "mode"));
+                                 picman_prop_enum_label_new (config, "mode"));
 
   label = gtk_label_new (NULL);
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
@@ -306,7 +306,7 @@ cdisplay_lcms_configure (GimpColorDisplay *display)
 }
 
 static void
-cdisplay_lcms_convert_surface (GimpColorDisplay *display,
+cdisplay_lcms_convert_surface (PicmanColorDisplay *display,
                                cairo_surface_t  *surface)
 {
   CdisplayLcms   *lcms   = CDISPLAY_LCMS (display);
@@ -334,7 +334,7 @@ cdisplay_lcms_convert_surface (GimpColorDisplay *display,
        */
       for (x = 0; x < width; x++)
         {
-          GIMP_CAIRO_ARGB32_GET_PIXEL (buf + 4*x, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_GET_PIXEL (buf + 4*x, r, g, b, a);
           rowbuf[4*x+0] = a;
           rowbuf[4*x+1] = r;
           rowbuf[4*x+2] = g;
@@ -350,7 +350,7 @@ cdisplay_lcms_convert_surface (GimpColorDisplay *display,
           r = rowbuf[4*x+1];
           g = rowbuf[4*x+2];
           b = rowbuf[4*x+3];
-          GIMP_CAIRO_ARGB32_SET_PIXEL (buf + 4*x, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_SET_PIXEL (buf + 4*x, r, g, b, a);
         }
     }
 
@@ -358,10 +358,10 @@ cdisplay_lcms_convert_surface (GimpColorDisplay *display,
 }
 
 static void
-cdisplay_lcms_changed (GimpColorDisplay *display)
+cdisplay_lcms_changed (PicmanColorDisplay *display)
 {
   CdisplayLcms    *lcms   = CDISPLAY_LCMS (display);
-  GimpColorConfig *config = gimp_color_display_get_config (display);
+  PicmanColorConfig *config = picman_color_display_get_config (display);
 
   cmsHPROFILE      src_profile   = NULL;
   cmsHPROFILE      dest_profile  = NULL;
@@ -380,21 +380,21 @@ cdisplay_lcms_changed (GimpColorDisplay *display)
 
   switch (config->mode)
     {
-    case GIMP_COLOR_MANAGEMENT_OFF:
+    case PICMAN_COLOR_MANAGEMENT_OFF:
       return;
 
-    case GIMP_COLOR_MANAGEMENT_SOFTPROOF:
+    case PICMAN_COLOR_MANAGEMENT_SOFTPROOF:
       proof_profile = cdisplay_lcms_get_printer_profile (lcms);
       /*  fallthru  */
 
-    case GIMP_COLOR_MANAGEMENT_DISPLAY:
+    case PICMAN_COLOR_MANAGEMENT_DISPLAY:
       src_profile = cdisplay_lcms_get_rgb_profile (lcms);
       dest_profile = cdisplay_lcms_get_display_profile (lcms);
       break;
     }
 
   if (config->display_intent ==
-      GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
+      PICMAN_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
     {
       flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
     }
@@ -415,7 +415,7 @@ cdisplay_lcms_changed (GimpColorDisplay *display)
 
           flags |= cmsFLAGS_GAMUTCHECK;
 
-          gimp_rgb_get_uchar (&config->out_of_gamut_color, &r, &g, &b);
+          picman_rgb_get_uchar (&config->out_of_gamut_color, &r, &g, &b);
 
           alarmCodes[0] = (cmsUInt16Number) r * 256;
           alarmCodes[1] = (cmsUInt16Number) g * 256;
@@ -462,16 +462,16 @@ cdisplay_lcms_profile_is_rgb (cmsHPROFILE profile)
 static cmsHPROFILE
 cdisplay_lcms_get_rgb_profile (CdisplayLcms *lcms)
 {
-  GimpColorConfig  *config;
-  GimpColorManaged *managed;
+  PicmanColorConfig  *config;
+  PicmanColorManaged *managed;
   cmsHPROFILE       profile = NULL;
 
-  managed = gimp_color_display_get_managed (GIMP_COLOR_DISPLAY (lcms));
+  managed = picman_color_display_get_managed (PICMAN_COLOR_DISPLAY (lcms));
 
   if (managed)
     {
       gsize         len;
-      const guint8 *data = gimp_color_managed_get_icc_profile (managed, &len);
+      const guint8 *data = picman_color_managed_get_icc_profile (managed, &len);
 
       if (data)
         profile = cmsOpenProfileFromMem ((gpointer) data, len);
@@ -486,7 +486,7 @@ cdisplay_lcms_get_rgb_profile (CdisplayLcms *lcms)
 
   if (! profile)
     {
-      config = gimp_color_display_get_config (GIMP_COLOR_DISPLAY (lcms));
+      config = picman_color_display_get_config (PICMAN_COLOR_DISPLAY (lcms));
 
       if (config->rgb_profile)
         profile = cmsOpenProfileFromFile (config->rgb_profile, "r");
@@ -499,10 +499,10 @@ static GdkScreen *
 cdisplay_lcms_get_screen (CdisplayLcms *lcms,
                           gint         *monitor)
 {
-  GimpColorManaged *managed;
+  PicmanColorManaged *managed;
   GdkScreen        *screen;
 
-  managed = gimp_color_display_get_managed (GIMP_COLOR_DISPLAY (lcms));
+  managed = picman_color_display_get_managed (PICMAN_COLOR_DISPLAY (lcms));
 
   if (GTK_IS_WIDGET (managed))
     screen = gtk_widget_get_screen (GTK_WIDGET (managed));
@@ -530,10 +530,10 @@ cdisplay_lcms_get_screen (CdisplayLcms *lcms,
 static cmsHPROFILE
 cdisplay_lcms_get_display_profile (CdisplayLcms *lcms)
 {
-  GimpColorConfig *config;
+  PicmanColorConfig *config;
   cmsHPROFILE      profile = NULL;
 
-  config = gimp_color_display_get_config (GIMP_COLOR_DISPLAY (lcms));
+  config = picman_color_display_get_config (PICMAN_COLOR_DISPLAY (lcms));
 
 #if defined GDK_WINDOWING_X11
   if (config->display_profile_from_gdk)
@@ -633,9 +633,9 @@ cdisplay_lcms_get_display_profile (CdisplayLcms *lcms)
 static cmsHPROFILE
 cdisplay_lcms_get_printer_profile (CdisplayLcms *lcms)
 {
-  GimpColorConfig *config;
+  PicmanColorConfig *config;
 
-  config = gimp_color_display_get_config (GIMP_COLOR_DISPLAY (lcms));
+  config = picman_color_display_get_config (PICMAN_COLOR_DISPLAY (lcms));
 
   if (config->printer_profile)
     return cmsOpenProfileFromFile (config->printer_profile, "r");
@@ -657,7 +657,7 @@ cdisplay_lcms_attach_labelled (GtkTable    *table,
                         "yalign", 0.5,
                         NULL);
 
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
   gtk_table_attach (table, label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
@@ -705,7 +705,7 @@ cdisplay_lcms_update_profile_label (CdisplayLcms *lcms,
   cdisplay_lcms_profile_get_info (profile, &text, &tooltip);
 
   gtk_label_set_text (GTK_LABEL (label), text);
-  gimp_help_set_help_data (label, tooltip, NULL);
+  picman_help_set_help_data (label, tooltip, NULL);
 
   g_free (text);
   g_free (tooltip);

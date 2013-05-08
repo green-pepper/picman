@@ -1,4 +1,4 @@
-/* tiff loading for GIMP
+/* tiff loading for PICMAN
  *  -Peter Mattis
  *
  * The TIFF loading code has been completely revamped by Nick Lamb
@@ -56,7 +56,7 @@
 
 #include <glib/gstdio.h>
 #ifdef G_OS_WIN32
-#include <libgimpbase/gimpwin32-io.h>
+#include <libpicmanbase/picmanwin32-io.h>
 #endif
 
 #ifndef _O_BINARY
@@ -65,15 +65,15 @@
 
 #include <tiffio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-tiff-load"
 #define PLUG_IN_BINARY "file-tiff-load"
-#define PLUG_IN_ROLE   "gimp-file-tiff-load"
+#define PLUG_IN_ROLE   "picman-file-tiff-load"
 
 
 typedef struct
@@ -104,9 +104,9 @@ typedef struct
 static void   query     (void);
 static void   run       (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gboolean  load_dialog      (TIFF               *tif,
                                    TiffSelectedPages  *pages);
@@ -142,7 +142,7 @@ static TIFF     *tiff_open     (const gchar  *filename,
                                 GError      **error);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -157,8 +157,8 @@ static TiffSaveVals tsvals =
 };
 
 
-static GimpRunMode             run_mode      = GIMP_RUN_INTERACTIVE;
-static GimpPageSelectorTarget  target        = GIMP_PAGE_SELECTOR_TARGET_LAYERS;
+static PicmanRunMode             run_mode      = PICMAN_RUN_INTERACTIVE;
+static PicmanPageSelectorTarget  target        = PICMAN_PAGE_SELECTOR_TARGET_LAYERS;
 
 
 MAIN ()
@@ -166,18 +166,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "loads files of the tiff file format",
                           "FIXME: write help for tiff_load",
                           "Spencer Kimball, Peter Mattis & Nick Lamb",
@@ -185,13 +185,13 @@ query (void)
                           "1995-1996,1998-2003",
                           N_("TIFF image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/tiff");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/tiff");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "tif,tiff",
                                     "",
                                     "0,string,II*\\0,0,string,MM\\0*");
@@ -200,12 +200,12 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   GError            *error  = NULL;
   gint32             image;
   TiffSelectedPages  pages;
@@ -218,8 +218,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   TIFFSetWarningHandler (tiff_warning);
   TIFFSetErrorHandler (tiff_error);
@@ -231,7 +231,7 @@ run (const gchar      *name,
 
       if (tif)
         {
-          gimp_get_data (LOAD_PROC, &target);
+          picman_get_data (LOAD_PROC, &target);
 
           pages.n_pages = pages.o_pages = TIFFNumberOfDirectories (tif);
 
@@ -239,16 +239,16 @@ run (const gchar      *name,
             {
               g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                            _("TIFF '%s' does not contain any directories"),
-                           gimp_filename_to_utf8 (filename));
+                           picman_filename_to_utf8 (filename));
 
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
           else
             {
               gboolean run_it = FALSE;
               gint     i;
 
-              if (run_mode != GIMP_RUN_INTERACTIVE)
+              if (run_mode != PICMAN_RUN_INTERACTIVE)
                 {
                   pages.pages = g_new (gint, pages.n_pages);
 
@@ -260,18 +260,18 @@ run (const gchar      *name,
 
               if (pages.n_pages == 1)
                 {
-                  target = GIMP_PAGE_SELECTOR_TARGET_LAYERS;
+                  target = PICMAN_PAGE_SELECTOR_TARGET_LAYERS;
                   pages.pages = g_new0 (gint, pages.n_pages);
 
                   run_it = TRUE;
                 }
 
-              if ((! run_it) && (run_mode == GIMP_RUN_INTERACTIVE))
+              if ((! run_it) && (run_mode == PICMAN_RUN_INTERACTIVE))
                 run_it = load_dialog (tif, &pages);
 
               if (run_it)
                 {
-                  gimp_set_data (LOAD_PROC, &target, sizeof (target));
+                  picman_set_data (LOAD_PROC, &target, sizeof (target));
 
                   image = load_image (param[1].data.d_string, tif, &pages,
                                       &error);
@@ -281,17 +281,17 @@ run (const gchar      *name,
                   if (image != -1)
                     {
                       *nreturn_vals = 2;
-                      values[1].type         = GIMP_PDB_IMAGE;
+                      values[1].type         = PICMAN_PDB_IMAGE;
                       values[1].data.d_image = image;
                     }
                   else
                     {
-                      status = GIMP_PDB_EXECUTION_ERROR;
+                      status = PICMAN_PDB_EXECUTION_ERROR;
                     }
                 }
               else
                 {
-                  status = GIMP_PDB_CANCEL;
+                  status = PICMAN_PDB_CANCEL;
                 }
             }
 
@@ -299,18 +299,18 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -425,11 +425,11 @@ load_dialog (TIFF              *tif,
   gint        i;
   gboolean    run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Import from TIFF"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Import from TIFF"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, LOAD_PROC,
+                            picman_standard_help_func, LOAD_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             _("_Import"),     GTK_RESPONSE_OK,
@@ -441,7 +441,7 @@ load_dialog (TIFF              *tif,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -450,19 +450,19 @@ load_dialog (TIFF              *tif,
   gtk_widget_show (vbox);
 
   /* Page Selector */
-  selector = gimp_page_selector_new ();
+  selector = picman_page_selector_new ();
   gtk_box_pack_start (GTK_BOX (vbox), selector, TRUE, TRUE, 0);
 
-  gimp_page_selector_set_n_pages (GIMP_PAGE_SELECTOR (selector),
+  picman_page_selector_set_n_pages (PICMAN_PAGE_SELECTOR (selector),
                                   pages->n_pages);
-  gimp_page_selector_set_target (GIMP_PAGE_SELECTOR (selector), target);
+  picman_page_selector_set_target (PICMAN_PAGE_SELECTOR (selector), target);
 
   for (i = 0; i < pages->n_pages; i++)
     {
       const gchar *name = tiff_get_page_name (tif);
 
       if (name)
-        gimp_page_selector_set_page_label (GIMP_PAGE_SELECTOR (selector),
+        picman_page_selector_set_page_label (PICMAN_PAGE_SELECTOR (selector),
                                            i, name);
 
       TIFFReadDirectory (tif);
@@ -478,22 +478,22 @@ load_dialog (TIFF              *tif,
   gtk_widget_show (dialog);
 
   /* run the dialog */
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
-    target = gimp_page_selector_get_target (GIMP_PAGE_SELECTOR (selector));
+    target = picman_page_selector_get_target (PICMAN_PAGE_SELECTOR (selector));
 
   pages->pages =
-    gimp_page_selector_get_selected_pages (GIMP_PAGE_SELECTOR (selector),
+    picman_page_selector_get_selected_pages (PICMAN_PAGE_SELECTOR (selector),
                                            &pages->n_pages);
 
   /* select all if none selected */
   if (pages->n_pages == 0)
     {
-      gimp_page_selector_select_all (GIMP_PAGE_SELECTOR (selector));
+      picman_page_selector_select_all (PICMAN_PAGE_SELECTOR (selector));
 
       pages->pages =
-        gimp_page_selector_get_selected_pages (GIMP_PAGE_SELECTOR (selector),
+        picman_page_selector_get_selected_pages (PICMAN_PAGE_SELECTOR (selector),
                                                &pages->n_pages);
     }
 
@@ -510,9 +510,9 @@ load_image (const gchar        *filename,
   guint16       orientation;
   gint          cols, rows;
   gboolean      alpha;
-  gint          image = 0, image_type = GIMP_RGB;
-  gint          layer, layer_type     = GIMP_RGB_IMAGE;
-  gint          first_image_type      = GIMP_RGB;
+  gint          image = 0, image_type = PICMAN_RGB;
+  gint          layer, layer_type     = PICMAN_RGB_IMAGE;
+  gint          first_image_type      = PICMAN_RGB;
   const Babl   *base_format = NULL;
   float         layer_offset_x        = 0.0;
   float         layer_offset_y        = 0.0;
@@ -526,7 +526,7 @@ load_image (const gchar        *filename,
   channel_data *channel = NULL;
 
   gushort      *redmap, *greenmap, *bluemap;
-  GimpRGB       color;
+  PicmanRGB       color;
   guchar        cmap[768];
 
   uint16  planar = PLANARCONFIG_CONTIG;
@@ -537,7 +537,7 @@ load_image (const gchar        *filename,
   gboolean      worst_case = FALSE;
 
   TiffSaveVals  save_vals;
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   guint16       tmp;
 
   const gchar  *name;
@@ -553,10 +553,10 @@ load_image (const gchar        *filename,
   guchar       *icc_profile;
 #endif
 
-  gimp_rgb_set (&color, 0.0, 0.0, 0.0);
+  picman_rgb_set (&color, 0.0, 0.0, 0.0);
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
   /* We will loop through the all pages in case of multipage TIFF
      and load every page as a separate layer. */
 
@@ -569,7 +569,7 @@ load_image (const gchar        *filename,
       TIFFSetDirectory (tif, pages->pages[li]);
       ilayer = pages->pages[li];
 
-      gimp_progress_update (0.0);
+      picman_progress_update (0.0);
 
       TIFFGetFieldDefaulted (tif, TIFFTAG_BITSPERSAMPLE, &bps);
 
@@ -586,14 +586,14 @@ load_image (const gchar        *filename,
       if (!TIFFGetField (tif, TIFFTAG_IMAGEWIDTH, &cols))
         {
           g_message ("Could not get image width from '%s'",
-                     gimp_filename_to_utf8 (filename));
+                     picman_filename_to_utf8 (filename));
           return -1;
         }
 
       if (!TIFFGetField (tif, TIFFTAG_IMAGELENGTH, &rows))
         {
           g_message ("Could not get image length from '%s'",
-                     gimp_filename_to_utf8 (filename));
+                     picman_filename_to_utf8 (filename));
           return -1;
         }
 
@@ -642,7 +642,7 @@ load_image (const gchar        *filename,
           /* assuming unassociated alpha if unspecified */
           g_message ("alpha channel type not defined for file %s. "
                      "Assuming alpha is not premultiplied",
-                     gimp_filename_to_utf8 (filename));
+                     picman_filename_to_utf8 (filename));
           alpha = TRUE;
           tsvals.save_transp_pixels = TRUE;
           --extra;
@@ -672,8 +672,8 @@ load_image (const gchar        *filename,
 #if 0
           if (bps == 1 && !alpha && spp == 1)
             {
-              image_type = GIMP_INDEXED;
-              layer_type = GIMP_INDEXED_IMAGE;
+              image_type = PICMAN_INDEXED;
+              layer_type = PICMAN_INDEXED_IMAGE;
 
               is_bw = TRUE;
               fill_bit2byte ();
@@ -681,8 +681,8 @@ load_image (const gchar        *filename,
           else
 #endif
             {
-              image_type = GIMP_GRAY;
-              layer_type = (alpha) ? GIMP_GRAYA_IMAGE : GIMP_GRAY_IMAGE;
+              image_type = PICMAN_GRAY;
+              layer_type = (alpha) ? PICMAN_GRAYA_IMAGE : PICMAN_GRAY_IMAGE;
               if (bps == 8 && alpha)
                 base_format = babl_format ("Y u8");
               else if (bps == 8 && !alpha)
@@ -695,8 +695,8 @@ load_image (const gchar        *filename,
           break;
 
         case PHOTOMETRIC_RGB:
-          image_type = GIMP_RGB;
-          layer_type = (alpha) ? GIMP_RGBA_IMAGE : GIMP_RGB_IMAGE;
+          image_type = PICMAN_RGB;
+          layer_type = (alpha) ? PICMAN_RGBA_IMAGE : PICMAN_RGB_IMAGE;
           if (bps == 8 && alpha)
             base_format = babl_format ("R'G'B'A u8");
           else if (bps == 8 && !alpha)
@@ -709,8 +709,8 @@ load_image (const gchar        *filename,
 
 #if 0
         case PHOTOMETRIC_PALETTE:
-          image_type = GIMP_INDEXED;
-          layer_type = (alpha) ? GIMP_INDEXEDA_IMAGE : GIMP_INDEXED_IMAGE;
+          image_type = PICMAN_INDEXED;
+          layer_type = (alpha) ? PICMAN_INDEXEDA_IMAGE : PICMAN_INDEXED_IMAGE;
           break;
 #endif
 
@@ -752,15 +752,15 @@ load_image (const gchar        *filename,
 
       if (worst_case)
         {
-          image_type = GIMP_RGB;
-          layer_type = GIMP_RGBA_IMAGE;
+          image_type = PICMAN_RGB;
+          layer_type = PICMAN_RGBA_IMAGE;
           if (bps == 8)
             base_format = babl_format ("RGBA u8");
           else if (bps == 16)
             base_format = babl_format ("RGBA u16");
         }
 
-      if (target == GIMP_PAGE_SELECTOR_TARGET_LAYERS)
+      if (target == PICMAN_PAGE_SELECTOR_TARGET_LAYERS)
         {
           if (li == 0)
             first_image_type = image_type;
@@ -768,23 +768,23 @@ load_image (const gchar        *filename,
             continue;
         }
 
-      if ((target == GIMP_PAGE_SELECTOR_TARGET_IMAGES) || (! image))
+      if ((target == PICMAN_PAGE_SELECTOR_TARGET_IMAGES) || (! image))
         {
-          if ((image = gimp_image_new_with_precision (cols, rows, image_type,
-                                                      bps <= 8 ? GIMP_PRECISION_U8 : GIMP_PRECISION_U16)) == -1)
+          if ((image = picman_image_new_with_precision (cols, rows, image_type,
+                                                      bps <= 8 ? PICMAN_PRECISION_U8 : PICMAN_PRECISION_U16)) == -1)
             {
               g_message ("Could not create a new image: %s",
-                         gimp_get_pdb_error ());
+                         picman_get_pdb_error ());
               return -1;
             }
 
-          gimp_image_undo_disable (image);
+          picman_image_undo_disable (image);
 
-          if (target == GIMP_PAGE_SELECTOR_TARGET_IMAGES)
+          if (target == PICMAN_PAGE_SELECTOR_TARGET_IMAGES)
             {
               gchar *fname = g_strdup_printf ("%s-%d", filename, ilayer);
 
-              gimp_image_set_filename (image, fname);
+              picman_image_set_filename (image, fname);
               g_free (fname);
 
               images_list = g_list_prepend (images_list,
@@ -795,12 +795,12 @@ load_image (const gchar        *filename,
               gchar *fname = g_strdup_printf (_("%s-%d-of-%d-pages"), filename,
                                               pages->n_pages, pages->o_pages);
 
-              gimp_image_set_filename (image, fname);
+              picman_image_set_filename (image, fname);
               g_free (fname);
             }
           else
             {
-              gimp_image_set_filename (image, filename);
+              picman_image_set_filename (image, filename);
             }
         }
 
@@ -812,22 +812,22 @@ load_image (const gchar        *filename,
        * that can handle ICC profiles. Otherwise just ignore this section. */
       if (TIFFGetField (tif, TIFFTAG_ICCPROFILE, &profile_size, &icc_profile))
         {
-          parasite = gimp_parasite_new ("icc-profile",
-                                        GIMP_PARASITE_PERSISTENT |
-                                        GIMP_PARASITE_UNDOABLE,
+          parasite = picman_parasite_new ("icc-profile",
+                                        PICMAN_PARASITE_PERSISTENT |
+                                        PICMAN_PARASITE_UNDOABLE,
                                         profile_size, icc_profile);
-          gimp_image_attach_parasite (image, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (image, parasite);
+          picman_parasite_free (parasite);
         }
 #endif
 
-      parasite = gimp_parasite_new ("tiff-save-options", 0,
+      parasite = picman_parasite_new ("tiff-save-options", 0,
                                     sizeof (save_vals), &save_vals);
-      gimp_image_attach_parasite (image, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image, parasite);
+      picman_parasite_free (parasite);
 
       /* Attach a parasite containing the image description.  Pretend to
-       * be a gimp comment so other plugins will use this description as
+       * be a picman comment so other plugins will use this description as
        * an image comment where appropriate. */
       {
         const gchar *img_desc;
@@ -835,11 +835,11 @@ load_image (const gchar        *filename,
         if (TIFFGetField (tif, TIFFTAG_IMAGEDESCRIPTION, &img_desc) &&
             g_utf8_validate (img_desc, -1, NULL))
           {
-            parasite = gimp_parasite_new ("gimp-comment",
-                                          GIMP_PARASITE_PERSISTENT,
+            parasite = picman_parasite_new ("picman-comment",
+                                          PICMAN_PARASITE_PERSISTENT,
                                           strlen (img_desc) + 1, img_desc);
-            gimp_image_attach_parasite (image, parasite);
-            gimp_parasite_free (parasite);
+            picman_image_attach_parasite (image, parasite);
+            picman_parasite_free (parasite);
           }
       }
 
@@ -847,7 +847,7 @@ load_image (const gchar        *filename,
       {
         gfloat   xres = 72.0, yres = 72.0;
         gushort  read_unit;
-        GimpUnit unit = GIMP_UNIT_PIXEL; /* invalid unit */
+        PicmanUnit unit = PICMAN_UNIT_PIXEL; /* invalid unit */
 
         if (TIFFGetField (tif, TIFFTAG_XRESOLUTION, &xres))
           {
@@ -863,13 +863,13 @@ load_image (const gchar        *filename,
                         break;
 
                       case RESUNIT_INCH:
-                        unit = GIMP_UNIT_INCH;
+                        unit = PICMAN_UNIT_INCH;
                         break;
 
                       case RESUNIT_CENTIMETER:
                         xres *= 2.54;
                         yres *= 2.54;
-                        unit = GIMP_UNIT_MM; /* this is our default metric unit */
+                        unit = PICMAN_UNIT_MM; /* this is our default metric unit */
                         break;
 
                       default:
@@ -894,13 +894,13 @@ load_image (const gchar        *filename,
             /* now set the new image's resolution info */
 
             /* If it is invalid, instead of forcing 72dpi, do not set the
-               resolution at all. Gimp will then use the default set by
+               resolution at all. Picman will then use the default set by
                the user */
             if (read_unit != RESUNIT_NONE)
               {
-                gimp_image_set_resolution (image, xres, yres);
-                if (unit != GIMP_UNIT_PIXEL)
-                  gimp_image_set_unit (image, unit);
+                picman_image_set_resolution (image, xres, yres);
+                if (unit != PICMAN_UNIT_PIXEL)
+                  picman_image_set_unit (image, unit);
               }
           }
 
@@ -921,14 +921,14 @@ load_image (const gchar        *filename,
           layer_offset_y = 0.0;
 
         /* round floating point position to integer position
-           required by GIMP */
+           required by PICMAN */
         layer_offset_x_pixel = ROUND(layer_offset_x * xres);
         layer_offset_y_pixel = ROUND(layer_offset_y * yres);
       }
 
 #if 0
       /* Install colormap for INDEXED images only */
-      if (image_type == GIMP_INDEXED)
+      if (image_type == PICMAN_INDEXED)
         {
           if (is_bw)
             {
@@ -949,7 +949,7 @@ load_image (const gchar        *filename,
                                  &redmap, &greenmap, &bluemap))
                 {
                   g_message ("Could not get colormaps from '%s'",
-                             gimp_filename_to_utf8 (filename));
+                             picman_filename_to_utf8 (filename));
                   return -1;
                 }
 
@@ -961,7 +961,7 @@ load_image (const gchar        *filename,
                 }
             }
 
-          gimp_image_set_colormap (image, cmap, (1 << bps));
+          picman_image_set_colormap (image, cmap, (1 << bps));
         }
 #endif
 
@@ -975,9 +975,9 @@ load_image (const gchar        *filename,
 
       if (name)
         {
-          layer = gimp_layer_new (image, name,
+          layer = picman_layer_new (image, name,
                                   cols, rows,
-                                  layer_type, 100, GIMP_NORMAL_MODE);
+                                  layer_type, 100, PICMAN_NORMAL_MODE);
         }
       else
         {
@@ -988,14 +988,14 @@ load_image (const gchar        *filename,
           else
             name = g_strdup_printf (_("Page %d"), ilayer);
 
-          layer = gimp_layer_new (image, name,
+          layer = picman_layer_new (image, name,
                                   cols, rows,
-                                  layer_type, 100, GIMP_NORMAL_MODE);
+                                  layer_type, 100, PICMAN_NORMAL_MODE);
           g_free (name);
         }
 
       channel[0].ID     = layer;
-      channel[0].buffer = gimp_drawable_get_buffer (layer);
+      channel[0].buffer = picman_drawable_get_buffer (layer);
       channel[0].format = base_format;
 
       if (extra > 0 && !worst_case)
@@ -1003,11 +1003,11 @@ load_image (const gchar        *filename,
           /* Add alpha channels as appropriate */
           for (i = 1; i <= extra; ++i)
             {
-              channel[i].ID = gimp_channel_new (image, _("TIFF Channel"),
+              channel[i].ID = picman_channel_new (image, _("TIFF Channel"),
                                                 cols, rows,
                                                 100.0, &color);
-              gimp_image_insert_channel (image, channel[i].ID, -1, 0);
-              channel[i].buffer = gimp_drawable_get_buffer (channel[i].ID);
+              picman_image_insert_channel (image, channel[i].ID, -1, 0);
+              channel[i].buffer = picman_drawable_get_buffer (channel[i].ID);
               if (bps < 16)
                 channel[i].format = babl_format ("A u8");
               else
@@ -1058,14 +1058,14 @@ load_image (const gchar        *filename,
             }
 
           if (flip_horizontal)
-            gimp_item_transform_flip_simple (layer,
-                                             GIMP_ORIENTATION_HORIZONTAL,
+            picman_item_transform_flip_simple (layer,
+                                             PICMAN_ORIENTATION_HORIZONTAL,
                                              TRUE /*auto_center*/,
                                              -1.0 /*axis*/);
 
           if (flip_vertical)
-            gimp_item_transform_flip_simple (layer,
-                                             GIMP_ORIENTATION_VERTICAL,
+            picman_item_transform_flip_simple (layer,
+                                             PICMAN_ORIENTATION_VERTICAL,
                                              TRUE /*auto_center*/,
                                              -1.0 /*axis*/);
         }
@@ -1079,7 +1079,7 @@ load_image (const gchar        *filename,
       channel = NULL;
 
 
-      /* TODO: in GIMP 2.6, use a dialog to selectively enable the
+      /* TODO: in PICMAN 2.6, use a dialog to selectively enable the
        * following code, as the save plug-in will then save layer offests
        * as well.
        */
@@ -1098,33 +1098,33 @@ load_image (const gchar        *filename,
       /* position the layer */
       if (layer_offset_x_pixel > 0 || layer_offset_y_pixel > 0)
         {
-          gimp_layer_set_offsets (layer,
+          picman_layer_set_offsets (layer,
                                   layer_offset_x_pixel, layer_offset_y_pixel);
         }
 
 
       if (ilayer > 0 && !alpha)
-        gimp_layer_add_alpha (layer);
+        picman_layer_add_alpha (layer);
 
-      gimp_image_insert_layer (image, layer, -1, -1);
+      picman_image_insert_layer (image, layer, -1, -1);
 
-      if (target == GIMP_PAGE_SELECTOR_TARGET_IMAGES)
+      if (target == PICMAN_PAGE_SELECTOR_TARGET_IMAGES)
         {
-          gimp_image_undo_enable (image);
-          gimp_image_clean_all (image);
+          picman_image_undo_enable (image);
+          picman_image_clean_all (image);
         }
 
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
     }
 
-  if (target != GIMP_PAGE_SELECTOR_TARGET_IMAGES)
+  if (target != PICMAN_PAGE_SELECTOR_TARGET_IMAGES)
     {
       /* resize image to bounding box of all layers */
-      gimp_image_resize (image,
+      picman_image_resize (image,
                          max_col - min_col, max_row - min_row,
                          -min_col, -min_row);
 
-      gimp_image_undo_enable (image);
+      picman_image_undo_enable (image);
     }
   else
     {
@@ -1138,7 +1138,7 @@ load_image (const gchar        *filename,
 
       while (images_list)
         {
-          gimp_display_new (GPOINTER_TO_INT (images_list->data));
+          picman_display_new (GPOINTER_TO_INT (images_list->data));
           images_list = images_list->next;
         }
 
@@ -1185,7 +1185,7 @@ load_rgba (TIFF         *tif,
                        GEGL_AUTO_ROWSTRIDE);
 
       if ((row % 32) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) imageLength);
+        picman_progress_update ((gdouble) row / (gdouble) imageLength);
     }
 
   g_free (buffer);
@@ -1203,8 +1203,8 @@ load_paths (TIFF *tif, gint image)
   gint width, height;
   gint path_index;
 
-  width = gimp_image_width (image);
-  height = gimp_image_height (image);
+  width = picman_image_width (image);
+  height = picman_image_height (image);
 
   if (!TIFFGetField (tif, TIFFTAG_PHOTOSHOP, &n_bytes, &bytes))
     return;
@@ -1276,8 +1276,8 @@ load_paths (TIFF *tif, gint image)
           gint     pointcount = 0;
           gboolean closed = FALSE;
 
-          vectors = gimp_vectors_new (image, name);
-          gimp_image_insert_vectors (image, vectors, -1, path_index);
+          vectors = picman_vectors_new (image, name);
+          picman_image_insert_vectors (image, vectors, -1, path_index);
           path_index++;
 
           while (rec < pos + len)
@@ -1331,7 +1331,7 @@ load_paths (TIFF *tif, gint image)
                                  (double) 0xFFFFFF;
 
                           /* coords are stored with vertical component
-                           * first, gimp expects the horizontal component
+                           * first, picman expects the horizontal component
                            * first. Sigh.  */
                           points[pointcount * 6 + (j ^ 1)] = f * (j % 2 ? width : height);
                         }
@@ -1340,8 +1340,8 @@ load_paths (TIFF *tif, gint image)
 
                       if (pointcount == expected_points)
                         {
-                          gimp_vectors_stroke_new_from_points (vectors,
-                                                               GIMP_VECTORS_STROKE_TYPE_BEZIER,
+                          picman_vectors_stroke_new_from_points (vectors,
+                                                               PICMAN_VECTORS_STROKE_TYPE_BEZIER,
                                                                pointcount * 6,
                                                                points,
                                                                closed);
@@ -1439,7 +1439,7 @@ load_contiguous (TIFF         *tif,
         {
           int offset;
 
-          gimp_progress_update (progress + one_row *
+          picman_progress_update (progress + one_row *
                                 ( (gdouble) x / (gdouble) imageWidth));
 
           if (TIFFIsTiled (tif))
@@ -1574,7 +1574,7 @@ load_separate (TIFF         *tif,
             {
               for (x = 0; x < imageWidth; x += tileWidth)
                 {
-                  gimp_progress_update (progress + one_row *
+                  picman_progress_update (progress + one_row *
                                         ( (gdouble) x / (gdouble) imageWidth));
 
                   if (TIFFIsTiled (tif))

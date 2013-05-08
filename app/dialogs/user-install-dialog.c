@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * user-install-dialog.c
@@ -22,28 +22,28 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp-user-install.h"
+#include "core/picman-user-install.h"
 
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
 #include "user-install-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GtkWidget * user_install_dialog_new (GimpUserInstall *install);
+static GtkWidget * user_install_dialog_new (PicmanUserInstall *install);
 static void        user_install_dialog_log (const gchar     *message,
 					    gboolean         error,
 					    gpointer         data);
 
 
 gboolean
-user_install_dialog_run (GimpUserInstall *install)
+user_install_dialog_run (PicmanUserInstall *install)
 {
   GtkWidget *dialog;
   gboolean   success;
@@ -52,7 +52,7 @@ user_install_dialog_run (GimpUserInstall *install)
 
   dialog = user_install_dialog_new (install);
 
-  success = gimp_user_install_run (install);
+  success = picman_user_install_run (install);
 
   if (! success)
     {
@@ -71,7 +71,7 @@ user_install_dialog_run (GimpUserInstall *install)
 }
 
 static GtkWidget *
-user_install_dialog_new (GimpUserInstall *install)
+user_install_dialog_new (PicmanUserInstall *install)
 {
   GtkWidget     *dialog;
   GtkWidget     *frame;
@@ -79,23 +79,23 @@ user_install_dialog_new (GimpUserInstall *install)
   GtkTextBuffer *buffer;
   GtkWidget     *view;
 
-  gimp_stock_init ();
+  picman_stock_init ();
 
-  dialog = gimp_message_dialog_new (_("GIMP User Installation"),
-				    GIMP_STOCK_WILBER_EEK,
+  dialog = picman_message_dialog_new (_("PICMAN User Installation"),
+				    PICMAN_STOCK_WILBER_EEK,
 				    NULL, 0, NULL, NULL,
 
 				    GTK_STOCK_QUIT, GTK_RESPONSE_OK,
 
 				    NULL);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
 				     _("User installation failed!"));
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
-			     _("The GIMP user installation failed; "
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
+			     _("The PICMAN user installation failed; "
 			       "see the log for details."));
 
-  frame = gimp_frame_new (_("Installation Log"));
+  frame = picman_frame_new (_("Installation Log"));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                       frame, TRUE, TRUE, 0);
@@ -123,7 +123,7 @@ user_install_dialog_new (GimpUserInstall *install)
 
   g_object_unref (buffer);
 
-  gimp_user_install_set_log_handler (install, user_install_dialog_log, buffer);
+  picman_user_install_set_log_handler (install, user_install_dialog_log, buffer);
 
   return dialog;
 }

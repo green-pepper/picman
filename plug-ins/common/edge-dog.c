@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,27 @@
  */
 
 /*
- * Gimp plug-in dog.c:  (C) 2004 William Skaggs
+ * Picman plug-in dog.c:  (C) 2004 William Skaggs
  *
  * Edge detection using the "Difference of Gaussians" method.
  * Finds edges by doing two Gaussian blurs with different radius, and
  * subtracting the results.  Blurring is done using code taken from
- * gauss_rle.c (as of Gimp 2.1, incorporated into gauss.c).
+ * gauss_rle.c (as of Picman 2.1, incorporated into gauss.c).
  */
 
 #include "config.h"
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-dog"
 #define PLUG_IN_BINARY "edge-dog"
-#define PLUG_IN_ROLE   "gimp-edge-dog"
+#define PLUG_IN_ROLE   "picman-edge-dog"
 
 
 typedef struct
@@ -53,36 +53,36 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gint      dog_dialog           (gint32        image_ID,
-                                       GimpDrawable *drawable);
+                                       PicmanDrawable *drawable);
 
-static void      gauss_rle            (GimpDrawable *drawable,
+static void      gauss_rle            (PicmanDrawable *drawable,
                                        gdouble       radius,
                                        gint          pass,
                                        gboolean      show_progress);
 
-static void      compute_difference   (GimpDrawable *drawable,
-                                       GimpDrawable *drawable1,
-                                       GimpDrawable *drawable2,
+static void      compute_difference   (PicmanDrawable *drawable,
+                                       PicmanDrawable *drawable1,
+                                       PicmanDrawable *drawable2,
                                        guchar       *maxval);
 
-static void      normalize_invert     (GimpDrawable *drawable,
+static void      normalize_invert     (PicmanDrawable *drawable,
                                        gboolean      normalize,
                                        guint         maxval,
                                        gboolean      invert);
 
 static void      dog                  (gint32        image_ID,
-                                       GimpDrawable *drawable,
+                                       PicmanDrawable *drawable,
                                        gdouble       inner,
                                        gdouble       outer,
                                        gboolean      show_progress);
 
-static void      preview_update_preview  (GimpPreview  *preview,
-                                          GimpDrawable *drawable);
+static void      preview_update_preview  (PicmanPreview  *preview,
+                                          PicmanDrawable *drawable);
 static void      change_radius_callback  (GtkWidget    *widget,
                                           gpointer      data);
 
@@ -99,7 +99,7 @@ static void      run_length_encode       (guchar    *src,
                                           gint       width);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -120,18 +120,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable" },
-    { GIMP_PDB_FLOAT,    "inner",     "Radius of inner gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_FLOAT,    "outer",     "Radius of outer gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_INT32,    "normalize", "Normalize { TRUE, FALSE }" },
-    { GIMP_PDB_INT32,    "invert",    "Invert { TRUE, FALSE }" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "inner",     "Radius of inner gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_FLOAT,    "outer",     "Radius of outer gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_INT32,    "normalize", "Normalize { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "invert",    "Invert { TRUE, FALSE }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Edge detection with control of edge thickness"),
                           "Applies two Gaussian blurs to the drawable, and "
                           "subtracts the results.  This is robust and widely "
@@ -141,7 +141,7 @@ query (void)
                           "1995-2004",
                           N_("_Difference of Gaussians..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -149,15 +149,15 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
+  static PicmanParam   values[2];
   gint32             image_ID;
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   GError            *error  = NULL;
 
   run_mode = param[0].data.d_int32;
@@ -167,47 +167,47 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  if (! gimp_item_is_layer (param[2].data.d_drawable))
+  if (! picman_item_is_layer (param[2].data.d_drawable))
     {
       g_set_error (&error, 0, 0, "%s",
                    _("Can operate on layers only "
                      "(but was called on channel or mask)."));
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Get the specified image and drawable  */
       image_ID = param[1].data.d_image;
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
 
       /*  set the tile cache size so that the gaussian blur works well  */
-      gimp_tile_cache_ntiles (2 *
+      picman_tile_cache_ntiles (2 *
                               (MAX (drawable->width, drawable->height) /
-                               gimp_tile_width () + 1));
+                               picman_tile_width () + 1));
 
       if (strcmp (name, PLUG_IN_PROC) == 0)
         {
           switch (run_mode)
             {
-            case GIMP_RUN_INTERACTIVE:
+            case PICMAN_RUN_INTERACTIVE:
               /*  Possibly retrieve data  */
-              gimp_get_data (PLUG_IN_PROC, &dogvals);
+              picman_get_data (PLUG_IN_PROC, &dogvals);
 
               /*  First acquire information with a dialog  */
               if (! dog_dialog (image_ID, drawable))
                 return;
               break;
 
-            case GIMP_RUN_NONINTERACTIVE:
+            case PICMAN_RUN_NONINTERACTIVE:
               /*  Make sure all the arguments are there!  */
               if (nparams != 7)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
 
-              if (status == GIMP_PDB_SUCCESS)
+              if (status == PICMAN_PDB_SUCCESS)
                 {
                   dogvals.inner     = param[3].data.d_float;
                   dogvals.outer     = param[4].data.d_float;
@@ -215,13 +215,13 @@ run (const gchar      *name,
                   dogvals.invert    = param[6].data.d_int32;
 
                   if (dogvals.inner <= 0.0 || dogvals.outer <= 0.0)
-                    status = GIMP_PDB_CALLING_ERROR;
+                    status = PICMAN_PDB_CALLING_ERROR;
                 }
               break;
 
-            case GIMP_RUN_WITH_LAST_VALS:
+            case PICMAN_RUN_WITH_LAST_VALS:
               /*  Possibly retrieve data  */
-              gimp_get_data (PLUG_IN_PROC, &dogvals);
+              picman_get_data (PLUG_IN_PROC, &dogvals);
               break;
 
             default:
@@ -230,50 +230,50 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("DoG Edge Detect"));
+          picman_progress_init (_("DoG Edge Detect"));
 
           /*  run the Difference of Gaussians  */
-          gimp_image_undo_group_start (image_ID);
+          picman_image_undo_group_start (image_ID);
 
           dog (image_ID, drawable, dogvals.inner, dogvals.outer, TRUE);
 
-          gimp_image_undo_group_end (image_ID);
+          picman_image_undo_group_end (image_ID);
 
-          gimp_progress_update (1.0);
+          picman_progress_update (1.0);
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &dogvals, sizeof (DoGValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &dogvals, sizeof (DoGValues));
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
         }
       else
         {
-          status        = GIMP_PDB_EXECUTION_ERROR;
+          status        = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals = 2;
 
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("Cannot operate on indexed color images.");
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -282,7 +282,7 @@ run (const gchar      *name,
 
 static gint
 dog_dialog (gint32        image_ID,
-            GimpDrawable *drawable)
+            PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *frame;
@@ -290,16 +290,16 @@ dog_dialog (gint32        image_ID,
   GtkWidget *main_vbox;
   GtkWidget *preview;
   GtkWidget *coord;
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gdouble    xres;
   gdouble    yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("DoG Edge Detect"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("DoG Edge Detect"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -311,7 +311,7 @@ dog_dialog (gint32        image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -319,7 +319,7 @@ dog_dialog (gint32        image_ID,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, FALSE, FALSE, 0);
   gtk_widget_show (preview);
 
@@ -327,16 +327,16 @@ dog_dialog (gint32        image_ID,
                     G_CALLBACK (preview_update_preview),
                     drawable);
 
-  frame = gimp_frame_new (_("Smoothing Parameters"));
+  frame = picman_frame_new (_("Smoothing Parameters"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  Get the image resolution and unit  */
-  gimp_image_get_resolution (image_ID, &xres, &yres);
-  unit = gimp_image_get_unit (image_ID);
+  picman_image_get_resolution (image_ID, &xres, &yres);
+  unit = picman_image_get_unit (image_ID);
 
-  coord = gimp_coordinates_new (unit, "%a", TRUE, FALSE, -1,
-                                GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  coord = picman_coordinates_new (unit, "%a", TRUE, FALSE, -1,
+                                PICMAN_SIZE_ENTRY_UPDATE_SIZE,
 
                                 FALSE,
                                 TRUE,
@@ -352,7 +352,7 @@ dog_dialog (gint32        image_ID,
   gtk_container_add (GTK_CONTAINER (frame), coord);
   gtk_widget_show (coord);
 
-  gimp_size_entry_set_pixel_digits (GIMP_SIZE_ENTRY (coord), 1);
+  picman_size_entry_set_pixel_digits (PICMAN_SIZE_ENTRY (coord), 1);
   g_signal_connect (coord, "value-changed",
                     G_CALLBACK (change_radius_callback),
                     preview);
@@ -361,10 +361,10 @@ dog_dialog (gint32        image_ID,
   gtk_box_pack_start (GTK_BOX (main_vbox), button, FALSE, FALSE, 0);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), dogvals.normalize);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dogvals.normalize);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   gtk_widget_show (button);
 
@@ -372,21 +372,21 @@ dog_dialog (gint32        image_ID,
   gtk_box_pack_start (GTK_BOX (main_vbox), button, FALSE, FALSE, 0);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), dogvals.invert);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dogvals.invert);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   gtk_widget_show (button);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {
-      dogvals.inner = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (coord), 0);
-      dogvals.outer = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (coord), 1);
+      dogvals.inner = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (coord), 0);
+      dogvals.outer = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (coord), 1);
     }
 
   gtk_widget_destroy (dialog);
@@ -445,13 +445,13 @@ separate_alpha (guchar *buf,
 
 static void
 dog (gint32        image_ID,
-     GimpDrawable *drawable,
+     PicmanDrawable *drawable,
      gdouble       inner,
      gdouble       outer,
      gboolean      show_progress)
 {
-  GimpDrawable *drawable1;
-  GimpDrawable *drawable2;
+  PicmanDrawable *drawable1;
+  PicmanDrawable *drawable2;
   gint32        drawable_id = drawable->drawable_id;
   gint32        layer1;
   gint32        layer2;
@@ -459,63 +459,63 @@ dog (gint32        image_ID,
   gint          x1, y1, x2, y2;
   guchar        maxval = 255;
 
-  gimp_drawable_mask_bounds (drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable_id, &x1, &y1, &x2, &y2);
 
   width  = (x2 - x1);
   height = (y2 - y1);
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
-  layer1 = gimp_layer_copy (drawable_id);
-  gimp_item_set_visible (layer1, FALSE);
-  gimp_item_set_name (layer1, "dog_scratch_layer1");
-  gimp_image_insert_layer (image_ID, layer1,
-                           gimp_item_get_parent (drawable_id), 0);
+  layer1 = picman_layer_copy (drawable_id);
+  picman_item_set_visible (layer1, FALSE);
+  picman_item_set_name (layer1, "dog_scratch_layer1");
+  picman_image_insert_layer (image_ID, layer1,
+                           picman_item_get_parent (drawable_id), 0);
 
-  layer2 = gimp_layer_copy (drawable_id);
-  gimp_item_set_visible (layer2, FALSE);
-  gimp_item_set_name (layer2, "dog_scratch_layer2");
-  gimp_image_insert_layer (image_ID, layer2,
-                           gimp_item_get_parent (drawable_id), 0);
+  layer2 = picman_layer_copy (drawable_id);
+  picman_item_set_visible (layer2, FALSE);
+  picman_item_set_name (layer2, "dog_scratch_layer2");
+  picman_image_insert_layer (image_ID, layer2,
+                           picman_item_get_parent (drawable_id), 0);
 
-  drawable1 = gimp_drawable_get (layer1);
-  drawable2 = gimp_drawable_get (layer2);
+  drawable1 = picman_drawable_get (layer1);
+  drawable2 = picman_drawable_get (layer2);
 
   gauss_rle (drawable1, inner, 0, show_progress);
   gauss_rle (drawable2, outer, 1, show_progress);
 
   compute_difference (drawable, drawable1, drawable2, &maxval);
 
-  gimp_drawable_detach (drawable1);
-  gimp_drawable_detach (drawable2);
+  picman_drawable_detach (drawable1);
+  picman_drawable_detach (drawable2);
 
-  gimp_image_remove_layer (image_ID, layer1);
-  gimp_image_remove_layer (image_ID, layer2);
+  picman_image_remove_layer (image_ID, layer1);
+  picman_image_remove_layer (image_ID, layer2);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable_id, TRUE);
-  gimp_drawable_update (drawable_id, x1, y1, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable_id, TRUE);
+  picman_drawable_update (drawable_id, x1, y1, width, height);
 
   if (dogvals.normalize || dogvals.invert)
-    /* gimp_invert doesn't work properly with previews due to shadow handling
+    /* picman_invert doesn't work properly with previews due to shadow handling
      * so reimplement it here - see Bug 557380
      */
     {
       normalize_invert (drawable, dogvals.normalize, maxval, dogvals.invert);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable_id, TRUE);
-      gimp_drawable_update (drawable_id, x1, y1, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable_id, TRUE);
+      picman_drawable_update (drawable_id, x1, y1, width, height);
     }
 }
 
 
 static void
-compute_difference (GimpDrawable *drawable,
-                    GimpDrawable *drawable1,
-                    GimpDrawable *drawable2,
+compute_difference (PicmanDrawable *drawable,
+                    PicmanDrawable *drawable1,
+                    PicmanDrawable *drawable2,
                     guchar       *maxval)
 {
-  GimpPixelRgn src1_rgn, src2_rgn, dest_rgn;
+  PicmanPixelRgn src1_rgn, src2_rgn, dest_rgn;
   gint         width, height;
   gint         bpp;
   gpointer     pr;
@@ -525,7 +525,7 @@ compute_difference (GimpDrawable *drawable,
 
   *maxval = 0;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   width  = (x2 - x1);
   height = (y2 - y1);
@@ -534,21 +534,21 @@ compute_difference (GimpDrawable *drawable,
     return;
 
   bpp = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
-  gimp_pixel_rgn_init (&src1_rgn,
+  picman_pixel_rgn_init (&src1_rgn,
                        drawable1, 0, 0, drawable1->width, drawable1->height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&src2_rgn,
+  picman_pixel_rgn_init (&src2_rgn,
                        drawable2, 0, 0, drawable1->width, drawable1->height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn,
+  picman_pixel_rgn_init (&dest_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (3, &src1_rgn, &src2_rgn, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (3, &src1_rgn, &src2_rgn, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       guchar *src1 = src1_rgn.data;
       guchar *src2 = src2_rgn.data;
@@ -596,12 +596,12 @@ compute_difference (GimpDrawable *drawable,
 
 
 static void
-normalize_invert (GimpDrawable *drawable,
+normalize_invert (PicmanDrawable *drawable,
                   gboolean      normalize,
                   guint         maxval,
                   gboolean      invert)
 {
-  GimpPixelRgn src_rgn, dest_rgn;
+  PicmanPixelRgn src_rgn, dest_rgn;
   gint         bpp;
   gpointer     pr;
   gint         x, y, k;
@@ -615,20 +615,20 @@ normalize_invert (GimpDrawable *drawable,
   else
     factor = 1.0;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
   bpp = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha(drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha(drawable->drawable_id);
 
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn,
+  picman_pixel_rgn_init (&dest_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       guchar *src  = src_rgn.data;
       guchar *dest = dest_rgn.data;
@@ -674,12 +674,12 @@ normalize_invert (GimpDrawable *drawable,
 
 
 static void
-gauss_rle (GimpDrawable *drawable,
+gauss_rle (PicmanDrawable *drawable,
            gdouble       radius,
            gint          pass,
            gboolean      show_progress)
 {
-  GimpPixelRgn src_rgn, dest_rgn;
+  PicmanPixelRgn src_rgn, dest_rgn;
   gint     width, height;
   gint     bytes;
   gint     has_alpha;
@@ -702,7 +702,7 @@ gauss_rle (GimpDrawable *drawable,
   if (radius <= 0.0)
     return;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   width  = (x2 - x1);
   height = (y2 - y1);
@@ -711,7 +711,7 @@ gauss_rle (GimpDrawable *drawable,
     return;
 
   bytes = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha(drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha(drawable->drawable_id);
 
   buf = g_new (gint, MAX (width, height) * 2);
 
@@ -719,10 +719,10 @@ gauss_rle (GimpDrawable *drawable,
   src = g_new (guchar, MAX (width, height) * bytes);
   dest = g_new (guchar, MAX (width, height) * bytes);
 
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn,
+  picman_pixel_rgn_init (&dest_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        TRUE, TRUE);
 
@@ -746,7 +746,7 @@ gauss_rle (GimpDrawable *drawable,
 
   for (col = 0; col < width; col++)
     {
-      gimp_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, (y2 - y1));
+      picman_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, (y2 - y1));
 
       if (has_alpha)
         multiply_alpha (src, height, bytes);
@@ -798,26 +798,26 @@ gauss_rle (GimpDrawable *drawable,
       if (has_alpha)
         separate_alpha (dest, height, bytes);
 
-      gimp_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, (y2 - y1));
+      picman_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, (y2 - y1));
 
       if (show_progress)
         {
           progress += height;
 
           if ((col % 32) == 0)
-            gimp_progress_update (0.5 * (pass + (progress / max_progress)));
+            picman_progress_update (0.5 * (pass + (progress / max_progress)));
         }
     }
 
   /*  prepare for the horizontal pass  */
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        FALSE, TRUE);
 
   /*  Now the horizontal pass  */
   for (row = 0; row < height; row++)
     {
-      gimp_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, (x2 - x1));
+      picman_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, (x2 - x1));
       if (has_alpha)
         multiply_alpha (src, width, bytes);
 
@@ -867,21 +867,21 @@ gauss_rle (GimpDrawable *drawable,
       if (has_alpha)
         separate_alpha (dest, width, bytes);
 
-      gimp_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, (x2 - x1));
+      picman_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, (x2 - x1));
 
       if (show_progress)
         {
           progress += width;
 
           if ((row % 32) == 0)
-            gimp_progress_update (0.5 * (pass + (progress / max_progress)));
+            picman_progress_update (0.5 * (pass + (progress / max_progress)));
         }
     }
 
   /*  merge the shadow, update the drawable  */
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
 
   /*  free buffers  */
   g_free (buf);
@@ -965,58 +965,58 @@ run_length_encode (guchar *src,
 }
 
 static void
-preview_update_preview (GimpPreview  *preview,
-                        GimpDrawable *drawable)
+preview_update_preview (PicmanPreview  *preview,
+                        PicmanDrawable *drawable)
 {
   gint          x1, y1;
   gint          width, height;
   gint          bpp;
   guchar       *buffer;
-  GimpPixelRgn  src_rgn;
-  GimpPixelRgn  preview_rgn;
+  PicmanPixelRgn  src_rgn;
+  PicmanPixelRgn  preview_rgn;
   gint32        image_id, src_image_id;
   gint32        preview_id;
-  GimpDrawable *preview_drawable;
+  PicmanDrawable *preview_drawable;
 
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
 
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &width, &height);
 
   buffer = g_new (guchar, width * height * bpp);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_get_rect (&src_rgn, buffer,
+  picman_pixel_rgn_get_rect (&src_rgn, buffer,
                            x1, y1, width, height);
 
-  /* set up gimp drawable for rendering preview into */
-  src_image_id = gimp_item_get_image (drawable->drawable_id);
-  image_id = gimp_image_new (width, height,
-                             gimp_image_base_type (src_image_id));
-  preview_id = gimp_layer_new (image_id, "preview", width, height,
-                               gimp_drawable_type (drawable->drawable_id),
+  /* set up picman drawable for rendering preview into */
+  src_image_id = picman_item_get_image (drawable->drawable_id);
+  image_id = picman_image_new (width, height,
+                             picman_image_base_type (src_image_id));
+  preview_id = picman_layer_new (image_id, "preview", width, height,
+                               picman_drawable_type (drawable->drawable_id),
                                100,
-                               GIMP_NORMAL_MODE);
-  preview_drawable = gimp_drawable_get (preview_id);
-  gimp_image_insert_layer (image_id, preview_id, -1, 0);
-  gimp_layer_set_offsets (preview_id, 0, 0);
-  gimp_pixel_rgn_init (&preview_rgn, preview_drawable,
+                               PICMAN_NORMAL_MODE);
+  preview_drawable = picman_drawable_get (preview_id);
+  picman_image_insert_layer (image_id, preview_id, -1, 0);
+  picman_layer_set_offsets (preview_id, 0, 0);
+  picman_pixel_rgn_init (&preview_rgn, preview_drawable,
                        0, 0, width, height, TRUE, TRUE);
-  gimp_pixel_rgn_set_rect (&preview_rgn, buffer,
+  picman_pixel_rgn_set_rect (&preview_rgn, buffer,
                            0, 0, width, height);
-  gimp_drawable_flush (preview_drawable);
-  gimp_drawable_merge_shadow (preview_id, TRUE);
-  gimp_drawable_update (preview_id, 0, 0, width, height);
+  picman_drawable_flush (preview_drawable);
+  picman_drawable_merge_shadow (preview_id, TRUE);
+  picman_drawable_update (preview_id, 0, 0, width, height);
 
   dog (image_id, preview_drawable, dogvals.inner, dogvals.outer, FALSE);
 
-  gimp_pixel_rgn_get_rect (&preview_rgn, buffer,
+  picman_pixel_rgn_get_rect (&preview_rgn, buffer,
                            0, 0, width, height);
 
-  gimp_preview_draw_buffer (preview, buffer, width * bpp);
+  picman_preview_draw_buffer (preview, buffer, width * bpp);
 
-  gimp_image_delete (image_id);
+  picman_image_delete (image_id);
   g_free (buffer);
 }
 
@@ -1024,10 +1024,10 @@ static void
 change_radius_callback (GtkWidget *coord,
                         gpointer   data)
 {
-  GimpPreview *preview = GIMP_PREVIEW (data);
+  PicmanPreview *preview = PICMAN_PREVIEW (data);
 
-  dogvals.inner = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (coord), 0);
-  dogvals.outer = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (coord), 1);
+  dogvals.inner = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (coord), 0);
+  dogvals.outer = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (coord), 1);
 
-  gimp_preview_invalidate (preview);
+  picman_preview_invalidate (preview);
 }

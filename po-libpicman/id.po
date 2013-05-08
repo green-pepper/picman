@@ -1,0 +1,1081 @@
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: libpicman HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-02-02 19:53+0100\n"
+"PO-Revision-Date: 2003-06-28 22:03+0700\n"
+"Last-Translator: Mohammad DAMT <mdamt@bisnisweb.com>\n"
+"Language-Team: Indonesian <sukarelawan@gnome.linux.or.id>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../libpicman/picmanbrushmenu.c:129
+msgid "Brush Selection"
+msgstr ""
+
+#: ../libpicman/picmanbrushmenu.c:158 ../libpicman/picmanpatternmenu.c:142
+msgid "_Browse..."
+msgstr ""
+
+#: ../libpicman/picmanexport.c:215 ../libpicman/picmanexport.c:251
+#, c-format
+msgid "%s can't handle layers"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:216 ../libpicman/picmanexport.c:225
+#: ../libpicman/picmanexport.c:234
+msgid "Merge Visible Layers"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:224
+#, c-format
+msgid "%s can't handle layer offsets, size or opacity"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:233 ../libpicman/picmanexport.c:242
+#, c-format
+msgid "%s can only handle layers as animation frames"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:234 ../libpicman/picmanexport.c:243
+msgid "Save as Animation"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:252
+#: ../libpicman/picmanexport.c:261
+msgid "Flatten Image"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:260
+#, c-format
+msgid "%s can't handle transparency"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:269
+#, c-format
+msgid "%s can't handle layer masks"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:270
+msgid "Apply Layer Masks"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:278
+#, c-format
+msgid "%s can only handle RGB images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:279 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:326
+msgid "Convert to RGB"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:287
+#, c-format
+msgid "%s can only handle grayscale images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:288 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:338
+msgid "Convert to Grayscale"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:296
+#, c-format
+msgid "%s can only handle indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:297 ../libpicman/picmanexport.c:326
+#: ../libpicman/picmanexport.c:336
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s can only handle bitmap (two color) indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:307
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:316
+#, c-format
+msgid "%s can only handle RGB or grayscale images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:325
+#, c-format
+msgid "%s can only handle RGB or indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:335
+#, c-format
+msgid "%s can only handle grayscale or indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:346
+#, c-format
+msgid "%s needs an alpha channel"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:347
+msgid "Add Alpha Channel"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:381
+msgid "Confirm Save"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:387
+msgid "Confirm"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:454
+msgid "Export File"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:458
+msgid "_Ignore"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:460
+msgid "_Export"
+msgstr ""
+
+#. the headline
+#: ../libpicman/picmanexport.c:482
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+
+#. the footline
+#: ../libpicman/picmanexport.c:553
+msgid "The export conversion won't modify your original image."
+msgstr ""
+
+#: ../libpicman/picmanexport.c:653
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+
+#: ../libpicman/picmanexport.c:659
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+
+#: ../libpicman/picmanfontmenu.c:89
+msgid "Font Selection"
+msgstr "Pilih Font"
+
+#: ../libpicman/picmangradientmenu.c:104
+msgid "Gradient Selection"
+msgstr ""
+
+#: ../libpicman/picmanmenu.c:406 ../libpicmanwidgets/picmanintstore.c:181
+msgid "(Empty)"
+msgstr ""
+
+#: ../libpicman/picmanpalettemenu.c:91
+#, fuzzy
+msgid "Palette Selection"
+msgstr "Pilih Font"
+
+#: ../libpicman/picmanpatternmenu.c:113
+msgid "Pattern Selection"
+msgstr ""
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:26
+msgid "_White (full opacity)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+#, fuzzy
+msgid "_Black (full transparency)"
+msgstr "Tetapkan sifat transparansi"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "Layer's _alpha channel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "_Transfer layer's alpha channel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "_Selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Grayscale copy of layer"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:61
+msgid "FG to BG (RGB)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:62
+msgid "FG to BG (HSV)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+#, fuzzy
+msgid "FG to transparent"
+msgstr "Tetapkan sifat transparansi"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+#, fuzzy
+msgid "Custom gradient"
+msgstr "Ganti Warna"
+
+#: ../libpicmanbase/picmanbaseenums.c:93
+#, fuzzy
+msgid "FG color fill"
+msgstr "Warna Baru"
+
+#: ../libpicmanbase/picmanbaseenums.c:94
+#, fuzzy
+msgid "BG color fill"
+msgstr "Warna Baru"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+#, fuzzy
+msgid "Pattern fill"
+msgstr "Pola:"
+
+#: ../libpicmanbase/picmanbaseenums.c:125
+msgid "Add to the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:126
+msgid "Subtract from the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+msgid "Replace the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Intersect with the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:160 ../libpicmanwidgets/picmancolorscales.c:168
+#: ../libpicmanwidgets/picmancolorselect.c:352
+msgid "Red"
+msgstr "Merah"
+
+#: ../libpicmanbase/picmanbaseenums.c:161 ../libpicmanwidgets/picmancolorscales.c:169
+#: ../libpicmanwidgets/picmancolorselect.c:353
+msgid "Green"
+msgstr "Hijau"
+
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmancolorscales.c:170
+#: ../libpicmanwidgets/picmancolorselect.c:354
+msgid "Blue"
+msgstr "Biru"
+
+#: ../libpicmanbase/picmanbaseenums.c:163
+msgid "Gray"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanbase/picmanbaseenums.c:436
+msgid "Indexed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmancolorscales.c:171
+#: ../libpicmanwidgets/picmancolorselect.c:355
+msgid "Alpha"
+msgstr "Alpha"
+
+#: ../libpicmanbase/picmanbaseenums.c:194
+msgid "Small"
+msgstr "Kecil"
+
+#: ../libpicmanbase/picmanbaseenums.c:195
+msgid "Medium"
+msgstr "Sedang"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Large"
+msgstr "Besar"
+
+#: ../libpicmanbase/picmanbaseenums.c:228
+msgid "Light Checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:229
+msgid "Mid-Tone Checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+msgid "Dark Checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "White Only"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Gray Only"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Black Only"
+msgstr "Hitam saja"
+
+#: ../libpicmanbase/picmanbaseenums.c:261
+#, fuzzy
+msgid "Image source"
+msgstr "/Lihat/Tampilkan Grid"
+
+#: ../libpicmanbase/picmanbaseenums.c:262
+#, fuzzy
+msgid "Pattern source"
+msgstr "Pola:"
+
+#: ../libpicmanbase/picmanbaseenums.c:290
+msgid "Dodge"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:291
+msgid "Burn"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:328 ../libpicmanbase/picmanbaseenums.c:468
+msgid "Linear"
+msgstr "Linier"
+
+#: ../libpicmanbase/picmanbaseenums.c:329
+#, fuzzy
+msgid "Bi-linear"
+msgstr "Linier"
+
+#: ../libpicmanbase/picmanbaseenums.c:330
+msgid "Radial"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:331
+msgid "Square"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:332
+msgid "Conical (sym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgid "Conical (asym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgid "Shaped (angular)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:335
+msgid "Shaped (spherical)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:336
+msgid "Shaped (dimpled)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:337
+msgid "Spiral (cw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:338
+msgid "Spiral (ccw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:367
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:368
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:369
+#, fuzzy
+msgid "Image file"
+msgstr "/Lihat/Tampilkan Grid"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "RGB color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:399 ../libpicmanbase/picmanbaseenums.c:434
+msgid "Grayscale"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgid "Indexed color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "RGB"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "RGB-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:435
+msgid "Grayscale-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:437
+msgid "Indexed-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:467
+msgid "None (Fastest)"
+msgstr "Tidak ada (Paling cepat)"
+
+#: ../libpicmanbase/picmanbaseenums.c:469
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:470
+#, fuzzy
+msgid "Lanczos (Best)"
+msgstr "Kubik (Paling baik)"
+
+#: ../libpicmanbase/picmanbaseenums.c:498
+msgid "Constant"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:499
+msgid "Incremental"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "None"
+msgstr "Tidak ada"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "Sawtooth wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+msgid "Triangular wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:558
+msgid "Pixels"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:559
+#, fuzzy
+msgid "Points"
+msgstr "poin"
+
+#: ../libpicmanbase/picmanbaseenums.c:588
+msgid "Shadows"
+msgstr "Bayangan"
+
+#: ../libpicmanbase/picmanbaseenums.c:589
+msgid "Midtones"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:590
+msgid "Highlights"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:618
+msgid "Forward (traditional)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:619
+msgid "Backward (corrective)"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:177
+#, c-format
+msgid "%d Bytes"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:182
+#, c-format
+msgid "%.2f KB"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.1f KB"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%d KB"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:197
+#, c-format
+msgid "%.2f MB"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.1f MB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, fuzzy, c-format
+msgid "%d MB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:212
+#, fuzzy, c-format
+msgid "%.2f GB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, fuzzy, c-format
+msgid "%.1f GB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%d GB"
+msgstr ""
+
+#: ../libpicmanbase/picmanutils.c:169 ../libpicmanbase/picmanutils.c:174
+msgid "(invalid UTF-8 string)"
+msgstr "(string UTF-8 salah)"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:95
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr ""
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:423
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "diminta 'ya' atau 'tidak' untuk token boolean %s, tapi didapat '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:497
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:512
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:581
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467 ../libpicmanconfig/picmanscanner.c:513
+#: ../libpicmanconfig/picmanscanner.c:594
+msgid "fatal parse error"
+msgstr "error parse fatal"
+
+#: ../libpicmanconfig/picmanconfig-path.c:349
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:134
+#, fuzzy, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Gagal saat membuat file '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:147
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:666
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:674
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:685
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:703
+#, fuzzy, c-format
+msgid "Could not create '%s': %s"
+msgstr "Gagal saat membuat file '%s': %s"
+
+#: ../libpicmanconfig/picmanscanner.c:100
+#, c-format
+msgid "Could not open '%s' for reading: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:270
+msgid "invalid UTF-8 string"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:621
+#, fuzzy, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr ""
+"Error saat menulis file '%s':\n"
+"%s"
+
+#: ../libpicmanmodule/picmanmodule.c:177
+#, c-format
+msgid "Loading module: '%s'\n"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:193 ../libpicmanmodule/picmanmodule.c:212
+#: ../libpicmanmodule/picmanmodule.c:326 ../libpicmanmodule/picmanmodule.c:354
+#: ../libpicmanmodule/picmanmodule.c:478
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:282
+#, c-format
+msgid "Skipping module: '%s'\n"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:422
+msgid "Module error"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:423
+msgid "Loaded"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:424
+msgid "Load failed"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:425
+msgid "Not loaded"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:227 ../libpicmanthumb/picmanthumb-utils.c:295
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:919
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:99
+msgid "_Foreground Color"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:103
+msgid "_Background Color"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:107
+msgid "Blac_k"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:111
+msgid "_White"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorscales.c:133
+msgid "Scales"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorscales.c:155
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmancolorscales.c:156
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmancolorscales.c:157
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmancolorscales.c:158
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmancolorscales.c:159
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmancolorscales.c:160
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmancolorscales.c:161
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmancolorscales.c:165
+#: ../libpicmanwidgets/picmancolorselect.c:349
+msgid "Hue"
+msgstr "Hue"
+
+#: ../libpicmanwidgets/picmancolorscales.c:166
+#: ../libpicmanwidgets/picmancolorselect.c:350 ../modules/cdisplay_proof.c:59
+msgid "Saturation"
+msgstr "Saturasi"
+
+#: ../libpicmanwidgets/picmancolorscales.c:167
+#: ../libpicmanwidgets/picmancolorselect.c:351
+msgid "Value"
+msgstr "Nilai"
+
+#: ../libpicmanwidgets/picmancolorscales.c:243
+msgid "Hexadecimal color notation as used in HTML and CSS"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorscales.c:248
+msgid "HTML _Notation:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:203
+msgid "Current:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:225
+msgid "Old:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:351
+msgid "Select Folder"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:353
+msgid "Select File"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:232
+msgid "Kilobytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:233
+msgid "Megabytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:234
+msgid "Gigabytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpatheditor.c:243
+msgid "Writable"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpatheditor.c:252
+msgid "Folder"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpickbutton.c:138
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:126
+msgid "Check Size"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:133
+msgid "Check Style"
+msgstr ""
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:240
+#, fuzzy
+msgid "_Preview"
+msgstr "Lihat Contoh Jadi"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:154 ../libpicmanwidgets/picmanstock.c:158
+msgid "_Stroke"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:170
+msgid "L_etter Spacing"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:171
+msgid "L_ine Spacing"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "_Resize"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:188 ../libpicmanwidgets/picmanstock.c:292
+msgid "_Scale"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:271
+msgid "Crop"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:288
+msgid "_Transform"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:291
+msgid "_Rotate"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:293
+msgid "_Shear"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:302
+msgid "More..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:612
+msgid "Unit Selection"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:655
+msgid "Unit"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:659
+msgid "Factor"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:1001
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid "_New Seed"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:1018
+msgid "Seed random number generator with a generated random number"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "_Randomize"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:68
+msgid "Protanopia (insensitivity to red"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:70
+msgid "Deuteranopia (insensitivity to green)"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:72
+msgid "Tritanopia (insensitivity to blue)"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:163
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:256
+msgid "Color Deficient Vision"
+msgstr ""
+
+#: ../modules/cdisplay_colorblind.c:554
+msgid "Color _Deficiency Type:"
+msgstr ""
+
+#: ../modules/cdisplay_gamma.c:105
+msgid "Gamma color display filter"
+msgstr ""
+
+#: ../modules/cdisplay_gamma.c:178
+msgid "Gamma"
+msgstr ""
+
+#: ../modules/cdisplay_gamma.c:352
+msgid "_Gamma:"
+msgstr ""
+
+#: ../modules/cdisplay_highcontrast.c:105
+msgid "High Contrast color display filter"
+msgstr ""
+
+#: ../modules/cdisplay_highcontrast.c:178
+msgid "Contrast"
+msgstr ""
+
+#: ../modules/cdisplay_highcontrast.c:352
+msgid "Contrast C_ycles:"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:57
+msgid "Perceptual"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:58
+msgid "Relative Colorimetric"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:60
+msgid "Absolute Colorimetric"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:147
+msgid "Color proof filter using ICC color profile"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:251
+msgid "Color Proof"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:462
+msgid "_Intent:"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:465
+msgid "Choose an ICC Color Profile"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:468
+msgid "_Profile:"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:476
+msgid "_Black Point Compensation"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:147
+msgid "_C"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:148
+msgid "_M"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:149
+msgid "_Y"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:150
+msgid "_K"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:154
+msgid "Cyan"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:155
+msgid "Magenta"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:156
+msgid "Yellow"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:157
+msgid "Black"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:191
+msgid "Black _Pullout:"
+msgstr ""
+
+#: ../modules/colorsel_cmyk.c:208
+msgid "The percentage of black to pull out of the colored inks."
+msgstr ""
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr ""
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr ""
+
+#: ../modules/colorsel_water.c:88
+msgid "Watercolor style color selector"
+msgstr ""
+
+#: ../modules/colorsel_water.c:154
+msgid "Watercolor"
+msgstr ""
+
+#: ../modules/colorsel_water.c:220
+msgid "Pressure"
+msgstr ""

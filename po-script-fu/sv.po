@@ -1,4 +1,4 @@
-# Swedish messages for GIMP Script-Fu.
+# Swedish messages for PICMAN Script-Fu.
 # Copyright (C) 2000-2011 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2000, 2001, 2002, 2003.
 # Jan Morén <jan.moren@lucs.lu.se>, 2003.
@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-03 18:14+0200\n"
 "PO-Revision-Date: 2011-09-03 18:37+0100\n"
@@ -153,8 +153,8 @@ msgid "_Start Server..."
 msgstr "_Starta servern..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP på nätet"
+msgid "_PICMAN Online"
+msgstr "_PICMAN på nätet"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -193,8 +193,8 @@ msgid "_Beveled Pattern"
 msgstr "Av_fasat mönster"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -752,7 +752,7 @@ msgstr "Skapa en enkel, avfasad knapp för webbsidor"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Gradient"
 
@@ -835,7 +835,7 @@ msgid "Create intermediate layers to blend two or more layers over a background 
 msgstr "Skapa mellanliggande lager för att tona två eller fler lager över en bakgrund som en animation"
 
 #: ../plug-ins/script-fu/scripts/blend-anim.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Ram"
 
@@ -1390,7 +1390,7 @@ msgstr "Utsmetningsradie"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Färg"
 
@@ -1579,59 +1579,59 @@ msgstr "Skuggvikt (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Suddig kant..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Bokmärke till GIMP:s webbplats"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Bokmärke till PICMAN:s webbplats"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Bokmärke till användarhandboken"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "Skapa och använd _markeringar"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "Skapa, öppna och spara _filer"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "Rita _enkla objekt"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Hur man använder _dialogrutor"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "_Register för insticksmoduler"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "Användning av _slingor"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "_Grundläggande koncept"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "Webbplats för _utvecklare"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "_Huvudwebbplats"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "_Förbered dina bilder för webben"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "Webbplats för _användarhandbok"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "Arbeta med digital_kamerabilder"
 
@@ -2332,126 +2332,126 @@ msgstr "Vänd från vänster till höger"
 msgid "_Spinning Globe..."
 msgstr "_Roterande glob..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "Lägg till spirografer, epitrokoider och Lissajous-kurvor till aktuellt lager"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Färgspruta"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Pensel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Cirkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Färgmetod"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrokoid"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Gradient: repetera sågtand"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Gradient: repetera triangel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Hexagon"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Hålförhållande"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Inre tänder"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Marginal (bildpunkter)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Yttre tänder"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Penna"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Femhörning"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Polygon: 10 sidor"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Polygon: 7 sidor"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Polygon: 8 sidor"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Polygon: 9 sidor"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Renderar spiro"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Form"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Solid färg"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spirograf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Fyrkant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Startvinkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Verktyg"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Triangel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Typ"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
-msgstr "_Spirogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
+msgstr "_Spiropicman..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
 msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
@@ -2735,10 +2735,10 @@ msgstr "_Xach-effekt..."
 
 #~ msgid "Autocrop"
 #~ msgstr "Beskär automatiskt"
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
-#~ msgstr "Skapa en bild med en stor rubrik med webbsidetemat från gimp.org"
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
-#~ msgstr "Skapa en bild med en liten rubrik med webbsidetemat från gimp.org"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
+#~ msgstr "Skapa en bild med en stor rubrik med webbsidetemat från picman.org"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
+#~ msgstr "Skapa en bild med en liten rubrik med webbsidetemat från picman.org"
 #~ msgid "Dark color"
 #~ msgstr "Mörk färg"
 #~ msgid "Index image"
@@ -2756,27 +2756,27 @@ msgstr "_Xach-effekt..."
 #~ msgid "_Small Header..."
 #~ msgstr "_Liten rubrik..."
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
 #~ msgstr ""
 #~ "Skapa en bild av en rubrik för en tubknappsetikett med webbsidetemat från "
-#~ "gimp.org"
+#~ "picman.org"
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
 #~ msgstr ""
-#~ "Skapa en bild av en tubknappsetikett med webbsidetemat från gimp.org"
+#~ "Skapa en bild av en tubknappsetikett med webbsidetemat från picman.org"
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Skapa en bild av en andranivås tubknappsetikett med webbsidetemat från "
-#~ "gimp.org"
+#~ "picman.org"
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
 #~ "Skapa en bild av en tredjenivås tubknappsetikett med webbsidetemat från "
-#~ "gimp.org"
+#~ "picman.org"
 #~ msgid "T_ube Sub-Button Label..."
 #~ msgstr "T_ub underknappsetikett..."
 #~ msgid "Tub_e Sub-Sub-Button Label..."
@@ -2931,10 +2931,10 @@ msgstr "_Xach-effekt..."
 #~ msgstr "Returvärden"
 #~ msgid "Additional Information"
 #~ msgstr "Mer information"
-#~ msgid "Internal GIMP procedure"
-#~ msgstr "Intern GIMP-procedur"
-#~ msgid "GIMP Plug-In"
-#~ msgstr "GIMP insticksmodul"
+#~ msgid "Internal PICMAN procedure"
+#~ msgstr "Intern PICMAN-procedur"
+#~ msgid "PICMAN Plug-In"
+#~ msgstr "PICMAN insticksmodul"
 #~ msgid "Temporary Procedure"
 #~ msgstr "Tillfällig procedur"
 #~ msgid "<Image>/Script-Fu/Alpha to Logo"
@@ -2973,8 +2973,8 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Toolbox>/Tillägg/Script-Fu/Verktyg"
 #~ msgid "_Font Map..."
 #~ msgstr "_Typsnittskarta..."
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
-#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Gimp.org"
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
+#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Picman.org"
 #~ msgid "Blend gradient (Text)"
 #~ msgstr "Färgtoningsskala (text)"
 #~ msgid "Bevel height (Sharpness)"
@@ -3011,8 +3011,8 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Toolbox>/Tillägg/Script-Fu/Diverse"
 #~ msgid "_Unsharp Mask..."
 #~ msgstr "_Oskarp mask..."
-#~ msgid "<Toolbox>/Help/The GIMP Online"
-#~ msgstr "<Toolbox>/Hjälp/GIMP på nätet"
+#~ msgid "<Toolbox>/Help/The PICMAN Online"
+#~ msgstr "<Toolbox>/Hjälp/PICMAN på nätet"
 #~ msgid "Cubic"
 #~ msgstr "Kubisk"
 #~ msgid "Linear"
@@ -3146,33 +3146,33 @@ msgstr "_Xach-effekt..."
 #~ msgid "<Image>/Script-Fu/Decor/_Fuzzy Border..."
 #~ msgstr "<Image>/Script-Fu/Dekor/_Suddig kant..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Small Header..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Small Header..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/iKlassisk.Gimp.org/_Liten "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/iKlassisk.Picman.org/_Liten "
 #~ "rubrik..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/T_ube Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/T_ube Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Gimp.org/Etikett för "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Picman.org/Etikett för "
 #~ "_rörunderknapp..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/Tub_e Sub-Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/Tub_e Sub-Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Gimp.org/Etikett för "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Picman.org/Etikett för "
 #~ "r_örunderunderknapp..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_General Tube "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_General Tube "
 #~ "Labels..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Gimp.org/_Generella "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Picman.org/_Generella "
 #~ "röretiketter..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Tube Button "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Tube Button "
 #~ "Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Gimp.org/Etikett för "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Klassisk.Picman.org/Etikett för "
 #~ "_rörknapp..."
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Glo_ssy..."
 #~ msgstr "<Image>/Script-Fu/Alfa till logotyp/_Glansig..."
@@ -3246,8 +3246,8 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Toolbox>/Tillägg/Script-Fu/Diverse/_Sfär..."
 #~ msgid "<Image>/Script-Fu/Animators/_Spinning Globe..."
 #~ msgstr "<Image>/Script-Fu/Animatörer/_Roterande jordglob..."
-#~ msgid "<Image>/Script-Fu/Render/_Spyrogimp..."
-#~ msgstr "<Image>/Script-Fu/Rendering/_Spirogimp..."
+#~ msgid "<Image>/Script-Fu/Render/_Spyropicman..."
+#~ msgstr "<Image>/Script-Fu/Rendering/_Spiropicman..."
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Starb_urst..."
 #~ msgstr "<Image>/Script-Fu/Alfa till logotyp/Stjärn_utbrott..."
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Logos/Starb_urst..."
@@ -3280,10 +3280,10 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Image>/Script-Fu/Animatörer/_Vågor..."
 #~ msgid "<Image>/Script-Fu/Alchemy/_Weave..."
 #~ msgstr "<Image>/Script-Fu/Alkemi/_Väv..."
-#~ msgid "<Toolbox>/Help/The GIMP Online/Plug-in _Registry"
-#~ msgstr "<Toolbox>/Hjälp/GIMP på nätet/Register över insticksmoduler"
-#~ msgid "<Toolbox>/Help/The GIMP Online/_Developer Web Site"
-#~ msgstr "<Toolbox>/Hjälp/GIMP på nätet/_Utvecklarnas webbsajt"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/Plug-in _Registry"
+#~ msgstr "<Toolbox>/Hjälp/PICMAN på nätet/Register över insticksmoduler"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/_Developer Web Site"
+#~ msgstr "<Toolbox>/Hjälp/PICMAN på nätet/_Utvecklarnas webbsajt"
 #~ msgid "<Image>/Script-Fu/Shadow/_Xach-Effect..."
 #~ msgstr "<Image>/Script-Fu/Skugga/_Xach-effekt..."
 #~ msgid ""
@@ -3377,34 +3377,34 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Toolbox>/Tillägg/Script-Fu/Mönster/_Virvlande (brickor)..."
 #~ msgid "<Toolbox>/Xtns/Web Browser/Developer FAQ"
 #~ msgstr "<Toolbox>/Tillägg/Webbläsare/Frågor och svar för utvecklare"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Bugs"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Fel i GIMP"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Manual"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP-manual"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP News"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP-nyheter"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Tutorials"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Kom igång med GIMP"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Documenation"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Dokumentation"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Download"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Hämta"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GIMP Art"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/GIMP-grafik"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GTK"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/GTK"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Links"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Länkar"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Mailing Lists"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Sändlistor"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Resources"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Resurser"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/The GIMP"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/GIMP"
-#~ msgid "<Toolbox>/Xtns/Web Browser/Gimp-Savvy.com"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Gimp-Savvy.com"
-#~ msgid "<Toolbox>/Xtns/Web Browser/Grokking the GIMP"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Förstå GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Bugs"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Fel i PICMAN"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Manual"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN-manual"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN News"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN-nyheter"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Tutorials"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Kom igång med PICMAN"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Documenation"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Dokumentation"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Download"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Hämta"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/PICMAN Art"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/PICMAN-grafik"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/GTK"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/GTK"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Links"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Länkar"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Mailing Lists"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Sändlistor"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Resources"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Resurser"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/The PICMAN"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/PICMAN"
+#~ msgid "<Toolbox>/Xtns/Web Browser/Picman-Savvy.com"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Picman-Savvy.com"
+#~ msgid "<Toolbox>/Xtns/Web Browser/Grokking the PICMAN"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/Förstå PICMAN"
 #~ msgid "<Toolbox>/Xtns/Web Browser/User FAQ"
 #~ msgstr "<Toolbox>/Tillägg/Webbläsare/Frågor och svar för användare"
 #~ msgid "Fonts"
@@ -3518,30 +3518,30 @@ msgstr "_Xach-effekt..."
 #~ msgstr "<Toolbox>/Tillägg/Script-Fu/Logotyper/Frostig..."
 #~ msgid "<Image>/Script-Fu/Decor/Fuzzy Border..."
 #~ msgstr "<Image>/Script-Fu/Dekor/Suddig kant..."
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Big Header..."
-#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Stor rubrik..."
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Small Header..."
-#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Liten rubrik..."
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Big Header..."
+#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Stor rubrik..."
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Small Header..."
+#~ msgstr "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Liten rubrik..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Sub-Button Label..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Sub-Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Etikett för "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Etikett för "
 #~ "rörunderknapp..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Sub-Sub-Button "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Sub-Sub-Button "
 #~ "Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Etikett för "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Etikett för "
 #~ "rörunderunderknapp..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/General Tube Labels..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/General Tube Labels..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Generella "
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Generella "
 #~ "röretiketter..."
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Button Label..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Gimp.org/Etikett för rörknapp..."
+#~ "<Toolbox>/Tillägg/Script-Fu/Webbsideteman/Picman.org/Etikett för rörknapp..."
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Glossy..."
 #~ msgstr "<Image>/Script-Fu/Alfa till logotyp/Glansig..."
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Logos/Glossy..."
@@ -3660,6 +3660,6 @@ msgstr "_Xach-effekt..."
 #~ msgstr "Stäng"
 #~ msgid "OK"
 #~ msgstr "OK"
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Documentation"
-#~ msgstr "<Toolbox>/Tillägg/Webbläsare/GIMP.ORG/Dokumentation"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Documentation"
+#~ msgstr "<Toolbox>/Tillägg/Webbläsare/PICMAN.ORG/Dokumentation"
 

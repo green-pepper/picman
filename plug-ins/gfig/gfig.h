@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates images containing vector type drawings.
  *
@@ -68,7 +68,7 @@ void       object_end              (GdkPoint *pnt, gint shift_down);
 
 #define PLUG_IN_PROC   "plug-in-gfig"
 #define PLUG_IN_BINARY "gfig"
-#define PLUG_IN_ROLE   "gimp-gfig"
+#define PLUG_IN_ROLE   "picman-gfig"
 
 extern gint       line_no;
 extern gint       preview_width, preview_height;
@@ -118,7 +118,7 @@ typedef struct BrushDesc
   gchar                *name;
   gdouble               opacity;
   gint                  spacing;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
   gint                  width;
   gint                  height;
   guchar               *pv_buf;  /* Buffer where brush placed */
@@ -131,8 +131,8 @@ typedef struct
 {
   gboolean     debug_styles;
   gboolean     show_background;  /* show thumbnail of image behind figure */
-  gint32       image_id;         /* Gimp image id */
-  gint32       drawable_id;      /* Gimp drawable to paint on */
+  gint32       image_id;         /* Picman image id */
+  gint32       drawable_id;      /* Picman drawable to paint on */
   GFigObj     *current_obj;
   GfigObject  *selected_obj;
   GtkWidget   *preview;
@@ -145,8 +145,8 @@ typedef struct
   GtkWidget   *gradient_select;
   GtkWidget   *fillstyle_combo;
   GtkWidget   *paint_type_toggle;
-  GimpRGB     *fg_color;
-  GimpRGB     *bg_color;
+  PicmanRGB     *fg_color;
+  PicmanRGB     *bg_color;
   gboolean     enable_repaint;
   gboolean     using_new_layer;
 } GFigContext;
@@ -239,7 +239,7 @@ void       paint_layer_fill        (gdouble x1,
 
 
 extern GtkWidget    *top_level_dlg;
-extern GimpDrawable *gfig_drawable;
+extern PicmanDrawable *gfig_drawable;
 extern GList        *gfig_list;
 extern gdouble       org_scale_x_factor, org_scale_y_factor;
 

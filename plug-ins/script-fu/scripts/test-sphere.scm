@@ -25,12 +25,12 @@
 ; ----------------------------------------------------------------------
 ; SF-FONT
 ; creates a font-selection widget in the dialog. It returns a fontname as
-; a string. There are two new gimp-text procedures to ease the use of this
+; a string. There are two new picman-text procedures to ease the use of this
 ; return parameter:
 ;
-;  (gimp-text-fontname image drawable
+;  (picman-text-fontname image drawable
 ;                      x-pos y-pos text border antialias size unit font)
-;  (gimp-text-get-extents-fontname text size unit font))
+;  (picman-text-get-extents-fontname text size unit font))
 ;
 ; where font is the fontname you get. The size specified in the fontname
 ; is silently ignored. It is only used in the font-selector. So you are
@@ -108,7 +108,7 @@
 ;
 ; Usage:
 ; SF-FILENAME "Environment Map"
-;             (string-append "" gimp-data-directory "/scripts/beavis.jpg")
+;             (string-append "" picman-data-directory "/scripts/beavis.jpg")
 ;
 ; The value returned when the script is invoked is a string containing the
 ; filename.
@@ -141,7 +141,7 @@
 ; Only useful in interactive mode. It will create a widget in the control
 ; dialog. The widget is a combo-box showing all enum values for the given
 ; enum type. This has to be the name of a registered enum, without the
-; "Gimp" prefix. The second parameter speficies the default value, using
+; "Picman" prefix. The second parameter speficies the default value, using
 ; the enum value's nick.
 ;
 ; Usage:
@@ -178,8 +178,8 @@
   (let* (
         (width (* radius 3.75))
         (height (* radius 2.5))
-        (img (car (gimp-image-new width height RGB)))
-        (drawable (car (gimp-layer-new img width height RGB-IMAGE
+        (img (car (picman-image-new width height RGB)))
+        (drawable (car (picman-layer-new img width height RGB-IMAGE
                                        "Sphere Layer" 100 NORMAL-MODE)))
         (radians (/ (* light *pi*) 180))
         (cx (/ width 2))
@@ -189,7 +189,7 @@
         (light-end-x (+ cx (* radius (cos (+ *pi* radians)))))
         (light-end-y (- cy (* radius (sin (+ *pi* radians)))))
         (offset (* radius 0.1))
-        (text-extents (gimp-text-get-extents-fontname multi-text
+        (text-extents (picman-text-get-extents-fontname multi-text
                                                       size PIXELS
                                                       font))
         (x-position (- cx (/ (car text-extents) 2)))
@@ -198,15 +198,15 @@
         (shadow-x 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
-    (gimp-context-set-foreground sphere-color)
-    (gimp-context-set-background bg-color)
-    (gimp-edit-fill drawable BACKGROUND-FILL)
-    (gimp-context-set-background '(20 20 20))
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
+    (picman-context-set-foreground sphere-color)
+    (picman-context-set-background bg-color)
+    (picman-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(20 20 20))
 
     (if (and
          (or (and (>= light 45) (<= light 75))
@@ -220,46 +220,46 @@
               (begin (set! shadow-x (+ cx shadow-w))
                      (set! shadow-w (- shadow-w))))
 
-          (gimp-context-set-feather TRUE)
-          (gimp-context-set-feather-radius 7.5 7.5)
-          (gimp-image-select-ellipse img CHANNEL-OP-REPLACE shadow-x shadow-y shadow-w shadow-h)
-          (gimp-context-set-pattern pattern)
-          (gimp-edit-bucket-fill drawable PATTERN-BUCKET-FILL MULTIPLY-MODE
+          (picman-context-set-feather TRUE)
+          (picman-context-set-feather-radius 7.5 7.5)
+          (picman-image-select-ellipse img CHANNEL-OP-REPLACE shadow-x shadow-y shadow-w shadow-h)
+          (picman-context-set-pattern pattern)
+          (picman-edit-bucket-fill drawable PATTERN-BUCKET-FILL MULTIPLY-MODE
                                  100 0 FALSE 0 0)))
 
-    (gimp-context-set-feather FALSE)
-    (gimp-image-select-ellipse img CHANNEL-OP-REPLACE (- cx radius) (- cy radius)
+    (picman-context-set-feather FALSE)
+    (picman-image-select-ellipse img CHANNEL-OP-REPLACE (- cx radius) (- cy radius)
                                (* 2 radius) (* 2 radius))
 
-    (gimp-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
+    (picman-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
                      GRADIENT-RADIAL 100 offset REPEAT-NONE FALSE
                      FALSE 0 0 TRUE
                      light-x light-y light-end-x light-end-y)
 
-    (gimp-selection-none img)
+    (picman-selection-none img)
 
-    (gimp-context-set-gradient gradient)
-    (gimp-image-select-ellipse img CHANNEL-OP-REPLACE 10 10 50 50)
+    (picman-context-set-gradient gradient)
+    (picman-image-select-ellipse img CHANNEL-OP-REPLACE 10 10 50 50)
 
-    (gimp-edit-blend drawable CUSTOM-MODE NORMAL-MODE
+    (picman-edit-blend drawable CUSTOM-MODE NORMAL-MODE
                      GRADIENT-LINEAR 100 offset REPEAT-NONE gradient-reverse
                      FALSE 0 0 TRUE
                      10 10 30 60)
 
-    (gimp-selection-none img)
+    (picman-selection-none img)
 
-    (gimp-context-set-foreground '(0 0 0))
-    (gimp-floating-sel-anchor (car (gimp-text-fontname img drawable
+    (picman-context-set-foreground '(0 0 0))
+    (picman-floating-sel-anchor (car (picman-text-fontname img drawable
                                                        x-position y-position
                                                        multi-text
                                                        0 TRUE
                                                        size PIXELS
                                                        font)))
 
-    (gimp-image-undo-enable img)
-    (gimp-display-new img)
+    (picman-image-undo-enable img)
+    (picman-display-new img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 
@@ -285,7 +285,7 @@
   SF-ADJUSTMENT "Font size (pixels)" '(50 1 1000 1 10 0 1)
   SF-PALETTE    "Palette"            "Default"
   SF-FILENAME   "Environment map"
-                (string-append gimp-data-directory
+                (string-append picman-data-directory
                                "/scripts/images/beavis.jpg")
   SF-OPTION     "Orientation"        '("Horizontal"
                                        "Vertical")

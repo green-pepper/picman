@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-paintbrush")
+(stock-id "picman-tool-paintbrush")
 (name "Structure")
-(tool-options "GimpPaintOptions"
-    (tool "gimp-paintbrush-tool")
+(tool-options "PicmanPaintOptions"
+    (tool "picman-paintbrush-tool")
     (brush "Structure")
     (dynamics "Perspective")
     (gradient "FG to BG (RGB)")
@@ -16,4 +16,4 @@
 (use-palette yes)
 (use-font yes)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

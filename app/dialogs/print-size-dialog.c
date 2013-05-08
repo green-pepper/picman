@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,21 +20,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimp-utils.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picman-utils.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "print-size-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -43,13 +43,13 @@
 
 typedef struct
 {
-  GimpImage              *image;
-  GimpSizeEntry          *size_entry;
-  GimpSizeEntry          *resolution_entry;
-  GimpChainButton        *chain;
+  PicmanImage              *image;
+  PicmanSizeEntry          *size_entry;
+  PicmanSizeEntry          *resolution_entry;
+  PicmanChainButton        *chain;
   gdouble                 xres;
   gdouble                 yres;
-  GimpResolutionCallback  callback;
+  PicmanResolutionCallback  callback;
   gpointer                user_data;
 } PrintSizeDialog;
 
@@ -73,14 +73,14 @@ static void   print_size_dialog_free               (PrintSizeDialog *private);
 
 
 GtkWidget *
-print_size_dialog_new (GimpImage              *image,
-                       GimpContext            *context,
+print_size_dialog_new (PicmanImage              *image,
+                       PicmanContext            *context,
                        const gchar            *title,
                        const gchar            *role,
                        GtkWidget              *parent,
-                       GimpHelpFunc            help_func,
+                       PicmanHelpFunc            help_func,
                        const gchar            *help_id,
-                       GimpResolutionCallback  callback,
+                       PicmanResolutionCallback  callback,
                        gpointer                user_data)
 {
   PrintSizeDialog *private;
@@ -96,17 +96,17 @@ print_size_dialog_new (GimpImage              *image,
   GtkObject       *adj;
   GList           *focus_chain = NULL;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
-  dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (image), context,
+  dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (image), context,
                                      title, role,
-                                     GIMP_STOCK_PRINT_RESOLUTION, title,
+                                     PICMAN_STOCK_PRINT_RESOLUTION, title,
                                      parent,
                                      help_func, help_id,
 
-                                     GIMP_STOCK_RESET, RESPONSE_RESET,
+                                     PICMAN_STOCK_RESET, RESPONSE_RESET,
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                      GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -133,9 +133,9 @@ print_size_dialog_new (GimpImage              *image,
   private->callback  = callback;
   private->user_data = user_data;
 
-  gimp_image_get_resolution (image, &private->xres, &private->yres);
+  picman_image_get_resolution (image, &private->xres, &private->yres);
 
-  frame = gimp_frame_new (_("Print Size"));
+  frame = picman_frame_new (_("Print Size"));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                       frame, FALSE, FALSE, 0);
@@ -151,16 +151,16 @@ print_size_dialog_new (GimpImage              *image,
 
   /*  the print size entry  */
 
-  width = gimp_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
+  width = picman_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (width), SB_WIDTH);
 
-  height = gimp_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
+  height = picman_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (height), SB_WIDTH);
 
-  entry = gimp_size_entry_new (0, gimp_get_default_unit (), "%p",
+  entry = picman_size_entry_new (0, picman_get_default_unit (), "%p",
                                FALSE, FALSE, FALSE, SB_WIDTH,
-                               GIMP_SIZE_ENTRY_UPDATE_SIZE);
-  private->size_entry = GIMP_SIZE_ENTRY (entry);
+                               PICMAN_SIZE_ENTRY_UPDATE_SIZE);
+  private->size_entry = PICMAN_SIZE_ENTRY (entry);
 
   label = gtk_label_new_with_mnemonic (_("_Width:"));
   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
@@ -186,37 +186,37 @@ print_size_dialog_new (GimpImage              *image,
   gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
   gtk_widget_show (entry);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (height), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), height, 0, 1, 1, 2);
   gtk_widget_show (height);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (width), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), width, 0, 1, 0, 1);
   gtk_widget_show (width);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 0,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 0,
                                   private->xres, FALSE);
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 1,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 1,
                                   private->yres, FALSE);
 
-  gimp_size_entry_set_refval_boundaries
-    (GIMP_SIZE_ENTRY (entry), 0, GIMP_MIN_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE);
-  gimp_size_entry_set_refval_boundaries
-    (GIMP_SIZE_ENTRY (entry), 1, GIMP_MIN_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE);
+  picman_size_entry_set_refval_boundaries
+    (PICMAN_SIZE_ENTRY (entry), 0, PICMAN_MIN_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE);
+  picman_size_entry_set_refval_boundaries
+    (PICMAN_SIZE_ENTRY (entry), 1, PICMAN_MIN_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 0,
-                              gimp_image_get_width  (image));
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 1,
-                              gimp_image_get_height (image));
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 0,
+                              picman_image_get_width  (image));
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 1,
+                              picman_image_get_height (image));
 
   /*  the resolution entry  */
 
-  width = gimp_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
+  width = picman_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (width), SB_WIDTH);
 
-  height = gimp_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
+  height = picman_spin_button_new (&adj, 1, 1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (height), SB_WIDTH);
 
   label = gtk_label_new_with_mnemonic (_("_X resolution:"));
@@ -237,10 +237,10 @@ print_size_dialog_new (GimpImage              *image,
   gtk_table_attach_defaults (GTK_TABLE (table), hbox, 1, 2, 2, 4);
   gtk_widget_show (hbox);
 
-  entry = gimp_size_entry_new (0, gimp_image_get_unit (image), _("pixels/%a"),
+  entry = picman_size_entry_new (0, picman_image_get_unit (image), _("pixels/%a"),
                                FALSE, FALSE, FALSE, SB_WIDTH,
-                               GIMP_SIZE_ENTRY_UPDATE_RESOLUTION);
-  private->resolution_entry = GIMP_SIZE_ENTRY (entry);
+                               PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION);
+  private->resolution_entry = PICMAN_SIZE_ENTRY (entry);
 
   gtk_table_set_row_spacing (GTK_TABLE (entry), 0, 2);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 1, 2);
@@ -249,34 +249,34 @@ print_size_dialog_new (GimpImage              *image,
   gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
   gtk_widget_show (entry);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (height), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), height, 0, 1, 1, 2);
   gtk_widget_show (height);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (width), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), width, 0, 1, 0, 1);
   gtk_widget_show (width);
 
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (entry), 0,
-                                         GIMP_MIN_RESOLUTION,
-                                         GIMP_MAX_RESOLUTION);
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (entry), 1,
-                                         GIMP_MIN_RESOLUTION,
-                                         GIMP_MAX_RESOLUTION);
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (entry), 0,
+                                         PICMAN_MIN_RESOLUTION,
+                                         PICMAN_MAX_RESOLUTION);
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (entry), 1,
+                                         PICMAN_MIN_RESOLUTION,
+                                         PICMAN_MAX_RESOLUTION);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 0, private->xres);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 1, private->yres);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 0, private->xres);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 1, private->yres);
 
-  chain = gimp_chain_button_new (GIMP_CHAIN_RIGHT);
-  gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (chain), TRUE);
+  chain = picman_chain_button_new (PICMAN_CHAIN_RIGHT);
+  picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (chain), TRUE);
   gtk_table_attach_defaults (GTK_TABLE (entry), chain, 1, 2, 0, 2);
   gtk_widget_show (chain);
 
-  private->chain = GIMP_CHAIN_BUTTON (chain);
+  private->chain = PICMAN_CHAIN_BUTTON (chain);
 
-  focus_chain = g_list_prepend (focus_chain, GIMP_SIZE_ENTRY (entry)->unitmenu);
+  focus_chain = g_list_prepend (focus_chain, PICMAN_SIZE_ENTRY (entry)->unitmenu);
   focus_chain = g_list_prepend (focus_chain, chain);
   focus_chain = g_list_prepend (focus_chain, height);
   focus_chain = g_list_prepend (focus_chain, width);
@@ -299,7 +299,7 @@ print_size_dialog_response (GtkWidget       *dialog,
                             gint             response_id,
                             PrintSizeDialog *private)
 {
-  GimpSizeEntry *entry = private->resolution_entry;
+  PicmanSizeEntry *entry = private->resolution_entry;
 
   switch (response_id)
     {
@@ -310,9 +310,9 @@ print_size_dialog_response (GtkWidget       *dialog,
     case GTK_RESPONSE_OK:
       private->callback (dialog,
                          private->image,
-                         gimp_size_entry_get_refval (entry, 0),
-                         gimp_size_entry_get_refval (entry, 1),
-                         gimp_size_entry_get_unit (entry),
+                         picman_size_entry_get_refval (entry, 0),
+                         picman_size_entry_get_refval (entry, 1),
+                         picman_size_entry_get_unit (entry),
                          private->user_data);
       break;
 
@@ -327,10 +327,10 @@ print_size_dialog_reset (PrintSizeDialog *private)
 {
   gdouble  xres, yres;
 
-  gimp_size_entry_set_unit (private->resolution_entry,
-                            gimp_get_default_unit ());
+  picman_size_entry_set_unit (private->resolution_entry,
+                            picman_get_default_unit ());
 
-  gimp_image_get_resolution (private->image, &xres, &yres);
+  picman_image_get_resolution (private->image, &xres, &yres);
   print_size_dialog_set_resolution (private, xres, yres);
 }
 
@@ -338,37 +338,37 @@ static void
 print_size_dialog_size_changed (GtkWidget       *widget,
                                 PrintSizeDialog *private)
 {
-  GimpImage *image = private->image;
+  PicmanImage *image = private->image;
   gdouble    width;
   gdouble    height;
   gdouble    xres;
   gdouble    yres;
   gdouble    scale;
 
-  scale = gimp_unit_get_factor (gimp_size_entry_get_unit (private->size_entry));
+  scale = picman_unit_get_factor (picman_size_entry_get_unit (private->size_entry));
 
-  width  = gimp_size_entry_get_value (private->size_entry, 0);
-  height = gimp_size_entry_get_value (private->size_entry, 1);
+  width  = picman_size_entry_get_value (private->size_entry, 0);
+  height = picman_size_entry_get_value (private->size_entry, 1);
 
-  xres = scale * gimp_image_get_width  (image) / MAX (0.001, width);
-  yres = scale * gimp_image_get_height (image) / MAX (0.001, height);
+  xres = scale * picman_image_get_width  (image) / MAX (0.001, width);
+  yres = scale * picman_image_get_height (image) / MAX (0.001, height);
 
-  xres = CLAMP (xres, GIMP_MIN_RESOLUTION, GIMP_MAX_RESOLUTION);
-  yres = CLAMP (yres, GIMP_MIN_RESOLUTION, GIMP_MAX_RESOLUTION);
+  xres = CLAMP (xres, PICMAN_MIN_RESOLUTION, PICMAN_MAX_RESOLUTION);
+  yres = CLAMP (yres, PICMAN_MIN_RESOLUTION, PICMAN_MAX_RESOLUTION);
 
   print_size_dialog_set_resolution (private, xres, yres);
   print_size_dialog_set_size (private,
-                              gimp_image_get_width  (image),
-                              gimp_image_get_height (image));
+                              picman_image_get_width  (image),
+                              picman_image_get_height (image));
 }
 
 static void
 print_size_dialog_resolution_changed (GtkWidget       *widget,
                                       PrintSizeDialog *private)
 {
-  GimpSizeEntry *entry = private->resolution_entry;
-  gdouble        xres  = gimp_size_entry_get_refval (entry, 0);
-  gdouble        yres  = gimp_size_entry_get_refval (entry, 1);
+  PicmanSizeEntry *entry = private->resolution_entry;
+  gdouble        xres  = picman_size_entry_get_refval (entry, 0);
+  gdouble        yres  = picman_size_entry_get_refval (entry, 1);
 
   print_size_dialog_set_resolution (private, xres, yres);
 }
@@ -382,8 +382,8 @@ print_size_dialog_set_size (PrintSizeDialog *private,
                                    print_size_dialog_size_changed,
                                    private);
 
-  gimp_size_entry_set_refval (private->size_entry, 0, width);
-  gimp_size_entry_set_refval (private->size_entry, 1, height);
+  picman_size_entry_set_refval (private->size_entry, 0, width);
+  picman_size_entry_set_refval (private->size_entry, 1, height);
 
   g_signal_handlers_unblock_by_func (private->size_entry,
                                      print_size_dialog_size_changed,
@@ -395,7 +395,7 @@ print_size_dialog_set_resolution (PrintSizeDialog *private,
                                   gdouble          xres,
                                   gdouble          yres)
 {
-  if (private->chain && gimp_chain_button_get_active (private->chain))
+  if (private->chain && picman_chain_button_get_active (private->chain))
     {
       if (xres != private->xres)
         {
@@ -414,8 +414,8 @@ print_size_dialog_set_resolution (PrintSizeDialog *private,
                                    print_size_dialog_resolution_changed,
                                    private);
 
-  gimp_size_entry_set_refval (private->resolution_entry, 0, xres);
-  gimp_size_entry_set_refval (private->resolution_entry, 1, yres);
+  picman_size_entry_set_refval (private->resolution_entry, 0, xres);
+  picman_size_entry_set_refval (private->resolution_entry, 1, yres);
 
   g_signal_handlers_unblock_by_func (private->resolution_entry,
                                      print_size_dialog_resolution_changed,
@@ -425,8 +425,8 @@ print_size_dialog_set_resolution (PrintSizeDialog *private,
                                    print_size_dialog_size_changed,
                                    private);
 
-  gimp_size_entry_set_resolution (private->size_entry, 0, xres, TRUE);
-  gimp_size_entry_set_resolution (private->size_entry, 1, yres, TRUE);
+  picman_size_entry_set_resolution (private->size_entry, 0, xres, TRUE);
+  picman_size_entry_set_resolution (private->size_entry, 1, yres, TRUE);
 
   g_signal_handlers_unblock_by_func (private->size_entry,
                                      print_size_dialog_size_changed,

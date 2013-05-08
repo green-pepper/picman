@@ -1,14 +1,14 @@
-# Czech translation for gimp.
-# Copyright (C) 2011 gimp's COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp package.
+# Czech translation for picman.
+# Copyright (C) 2011 picman's COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman package.
 #
 # Marek Černocký <marek@manet.cz>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp master\n"
+"Project-Id-Version: picman master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-12-26 09:54+0000\n"
 "PO-Revision-Date: 2011-12-26 09:54+0000\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
@@ -19,10 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "kulatý"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "round"
 msgstr "rozpitý"

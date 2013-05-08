@@ -1,0 +1,2297 @@
+# Vietnamese translation for PICMAN LibPICMAN.
+# Copyright © 2006 Gnome i18n Project for Vietnamese.
+# T.M.Thanh <tmthanh@yahoo.com>, 2002-2003.
+# Clytie Siddall <clytie@riverland.net.au>, 2005-2006.
+# Nguyễn Thái Ngọc Duy <pclouds@gmail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Picman-libpicman Gnome HEAD\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=picman&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-11-05 16:04+0000\n"
+"PO-Revision-Date: 2011-12-27 10:01+0700\n"
+"Last-Translator: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>\n"
+"Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: LocFactoryEditor 1.6fc1\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "thành công"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "lỗi thực thi"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "lỗi gọi"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "bị huỷ"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+#| msgid "_Selection"
+msgid "Brush Selection"
+msgstr "Vùng chọn chỗi vẽ"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Duyệt"
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+#| msgid "%s can't handle layers"
+msgid "%s plug-in can't handle layers"
+msgstr "Phần bổ sung %s không thể xử lý lớp"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Trộn các lớp hiển thị"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+#| msgid "%s can't handle layer offsets, size or opacity"
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"Phần bổ sung %s không thể xử lý các độ dịch, kích cỡ hay độ đục của lớp"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+#| msgid "%s can only handle layers as animation frames"
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "Phần bổ sung %s có thể xử lý các lớp chỉ như là các khung hoạt cảnh"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Lưu dạng hoạt cảnh"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Làm phẳng ảnh"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+#| msgid "%s can't handle transparency"
+msgid "%s plug-in can't handle transparency"
+msgstr "Phần bổ sung %s không thể xử lý độ trong suốt"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+#| msgid "%s can't handle layer masks"
+msgid "%s plug-in can't handle layer masks"
+msgstr "Phần bổ sung %s không thể xử lý mặt nạ lớp"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Áp dụng mặt nạ lớp"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+#| msgid "%s can only handle RGB images"
+msgid "%s plug-in can only handle RGB images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ các ảnh kiểu RGB"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Chuyển đổi sang RGB"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+#| msgid "%s can only handle grayscale images"
+msgid "%s plug-in can only handle grayscale images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ ảnh kiểu mức xám"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Chuyển đổi sang mức xám"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+#| msgid "%s can only handle indexed images"
+msgid "%s plug-in can only handle indexed images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ ảnh phụ lục"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Chuyển đổi thành Phụ Lục bằng các thiết\n"
+"lập mặc định (tự làm để chỉnh kết quả)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+#| msgid "%s can only handle bitmap (two color) indexed images"
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ ảnh phụ lục kiểu mảng ảnh (hai màu)"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Chuyển đổi thành Phụ Lục bằng các thiết\n"
+"lập mảng ảnh mặc định (tự làm để chỉnh kết quả)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+#| msgid "%s can only handle RGB or grayscale images"
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "Phần bổ sung %s chỉ có thể xử lý ảnh kiểu RGB hay mức xám"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+#| msgid "%s can only handle RGB or indexed images"
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ ảnh kiểu RGB hay phụ lục"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+#| msgid "%s can only handle grayscale or indexed images"
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "Phần bổ sung %s có thể xử lý chỉ ảnh phụ lục hay mức xám"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+#| msgid "%s needs an alpha channel"
+msgid "%s plug-in needs an alpha channel"
+msgstr "Phần bổ sung %s cần một kênh anfa"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Thêm kênh anfa"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Xác nhận Lưu"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Xuất ra tập tin"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "Bỏ _qua"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "_Xuất"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Ảnh nên được xuất ra trước khi nó được lưu dạng %s, vì những lý do sau :"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Việc chuyển đổi khi xuất ra sẽ không sửa đổi ảnh gốc của bạn."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Bạn sắp lưu một mặt nạ lớp dạng %s.\n"
+"Việc này sẽ không lưu các lớp hiển thị."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Bạn sắp lưu một kênh (vùng chọn được lưu) dạng %s.\n"
+"Việc này sẽ không lưu các lớp hiển thị."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr ""
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Chọn phông"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Không chân"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+#| msgid "Font Selection"
+msgid "Gradient Selection"
+msgstr "Chọn gradient"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(Rỗng)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+#| msgid "Font Selection"
+msgid "Palette Selection"
+msgstr ""
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+#| msgid "Font Selection"
+msgid "Pattern Selection"
+msgstr "Chọn mẫu"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "theo tên"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "theo mô tả"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "theo trợ giúp"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "theo tác giả"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "theo tác quyền"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "theo ngày"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "theo kiểu"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Không tìm thấy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Đang tìm kiếm"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Đang tìm kiếm theo tên"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Đang tìm kiếm theo mô tả"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Đang tìm kiếm theo trợ giúp"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Đang tìm kiếm theo tác giả"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Đang tìm kiếm theo tác quyền"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Đang tìm kiếm theo ngày"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Đang tìm kiếm theo kiểu"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "Thủ tục %d"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Không tìm thấy"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d thủ tục khớp với truy vấn của bạn"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Tham số"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Giá trị trả lại"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Thông tin thêm"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Tác giả:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Ngày:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Tác quyền:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "phần trăm"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#| msgid "_White (full opacity)"
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "T_rắng (đục tuyệt đối)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#| msgid "_Black (full transparency)"
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "Đ_en (trong suốt tuyệt đối)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#| msgid "Layer's _alpha channel"
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "Kênh _anfa của lớp"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#| msgid "_Transfer layer's alpha channel"
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Truyền kênh anfa của lớp"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+#| msgid "_Selection"
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Vùng chọn"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+#| msgid "_Grayscale copy of layer"
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "Bản sao mức _xám của lớp"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+#| msgid "C_hannel"
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "Kên_h"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+#| msgid "FG to BG (RGB)"
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "Cảnh gần thành nền (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+#| msgid "FG to BG (HSV)"
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "Cảnh gần thành nền (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+#| msgid "FG to transparent"
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Cảnh gần thành trong suốt"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+#| msgid "Custom gradient"
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Dốc tự chọn"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+#| msgid "FG color fill"
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Màu tô cảnh gần"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+#| msgid "BG color fill"
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Màu tô nền"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+#| msgid "Pattern fill"
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Điền mẫu"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+#| msgid "Add to the current selection"
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Thêm vào vùng chọn hiện thời"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+#| msgid "Subtract from the current selection"
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Loại khỏi vùng chọn hiện thời"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+#| msgid "Replace the current selection"
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Thay thế vùng chọn hiện thời"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+#| msgid "Intersect with the current selection"
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Cắt chéo với vùng chọn hiện thời"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#| msgid "Red"
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Đỏ"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+#| msgid "Green"
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Lục"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+#| msgid "Blue"
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Xanh dương"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+#| msgid "Gray"
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Xám"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+#| msgid "Indexed"
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Chỉ mục"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+#| msgid "Alpha"
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Anfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+#| msgid "Small"
+msgctxt "check-size"
+msgid "Small"
+msgstr "Nhỏ"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+#| msgid "Medium"
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Vừa"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+#| msgid "Large"
+msgctxt "check-size"
+msgid "Large"
+msgstr "Lớn"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+#| msgid "Light checks"
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Đối sánh nhạt"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+#| msgid "Mid-tone checks"
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Đối sánh nửa sắc"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+#| msgid "Dark checks"
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Đối sánh tối"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+#| msgid "White only"
+msgctxt "check-type"
+msgid "White only"
+msgstr "Chỉ màu trắng"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+#| msgid "Gray only"
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Chỉ màu xám"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+#| msgid "Black only"
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Chỉ màu đen"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+#| msgid "Images"
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Ảnh"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+#| msgid "Pattern fill"
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Mẫu"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+#| msgid "Lightness"
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Độ nhạt"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+#| msgid "Luminosity"
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Độ sáng"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+#| msgid "Average"
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Trung bình"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+#| msgid "Dodge"
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Tránh"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+#| msgid "Burn"
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Đốt"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Tuyến tính"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Tuyến kép"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+#| msgid "Radial"
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Toả tròn"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+#| msgid "Square"
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Vuông"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+#| msgid "Conical (sym)"
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Chóp nón (đối xứng)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+#| msgid "Conical (asym)"
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Chóp nón (không đối xứng)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+#| msgid "Shaped (angular)"
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Vỡ hình (ở góc)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+#| msgid "Shaped (spherical)"
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Vỡ hình (hình cầu)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+#| msgid "Shaped (dimpled)"
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Vỡ hình (nhiều trũng)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+#| msgid "Spiral (cw)"
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Xoắn ốc (xuôi chiều)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+#| msgid "Spiral (ccw)"
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Xoắn ốc (ngược chiều)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+#| msgid "Intersections (dots)"
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Giao (chấm)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+#| msgid "Intersections (crosshairs)"
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Giao (chữ thập mảnh)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+#| msgid "Dashed"
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Gạch gạch"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+#| msgid "Double dashed"
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Gạch đôi"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+#| msgid "Solid"
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Đặc"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+#| msgid "Stock ID"
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "ID chuẩn"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+#| msgid "Inline pixbuf"
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Bộ đệm điểm ảnh trực tiếp"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+#| msgid "Image file"
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Tập tin ảnh"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+#| msgid "RGB color"
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "Màu RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+#| msgid "Grayscale"
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Mức xám"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+#| msgid "Indexed color"
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Màu chỉ mục"
+
+# Name: don't translate / Tên: đừng dịch
+#: ../libpicmanbase/picmanbaseenums.c:543
+#| msgid "RGB"
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+#| msgid "RGB-alpha"
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RGB-anfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+#| msgid "Grayscale"
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Mức xám"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+#| msgid "Grayscale-alpha"
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Mức xám-anfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+#| msgid "Indexed"
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Chỉ mục"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+#| msgid "Indexed-alpha"
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Chỉ mục-anfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+#| msgid "None"
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Không có"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+#| msgid "Bi-linear"
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Tuyến tính"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+#| msgid "Cubic"
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Khối"
+
+# Name: don't translate/Tên: đừng dịch
+#: ../libpicmanbase/picmanbaseenums.c:582
+#| msgid "Lanczos"
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+#| msgid "Constant"
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Hằng số"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+#| msgid "Incremental"
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Tăng dần"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+#| msgid "None"
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Không có"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+#| msgid "Sawtooth wave"
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Sóng răng cưa"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+#| msgid "Triangular wave"
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Sóng tam giác"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+#| msgid "Run interactively"
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Chạy tương tác"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+#| msgid "Run non-interactively"
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Chạy không tương tác"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+#| msgid "Run with last used values"
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Chạy với các giá trị mới dùng"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+#| msgid "Pixels"
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Điểm ảnh"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+#| msgid "Points"
+msgctxt "size-type"
+msgid "Points"
+msgstr "Điểm"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+#| msgid "Shadows"
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Bóng"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+#| msgid "Midtones"
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Nửa sắc"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+#| msgid "Highlights"
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Nổi bật"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+#| msgid "Forward"
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Bình thường (Tới)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Điều chỉnh"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Xén"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+#| msgid "Internal PICMAN procedure"
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Thủ tục PICMAN nội bộ"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+#| msgid "PICMAN Plug-In"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "Phần bổ sung PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+#| msgid "PICMAN Extension"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "Phần mở rộng PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+#| msgid "Temporary Procedure"
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Thủ tục tạm thời"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+#| msgid "None"
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Không có"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+#| msgid "Highlights"
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Nhẹ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+#| msgid "Medium"
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Vừa"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Đầy"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Canh trái"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Canh phải"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+#| msgid "C_enter"
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Giữa"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Điền đầy"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(chuỗi UTF-8 không hợp lệ)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Chế độ thao tác quản lý màu sắc."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Hồ sơ màu của màn hình (chính) của bạn."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+#| msgid ""
+#| "When enabled, the PICMAN will try to use the display color profile from the "
+#| "windowing system. The configured monitor profile is then only used as a "
+#| "fallback."
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Khi bật, PICMAN sẽ thử dùng hồ sơ màu bộ trình bày từ hệ thống cửa sổ. Hồ sơ "
+"bộ trình bày đã cấu hình thì chỉ dùng là sự chọn phòng bị."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+#| msgid "The default RGB workspace color profile."
+msgid "The default RGB working space color profile."
+msgstr "Hồ sơ màu vùng làm việc RGB mặc định."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "Hồ sơ màu CMYK dùng để chuyển đổi giữa RGB và CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "Hồ sơ dùng để mô phỏng phiên bản đã in (xem thử mềm)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Đặt cách ánh xạ màu cho bộ trình bày của bạn."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+#| msgid ""
+#| "Sets how colors are converted from workspace to the print simulation "
+#| "device."
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr "Đặt cách chuyển đổi màu từ vùng làm việc sang thiết bị mô phỏng in."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+#| msgid "No color management"
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Không quản lý màu"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+#| msgid "Color managed display"
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Bộ trình bày có màu đã quản lý"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+#| msgid "Print simulation"
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Mô phỏng in"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+#| msgid "Perceptual"
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Dựa vào nhận thức"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+#| msgid "Relative colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Đo màu tượng ứng"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+#| msgid "Saturation"
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Độ bão hòa"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+#| msgid "Absolute colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Đo màu tuyệt đối"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "giá trị cho hiệu bài %s không phải là chuỗi UTF-8 hợp lệ"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+"ngờ « có » (yes) hay « không » (no) cho hiệu bài luận lý %s, còn nhận « %s »"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "giá trị không hợp lệ « %s » cho hiệu bài %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "giá trị không hợp lệ « %ld » cho hiệu bài %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "trong khi phân tách hiệu bài « %s »: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "lỗi phân tách nghiêm trọng"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Không thể mở rộng ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Gặp lỗi khi ghi vào « %s »: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Không thể tạo tập tin tạm thời cho « %s »: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Không thể mở « %s » để ghi: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Gặp lỗi khi ghi vào tập tin tạm thời cho « %s »: %s\n"
+"Tập tin gốc chưa được đụng."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Gặp lỗi khi ghi vào tập tin tạm thời cho « %s »: %s\n"
+"Chưa tạo tập tin nào."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Không thể tạo « %s »: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "chuỗi UTF-8 không hợp lệ"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+#| msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr "chờ 'yes' (có) hay 'no' (không) cho hiệu bài luận lý, nhận được '%s'"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Gặp lỗi khi phân tách « %s » trên dòng %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Lỗi tải mô-đun « %s »: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Lỗi mô-đun"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Đã tải"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Lỗi tải"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Chưa tải"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Không thể quyết định thư mục chính hợp lệ.\n"
+"Nư thế thì chác hình thu nhỏ sẽ được lưu vào thư mục cho tập tin tạm thời "
+"(%s) thay thế."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Lỗi tạo thư mục hình thu nhỏ « %s »."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Không thể tạo hình thu nhỏ cho %s: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "Tìm _kiếm:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "Màu cảnh _gần"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "Màu _nền"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "Đ_en"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "T_rắng"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+#| msgid "None"
+msgctxt "profile"
+msgid "None"
+msgstr "Không có"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Tỷ lệ"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Hiện thời:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Cũ :"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Cách ghi màu thập lục như dạng HTML và CSS. Mục nhập này cũng chấp nhận tên "
+"màu kiểu CSS."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "Cách _ghi HTML:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Mở hộp chọn tập tin để duyệt qua các thư mục của bạn"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Mở hộp chọn tập tin để duyệt qua các tập tin của bạn"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Chọn thư mục"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Chọn tập tin"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "Kilo-byte"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "Mega-byte"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "Giga-byte"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Chưa chọn gì"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "Chọn _hết"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "Chọn _phạm vị:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Mở t_rang dạng"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Trang 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Trang %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Một trang đã chọn"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d trang đã chọn"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Có thể ghi"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Thư mục"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Hãy nhấn vào ống nhỏ giọt, rồi nhấn vào bất cứ nơi nào trên màn hình, để "
+"chọn màu đó."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Xem thử"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Kiểm tra cỡ"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Kiểm trả kiểu dáng"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Trường nhập chữ này có hạn chế là %d ký tự."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Neo"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "G_iữa"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Nhân đôi"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "_Sửa"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Đã nối kết"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Dán làm mới"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Dán vào"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "Đặt _lại"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Hiển thị"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Nét"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Kh_oảng cách chữ"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Khoảng cách _dòng"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "Đổ_i cỡ"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_Co dãn"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+#| msgid "Crop"
+msgid "Cr_op"
+msgstr "_Xén"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "Chu_yển dạng"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_Xoay"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Kéo cắt"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Thêm..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Chọn đơn vị"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Đơn vị"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Hệ số"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Hãy dùng giá trị này để gieo trình sinh số ngẫu nhiên — điều này cho bạn có "
+"khả năng nhắc lại hoạt động « ngẫu nhiên » đưa ra."
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "Hạt _mới"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "Gieo trình sinh số ngẫu nhiên bằng số ngẫu nhiên được tạo ra"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "Để ngẫ_u nhiên"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+#| msgid "Visible"
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Tắt"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+#| msgid "Green"
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Màn hình"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Cửa sổ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+#| msgid "Square"
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Vuông"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+#| msgid "Contrast"
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Chân dung"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Phong cảnh"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+#| msgid "_H"
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Sắc màu"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+#| msgid "_S"
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Độ bão hòa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+#| msgid "_V"
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Giá trị"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+#| msgid "_R"
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Đỏ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+#| msgid "_G"
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Xanh lá cây"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+#| msgid "_B"
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Xanh dương"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+#| msgid "_A"
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Anfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+#| msgid "Layers"
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Lớp"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+#| msgid "Images"
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Ảnh"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+#| msgid "Zoom in"
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Phóng to"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+#| msgid "Zoom out"
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Thu nhỏ"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+#| msgid "Color proof filter using ICC color profile"
+msgid "CMYK color selector (using color profile)"
+msgstr ""
+
+# Name: don't translate / Tên: đừng dịch
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_X"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_T"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_V"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_MĐ"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Xanh lông mòng"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Đỏ tươi"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Vàng"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Đen"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+#| msgid "_Profile:"
+msgid "Profile: (none)"
+msgstr "Hồ sơ: (không có)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+#| msgid "_Profile:"
+msgid "Profile: %s"
+msgstr "Hồ sơ: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "Bộ chọn màu CMYK"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Kéo _ra đen:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Phần trăm màu đen cần kéo ra các mực màu."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Bộ chọn màu kiểu dáng màu nước"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Màu nước"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Áp lực"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr ""
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:155
+#| msgid "Linux input event controller"
+msgid "DirectX DirectInput event controller"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Thiết bị:"
+
+#: ../modules/controller-dx-dinput.c:196
+#| msgid "The name of the device to read Linux Input events from."
+msgid "The device to read DirectInput events from."
+msgstr "Tên thiết bị từ đó cần đọc các sự kiện nhập."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+#| msgid "Button 0"
+msgid "Button %d"
+msgstr "Nút %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+#| msgid "Button Side"
+msgid "Button %d Press"
+msgstr "Nhấn nút %d"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+#| msgid "Button Middle"
+msgid "Button %d Release"
+msgstr "Nhả nút %d"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+#| msgid "Dial Turn Left"
+msgid "Z Axis Turn Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+#| msgid "Dial Turn Right"
+msgid "Z Axis Turn Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1081
+#| msgid "Linux Input Events"
+msgid "DirectInput Events"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Chưa cấu hình thiết bị nào"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+#| msgid "Device not available: %s"
+msgid "Device not available"
+msgstr "Thiết bị không sẵn sàng"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Nút 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Nút 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Nút 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Nút 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Nút 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Nút 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Nút 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Nút 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Nút 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Nút 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Chuột nút"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Nút trái"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Nút phải"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Nút giữa"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Nút bên"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Nút nữa"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Nút tới"
+
+#: ../modules/controller-linux-input.c:74
+#| msgid "Button 0"
+msgid "Button Back"
+msgstr "Nút lùi"
+
+#: ../modules/controller-linux-input.c:75
+#| msgid "Button 0"
+msgid "Button Task"
+msgstr "Nút tác vụ"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Bánh xe nút"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Cơ chế nút Xuống"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Cơ chế nút Lên"
+
+#: ../modules/controller-linux-input.c:91
+#| msgid "Forward"
+msgid "Y Move Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "La bàn quay trái"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "La bàn quay phải"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Bánh xe quay trái"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Bánh xe quay phải"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Bộ điều khiển sự kiện nhập Linux"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Tên thiết bị từ đó cần đọc các sự kiện Nhập Linux."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Nhập Linux"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Sự Kiện Nhập Linux"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Đang đọc từ %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Thiết bị không sẵn sàng: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Kết thúc tập tin"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "Bộ điều khiển sự kiện MIDI"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Tên của thiết bị từ đó cần đọc các sự kiện MIDI."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Hãy nhập « alsa » để sử dụng bộ sắp xếp dãy ALSA."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kênh:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"Kênh MIDI từ đó cần đọc các sự kiện. Hãy đặt nó là -1 để đọc từ mọi kênh "
+"MIDI."
+
+# Name: don't translate / Tên: đừng dịch
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Ghi chú %02x bật"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Ghi chú %02x tắt"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Bộ điều khiển %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "Sự Kiện MIDI"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr ""
+
+#: ../modules/controller-midi.c:427
+#| msgid "MIDI event controller"
+msgid "PICMAN MIDI Input Controller"
+msgstr "Bộ điều khiển nhận MIDI"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Không nhạy cảm màu đỏ"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Không nhạy cảm màu xanh lá cây"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Không nhạy cảm màu xanh dương"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Bộ lọc mô phỏng không nhạy cảm màu (thuật toán Brettel-Vienot-Mollon)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Nhìn thiếu màu"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Kiể_u thiếu màu :"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Bộ lọc hiển thị màu gamma (γ)"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma (γ)"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma (γ):"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Bộ lọc hiển thị màu có độ tương phản cao"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Độ tương phản"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "Ch_u kỳ tương phản:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Bộ lọc trình bày quản lý màu, dùng xác lập màu ICC"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Quản lý màu"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Không có"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Bộ lọc này bắt cấu hình từ phần Quản Lý Màu trong hộp thoại « Tùy thích »."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Chế độ thao tác:"
+
+#: ../modules/display-filter-lcms.c:228
+#| msgid "Image file"
+msgid "Image profile:"
+msgstr "Hồ sơ ảnh:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Xác lập bộ trình bày:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Hồ sơ mô phỏng in:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Bộ lọc xem thử màu dùng hồ sơ màu ICC"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Xem thử màu"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Chọn hồ sơ màu ICC"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Mọi tập tin (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "Hồ _sơ:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "Địn_h:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "_Bù điểm đen"
+
+#~ msgid "Image source"
+#~ msgstr "Nguồn ảnh"
+
+#~ msgid "Pattern source"
+#~ msgstr "Nguồn mẫu"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "Tuyến"
+
+#~ msgid "interpolation|None"
+#~ msgstr "Không có"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "Tuyến"
+
+#~ msgid "Backward"
+#~ msgstr "Lùi"
+
+#~ msgid "%d Byte"
+#~ msgid_plural "%d Bytes"
+#~ msgstr[0] "%d Byte"
+
+#~ msgid "%.2f KB"
+#~ msgstr "%.2f KB"
+
+#~ msgid "%.1f KB"
+#~ msgstr "%.1f KB"
+
+#~ msgid "%d KB"
+#~ msgstr "%d KB"
+
+#~ msgid "%.2f MB"
+#~ msgstr "%.2f MB"
+
+#~ msgid "%.1f MB"
+#~ msgstr "%.1f MB"
+
+#~ msgid "%d MB"
+#~ msgstr "%d MB"
+
+#~ msgid "%.2f GB"
+#~ msgstr "%.2f GB"
+
+#~ msgid "%.1f GB"
+#~ msgstr "%.1f GB"
+
+#~ msgid "%d GB"
+#~ msgstr "%d GB"
+
+#~ msgid "intent|Saturation"
+#~ msgstr "Độ bão hòa"
+
+#~ msgid "Ask"
+#~ msgstr "Hỏi"
+
+#~ msgid "Use embedded profile"
+#~ msgstr "Dùng hồ sơ nhúng"
+
+#~ msgid "Convert to RGB workspace"
+#~ msgstr "Chuyển đổi sang vùng làm việc RGB"
+
+#~ msgid "pixels/%s"
+#~ msgstr "điểm ảnh/%s"
+
+#~ msgid "RGB workspace profile:"
+#~ msgstr "Xác lập vùng làm việc RGB:"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "Bộ chọn màu tam giác kiểu dáng thợ sơn"
+
+#~ msgid "Triangle"
+#~ msgstr "Tam giác"

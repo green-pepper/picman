@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/Legacy
+## Makefile.am for picman/data/brushes/Legacy
 
-brushlegacydatadir = $(gimpdatadir)/brushes/Legacy
+brushlegacydatadir = $(picmandatadir)/brushes/Legacy
 
 brushlegacydata_DATA = \
 	confetti.gbr	\

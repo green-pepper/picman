@@ -1,10 +1,10 @@
-## Makefile.am for gimp/data/dynamics
+## Makefile.am for picman/data/dynamics
 
 SUBDIRS = \
 	Basic \
 	FX
 
-dynamicsdatadir = $(gimpdatadir)/dynamics
+dynamicsdatadir = $(picmandatadir)/dynamics
 
 dynamicsdata_DATA = \
 	Basic-Dynamics.gdyn		\

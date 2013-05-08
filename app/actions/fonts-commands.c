@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,16 +22,16 @@
 
 #include "actions-types.h"
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
-#include "text/gimp-fonts.h"
+#include "text/picman-fonts.h"
 
-#include "widgets/gimpfontview.h"
+#include "widgets/picmanfontview.h"
 
 #include "actions.h"
 #include "fonts-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functionss */
@@ -40,8 +40,8 @@ void
 fonts_refresh_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpContext *context = action_data_get_context (data);
+  PicmanContext *context = action_data_get_context (data);
 
   if (context)
-    gimp_fonts_load (context->gimp);
+    picman_fonts_load (context->picman);
 }

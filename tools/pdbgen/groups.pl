@@ -17,8 +17,8 @@
     floating_sel
     font_select
     fonts
-    gimp
-    gimprc
+    picman
+    picmanrc
     gradient
     gradient_select
     gradients

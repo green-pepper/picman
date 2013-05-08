@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-11-18 02:56+0000\n"
 "PO-Revision-Date: 2011-12-17 21:47+0200\n"
 "Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
@@ -154,8 +154,8 @@ msgid "_Start Server..."
 msgstr "_Startēt serveri..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP tiešsaistē"
+msgid "_PICMAN Online"
+msgstr "_PICMAN tiešsaistē"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -194,8 +194,8 @@ msgid "_Beveled Pattern"
 msgstr "_Noslīpēts raksts"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -766,7 +766,7 @@ msgstr "Izveidot vienkāršu, slīpētu pogas grafiku tīmekļa lapai"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Krāsu pāreja"
 
@@ -853,7 +853,7 @@ msgstr ""
 "animācijas"
 
 #: ../plug-ins/script-fu/scripts/blend-anim.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Kadrs"
 
@@ -1441,7 +1441,7 @@ msgstr "Aizmiglošanas rādiuss"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Krāsa"
 
@@ -1637,59 +1637,59 @@ msgstr "Ēnas svars (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Izplūdusi apmale..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Grāmatzīme uz GIMP tīmekļa vietni"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Grāmatzīme uz PICMAN tīmekļa vietni"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Grāmatzīme uz lietotāja rokasgrāmatu"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "Izveidot un lietot iezīmējumu_s"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "Izveidot, atvērt un saglabāt _failus"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "Vienkāršu_s objektu zīmēšana"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Kā izmantot _dialoglodziņus"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "Spraudņu _reģistrs "
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "_Ceļu lietošana"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "_Pamatjēdzieni"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "Izstrā_dātāja tīmekļa vietne"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "Galvenā tī_mekļa vietne"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "_Attēlu sagatavošana tīmeklim"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "_Lietotāja rokasgrāmatas tīmekļa vietne"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "_Darbs ar ciparu kameras fotogrāfijām"
 
@@ -2422,127 +2422,127 @@ msgstr "Pagriezties no kreisās uz labo"
 msgid "_Spinning Globe..."
 msgstr "Rotē_joša lode..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid ""
 "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "Pievienot spirogrāfu, epitrohoidu un Lissajous līknes dotajam slānim"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Aerogrāfs"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Ota"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Aplis"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Krāsu metode"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrohoida"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Krāsu pāreja: cikliski zāģa zobi"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Krāsu pāreja: cikliski trijstūri"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Sešstūris"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Cauruma proporcija"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Iekšējais zobs"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Mala (pikseļos)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Ārējais zobs"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Zīmulis"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Piecstūris"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Daudzstūris: 10 malas"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Daudzstūris: 7 malas"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Daudzstūris: 8 malas"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Daudzstūris: 9 malas"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Renderē līnijas"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Forma"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Viendabīga krāsa"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spirografs"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Kvadrāts"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Sākuma leņķis"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Rīks"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Trijstūris"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Tips"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
-msgstr "_Spirogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
+msgstr "_Spiropicman..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
 msgid "Create a logo using a rock-like texture, a nova glow, and shadow"

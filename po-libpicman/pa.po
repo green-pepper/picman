@@ -1,0 +1,1881 @@
+# translation of picman-libpicman.HEAD.pa.po to Punjabi
+# Copyright (C) 2004 THE picman-libpicman'S COPYRIGHT HOLDER
+#
+#
+# This file is distributed under the same license as the picman-libpicman package
+#Jaswinder Singh Phulewala <jaswinderlinux@netscape.net>, 2004.
+# ASB <aalam@users.sf.net>,2004,2005,2006, 2007.
+# Amanpreet Singh Alam <aalam@users.sf.net>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD.pa\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-09-05 07:32+0000\n"
+"PO-Revision-Date: 2008-10-07 06:41+0000\n"
+"Last-Translator: Amanpreet Singh Alam <aalam@users.sf.net>\n"
+"Language-Team: Punjabi/Panjabi <punjabi-l10n@lists.sf.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: LoKalize 0.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1044
+msgid "success"
+msgstr "ਸਫ਼ਲ"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1048
+msgid "execution error"
+msgstr "ਚਲਾਉਣ ਗਲਤੀ"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1052
+msgid "calling error"
+msgstr "ਕਾਲ ਗਲਤੀ"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1056
+msgid "cancelled"
+msgstr "ਰੱਦ ਕੀਤਾ"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "ਬੁਰਸ਼ ਚੋਣ"
+
+#: ../libpicman/picmanbrushselectbutton.c:913
+#: ../libpicman/picmanpatternselectbutton.c:714
+msgid "_Browse..."
+msgstr "ਬਰਾਊਜ਼(_B)..."
+
+#: ../libpicman/picmanexport.c:217 ../libpicman/picmanexport.c:253
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s ਪਲੱਗਇਨ ਲੇਅਰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:218 ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "ਦਿੱਖ ਲੇਅਰਾਂ ਮਰਜ਼ ਕਰੋ"
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "%s ਪਲੱਗਇਨ ਆਫਸੈੱਟ, ਆਕਾਰ ਜਾਂ ਧੁੰਧਲੀ ਲੇਅਰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:235 ../libpicman/picmanexport.c:244
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ ਲੇਅਰ, ਜੋ ਕਿ ਐਨੀਮੇਸ਼ਨ ਫਰੇਮ ਵਾਂਗ ਹੀ, ਹੈਂਡਲ ਕਰ ਸਕਦੇ ਹਨ"
+
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "ਐਨੀਮੇਸ਼ਨ ਵਾਂਗ ਸੰਭਾਲੋ"
+
+#: ../libpicman/picmanexport.c:245 ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "ਫੈਲਿਆ ਚਿੱਤਰ"
+
+#: ../libpicman/picmanexport.c:262
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s ਪਲੱਗਇਨ ਪਾਰਦਰਸ਼ਤਾ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:271
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s ਪਲੱਗਇਨ ਮਾਸਕ ਲੇਅਰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "ਲੇਅਰ ਮਾਸਕ ਲਾਗੂ ਕਰੋ"
+
+#: ../libpicman/picmanexport.c:280
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ RGB ਚਿੱਤਰਾਂ ਨੂੰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:281 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "RGB ਵਿੱਚ ਕਨਵਰਟ"
+
+#: ../libpicman/picmanexport.c:289
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ ਗਰੇ-ਸਕੇਲ ਚਿੱਤਰ ਹੈਂਡਲ ਨਹੀਂ ਸਕਦੇ ਹੋ"
+
+#: ../libpicman/picmanexport.c:290 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "ਗਰੇ-ਸਕੇਲ ਲਈ ਕਨਵਰਟ ਕਰੋ"
+
+#: ../libpicman/picmanexport.c:298
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s ਪਲੱਗਇਨ ਨੂੰ ਇੰਡੈਕਸਡ ਚਿੱਤਰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:299 ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"ਡਿਫਾਲਟ ਸੈਟਿੰਗ ਵਰਤ ਕੇ ਇੰਡੈਕਸ ਵਿੱਚ ਬਦਲੋ\n"
+"(ਨਤੀਜਾ ਵੇਖਣ ਲਈ ਇਸ ਨੂੰ ਦਸਤਾਵੇਜ਼ੀ ਕਰੋ)"
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ ਬਿੱਟਮੈਪ (ਦੋ ਰੰਗ) ਇੰਡੈਕਸ ਚਿੱਤਰ ਹੈਂਡਲ ਹੀ ਕਰ ਸਕਦੀ"
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"ਬਿੱਟ-ਮੈਪ ਡਿਫਾਲਟ ਸੈਟਿੰਗ ਵਰਤ ਕੇ ਇੰਡੈਕਸ ਵਿੱਚ ਬਦਲੋ\n"
+"(ਨਤੀਜਾ ਵੇਖਣ ਲਈ ਇਸ ਨੂੰ ਦਸਤਾਵੇਜ਼ੀ ਕਰੋ)"
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ RGB ਜਾਂ ਗਰੇ-ਸਕੇਲ ਚਿੱਤਰ ਹੀ ਹੈਂਡਲ ਕਰ ਸਕਦੀ ਹੈ"
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ RGB ਜਾਂ ਇੰਡੈਕਸ ਚਿੱਤਰ ਹੀ ਹੈਂਡਲ ਕਰ ਸਕਦੀ ਹੈ"
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "%s ਪਲੱਗਇਨ ਕੇਵਲ ਗਰੇ-ਸਕੇਲ ਜਾਂ ਇੰਡੈਕਸ ਚਿੱਤਰ ਹੀ ਹੈਂਡਲ ਕਰ ਸਕਦੀ ਹੈ"
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s ਪਲੱਗਇਨ ਲਈ ਐਲਫ਼ਾ ਚੈਨਲ ਦੀ ਲੋੜ ਹੈ"
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "ਐਲਫਾ ਚੈਨਲ ਜੋੜੋ"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "ਸੰਭਾਲ ਦੀ ਪੁਸ਼ਟੀ"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "ਪੁਸ਼ਟੀ"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "ਫਾਇਲ ਐਕਸਪੋਰਟ"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "ਅਣਡਿੱਠਾ(_I)"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "ਐਕਸਪੋਰਟ(_E)"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "ਤੁਹਾਡਾ ਚਿੱਤਰ ਹੇਠਲੇ ਕਾਰਨਾਂ ਕਰਕੇ %s ਦੇ ਤੌਰ ਤੇ ਸੰਭਾਲਣ ਤੋਂ ਪਹਿਲਾਂ ਐਕਸਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr "ਐਕਸਪੋਰਟ ਕਨਵਰਜ਼ਨ ਤੁਹਾਡੇ ਅਸਲੀ ਚਿੱਤਰ ਨੂੰ ਤਬਦੀਲ ਨਹੀਂ ਕਰੇਗਾ ।"
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"ਤੁਸੀਂ ਲੇਅਰ ਮਾਸਕ %s ਦੇ ਤੌਰ ਉੱਤੇ ਸੰਭਾਲ ਰਹੇ ਹੋ ।\n"
+"ਇਹ ਦਿੱਖ ਲੇਅਰਾਂ ਨੂੰ ਨਹੀ ਸੰਭਾਲੇਗਾ ।"
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"ਤੁਸੀ ਚੈਨਲ %s (ਸੰਭਾਲੀ ਚੋਣ) ਦੇ ਤੌਰ ਉੱਤੇ ਸੰਭਾਲ ਰਹੇ ਹੋ ।\n"
+"ਇਹ ਦਿੱਖ ਲੇਅਰਾਂ ਨੂੰ ਨਹੀ ਸੰਭਾਲੇਗਾ ।"
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "ਫੋਂਟ ਚੋਣ"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "ਗਰੇਡੀਐਂਟ ਚੋਣ"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(ਖਾਲੀ)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "ਪਲੈਅਟ ਚੋਣ"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "ਪੈਟਰਨ ਚੋਣ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "ਨਾਂ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "ਵੇਰਵੇ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "ਮੱਦਦ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "ਲੇਖਕ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "ਕਾਪੀਰਾਈਟ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "ਮਿਤੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "ਟਾਈਪ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "ਨਾਂ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "ਵੇਰਵੇ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "ਮੱਦਦ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "ਲੇਖਕ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "ਕਾਪੀਰਾਈਟ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "ਮਿਤੀ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "ਟਾਈਪ ਨਾਲ ਖੋਜ ਜਾਰੀ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "ਤੁਹਾਡੀ ਕਿਊਰੀ ਲਈ ਕੋਈ ਮੇਲ ਨਹੀਂ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] ""
+msgstr[1] ""
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516 ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "ਕੋਈ ਮੇਲ ਨਹੀਂ"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr "ਪੈਰਾਮੀਟਰ"
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "ਜਵਾਬੀ ਮੁੱਲ"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "ਹੋਰ ਜਾਣਕਾਰੀ"
+
+#: ../libpicman/picmanprocview.c:209
+msgid "Author:"
+msgstr "ਲੇਖਕ:"
+
+#: ../libpicman/picmanprocview.c:221
+msgid "Date:"
+msgstr "ਮਿਤੀ:"
+
+#: ../libpicman/picmanprocview.c:233
+msgid "Copyright:"
+msgstr "ਕਾਪੀਰਾਈਟ:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "ਫੀਸਦੀ"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_White (full opacity)"
+msgstr "ਚਿੱਟਾ (ਪੂਰਾ ਧੁੰਦਲਾਪਨ)(_W)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "_Black (full transparency)"
+msgstr "ਕਾਲਾ (ਪੂਰਾ ਪਾਰਦਰਸ਼ੀ)(_B)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "Layer's _alpha channel"
+msgstr "ਲੇਅਰ ਦਾ ਐਲਫ਼ਾ ਚੈਨਲ(_a)"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Transfer layer's alpha channel"
+msgstr "ਲੇਅਰ ਦਾ ਐਲਫ਼ਾ ਚੈਨਲ ਟਰਾਂਸਫਰ ਕਰੋ(_T)"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Selection"
+msgstr "ਚੋਣ(_S)"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "_Grayscale copy of layer"
+msgstr "ਲੇਅਰ ਦੀ ਗਰੇ-ਸਕੇਲ ਕਾਪੀ(_G)"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgid "C_hannel"
+msgstr "ਚੈਨਲ(_h)"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (RGB)"
+msgstr "FG ਤੋਂ BG (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to BG (HSV)"
+msgstr "FG ਤੋਂ BG (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "FG to transparent"
+msgstr "FG ਤੋਂ ਟਰਾਂਸਪੇਰੈਂਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgid "Custom gradient"
+msgstr "ਕਸਟਮ ਗਰੇਂਡੀਐਂਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "FG color fill"
+msgstr "FG ਰੰਗ ਭਰੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "BG color fill"
+msgstr "BG ਰੰਗ ਭਰੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgid "Pattern fill"
+msgstr "ਪੈਟਰਨ ਭਰੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Add to the current selection"
+msgstr "ਮੌਜੂਦਾ ਚੋਣ ਵਿੱਚ ਜੋੜ੍ਹੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Subtract from the current selection"
+msgstr "ਮੌਜੂਦਾ ਚੋਣ ਵਿੱਚੋਂ ਘਟਾਓ"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Replace the current selection"
+msgstr "ਮੌਜੂਦਾ ਚੋਣ ਵਿੱਚ ਤਬਦੀਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgid "Intersect with the current selection"
+msgstr "ਮੌਜੂਦਾ ਚੋਣ ਨਾਲ ਇੰਟਰਸੈਕਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:163 ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "ਲਾਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "ਹਰਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "ਨੀਲਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:166
+msgid "Gray"
+msgstr "ਗਰੇ"
+
+#: ../libpicmanbase/picmanbaseenums.c:167 ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed"
+msgstr "ਇੰਡੈਕਸ"
+
+#: ../libpicmanbase/picmanbaseenums.c:168 ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "ਐਲਫਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Small"
+msgstr "ਛੋਟਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Medium"
+msgstr "ਮੱਧਮ"
+
+#: ../libpicmanbase/picmanbaseenums.c:199
+msgid "Large"
+msgstr "ਵੱਡਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Light checks"
+msgstr "ਲਾਈਟ ਚੈੱਕ"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Mid-tone checks"
+msgstr "ਮਿਡ-ਟੋਨ ਚੈੱਕ"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Dark checks"
+msgstr "ਗੂੜਾ ਚੈੱਕ"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "White only"
+msgstr "ਕੇਵਲ ਚਿੱਟਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Gray only"
+msgstr "ਕੇਵਲ ਗਰੇ"
+
+#: ../libpicmanbase/picmanbaseenums.c:236
+msgid "Black only"
+msgstr "ਕੇਵਲ ਕਾਲਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Image"
+msgstr "ਚਿੱਤਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:265
+msgid "Pattern"
+msgstr "ਪੈਟਰਨ"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Lightness"
+msgstr "ਲਾਈਟਨੈਂਸ"
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Luminosity"
+msgstr "ਲੁਮਿਨੋਸਟੀ"
+
+#: ../libpicmanbase/picmanbaseenums.c:296
+msgid "Average"
+msgstr "ਔਸਤ"
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Dodge"
+msgstr "ਡੋਡਜੀ"
+
+#: ../libpicmanbase/picmanbaseenums.c:325
+msgid "Burn"
+msgstr "ਬਰਨ"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "gradient|Linear"
+msgstr "ਲੀਨੀਅਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Bi-linear"
+msgstr "ਬਾਈ-ਲੀਨੀਅਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:391
+msgid "Radial"
+msgstr "ਰੇਡੀਕਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:392 ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "ਵਰਗ"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (sym)"
+msgstr "ਸ਼ੰਕੂਕਾਰ (sym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Conical (asym)"
+msgstr "ਸ਼ੰਕੂਕਾਰ (asym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (angular)"
+msgstr "ਸ਼ੇਪ (ਕੋਣੀ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (spherical)"
+msgstr "ਸ਼ੇਪ (ਗੋਲਾਕਾਰ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Shaped (dimpled)"
+msgstr "ਸ਼ੇਪ (ਲਹਿਰਦਾਰ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (cw)"
+msgstr "ਗੋਲ (cw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:399
+msgid "Spiral (ccw)"
+msgstr "ਗੋਲ (ccw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (dots)"
+msgstr "ਇੰਟਰਸ਼ੈਕਸ਼ਨ (ਡਾਟ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Intersections (crosshairs)"
+msgstr "ਇੰਟਰਸ਼ੈਕਸ਼ਨ (ਕਰਾਂਸ-ਹੇਅਰ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Dashed"
+msgstr "ਡੈਸ਼"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Double dashed"
+msgstr "ਡਬਲ ਡੈਸ਼"
+
+#: ../libpicmanbase/picmanbaseenums.c:434
+msgid "Solid"
+msgstr "ਗੂੜ੍ਹਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Stock ID"
+msgstr "ਸਟਾਕ ID"
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Inline pixbuf"
+msgstr "ਇੰ-ਲਾਈਨ pixbuf"
+
+#: ../libpicmanbase/picmanbaseenums.c:465
+msgid "Image file"
+msgstr "ਚਿੱਤਰ ਫਾਇਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:494
+msgid "RGB color"
+msgstr "RGB ਰੰਗ"
+
+#: ../libpicmanbase/picmanbaseenums.c:495 ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale"
+msgstr "ਗਰੇ-ਸਕੇਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:496
+msgid "Indexed color"
+msgstr "ਇੰਡੈਕਸ ਰੰਗ"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "RGB-alpha"
+msgstr "RGB-ਐਲਫ਼ਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:531
+msgid "Grayscale-alpha"
+msgstr "ਗਰੇ-ਸਕੇਲ - ਐਲਫ਼ਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:533
+msgid "Indexed-alpha"
+msgstr "ਇੰਡੈਕਸ-ਐਲਫ਼ਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|None"
+msgstr "ਕੋਈ ਨਹੀਂ"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "interpolation|Linear"
+msgstr "ਲੀਨੀਅਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Cubic"
+msgstr "ਕਿਊਬਕ"
+
+#: ../libpicmanbase/picmanbaseenums.c:566
+msgid "Sinc (Lanczos3)"
+msgstr "ਸਾਇਨ (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Constant"
+msgstr "ਸਥਿਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:595
+msgid "Incremental"
+msgstr "ਵਾਧਾ"
+
+#: ../libpicmanbase/picmanbaseenums.c:624 ../modules/display-filter-lcms.c:191
+msgid "None"
+msgstr "ਕੋਈ ਨਹੀਂ"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Sawtooth wave"
+msgstr "ਧਾਰੀਦਾਰ ਲਹਿਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:626
+msgid "Triangular wave"
+msgstr "ਤਿਕੋਨੀ ਲਹਿਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run interactively"
+msgstr "ਇੰਟਰ-ਐਕਟਿਵਲੀ ਚਲਾਓ"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run non-interactively"
+msgstr "ਗ਼ੈਰ-ਇੰਟਰ-ਐਕਟਿਵਲੀ ਚਲਾਓ"
+
+#: ../libpicmanbase/picmanbaseenums.c:657
+msgid "Run with last used values"
+msgstr "ਆਖਰੀ ਵਰਤੇ ਮੁੱਲਾਂ ਨਾਲ ਚਲਾਓ"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Pixels"
+msgstr "ਪਿਕਸਲ"
+
+#: ../libpicmanbase/picmanbaseenums.c:686
+msgid "Points"
+msgstr "ਪੁਆਇੰਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Shadows"
+msgstr "ਛਾਂ"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Midtones"
+msgstr "ਮਿਡ-ਟੋਨ"
+
+#: ../libpicmanbase/picmanbaseenums.c:717
+msgid "Highlights"
+msgstr "ਹਾਈਲਾਈਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Normal (Forward)"
+msgstr "ਨਾਰਮਲ (ਅੱਗੇ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:746
+msgid "Corrective (Backward)"
+msgstr "ਕੱਰੀਇਕਟਿਵ (ਪਿੱਛੇ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Adjust"
+msgstr "ਅਡਜੱਸਟ"
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Clip"
+msgstr "ਕਲਿੱਪ"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop to result"
+msgstr "ਨਤੀਜੇ ਤੋਂ ਕਰੋਪ ਕਰੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:779
+msgid "Crop with aspect"
+msgstr "ਆਕਾਰ ਨਾਲ ਕਰੋਪ ਕਰੋ"
+
+#: ../libpicmanbase/picmanbaseenums.c:909
+msgid "Internal PICMAN procedure"
+msgstr "ਅੰਦਰੂਨੀ ਜੈਮਪ ਪਰੋਸੀਜ਼ਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:910
+msgid "PICMAN Plug-In"
+msgstr "ਜੈਮਪ ਪਲੱਗਇਨ"
+
+#: ../libpicmanbase/picmanbaseenums.c:911
+msgid "PICMAN Extension"
+msgstr "ਜੈਮਪ ਐਕਸ਼ਟੈਂਸ਼ਨ"
+
+#: ../libpicmanbase/picmanbaseenums.c:912
+msgid "Temporary Procedure"
+msgstr "ਆਰਜ਼ੀ ਪਰੋਸ਼ੀਜ਼ਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1074
+msgid "From left to right"
+msgstr "ਖੱਬੇ ਤੋਂ ਸੱਜੇ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1075
+msgid "From right to left"
+msgstr "ਸੱਜੇ ਤੋਂ ਖੱਬੇ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgid "Left justified"
+msgstr "ਖੱਬੇ ਇਕਸਾਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgid "Right justified"
+msgstr "ਸੱਜੇ ਇਕਸਾਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1107
+msgid "Centered"
+msgstr "ਸੈਂਟਰ"
+
+#: ../libpicmanbase/picmanbaseenums.c:1108
+msgid "Filled"
+msgstr "ਭਰਿਆ"
+
+#: ../libpicmanbase/picmanutils.c:170 ../libpicmanbase/picmanutils.c:175
+#: ../modules/display-filter-lcms.c:183
+#: ../modules/color-selector-cmyk-lcms.c:407
+#: ../modules/color-selector-cmyk-lcms.c:413
+msgid "(invalid UTF-8 string)"
+msgstr "(ਗਲਤ UTF-8 ਲਾਈਨ)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "Mode of operation for color management."
+msgstr "ਰੰਗ ਪਰਬੰਧ ਲਈ ਓਪਰੇਸ਼ਨ ਦਾ ਮੋਡ"
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid "The color profile of your (primary) monitor."
+msgstr "ਤੁਹਾਡੇ (ਪ੍ਰਾਇਮਰੀ) ਮਾਨੀਟਰ ਲਈ ਰੰਗ ਪਰੋਫਾਇਲ ਹੈ।"
+
+#: ../libpicmanconfig/picmancolorconfig.c:46
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"ਜਦੋਂ ਯੋਗ ਕੀਤਾ ਤਾਂ ਜੈਮਪ ਵਿੰਡੋਜ਼ ਸਿਸਟਮ ਤੋਂ ਕਲਰ ਪਰੋਫਾਇਲ ਵੇਖਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੇਗਾ।   ਸੰਰਚਿਤ ਮਾਨੀਟਰ "
+"ਪਰੋਫਾਇਲ ਨੂੰ ਤਦ ਫਾਲ-ਬੈਕ ਦੇ ਤੌਰ ਉੱਤੇ ਹੀ ਵਰਤਿਆ ਜਾਵੇਗਾ।"
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The default RGB working space color profile."
+msgstr "ਡਿਫਾਲਟ RGB ਵਰਕਿੰਗ ਸਪੇਸ ਰੰਗ ਪਰੋਫਾਇਲ ਹੈ।"
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "RGB ਅਤੇ CMYK ਵਿੱਚ ਬਦਲਣ ਵਾਸਤੇ ਵਰਤਿਆ ਜਾਂਦਾ CMYK ਰੰਗ ਪਰੋਫਾਇਲ"
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid "Sets how colors are mapped for your display."
+msgstr "ਤੁਹਾਡੇ ਡਿਸਪਲੇਅ ਉੱਤੇ ਕਿੰਨੇ ਰੰਗ ਮੈਪ ਕੀਤੇ ਜਾਣੇ ਹਨ।"
+
+#: ../libpicmanconfig/picmancolorconfig.c:58
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:61
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr "ਕੋਈ ਕਲਰ ਪਰਬੰਧ ਨਹੀਂ ਹੈ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr "ਕਲਰ ਪਰਬੰਧ ਡਿਸਪਲੇਅ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr "ਪਰਿੰਟ ਸਿਮੂਲੇਸ਼ਨ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr "ਸੰਬੰਧਿਤ ਕਲੋਰੀਮੈਟ੍ਰਿਕ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "ਸੰਤ੍ਰਿਪਤੀ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr "ਪੂਰਨ ਕਲੋਰੀਮੈਟ੍ਰਿਕ"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:97
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "ਟੋਕਨ %s ਦਾ ਮੁੱਲ ਜਾਇਜ UTF-8 ਲਾਈਨ ਨਹੀਂ ਹੈ"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:436
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "ਬੂਲੀਅਨ ਟੋਕਨ  %s ਲਈ 'ਹਾਂ' ਜਾਂ 'ਨਹੀ' ਦੀ ਉਮੀਦ ਸੀ, ਮਿਲਿਆ '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:510
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "ਟੋਕਨ %2$s ਲਈ ਗਲਤ ਮੁੱਲ '%1$s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:525
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "ਗਲਤ ਮੁੱਲ '%ld'  ਟੋਕਨ %s ਲਈ"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:594
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "ਜਦੋ ਟੋਕਨ '%s' ਨੂੰ ਪਾਰਸ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:474
+#: ../libpicmanconfig/picmanconfig-iface.c:487 ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "ਘਾਤਕ ਪਾਰਸ ਗਲਤੀ"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "${%s} ਫੈਲਾ ਨਹੀ ਸਕਦਾ"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:78
+#: ../libpicmanconfig/picmanconfigwriter.c:693
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "ਗਲਤੀ '%s' ਨੂੰ ਲਿਖਣ ਵਿੱਚ: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:136
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "'%s' ਲਈ ਆਰਜ਼ੀ ਫਾਇਲ ਨਹੀ ਬਣਾ ਸਕਿਆ: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:149
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "'%s' ਨੂੰ ਲਿਖਣ ਲਈ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:674
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"'%s' ਲਈ ਆਰਜ਼ੀ ਫਾਇਲ ਲਿਖਣ ਵਿੱਚ ਗਲਤੀ: %s\n"
+"ਅਸਲੀ ਫਾਇਲ ਨੂੰ ਛੂਹਿਆ ਨਹੀ ਜਾ ਸਕਦਾ ਹੈ।"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:682
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"'%s' ਲਈ ਆਰਜ਼ੀ ਫਾਇਲ ਲਿਖਣ ਵਿੱਚ ਗਲਤੀ: %s\n"
+"ਕੋਈ ਫਾਇਲ ਨੂੰ ਬਣਾਇਆ ਨਹੀ ਜਾ ਸਕਿਆ ਹੈ।"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:711
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "'%s' ਨੂੰ ਬਣਾਇਆ ਨਹੀ ਜਾ ਸਕਿਆ ਹੈ: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:255
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "ਗਲਤ UTF-8 ਲਾਈਨ"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "ਗਲਤੀ, '%s' ਨੂੰ ਪਾਰਸ ਕਰਨ ਦੌਰਾਨ, ਲਾਈਨ %d ਵਿੱਚ: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:153 ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280 ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "ਮੋਡੀਊਲ '%s' ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "ਮੋਡੀਊਲ ਗਲਤੀ"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr "ਲੋਡ ਕੀਤਾ"
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr "ਲੋਡ ਫੇਲ੍ਹ"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr "ਲੋਡ ਨਹੀਂ ਹੋਇਆ"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:123
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"ਇੱਕ ਠੀਕ ਘਰ ਡਾਇਰੈਕਟਰੀ ਨਹੀਂ ਜਾਣੀ ਨਹੀਂ ਜਾ ਸਕੀ।\n"
+"ਥੰਮਨੇਲਾਂ ਨੂੰ ਆਰਜ਼ੀ ਫਾਇਲਾਂ (%s) ਦੀ ਬਜਾਏ ਫੋਲਡਰ ਵਿੱਚ ਸੰਭਾਲਿਆ ਜਾਵੇਗਾ।"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:247 ../libpicmanthumb/picmanthumb-utils.c:315
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "ਥੰਮਨੇਲ ਫੋਲਡਰ '%s' ਬਣਾਉਣ ਲਈ ਫੇਲ੍ਹ ਹੈ।"
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "ਥੰਮਨੇਲ ਵਿੱਚ ਕੋਈ ਥੰਮ ਨਹੀਂ ਹੈ::URI ਟੈਗ"
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "%s ਲਈ ਥੰਮਨੇਲ ਬਣਾਏ ਨਹੀਂ ਜਾ ਸਕੇ: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "ਖੋਜ(_S):"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "ਫਾਰਗਰਾਊਂਡ ਰੰਗ(_F)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ(_B)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr "ਕਾਲਾ(_k)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "ਚਿੱਟਾ(_W)"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:144
+msgid "Select color profile from disk..."
+msgstr "ਡਿਸਕ ਤੋਂ ਕਲਰ ਪਰੋਫਾਇਲ ਚੁਣੋ..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "ਕੋਈ ਨਹੀਂ"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr "ਸਕੇਲ"
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "ਮੌਜੂਦਾ:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "ਪੁਰਾਣਾ:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"HTML ਅਤੇ CSS ਵਿੱਚ ਵਰਤੇ ਜਾਂਦੇ ਹੈਕਸਾਡੈਸੀਮਲ ਰੰਗ ਹਦਾਇਤਾਂ।  ਇਹ ਐਂਟਰੀ CSS ਰੰਗ ਨਾਂ ਵੀ ਮਨਜ਼ੂਰ ਕਰਦੀ "
+"ਹੈ।"
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr "HTML ਹਦਾਇਤਾਂ(_n):"
+
+#: ../libpicmanwidgets/picmanhelpui.c:420
+msgid "Press F1 for more help"
+msgstr "ਹੋਰ ਮੱਦਦ ਲਈ F1 ਦੱਬੋ"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr "ਆਪਣੇ ਫੋਲਡਰਾਂ ਵੇਖਣ ਲਈ ਫਾਇਲ ਚੋਣਕਾਰ ਖੋਲ੍ਹੋ"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr "ਆਪਣੀਆਂ ਫਾਇਲਾਂ ਵੇਖਣ ਲਈ ਫਾਇਲ ਚੋਣਕਾਰ ਖੋਲ੍ਹੋ"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "ਫੋਲਡਰ ਚੁਣੋ"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "ਫਾਇਲ ਚੁਣੋ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr "ਕਿਲੋ-ਬਾਈਟ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr "ਮੈਗਾ ਬਾਈਟ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr "ਗੀਗਾ ਬਾਈਟ"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1166
+msgid "Nothing selected"
+msgstr "ਕੁਝ ਵੀ ਚੁਣਿਆ ਨਹੀਂ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "ਸਭ ਚੁਣੋ(_A)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr "ਰੇਜ਼ ਚੁਣੋ(_r):"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr "ਪੇਜ਼ ਇੰਝ ਖੋਲ੍ਹੋ(_p)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "ਪੇਜ਼ 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:508
+#: ../libpicmanwidgets/picmanpageselector.c:744
+#, c-format
+msgid "Page %d"
+msgstr "ਪੇਜ਼ %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "One page selected"
+msgstr "ਇੱਕ ਪੇਜ਼ ਚੁਣਿਆ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+#: ../libpicmanwidgets/picmanpageselector.c:1182
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d ਪੇਜ਼ ਚੁਣੇ"
+msgstr[1] "%d ਪੇਜ਼ ਚੁਣੇ"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "ਲਿਖਣਯੋਗ"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "ਫੋਲਡਰ"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr "ਆਈਡਰੌਪਰ ਦਬਾਓ, ਫਿਰ ਆਪਣੀ ਸਕਰੀਨ ਉੱਤੇ ਕਿਤੇ ਵੀ ਚੁਣਨ ਲਈ ਇੱਕ ਰੰਗ ਦਬਾਓ ।"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr "ਚੈੱਕ ਆਕਾਰ"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr "ਚੈੱਕ ਸਟਾਇਲ"
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "ਝਲਕ(_P)"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1860
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "ਇਹ ਟੈਕਸਟ ਇੰਪੁੱਟ ਖੇਤਰ ਕੇਵਲ %d ਅੱਖਰ ਲਈ ਹੀ ਸੀਮਿਤ ਹੈ।"
+msgstr[1] "ਇਹ ਟੈਕਸਟ ਇੰਪੁੱਟ ਖੇਤਰ ਕੇਵਲ %d ਅੱਖਰਾਂ ਲਈ ਹੀ ਸੀਮਿਤ ਹੈ।"
+
+#: ../libpicmanwidgets/picmanstock.c:112
+msgid "Anchor"
+msgstr "ਐਂਕਰ"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "C_enter"
+msgstr "ਸੈਂਟਰ(_e)"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "_Duplicate"
+msgstr "ਡੁਪਲੀਕੇਟ(_D)"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Edit"
+msgstr "ਸੋਧ(_E)"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "Linked"
+msgstr "ਲਿੰਕ"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Paste as New"
+msgstr "ਨਵੇਂ ਵਾਂਗ ਚੇਪੋ"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste Into"
+msgstr "ਵਿੱਚ ਚੇਪੋ"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "_Reset"
+msgstr "ਮੁੜ-ਸੈੱਟ(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "Visible"
+msgstr "ਦਿੱਖ"
+
+#: ../libpicmanwidgets/picmanstock.c:156 ../libpicmanwidgets/picmanstock.c:160
+msgid "_Stroke"
+msgstr "ਸਟਰੋਕ(_S)"
+
+#: ../libpicmanwidgets/picmanstock.c:172
+msgid "L_etter Spacing"
+msgstr "ਅੱਖਰ ਸਪੇਸਿੰਗ(_e)"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_ine Spacing"
+msgstr "ਲਾਈਨ ਸਪੇਸਿੰਗ(_i)"
+
+#: ../libpicmanwidgets/picmanstock.c:189
+msgid "_Resize"
+msgstr "ਮੁੜ-ਆਕਾਰ(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:190 ../libpicmanwidgets/picmanstock.c:320
+msgid "_Scale"
+msgstr "ਸਕੇਲ(_S)"
+
+#: ../libpicmanwidgets/picmanstock.c:296
+msgid "Cr_op"
+msgstr "ਕਰੋਪ ਕਰੋ(_o)"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "_Transform"
+msgstr "ਟਰਾਂਸਫਰਮ(_T)"
+
+#: ../libpicmanwidgets/picmanstock.c:319
+msgid "_Rotate"
+msgstr "ਘੁੰਮਾਓ(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:321
+msgid "_Shear"
+msgstr "ਸ਼ੀਅਰ(_S)"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "ਹੋਰ..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:581
+msgid "Unit Selection"
+msgstr "ਯੂਨਿਟ ਚੋਣ"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:629
+msgid "Unit"
+msgstr "ਯੂਨਿਟ"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:633
+msgid "Factor"
+msgstr "ਫੈਕਟਰ"
+
+#: ../libpicmanwidgets/picmanwidgets.c:511
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"ਰੈਂਡਮ ਨੰਬਰ ਜਰਨੇਟਰ ਸੀਡ ਲਈ ਇਹ ਮੁੱਲ ਚੁਣੋ - ਇਸ ਨਾਲ ਤੁਸੀਂ ਦਰਸਾਏ \"ਰੈਂਡਮ\" ਓਪਰੇਸ਼ਨ ਦੁਹਰਾ ਸਕਦੇ ਹੋ"
+
+#: ../libpicmanwidgets/picmanwidgets.c:515
+msgid "_New Seed"
+msgstr "ਨਵੀਂ ਸੀਡ(_N)"
+
+#: ../libpicmanwidgets/picmanwidgets.c:528
+msgid "Seed random number generator with a generated random number"
+msgstr "ਉਪਜੇ ਰੈਂਡਮ ਨੰਬਰ ਸਮੇਤ ਡਿਫਾਲਟ ਨੰਬਰ ਜਰਨੇਟਰ ਸੀਡ"
+
+#: ../libpicmanwidgets/picmanwidgets.c:532
+msgid "_Randomize"
+msgstr "ਰੈਂਡਮਾਈਜ਼(_R)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "ਪੋਰਟਰੇਟ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "ਲੈਂਡਸਕੇਪ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "ਰੰਗਤ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "ਸੰਤ੍ਰਿਪਤੀ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "ਮੁੱਲ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "ਲੇਅਰਾਂ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "ਚਿੱਤਰ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "ਜ਼ੂਮ ਇਨ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "ਜ਼ੂਮ ਆਉਟ"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "ਪਰੋਤਾਂਨੋਪੀਆ (ਲਾਲ ਨੂੰ ਇੰ-ਸੈਂਸਟਵਟੀ)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "ਡਯੂਟਰਾਂਨੋਪੀਆ (ਹਰੇ ਨੂੰ ਇੰ-ਸੈਂਸਟਵਟੀ)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "ਟਰੀਟਾਂਨੋਪੀਆ (ਨੀਲੇ ਨੂੰ ਇੰ-ਸੈਂਸਟਵਟੀ)"
+
+#: ../modules/display-filter-color-blind.c:198
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "ਰੰਗ ਕਮੀ ਕਪਟ ਫਿਟਰ (Brettel-Vienot-Mollon algorithm)"
+
+#: ../modules/display-filter-color-blind.c:261
+msgid "Color Deficient Vision"
+msgstr "ਰੰਗ ਕਮੀ ਵਾਲੀ ਦਿੱਖ"
+
+#: ../modules/display-filter-color-blind.c:483
+msgid "Color _deficiency type:"
+msgstr "ਰੰਗ ਕਮੀ ਟਾਈਪ(_d):"
+
+#: ../modules/display-filter-gamma.c:90
+msgid "Gamma color display filter"
+msgstr "ਗਾਮਾ ਰੰਗ ਦਰਿਸ਼ ਫਿਲਟਰ"
+
+#: ../modules/display-filter-gamma.c:129
+msgid "Gamma"
+msgstr "ਗਾਮਾ"
+
+#: ../modules/display-filter-gamma.c:232
+msgid "_Gamma:"
+msgstr "ਗਾਮਾ:"
+
+#: ../modules/display-filter-high-contrast.c:90
+msgid "High Contrast color display filter"
+msgstr "ਵਧੇਰੇ ਵਖਰੇਂਵਾਂ ਰੰਗ ਦਰਿਸ਼ ਫਿਲਟਰ"
+
+#: ../modules/display-filter-high-contrast.c:129
+msgid "Contrast"
+msgstr "ਵਖਰੇਂਵਾਂ"
+
+#: ../modules/display-filter-high-contrast.c:232
+msgid "Contrast c_ycles:"
+msgstr "ਵਖਰੇਂਵਾਂ ਸਾਈਕਲ(_y):"
+
+#: ../modules/display-filter-lcms.c:102
+msgid "Color management display filter using ICC color profiles"
+msgstr "ICC ਰੰਗ ਪਰੋਫਾਇਲ ਦੀ ਵਰਤੋਂ ਨਾਲ ਰੰਗ ਪਰਬੰਧ ਡਿਸਪਲੇਅ ਫਿਲਟਰ"
+
+#: ../modules/display-filter-lcms.c:134
+msgid "Color Management"
+msgstr "ਰੰਗ ਪਰਬੰਧ"
+
+#: ../modules/display-filter-lcms.c:212
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr "ਇਹ ਫਿਲਟਰ ਆਪਣੀ ਸੰਰਚਨਾ ਪਸੰਦੀਦਾ ਡਾਈਲਾਗ ਵਿੱਚੋਂ ਕਲਰ ਪਰਬੰਧ ਚੋਣ ਰਾਹੀਂ ਲੈਂਦਾ ਹੈ।"
+
+#: ../modules/display-filter-lcms.c:226
+msgid "Mode of operation:"
+msgstr "ਓਪਰੇਸ਼ਨ ਦਾ ਮੋਡ:"
+
+#: ../modules/display-filter-lcms.c:233
+msgid "Image profile:"
+msgstr "ਚਿੱਤਰ ਪਰੋਫਾਇਲ:"
+
+#: ../modules/display-filter-lcms.c:241
+msgid "Monitor profile:"
+msgstr "ਮਾਨੀਟਰ ਪਰੋਫਾਇਲ:"
+
+#: ../modules/display-filter-lcms.c:249
+msgid "Print simulation profile:"
+msgstr "ਪਰਿੰਟ ਸਿਮੂਲੇਸ਼ਨ ਪਰੋਫਾਇਲ:"
+
+#: ../modules/display-filter-proof.c:97
+msgid "Color proof filter using ICC color profile"
+msgstr "ICC ਰੰਗ ਪਰੋਫਾਇਲ ਦੀ ਵਰਤੋਂ ਨਾਲ ਕਲਰ ਪਰੂਫ਼ ਫਿਲਟਰ"
+
+#: ../modules/display-filter-proof.c:145
+msgid "Color Proof"
+msgstr "ਕਲਰ ਪਰੂਫ਼"
+
+#: ../modules/display-filter-proof.c:311
+msgid "Choose an ICC Color Profile"
+msgstr "ਇੱਕ ICC ਰੰਗ ਪਰੋਫਾਇਲ ਚੁਣੋ"
+
+#: ../modules/display-filter-proof.c:338
+msgid "All files (*.*)"
+msgstr "ਸਭ ਫਾਇਲਾਂ (*.*)"
+
+#: ../modules/display-filter-proof.c:343
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC ਕਲਰ ਪਰੋਫਾਇਲ (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:401
+msgid "_Profile:"
+msgstr "ਪਰੋਫਾਇਲ(_P):"
+
+#: ../modules/display-filter-proof.c:407
+msgid "_Intent:"
+msgstr "ਇੰਟੈਂਟ(_I):"
+
+#: ../modules/display-filter-proof.c:412
+msgid "_Black Point Compensation"
+msgstr "ਬਲੈਕ ਪੁਆਇੰਟ ਪੂਰਤੀ(_B)"
+
+#: ../modules/color-selector-cmyk.c:71
+msgid "CMYK color selector"
+msgstr "CMYK ਰੰਗ ਚੋਣਕਾਰ"
+
+#: ../modules/color-selector-cmyk.c:102
+#: ../modules/color-selector-cmyk-lcms.c:150
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk.c:125
+#: ../modules/color-selector-cmyk-lcms.c:169
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk.c:127
+#: ../modules/color-selector-cmyk-lcms.c:171
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk.c:129
+#: ../modules/color-selector-cmyk-lcms.c:173
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk.c:131
+#: ../modules/color-selector-cmyk-lcms.c:175
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk.c:135
+#: ../modules/color-selector-cmyk-lcms.c:179
+msgid "Cyan"
+msgstr "ਕਿਰਮਚੀ(cyan)"
+
+#: ../modules/color-selector-cmyk.c:136
+#: ../modules/color-selector-cmyk-lcms.c:180
+msgid "Magenta"
+msgstr "ਮਜੈਨਟਾ"
+
+#: ../modules/color-selector-cmyk.c:137
+#: ../modules/color-selector-cmyk-lcms.c:181
+msgid "Yellow"
+msgstr "ਪੀਲਾ"
+
+#: ../modules/color-selector-cmyk.c:138
+#: ../modules/color-selector-cmyk-lcms.c:182
+msgid "Black"
+msgstr "ਕਾਲਾ"
+
+#: ../modules/color-selector-cmyk.c:172
+msgid "Black _pullout:"
+msgstr "ਕਾਲਾ ਪੁਲਆਉਟ (%):"
+
+#: ../modules/color-selector-cmyk.c:189
+msgid "The percentage of black to pull out of the colored inks."
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:87
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK ਰੰਗ ਚੋਣਕਾਰ (ਰੰਗ ਪਰੋਫਾਇਲ ਵਰਤੋਂ)"
+
+#: ../modules/color-selector-cmyk-lcms.c:395
+msgid "Profile: (none)"
+msgstr "ਪਰੋਫਾਇਲ: (ਕੋਈ ਨਹੀਂ)"
+
+#: ../modules/color-selector-cmyk-lcms.c:416
+#, c-format
+msgid "Profile: %s"
+msgstr "ਪਰੋਫਾਇਲ: %s"
+
+#: ../modules/color-selector-water.c:82
+msgid "Watercolor style color selector"
+msgstr "ਵਾਟਰ-ਕਲਰ ਸਟਾਇਲ ਰੰਗ ਚੋਣਕਾਰ"
+
+#: ../modules/color-selector-water.c:118
+msgid "Watercolor"
+msgstr "ਵਾਟਰ-ਕਲਰ"
+
+#: ../modules/color-selector-water.c:186
+msgid "Pressure"
+msgstr "ਦਬਾਅ"
+
+#: ../modules/color-selector-wheel.c:98
+msgid "HSV color wheel"
+msgstr "HSV ਕਲਰ ਵੀਲ"
+
+#: ../modules/color-selector-wheel.c:129
+msgid "Wheel"
+msgstr "ਵੀਲ"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 0"
+msgstr "ਬਟਨ 0"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 1"
+msgstr "ਬਟਨ 1"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 2"
+msgstr "ਬਟਨ 2"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 3"
+msgstr "ਬਟਨ 3"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 4"
+msgstr "ਬਟਨ 4"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 5"
+msgstr "ਬਟਨ 5"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 6"
+msgstr "ਬਟਨ 6"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 7"
+msgstr "ਬਟਨ 7"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 8"
+msgstr "ਬਟਨ 8"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button 9"
+msgstr "ਬਟਨ 9"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Mouse"
+msgstr "ਬਟਨ ਮਾਊਂਸ"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Left"
+msgstr "ਬਟਨ ਖੱਬਾ"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Right"
+msgstr "ਬਟਨ ਸੱਜੇ"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Middle"
+msgstr "ਬਟਨ ਮਿਡਲ"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Side"
+msgstr "ਬਟਨ ਸਾਇਡ"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Extra"
+msgstr "ਬਟਨ ਐਕਸਟਰਾ"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Forward"
+msgstr "ਬਟਨ ਅੱਗੇ"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Back"
+msgstr "ਬਟਨ ਪਿੱਛੇ"
+
+#: ../modules/controller-linux-input.c:76
+msgid "Button Task"
+msgstr "ਬਟਨ ਟਾਸਕ"
+
+#: ../modules/controller-linux-input.c:78
+msgid "Button Wheel"
+msgstr "ਬਟਨ ਵੀਲ"
+
+#: ../modules/controller-linux-input.c:81
+msgid "Button Gear Down"
+msgstr "ਬਟਨ ਗੀਅਰ ਡਾਊਨ"
+
+#: ../modules/controller-linux-input.c:84
+msgid "Button Gear Up"
+msgstr "ਬਟਨ ਗੀਅਰ ਅੱਪ"
+
+#: ../modules/controller-linux-input.c:90
+#: ../modules/controller-dx-dinput.c:443
+msgid "X Move Left"
+msgstr "X ਮੂਵ ਖੱਬੇ"
+
+#: ../modules/controller-linux-input.c:91
+#: ../modules/controller-dx-dinput.c:446
+msgid "X Move Right"
+msgstr "X ਮੂਵ ਸੱਜੇ"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Forward"
+msgstr "Y ਮੂਵ ਅੱਗੇ"
+
+#: ../modules/controller-linux-input.c:93
+msgid "Y Move Back"
+msgstr "Y ਮੂਵ ਪਿੱਛੇ"
+
+#: ../modules/controller-linux-input.c:94
+#: ../modules/controller-dx-dinput.c:461
+msgid "Z Move Up"
+msgstr "Z ਮੂਵ ਉੱਤੇ"
+
+#: ../modules/controller-linux-input.c:95
+#: ../modules/controller-dx-dinput.c:464
+msgid "Z Move Down"
+msgstr "Z ਮੂਵ ਹੇਠਾਂ"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Forward"
+msgstr "X ਧੁਰਾ ਅੱਗੇ ਟਲਿੱਟ"
+
+#: ../modules/controller-linux-input.c:98
+msgid "X Axis Tilt Back"
+msgstr "X ਧੁਰਾ ਪਿੱਛੇ ਟਲਿਟ"
+
+#: ../modules/controller-linux-input.c:99
+#: ../modules/controller-dx-dinput.c:479
+msgid "Y Axis Tilt Right"
+msgstr "Y ਧੁਰਾ ਸੱਜੇ ਟਲਿੱਟ"
+
+#: ../modules/controller-linux-input.c:100
+#: ../modules/controller-dx-dinput.c:482
+msgid "Y Axis Tilt Left"
+msgstr "Y ਧੁਰਾ ਖੱਬੇ ਟਲਿੱਟ"
+
+#: ../modules/controller-linux-input.c:101
+#: ../modules/controller-dx-dinput.c:488
+msgid "Z Axis Turn Left"
+msgstr "Z ਧੁਰਾ ਖੱਬੇ ਟਲਿੱਟ"
+
+#: ../modules/controller-linux-input.c:102
+#: ../modules/controller-dx-dinput.c:491
+msgid "Z Axis Turn Right"
+msgstr "Z ਧੁਰਾ ਸੱਜੇ ਟਲਿੱਟ"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr "ਹਰੀਜੱਟਲ ਵੀਲ ਪਿੱਛੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr "ਹਰੀਜੱਟਲ ਵੀਲ ਅੱਗੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Left"
+msgstr "ਡਾਇਲ ਖੱਬੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Dial Turn Right"
+msgstr "ਡਾਇਲ ਸੱਜੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Left"
+msgstr "ਵੀਲ ਖੱਬੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:109
+msgid "Wheel Turn Right"
+msgstr "ਵੀਲ ਸੱਜੇ ਘੁੰਮਾਓ"
+
+#: ../modules/controller-linux-input.c:178
+msgid "Linux input event controller"
+msgstr "ਲਿਨਕਸ ਇੰਪੁੱਟ ਈਵੈਂਟ ਕੰਟਰਲੋਰ"
+
+#: ../modules/controller-linux-input.c:218
+#: ../modules/controller-dx-dinput.c:196 ../modules/controller-midi.c:212
+msgid "Device:"
+msgstr "ਜੰਤਰ:"
+
+#: ../modules/controller-linux-input.c:219
+msgid "The name of the device to read Linux Input events from."
+msgstr "ਲੀਨਕਸ ਇੰਪੁੱਟ ਈਵੈਂਟ ਤੋਂ ਪੜ੍ਹਨ ਵਾਲੇ ਜੰਤਰ ਦਾ ਨਾਂ।"
+
+#: ../modules/controller-linux-input.c:230
+msgid "Linux Input"
+msgstr "ਲੀਨਕਸ ਇੰਪੁੱਟ"
+
+#: ../modules/controller-linux-input.c:513
+msgid "Linux Input Events"
+msgstr "ਲਿਨਕਸ ਇੰਪੁੱਟ ਈਵੈਂਟ"
+
+#: ../modules/controller-linux-input.c:525
+#: ../modules/controller-dx-dinput.c:1095 ../modules/controller-midi.c:505
+msgid "No device configured"
+msgstr "ਕੋਈ ਜੰਤਰ ਸੰਰਚਿਤ ਨਹੀਂ"
+
+#: ../modules/controller-linux-input.c:551 ../modules/controller-midi.c:454
+#: ../modules/controller-midi.c:480
+#, c-format
+msgid "Reading from %s"
+msgstr "%s ਤੋਂ ਪੜ੍ਹਿਆ ਜਾ ਰਿਹਾ ਹੈ"
+
+#: ../modules/controller-linux-input.c:569
+#: ../modules/controller-linux-input.c:623 ../modules/controller-midi.c:436
+#: ../modules/controller-midi.c:497 ../modules/controller-midi.c:568
+#, c-format
+msgid "Device not available: %s"
+msgstr "ਜੰਤਰ ਉਪਲੱਬਧ ਨਹੀਂ: %s"
+
+#: ../modules/controller-linux-input.c:588
+#: ../modules/controller-dx-dinput.c:1120
+msgid "Device not available"
+msgstr "ਜੰਤਰ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ"
+
+#: ../modules/controller-linux-input.c:632 ../modules/controller-midi.c:577
+msgid "End of file"
+msgstr "ਫਾਇਲ ਦਾ ਐਂਡ"
+
+#: ../modules/controller-dx-dinput.c:156
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX DirectInput ਈਵੈਂਟ ਕੰਟਰੋਲਰ"
+
+#: ../modules/controller-dx-dinput.c:197
+msgid "The device to read DirectInput events from."
+msgstr "DirectInput ਈਵੈਂਟ ਤੋਂ ਪੜ੍ਹਨ ਵਾਲਾ ਜੰਤਰ ਹੈ।"
+
+#: ../modules/controller-dx-dinput.c:206
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:420
+#, c-format
+msgid "Button %d"
+msgstr "ਬਟਨ %d"
+
+#: ../modules/controller-dx-dinput.c:423
+#, c-format
+msgid "Button %d Press"
+msgstr "ਬਟਨ %d ਪਰੈੱਸ"
+
+#: ../modules/controller-dx-dinput.c:426
+#, c-format
+msgid "Button %d Release"
+msgstr "ਬਟਨ %d ਰੀਲਿਜ਼"
+
+#: ../modules/controller-dx-dinput.c:452
+msgid "Y Move Away"
+msgstr "Y ਦੂਰ ਹੋਇਆ"
+
+#: ../modules/controller-dx-dinput.c:455
+msgid "Y Move Near"
+msgstr "Y ਨੇੜੇ ਹੋਇਆ"
+
+#: ../modules/controller-dx-dinput.c:470
+msgid "X Axis Tilt Away"
+msgstr "X ਧੁਰਾ ਦੂਰ ਹਿਲਾਓ"
+
+#: ../modules/controller-dx-dinput.c:473
+msgid "X Axis Tilt Near"
+msgstr "X ਧੁਰਾ ਨੇੜੇ ਕਰੋ"
+
+#: ../modules/controller-dx-dinput.c:502
+#, c-format
+msgid "Slider %d Increase"
+msgstr "ਸਲਾਇਡਰ %d ਵਧਾਓ"
+
+#: ../modules/controller-dx-dinput.c:505
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "ਸਲਾਇਡਰ %d ਘਟਾਓ"
+
+#: ../modules/controller-dx-dinput.c:515
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d X ਝਲਕ"
+
+#: ../modules/controller-dx-dinput.c:518
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d Y ਝਲਕ"
+
+#: ../modules/controller-dx-dinput.c:521
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d ਵਾਪਸ"
+
+#: ../modules/controller-dx-dinput.c:1084
+msgid "DirectInput Events"
+msgstr "DirectInput ਈਵੈਂਟ"
+
+#: ../modules/controller-midi.c:164
+msgid "MIDI event controller"
+msgstr "MIDI ਈਵੈਂਟ ਕੰਟਰੋਲਰ"
+
+#: ../modules/controller-midi.c:203
+msgid "The name of the device to read MIDI events from."
+msgstr "MIDI ਈਵੈਂਟ ਤੋਂ ਪੜ੍ਹਨ ਵਾਲੇ ਜੰਤਰ ਦਾ ਨਾਂ ਹੈ।"
+
+#: ../modules/controller-midi.c:206
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr ""
+
+#: ../modules/controller-midi.c:221
+msgid "Channel:"
+msgstr "ਚੈਨਲ:"
+
+#: ../modules/controller-midi.c:222
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+
+#: ../modules/controller-midi.c:226
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:355
+#, c-format
+msgid "Note %02x on"
+msgstr "ਨੋਟ %02x ਆਨ"
+
+#: ../modules/controller-midi.c:358
+#, c-format
+msgid "Note %02x off"
+msgstr "ਨੋਟ %02x ਆਫ"
+
+#: ../modules/controller-midi.c:361
+#, c-format
+msgid "Controller %03d"
+msgstr "ਕੰਟਰੋਲਰ %03d"
+
+#: ../modules/controller-midi.c:408
+msgid "MIDI Events"
+msgstr "MIDI ਈਵੈਂਟ"
+
+#: ../modules/controller-midi.c:426
+msgid "PICMAN"
+msgstr "ਜੈਮਪ"
+
+#: ../modules/controller-midi.c:428
+msgid "PICMAN MIDI Input Controller"
+msgstr "ਜੈਮਪ MIDI ਇੰਪੁੱਟ ਕੰਟਰੋਲਰ"
+
+#~ msgid "%d Byte"
+#~ msgid_plural "%d Bytes"
+#~ msgstr[0] "%d ਬਾਈਟ"
+#~ msgstr[1] "%d ਬਾਈਟ"
+
+#~ msgid "%.2f KB"
+#~ msgstr "%.2f KB"
+
+#~ msgid "%.1f KB"
+#~ msgstr "%.1f KB"
+
+#~ msgid "%d KB"
+#~ msgstr "%d KB"
+
+#~ msgid "%.2f MB"
+#~ msgstr "%.2f MB"
+
+#~ msgid "%.1f MB"
+#~ msgstr "%.1f MB"
+
+#~ msgid "%d MB"
+#~ msgstr "%d MB"
+
+#~ msgid "%.2f GB"
+#~ msgstr "%.2f GB"
+
+#~ msgid "%.1f GB"
+#~ msgstr "%.1f GB"
+
+#~ msgid "%d GB"
+#~ msgstr "%d GB"
+
+#~ msgid "profile|None"
+#~ msgstr "ਕੋਈ ਨਹੀਂ"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "ਪੇਂਟਰ-ਸਟਾਇਲ ਤਿਕੋਣੀ ਰੰਗ ਚੋਣਕਾਰ"
+
+#~ msgid "Triangle"
+#~ msgstr "ਤਿਕੋਣ"
+

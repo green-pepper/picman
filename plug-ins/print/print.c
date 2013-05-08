@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "print.h"
 #include "print-settings.h"
@@ -28,11 +28,11 @@
 #include "print-page-setup.h"
 #include "print-draw-page.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_BINARY       "print"
-#define PLUG_IN_ROLE         "gimp-print"
+#define PLUG_IN_ROLE         "picman-print"
 #define PRINT_PROC_NAME      "file-print-gtk"
 
 #ifndef EMBED_PAGE_SETUP
@@ -44,15 +44,15 @@
 static void        query (void);
 static void        run   (const gchar       *name,
                           gint               nparams,
-                          const GimpParam   *param,
+                          const PicmanParam   *param,
                           gint              *nreturn_vals,
-                          GimpParam        **return_vals);
+                          PicmanParam        **return_vals);
 
-static GimpPDBStatusType  print_image       (gint32             image_ID,
+static PicmanPDBStatusType  print_image       (gint32             image_ID,
                                              gboolean           interactive,
                                              GError           **error);
 #ifndef EMBED_PAGE_SETUP
-static GimpPDBStatusType  page_setup        (gint32             image_ID);
+static PicmanPDBStatusType  page_setup        (gint32             image_ID);
 #endif
 
 static void        print_show_error         (const gchar       *message);
@@ -84,7 +84,7 @@ static GtkPrintOperation *print_operation = NULL;
 #endif
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -97,13 +97,13 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef print_args[] =
+  static const PicmanParamDef print_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Image to print"                       }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Image to print"                       }
   };
 
-  gimp_install_procedure (PRINT_PROC_NAME,
+  picman_install_procedure (PRINT_PROC_NAME,
                           N_("Print the image"),
                           "Print the image using the GTK+ Print API.",
                           "Bill Skaggs, Sven Neumann, Stefan Röllin",
@@ -111,30 +111,30 @@ query (void)
                           "2006 - 2008",
                           N_("_Print..."),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (print_args), 0,
                           print_args, NULL);
 
-  gimp_plugin_menu_register (PRINT_PROC_NAME, "<Image>/File/Send");
-  gimp_plugin_icon_register (PRINT_PROC_NAME, GIMP_ICON_TYPE_STOCK_ID,
+  picman_plugin_menu_register (PRINT_PROC_NAME, "<Image>/File/Send");
+  picman_plugin_icon_register (PRINT_PROC_NAME, PICMAN_ICON_TYPE_STOCK_ID,
                              (const guint8 *) GTK_STOCK_PRINT);
 
 #ifndef EMBED_PAGE_SETUP
-  gimp_install_procedure (PAGE_SETUP_PROC_NAME,
+  picman_install_procedure (PAGE_SETUP_PROC_NAME,
                           N_("Adjust page size and orientation for printing"),
                           "Adjust page size and orientation for printing the "
                           "image using the GTK+ Print API.",
                           "Bill Skaggs, Sven Neumann, Stefan Röllin",
-                          "Sven Neumann <sven@gimp.org>",
+                          "Sven Neumann <sven@picman.org>",
                           "2008",
                           N_("Page Set_up"),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (print_args), 0,
                           print_args, NULL);
 
-  gimp_plugin_menu_register (PAGE_SETUP_PROC_NAME, "<Image>/File/Send");
-  gimp_plugin_icon_register (PAGE_SETUP_PROC_NAME, GIMP_ICON_TYPE_STOCK_ID,
+  picman_plugin_menu_register (PAGE_SETUP_PROC_NAME, "<Image>/File/Send");
+  picman_plugin_icon_register (PAGE_SETUP_PROC_NAME, PICMAN_ICON_TYPE_STOCK_ID,
                              (const guint8 *) GTK_STOCK_PAGE_SETUP);
 #endif
 }
@@ -142,13 +142,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
   gint32             image_ID;
   GError            *error = NULL;
 
@@ -160,16 +160,16 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   image_ID = param[1].data.d_int32;
 
   if (strcmp (name, PRINT_PROC_NAME) == 0)
     {
-      status = print_image (image_ID, run_mode == GIMP_RUN_INTERACTIVE, &error);
+      status = print_image (image_ID, run_mode == PICMAN_RUN_INTERACTIVE, &error);
 
-      if (error && run_mode == GIMP_RUN_INTERACTIVE)
+      if (error && run_mode == PICMAN_RUN_INTERACTIVE)
         {
           print_show_error (error->message);
         }
@@ -177,32 +177,32 @@ run (const gchar      *name,
 #ifndef EMBED_PAGE_SETUP
   else if (strcmp (name, PAGE_SETUP_PROC_NAME) == 0)
     {
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           status = page_setup (image_ID);
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
     }
 #endif
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
   values[0].data.d_status = status;
 }
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 print_image (gint32     image_ID,
              gboolean   interactive,
              GError   **error)
@@ -216,7 +216,7 @@ print_image (gint32     image_ID,
 #endif
 
   /*  create a print layer from the projection  */
-  layer = gimp_layer_new_from_visible (image_ID, image_ID, PRINT_PROC_NAME);
+  layer = picman_layer_new_from_visible (image_ID, image_ID, PRINT_PROC_NAME);
 
   operation = gtk_print_operation_new ();
 
@@ -228,8 +228,8 @@ print_image (gint32     image_ID,
   /* fill in the PrintData struct */
   data.image_id        = image_ID;
   data.drawable_id     = layer;
-  data.unit            = gimp_get_default_unit ();
-  data.image_unit      = gimp_image_get_unit (image_ID);
+  data.unit            = picman_get_default_unit ();
+  data.image_unit      = picman_image_get_unit (image_ID);
   data.offset_x        = 0;
   data.offset_y        = 0;
   data.center          = CENTER_BOTH;
@@ -237,7 +237,7 @@ print_image (gint32     image_ID,
   data.draw_crop_marks = FALSE;
   data.operation       = operation;
 
-  gimp_image_get_resolution (image_ID, &data.xres, &data.yres);
+  picman_image_get_resolution (image_ID, &data.xres, &data.yres);
 
   print_settings_load (&data);
 
@@ -256,12 +256,12 @@ print_image (gint32     image_ID,
 #ifndef EMBED_PAGE_SETUP
   print_operation = operation;
   temp_proc = print_temp_proc_install (image_ID);
-  gimp_extension_enable ();
+  picman_extension_enable ();
 #endif
 
   if (interactive)
     {
-      gimp_ui_init (PLUG_IN_BINARY, FALSE);
+      picman_ui_init (PLUG_IN_BINARY, FALSE);
 
       g_signal_connect_swapped (operation, "end-print",
                                 G_CALLBACK (print_settings_save),
@@ -295,42 +295,42 @@ print_image (gint32     image_ID,
     }
 
 #ifndef EMBED_PAGE_SETUP
-  gimp_uninstall_temp_proc (temp_proc);
+  picman_uninstall_temp_proc (temp_proc);
   g_free (temp_proc);
   print_operation = NULL;
 #endif
 
   g_object_unref (operation);
 
-  if (gimp_item_is_valid (layer))
-    gimp_item_delete (layer);
+  if (picman_item_is_valid (layer))
+    picman_item_delete (layer);
 
   switch (result)
     {
     case GTK_PRINT_OPERATION_RESULT_APPLY:
     case GTK_PRINT_OPERATION_RESULT_IN_PROGRESS:
-      return GIMP_PDB_SUCCESS;
+      return PICMAN_PDB_SUCCESS;
 
     case GTK_PRINT_OPERATION_RESULT_CANCEL:
-      return GIMP_PDB_CANCEL;
+      return PICMAN_PDB_CANCEL;
 
     case GTK_PRINT_OPERATION_RESULT_ERROR:
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  return GIMP_PDB_EXECUTION_ERROR;
+  return PICMAN_PDB_EXECUTION_ERROR;
 }
 
 #ifndef EMBED_PAGE_SETUP
-static GimpPDBStatusType
+static PicmanPDBStatusType
 page_setup (gint32 image_ID)
 {
   GtkPrintOperation  *operation;
-  GimpParam          *return_vals;
+  PicmanParam          *return_vals;
   gchar              *name;
   gint                n_return_vals;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   operation = gtk_print_operation_new ();
 
@@ -346,17 +346,17 @@ page_setup (gint32 image_ID)
   /* we don't want the core to show an error message if the
    * temporary procedure does not exist
    */
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
-  return_vals = gimp_run_procedure (name,
+  return_vals = picman_run_procedure (name,
                                     &n_return_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
-  gimp_destroy_params (return_vals, n_return_vals);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
+  picman_destroy_params (return_vals, n_return_vals);
 
   g_free (name);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 #endif
 
@@ -382,7 +382,7 @@ static void
 print_operation_set_name (GtkPrintOperation *operation,
                           gint               image_ID)
 {
-  gchar *name = gimp_image_get_name (image_ID);
+  gchar *name = picman_image_get_name (image_ID);
 
   gtk_print_operation_set_job_name (operation, name);
 
@@ -396,7 +396,7 @@ begin_print (GtkPrintOperation *operation,
 {
   gtk_print_operation_set_use_full_page (operation, data->use_full_page);
 
-  gimp_progress_init (_("Printing"));
+  picman_progress_init (_("Printing"));
 }
 
 static void
@@ -405,13 +405,13 @@ end_print (GtkPrintOperation *operation,
            gint32            *layer_ID)
 {
   /* we don't need the print layer any longer, delete it */
-  if (gimp_item_is_valid (*layer_ID))
+  if (picman_item_is_valid (*layer_ID))
     {
-      gimp_item_delete (*layer_ID);
+      picman_item_delete (*layer_ID);
       *layer_ID = -1;
     }
 
-  gimp_progress_end ();
+  picman_progress_end ();
 
   /* generate events to solve the problems described in bug #466928 */
   g_timeout_add_seconds (1, (GSourceFunc) gtk_true, NULL);
@@ -425,7 +425,7 @@ draw_page (GtkPrintOperation *operation,
 {
   print_draw_page (context, data);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 }
 
 /*
@@ -443,14 +443,14 @@ create_custom_widget (GtkPrintOperation *operation,
 static void
 print_temp_proc_run (const gchar      *name,
                      gint              nparams,
-                     const GimpParam  *param,
+                     const PicmanParam  *param,
                      gint             *nreturn_vals,
-                     GimpParam       **return_vals)
+                     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
+  static PicmanParam  values[1];
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   *nreturn_vals = 1;
   *return_vals  = values;
@@ -468,14 +468,14 @@ print_temp_proc_name (gint32 image_ID)
 static gchar *
 print_temp_proc_install (gint32  image_ID)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Image to print" }
+    { PICMAN_PDB_IMAGE, "image", "Image to print" }
   };
 
   gchar *name = print_temp_proc_name (image_ID);
 
-  gimp_install_temp_proc (name,
+  picman_install_temp_proc (name,
                           "DON'T USE THIS ONE",
                           "Temporary procedure to notify the Print plug-in "
                           "about changes to the Page Setup.",
@@ -484,7 +484,7 @@ print_temp_proc_install (gint32  image_ID)
                          "2008",
                           NULL,
                           "",
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0, args, NULL,
                           print_temp_proc_run);
 

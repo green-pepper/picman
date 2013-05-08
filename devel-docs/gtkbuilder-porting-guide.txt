@@ -78,7 +78,7 @@ Construct UI with GtkBuilder and do setup of widgets
 The code to construct the UI will look something like this:
 
   builder = gtk_builder_new ();
-  ui_file = g_build_filename (gimp_data_directory (),
+  ui_file = g_build_filename (picman_data_directory (),
                               "ui/plug-ins/plug-in-file-gif-save.ui",
                               NULL);
   if (! gtk_builder_add_from_file (builder, ui_file, &error))

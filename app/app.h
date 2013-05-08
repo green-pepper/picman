@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #define __APP_H__
 
 
-#ifndef GIMP_APP_GLUE_COMPILATION
+#ifndef PICMAN_APP_GLUE_COMPILATION
 #error You must not #include "app.h" from a subdir
 #endif
 
@@ -32,8 +32,8 @@ void  app_exit      (gint                 status) G_GNUC_NORETURN;
 
 void  app_run       (const gchar         *full_prog_name,
                      const gchar        **filenames,
-                     const gchar         *alternate_system_gimprc,
-                     const gchar         *alternate_gimprc,
+                     const gchar         *alternate_system_picmanrc,
+                     const gchar         *alternate_picmanrc,
                      const gchar         *session_name,
                      const gchar         *batch_interpreter,
                      const gchar        **batch_commands,
@@ -47,8 +47,8 @@ void  app_run       (const gchar         *full_prog_name,
                      gboolean             use_cpu_accel,
                      gboolean             console_messages,
                      gboolean             use_debug_handler,
-                     GimpStackTraceMode   stack_trace_mode,
-                     GimpPDBCompatMode    pdb_compat_mode);
+                     PicmanStackTraceMode   stack_trace_mode,
+                     PicmanPDBCompatMode    pdb_compat_mode);
 
 
 #endif /* __APP_H__ */

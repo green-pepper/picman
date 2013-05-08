@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,21 +25,21 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gegl.h>
 
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 #include <gtk/gtk.h>
 #endif
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "about.h"
 #include "version.h"
 #include "git-version.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void
-gimp_show_library_version (const gchar *package,
+picman_show_library_version (const gchar *package,
                            gint         build_time_major,
                            gint         build_time_minor,
                            gint         build_time_micro,
@@ -59,7 +59,7 @@ gimp_show_library_version (const gchar *package,
                                       run_time_minor,
                                       run_time_micro);
 
-  /* show versions of libraries used by GIMP */
+  /* show versions of libraries used by PICMAN */
   g_print (_("using %s version %s (compiled against version %s)"),
            package, run_time_version, build_time_version);
   g_print ("\n");
@@ -69,7 +69,7 @@ gimp_show_library_version (const gchar *package,
 }
 
 static void
-gimp_show_library_versions (void)
+picman_show_library_versions (void)
 {
   gint gegl_major_version;
   gint gegl_minor_version;
@@ -79,7 +79,7 @@ gimp_show_library_versions (void)
                     &gegl_minor_version,
                     &gegl_micro_version);
 
-  gimp_show_library_version ("GEGL",
+  picman_show_library_version ("GEGL",
                              GEGL_MAJOR_VERSION,
                              GEGL_MINOR_VERSION,
                              GEGL_MICRO_VERSION,
@@ -87,7 +87,7 @@ gimp_show_library_versions (void)
                              gegl_minor_version,
                              gegl_micro_version);
 
-  gimp_show_library_version ("GLib",
+  picman_show_library_version ("GLib",
                              GLIB_MAJOR_VERSION,
                              GLIB_MINOR_VERSION,
                              GLIB_MICRO_VERSION,
@@ -95,7 +95,7 @@ gimp_show_library_versions (void)
                              glib_minor_version,
                              glib_micro_version);
 
-  gimp_show_library_version ("GdkPixbuf",
+  picman_show_library_version ("GdkPixbuf",
                              GDK_PIXBUF_MAJOR,
                              GDK_PIXBUF_MINOR,
                              GDK_PIXBUF_MICRO,
@@ -103,8 +103,8 @@ gimp_show_library_versions (void)
                              gdk_pixbuf_minor_version,
                              gdk_pixbuf_micro_version);
 
-#ifndef GIMP_CONSOLE_COMPILATION
-  gimp_show_library_version ("GTK+",
+#ifndef PICMAN_CONSOLE_COMPILATION
+  picman_show_library_version ("GTK+",
                              GTK_MAJOR_VERSION,
                              GTK_MINOR_VERSION,
                              GTK_MICRO_VERSION,
@@ -113,7 +113,7 @@ gimp_show_library_versions (void)
                              gtk_micro_version);
 #endif
 
-  gimp_show_library_version ("Pango",
+  picman_show_library_version ("Pango",
                              PANGO_VERSION_MAJOR,
                              PANGO_VERSION_MINOR,
                              PANGO_VERSION_MICRO,
@@ -121,7 +121,7 @@ gimp_show_library_versions (void)
                              pango_version () / 100 % 100,
                              pango_version () % 100);
 
-  gimp_show_library_version ("Fontconfig",
+  picman_show_library_version ("Fontconfig",
                              FC_MAJOR, FC_MINOR, FC_REVISION,
                              FcGetVersion () / 100 / 100,
                              FcGetVersion () / 100 % 100,
@@ -133,17 +133,17 @@ gimp_show_library_versions (void)
 }
 
 void
-gimp_version_show (gboolean be_verbose)
+picman_version_show (gboolean be_verbose)
 {
-  g_print (_("%s version %s"), GIMP_NAME, GIMP_VERSION);
+  g_print (_("%s version %s"), PICMAN_NAME, PICMAN_VERSION);
   g_print ("\n");
 
   if (be_verbose)
     {
-      g_print ("git-describe: %s", GIMP_GIT_VERSION);
+      g_print ("git-describe: %s", PICMAN_GIT_VERSION);
       g_print ("\n");
 
       g_print ("\n");
-      gimp_show_library_versions ();
+      picman_show_library_versions ();
     }
 }

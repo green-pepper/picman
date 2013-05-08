@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-tags\n"
+"Project-Id-Version: picman-tags\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-01 19:46+0800\n"
 "PO-Revision-Date: 2011-01-01 19:46+0800\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "模糊"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 #, fuzzy
 msgid "round"
 msgstr "圓形"

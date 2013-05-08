@@ -1,6 +1,6 @@
-# gimp-plugins' Portuguese translation.
-# Copyright © 2002, 2004 gimp
-# Distributed under the same licence as the gimp package
+# picman-plugins' Portuguese translation.
+# Copyright © 2002, 2004 picman
+# Distributed under the same licence as the picman package
 #
 # Filipe Maia <fmaia@gmx.net>, 2002
 # Duarte Loreto <happyguy_pt@hotmail.com>, 2003, 2004.
@@ -55,13 +55,13 @@ msgstr "Contexto"
 
 #. spinbutton 1
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:297
-#: ../plug-ins/file-fli/fli-gimp.c:873 ../plug-ins/file-fli/fli-gimp.c:929
+#: ../plug-ins/file-fli/fli-picman.c:873 ../plug-ins/file-fli/fli-picman.c:929
 msgid "From:"
 msgstr "A partir de:"
 
 #. spinbutton 2
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:323
-#: ../plug-ins/file-fli/fli-gimp.c:882 ../plug-ins/file-fli/fli-gimp.c:938
+#: ../plug-ins/file-fli/fli-picman.c:882 ../plug-ins/file-fli/fli-picman.c:938
 msgid "To:"
 msgstr "Para:"
 
@@ -435,8 +435,8 @@ msgid "Optimizing animation"
 msgstr "A Optimizar Animação"
 
 #: ../plug-ins/common/animation-play.c:167
-msgid "Preview a GIMP layer-based animation"
-msgstr "Ante-visão de animação GIMP baseada em camadas"
+msgid "Preview a PICMAN layer-based animation"
+msgstr "Ante-visão de animação PICMAN baseada em camadas"
 
 #: ../plug-ins/common/animation-play.c:172
 msgid "_Playback..."
@@ -631,7 +631,7 @@ msgstr "_Vertical"
 #: ../plug-ins/file-psd/psd-image-res-load.c:997
 #: ../plug-ins/file-psd/psd-load.c:1576 ../plug-ins/file-sgi/sgi.c:406
 #: ../plug-ins/gfig/gfig-dialog.c:1284
-#: ../plug-ins/gimpressionist/general.c:139 ../plug-ins/twain/twain.c:567
+#: ../plug-ins/picmanressionist/general.c:139 ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1155
 msgid "Background"
 msgstr "Fundo"
@@ -1043,8 +1043,8 @@ msgstr "Carregar Definições do Misturador de Canais"
 #: ../plug-ins/common/file-xmc.c:666 ../plug-ins/common/file-xmc.c:853
 #: ../plug-ins/common/file-xwd.c:432 ../plug-ins/common/sphere-designer.c:2003
 #: ../plug-ins/file-bmp/bmp-read.c:155 ../plug-ins/file-faxg3/faxg3.c:232
-#: ../plug-ins/file-fits/fits.c:357 ../plug-ins/file-fli/fli-gimp.c:458
-#: ../plug-ins/file-fli/fli-gimp.c:495 ../plug-ins/file-ico/ico-load.c:652
+#: ../plug-ins/file-fits/fits.c:357 ../plug-ins/file-fli/fli-picman.c:458
+#: ../plug-ins/file-fli/fli-picman.c:495 ../plug-ins/file-ico/ico-load.c:652
 #: ../plug-ins/file-ico/ico-load.c:731 ../plug-ins/file-jpeg/jpeg-load.c:108
 #: ../plug-ins/file-jpeg/jpeg-load.c:830 ../plug-ins/file-psd/psd-load.c:130
 #: ../plug-ins/file-psd/psd-thumb-load.c:79
@@ -1053,8 +1053,8 @@ msgstr "Carregar Definições do Misturador de Canais"
 #: ../plug-ins/flame/flame.c:409
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1862
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:928
-#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1357
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1083,7 +1083,7 @@ msgstr "Guardar Definições de Misturador de Canais"
 #: ../plug-ins/common/file-xmc.c:1460 ../plug-ins/common/file-xwd.c:617
 #: ../plug-ins/common/sphere-designer.c:2112
 #: ../plug-ins/file-bmp/bmp-write.c:295 ../plug-ins/file-fits/fits.c:475
-#: ../plug-ins/file-fli/fli-gimp.c:748 ../plug-ins/file-ico/ico-save.c:1007
+#: ../plug-ins/file-fli/fli-picman.c:748 ../plug-ins/file-ico/ico-save.c:1007
 #: ../plug-ins/file-jpeg/jpeg-save.c:328 ../plug-ins/file-psd/psd-save.c:1637
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:162
 #: ../plug-ins/file-xjt/xjt.c:1276 ../plug-ins/file-xjt/xjt.c:1711
@@ -1118,7 +1118,7 @@ msgid "Checkerboard"
 msgstr "Padrão de tabuleiro de xadrez"
 
 #: ../plug-ins/common/checkerboard.c:412 ../plug-ins/common/file-xmc.c:1167
-#: ../plug-ins/gimpressionist/sizemap.c:511
+#: ../plug-ins/picmanressionist/sizemap.c:511
 msgid "_Size:"
 msgstr "_Tamanho:"
 
@@ -1316,8 +1316,8 @@ msgstr "Aleatórios a partir de semente (partilhado)"
 
 #: ../plug-ins/common/cml-explorer.c:299 ../plug-ins/common/cml-explorer.c:307
 #: ../plug-ins/common/decompose.c:187
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "Matiz"
 
@@ -1328,8 +1328,8 @@ msgstr "Saturação"
 
 #: ../plug-ins/common/cml-explorer.c:301 ../plug-ins/common/cml-explorer.c:309
 #: ../plug-ins/common/decompose.c:189
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "Valor"
 
@@ -2255,8 +2255,8 @@ msgstr "Dobrar em Curva"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1261
-#: ../plug-ins/gimpressionist/orientmap.c:591
-#: ../plug-ins/gimpressionist/sizemap.c:461
+#: ../plug-ins/picmanressionist/orientmap.c:591
+#: ../plug-ins/picmanressionist/sizemap.c:461
 #: ../plug-ins/print/print-page-layout.c:171
 msgid "Preview"
 msgstr "Ante-visão"
@@ -2843,7 +2843,7 @@ msgstr "_Raio 1:"
 msgid "R_adius 2:"
 msgstr "R_aio 2:"
 
-#: ../plug-ins/common/edge-dog.c:372 ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/common/edge-dog.c:372 ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "_Inverter"
 
@@ -3051,7 +3051,7 @@ msgstr "Carregar Paleta KISS"
 #: ../plug-ins/common/file-xbm.c:741 ../plug-ins/common/file-xmc.c:678
 #: ../plug-ins/common/file-xpm.c:351 ../plug-ins/common/file-xwd.c:523
 #: ../plug-ins/file-bmp/bmp-read.c:160 ../plug-ins/file-faxg3/faxg3.c:216
-#: ../plug-ins/file-fli/fli-gimp.c:500 ../plug-ins/file-ico/ico-load.c:645
+#: ../plug-ins/file-fli/fli-picman.c:500 ../plug-ins/file-ico/ico-load.c:645
 #: ../plug-ins/file-jpeg/jpeg-load.c:114 ../plug-ins/file-psd/psd-load.c:135
 #: ../plug-ins/file-sgi/sgi.c:329 ../plug-ins/file-xjt/xjt.c:3329
 #, c-format
@@ -3079,7 +3079,7 @@ msgstr "Profundidade de cor não suportada (%d) !"
 #: ../plug-ins/common/file-xbm.c:1039 ../plug-ins/common/file-xmc.c:1465
 #: ../plug-ins/common/file-xpm.c:636 ../plug-ins/common/file-xwd.c:622
 #: ../plug-ins/file-bmp/bmp-write.c:306 ../plug-ins/file-fits/fits.c:480
-#: ../plug-ins/file-fli/fli-gimp.c:716 ../plug-ins/file-ico/ico-save.c:1001
+#: ../plug-ins/file-fli/fli-picman.c:716 ../plug-ins/file-ico/ico-save.c:1001
 #: ../plug-ins/file-jpeg/jpeg-save.c:285 ../plug-ins/file-psd/psd-save.c:1642
 #: ../plug-ins/file-sgi/sgi.c:575 ../plug-ins/file-xjt/xjt.c:1692
 #, c-format
@@ -3186,8 +3186,8 @@ msgid "Cannot operate on unknown image types."
 msgstr "Incapaz de processar tipos de imagens desconhecidos."
 
 #: ../plug-ins/common/file-gbr.c:153 ../plug-ins/common/file-gbr.c:174
-msgid "GIMP brush"
-msgstr "Pincel GIMP"
+msgid "PICMAN brush"
+msgstr "Pincel PICMAN"
 
 #: ../plug-ins/common/file-gbr.c:398 ../plug-ins/common/file-pat.c:417
 #, c-format
@@ -3200,8 +3200,8 @@ msgstr "Formato de pincel não suportado"
 
 #: ../plug-ins/common/file-gbr.c:446
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "Erro no ficheiro de pincel GIMP '%s'"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "Erro no ficheiro de pincel PICMAN '%s'"
 
 #: ../plug-ins/common/file-gbr.c:454
 #, c-format
@@ -3215,8 +3215,8 @@ msgid "Unnamed"
 msgstr "Sem nome"
 
 #: ../plug-ins/common/file-gbr.c:652
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "Os pincéis GIMP são em ESCALA CINZENTOS ou RGBA"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "Os pincéis PICMAN são em ESCALA CINZENTOS ou RGBA"
 
 #: ../plug-ins/common/file-gbr.c:769
 msgid "Brush"
@@ -3228,7 +3228,7 @@ msgid "Spacing:"
 msgstr "Espaçamento:"
 
 #: ../plug-ins/common/file-gbr.c:794 ../plug-ins/common/file-gih.c:892
-#: ../plug-ins/common/file-pat.c:566 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:566 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "Descrição:"
 
@@ -3366,16 +3366,16 @@ msgid "The default comment is limited to %d characters."
 msgstr "O comentário está limitado a %d caracteres, por predefinição."
 
 #: ../plug-ins/common/file-gih.c:208 ../plug-ins/common/file-gih.c:229
-msgid "GIMP brush (animated)"
-msgstr "Pincel GIMP (animado)"
+msgid "PICMAN brush (animated)"
+msgstr "Pincel PICMAN (animado)"
 
 #: ../plug-ins/common/file-gih.c:484
-msgid "Error in GIMP brush pipe file."
-msgstr "Erro no ficheiro de processos do pincel GIMP."
+msgid "Error in PICMAN brush pipe file."
+msgstr "Erro no ficheiro de processos do pincel PICMAN."
 
 #: ../plug-ins/common/file-gih.c:550
-msgid "GIMP brush file appears to be corrupted."
-msgstr "Ficheiro de pincel GIMP parece estar corrompido."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "Ficheiro de pincel PICMAN parece estar corrompido."
 
 #: ../plug-ins/common/file-gih.c:700
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -3759,8 +3759,8 @@ msgid "MNG animation"
 msgstr "Animação MNG"
 
 #: ../plug-ins/common/file-pat.c:122 ../plug-ins/common/file-pat.c:144
-msgid "GIMP pattern"
-msgstr "Textura GIMP"
+msgid "PICMAN pattern"
+msgstr "Textura PICMAN"
 
 #: ../plug-ins/common/file-pat.c:377
 #, c-format
@@ -3956,17 +3956,17 @@ msgid "Invalid X resolution."
 msgstr "Resolução X inválida."
 
 #: ../plug-ins/common/file-pnm.c:554
-msgid "Image width is larger than GIMP can handle."
-msgstr "A largura da imagem é demasiado grande para ser manipulável pelo GIMP."
+msgid "Image width is larger than PICMAN can handle."
+msgstr "A largura da imagem é demasiado grande para ser manipulável pelo PICMAN."
 
 #: ../plug-ins/common/file-pnm.c:561
 msgid "Invalid Y resolution."
 msgstr "Resolução Y inválida."
 
 #: ../plug-ins/common/file-pnm.c:563
-msgid "Image height is larger than GIMP can handle."
+msgid "Image height is larger than PICMAN can handle."
 msgstr ""
-"A altura da imagem é demasiado grande para poder ser manipulável pelo GIMP."
+"A altura da imagem é demasiado grande para poder ser manipulável pelo PICMAN."
 
 #: ../plug-ins/common/file-pnm.c:575
 msgid "Unsupported maximum value."
@@ -4019,13 +4019,13 @@ msgstr "Guardar em PostScript não suporta imagens com canais transparência"
 #, c-format
 msgid ""
 "Error starting Ghostscript. Make sure that Ghostscript is installed and - if "
-"necessary - use the environment variable GS_PROG to tell GIMP about its "
+"necessary - use the environment variable GS_PROG to tell PICMAN about its "
 "location.\n"
 "(%s)"
 msgstr ""
 "Erro ao iniciar o Ghostscript. Certifique-se que o Ghostscript está "
 "instalado e, se necessário, usa a variável de ambiente GS_PROG para informar "
-"o GIMP sobre a localização do Ghostscript.\n"
+"o PICMAN sobre a localização do Ghostscript.\n"
 "(%s)"
 
 #: ../plug-ins/common/file-ps.c:1932 ../plug-ins/common/file-tiff-load.c:1000
@@ -4089,8 +4089,8 @@ msgid "B/W"
 msgstr "P/B"
 
 #: ../plug-ins/common/file-ps.c:3229 ../plug-ins/common/file-xpm.c:478
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "Cor"
@@ -4318,10 +4318,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"A largura da imagem é demasiado grande para ser manipulável pelo GIMP."
+"A largura da imagem é demasiado grande para ser manipulável pelo PICMAN."
 
 #: ../plug-ins/common/file-sunras.c:472 ../plug-ins/common/file-xbm.c:840
 #: ../plug-ins/common/file-xwd.c:507
@@ -4338,10 +4338,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"A altura da imagem é demasiado grande para ser manipulável pelo GIMP."
+"A altura da imagem é demasiado grande para ser manipulável pelo PICMAN."
 
 #: ../plug-ins/common/file-sunras.c:518
 msgid "This image depth is not supported"
@@ -4446,9 +4446,9 @@ msgstr "Importar _Caminhos"
 
 #: ../plug-ins/common/file-svg.c:960
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
 msgstr ""
-"Importar elementos de caminho do SVG para que possam ser utilizados no GIMP "
+"Importar elementos de caminho do SVG para que possam ser utilizados no PICMAN "
 "com a Ferramenta Caminhos."
 
 #: ../plug-ins/common/file-svg.c:973
@@ -4523,12 +4523,12 @@ msgstr "Canal TIFF"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "Aviso:\n"
-"A imagem que está a ler tem 16 bits por canal. O GIMP apenas suporta 8 bit, "
+"A imagem que está a ler tem 16 bits por canal. O PICMAN apenas suporta 8 bit, "
 "pelo que terá de ser convertida. Devido a esta conversão será perdida alguma "
 "informação."
 
@@ -6533,7 +6533,7 @@ msgstr "T_urbulência:"
 
 #: ../plug-ins/common/plugin-browser.c:133
 msgid "Display information about plug-ins"
-msgstr "Apresentar informação acerca das Extensões GIMP (plug-ins)"
+msgstr "Apresentar informação acerca das Extensões PICMAN (plug-ins)"
 
 #: ../plug-ins/common/plugin-browser.c:143
 msgid "_Plug-In Browser"
@@ -6547,8 +6547,8 @@ msgstr "Procurar por Nome"
 #, c-format
 msgid "%d plug-in"
 msgid_plural "%d plug-ins"
-msgstr[0] "%d Extensões do GIMP (plug-in)"
-msgstr[1] "%d Extensões do GIMP (plug-ins)"
+msgstr[0] "%d Extensões do PICMAN (plug-in)"
+msgstr[1] "%d Extensões do PICMAN (plug-ins)"
 
 #: ../plug-ins/common/plugin-browser.c:399
 msgid "No matches for your query"
@@ -6558,8 +6558,8 @@ msgstr "Não foram encontrados resultados para a sua consulta"
 #, c-format
 msgid "%d plug-in matches your query"
 msgid_plural "%d plug-ins match your query"
-msgstr[0] "%d Extensão do GIMP encontrada"
-msgstr[1] "%d Extensões do GIMP encontradas"
+msgstr[0] "%d Extensão do PICMAN encontrada"
+msgstr[1] "%d Extensões do PICMAN encontradas"
 
 #: ../plug-ins/common/plugin-browser.c:533
 msgid "No matches"
@@ -7328,7 +7328,7 @@ msgid "Use the background color"
 msgstr "Usar a cor definida para o fundo"
 
 #: ../plug-ins/common/sphere-designer.c:292
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "Sólido"
 
@@ -7424,7 +7424,7 @@ msgstr "Diálogo Selecção Cores"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2752
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:551
 msgid "Scale:"
 msgstr "Dimensionar:"
@@ -7718,11 +7718,11 @@ msgstr "Guardado"
 
 #: ../plug-ins/common/unit-editor.c:93
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr ""
 "Se a opção desta coluna estiver marcada, será gravada a definição de unidade "
-"antes de sair do GIMP, caso contrário será uma definição temporária."
+"antes de sair do PICMAN, caso contrário será uma definição temporária."
 
 #: ../plug-ins/common/unit-editor.c:95
 msgid "ID"
@@ -7730,10 +7730,10 @@ msgstr "ID da unidade"
 
 #: ../plug-ins/common/unit-editor.c:95
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
+"This string will be used to identify a unit in PICMAN's configuration files."
 msgstr ""
 "Esta expressão será utilizada para identificar uma unidade nos ficheiros de "
-"configuração do GIMP."
+"configuração do PICMAN."
 
 #: ../plug-ins/common/unit-editor.c:97
 msgid "Factor"
@@ -7803,8 +7803,8 @@ msgid "Create a new unit using the currently selected unit as template"
 msgstr "Criar uma nova unidade, tendo como modelo a que estiver seleccionada."
 
 #: ../plug-ins/common/unit-editor.c:144
-msgid "Create or alter units used in GIMP"
-msgstr "Criar ou alterar as unidades de medida usadas no GIMP"
+msgid "Create or alter units used in PICMAN"
+msgstr "Criar ou alterar as unidades de medida usadas no PICMAN"
 
 #: ../plug-ins/common/unit-editor.c:149
 msgid "U_nits"
@@ -8429,7 +8429,7 @@ msgstr ""
 "Valores mais altos fazem com que o efeito seja aplicado a menos áreas da "
 "imagem"
 
-#: ../plug-ins/common/wind.c:1027 ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/common/wind.c:1027 ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "_Força:"
 
@@ -8554,26 +8554,26 @@ msgstr "Por DATAMIN/DATAMAX"
 msgid "Image Composing"
 msgstr "Composição de Imagem"
 
-#: ../plug-ins/file-fli/fli-gimp.c:165 ../plug-ins/file-fli/fli-gimp.c:185
+#: ../plug-ins/file-fli/fli-picman.c:165 ../plug-ins/file-fli/fli-picman.c:185
 msgid "AutoDesk FLIC animation"
 msgstr "Animação FLIC AutoDesk"
 
-#: ../plug-ins/file-fli/fli-gimp.c:560
+#: ../plug-ins/file-fli/fli-picman.c:560
 #, c-format
 msgid "Frame (%i)"
 msgstr "Fotograma (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:712
+#: ../plug-ins/file-fli/fli-picman.c:712
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr ""
 "Temos pena, mas apenas podem ser guardadas imagens INDEXADAS e TONS DE "
 "CINZENTO."
 
-#: ../plug-ins/file-fli/fli-gimp.c:844
+#: ../plug-ins/file-fli/fli-picman.c:844
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - Carregar pilha de fotogramas"
 
-#: ../plug-ins/file-fli/fli-gimp.c:912
+#: ../plug-ins/file-fli/fli-picman.c:912
 msgid "GFLI 1.3"
 msgstr "GFLI 1.3 - Carregar pilha de fotogramas"
 
@@ -8646,8 +8646,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "De acordo com os dados EXIF, a imagem está rodada."
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:366
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "Quer que o GIMP rode a imagem para a orientação standard ?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "Quer que o PICMAN rode a imagem para a orientação standard ?"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:240
 msgid "JPEG preview"
@@ -8897,8 +8897,8 @@ msgstr ""
 "normal."
 
 #: ../plug-ins/file-psd/psd-save.c:633
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
-msgstr "Erro: Impossível converter o tipo de imagem base GIMP para modo PSD"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
+msgstr "Erro: Impossível converter o tipo de imagem base PICMAN para modo PSD"
 
 #: ../plug-ins/file-psd/psd-save.c:1607
 #, c-format
@@ -9055,8 +9055,8 @@ msgid "URI"
 msgstr "URI"
 
 #: ../plug-ins/file-xjt/xjt.c:485 ../plug-ins/file-xjt/xjt.c:503
-msgid "GIMP compressed XJT image"
-msgstr "Imagem XJT com compressão GIMP"
+msgid "PICMAN compressed XJT image"
+msgstr "Imagem XJT com compressão PICMAN"
 
 #: ../plug-ins/file-xjt/xjt.c:733
 #, c-format
@@ -9170,8 +9170,8 @@ msgstr "Modo Aleató_rio"
 msgid "Same"
 msgstr "Idêntico"
 
-#: ../plug-ins/flame/flame.c:744 ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/flame/flame.c:744 ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "Aleatório"
 
@@ -9320,16 +9320,16 @@ msgid "C_amera"
 msgstr "C_amera"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
-#: ../plug-ins/gfig/gfig-dialog.c:273 ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/gfig/gfig-dialog.c:273 ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:880
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"Nenhum %s em gimprc:\n"
+"Nenhum %s em picmanrc:\n"
 "Tem de adicionar uma entrada como a seguinte\n"
 "(%s \"%s\")\n"
 "ao seu ficheiro %s."
@@ -9860,7 +9860,7 @@ msgid "Max undo:"
 msgstr "Desfazer máximo:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1283
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "Transparente"
 
@@ -9956,7 +9956,7 @@ msgid "Left"
 msgstr "Esquerda"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1719
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "Orientação:"
 
@@ -10018,302 +10018,302 @@ msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr ""
 "Erro ao tentar abrir o ficheiro temporário '%s' para carregar o parasita: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:246
+#: ../plug-ins/picmanressionist/brush.c:246
 msgid "Can only save drawables!"
 msgstr "Apenas podem ser guardados os desenháveis !"
 
-#: ../plug-ins/gimpressionist/brush.c:251
+#: ../plug-ins/picmanressionist/brush.c:251
 msgid "Save Brush"
 msgstr "Guardar Pincel"
 
-#: ../plug-ins/gimpressionist/brush.c:506
+#: ../plug-ins/picmanressionist/brush.c:506
 msgid "_Brush"
 msgstr "P_incel"
 
-#: ../plug-ins/gimpressionist/brush.c:543
+#: ../plug-ins/picmanressionist/brush.c:543
 msgid "Gamma:"
 msgstr "Gama:"
 
-#: ../plug-ins/gimpressionist/brush.c:561
+#: ../plug-ins/picmanressionist/brush.c:561
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Altera a gama (brilho) do pincel seleccionado"
 
-#: ../plug-ins/gimpressionist/brush.c:569
+#: ../plug-ins/picmanressionist/brush.c:569
 msgid "Select:"
 msgstr "Seleccionar:"
 
-#: ../plug-ins/gimpressionist/brush.c:598
+#: ../plug-ins/picmanressionist/brush.c:598
 msgid "Aspect ratio:"
 msgstr "Factor de Proporção:"
 
-#: ../plug-ins/gimpressionist/brush.c:602
+#: ../plug-ins/picmanressionist/brush.c:602
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Especifica o rácio de proporção do pincel"
 
-#: ../plug-ins/gimpressionist/brush.c:611
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:611
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "Relevo:"
 
-#: ../plug-ins/gimpressionist/brush.c:615
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:615
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr ""
 "Especifica a quantidade de relevo a ser aplicada à imagem (em percentagem)"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "C_or"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "_Média sob o pincel"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "C_entro do pincel"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr ""
 "A cor é obtida através do cálculo da média de todos os pixeis sob o pincel"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "Tira uma amostra de cor a partir do pixel no centro do pincel"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "R_uído na cor:"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "Adiciona ruído aleatório à cor"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3528
 msgid "_General"
 msgstr "_Geral"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "Manter o original"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "Preservar a imagem original como fundo"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "A partir de papel"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "Copia a textura do papel seleccionado a ser aplicado como fundo"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "Fundo sólido colorido"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "Usa um fundo transparente; Somente as pinceladas serão visíveis"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "Pintar margens"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "Selecciona para concentrar as pinceladas ao redor do centro da imagem"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
+#: ../plug-ins/picmanressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "Em Mosico"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr ""
 "Seleccione se quiser que a imagem resultante seja em mosaicos com juntas "
 "perfeitamente ajustáveis"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "Sombra projectada"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "Adiciona um efeito sombra a cada pincelada"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "Escurecer as margens:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "Escolher o quanto  \"escurecer\" as margens de cada pincelada"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "Escurecer sombra:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "O quanto \"escurecer\" a sombra projectada"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "Profundidade da sombra:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr ""
 "A profundidade da sombra, isto é, a distância a que deve estar do objecto"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "Suavização da sombra:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "O quanto desfocar a sombra projectada"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "Tolerância de desvio:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "Um valor de saida seguro para selecções adaptativas"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "Realiza operações artísticas variadas"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "_GIMPressionista..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "_PICMANressionista..."
 
-#: ../plug-ins/gimpressionist/gimp.c:164
+#: ../plug-ins/picmanressionist/picman.c:164
 msgid "The selection does not intersect the active layer or mask."
 msgstr "A selecção não se intersecta com a camada ou máscara activas."
 
-#: ../plug-ins/gimpressionist/gimp.c:391
+#: ../plug-ins/picmanressionist/picman.c:391
 msgid "Painting"
 msgstr "Pintura"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPressionista"
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANressionista"
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "Or_ientação"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "Direcções:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "O número de direcções (por ex. pincéis) a serem usadas"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "Ângulo inicial:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "O ângulo inicial a criar do primeiro pincel"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "Abertura do ângulo:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "A abertura do ângulo a criar do primeiro pincel"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr ""
 "Deixar o valor (brilho) da região determinar qual a direcção da pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "Raio"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr ""
 "A distância a partir do centro da imagem determina a direcção da pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "Selecciona uma direcção aleatória a cada pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "Radial"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr ""
 "Deixar a direcção a partir do centro determinar qual a direcção da pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "Fluídez"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "As pinceladas seguem um padrão \"fluido\""
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "A matiz da região determina a direcção da pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "Adaptável"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "Será seleccionada a direcção que combinar melhor com a imagem original"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "Manual"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "Especificar manualmente a orientação da pincelada"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "Abre o Editor do Mapa de Orientação"
 
-#: ../plug-ins/gimpressionist/orientmap.c:525
+#: ../plug-ins/picmanressionist/orientmap.c:525
 msgid "Orientation Map Editor"
 msgstr "Editor de Mapa de Orientação"
 
-#: ../plug-ins/gimpressionist/orientmap.c:554
+#: ../plug-ins/picmanressionist/orientmap.c:554
 msgid "Vectors"
 msgstr "Vectores"
 
-#: ../plug-ins/gimpressionist/orientmap.c:566
+#: ../plug-ins/picmanressionist/orientmap.c:566
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -10322,63 +10322,63 @@ msgstr ""
 "direito para o apontar em direcção ao rato, botão do meio para adicionar "
 "novo vector."
 
-#: ../plug-ins/gimpressionist/orientmap.c:589
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:589
+#: ../plug-ins/picmanressionist/sizemap.c:459
 msgid "Adjust the preview's brightness"
 msgstr "Ajustar o brilho de ante-visão"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "Seleccionar vector anterior"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "Seleccionar vector seguinte"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:490
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:490
 msgid "A_dd"
 msgstr "A_dicionar"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "Adicionar novo vector"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:497
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:497
 msgid "_Kill"
 msgstr "_Remover"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "Excluir o vector seleccionado"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "Tipo"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "_Normal"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "Vé_rtice"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "Vértice_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "Vértice_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:542
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:542
 msgid "_Voronoi"
 msgstr "_Voronoi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
@@ -10386,229 +10386,229 @@ msgstr ""
 "Modo-Voronoi faz com que apenas o vector mais próximo de um dado ponto tenha "
 "influência"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "Â_ngulo:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "Alterar o ângulo do vector seleccionado"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "Deslocamento do ângu_lo:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr "Deslocar todos os vectores com um ângulo indicado"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "Alterar a resistência do vector seleccionado"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "Resis_tência exponencial:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:537
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:537
 msgid "Change the exponent of the strength"
 msgstr "Alterar o expoente da resistência"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "P_apel"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "Inverte a textura dos Papéis"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "So_breposição"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "Aplica o papel tal como ele está (sem criar relevos)"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "Especifica a escala da textura (na percentagem do ficheiro original)"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "Posicion_amento"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "Posicionamento"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "Aleatório"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "Distribuído por igual"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "Coloca pinceladas aleatórias em torno da imagem"
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "As pinceladas são distribuídas uniformemente através da imagem"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "Centradas"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "Concentrar as pinceladas ao redor do centro da imagem"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "_Densidade da pincelada:"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "A densidade relativa das pinceladas do pincel"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:652
+#: ../plug-ins/picmanressionist/ppmtool.c:652
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "Falha ao guardar ficheiro PPM '%s': %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "Guardar as Actuais"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Predefinições do Gimpressionista"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Predefinições do Picmanressionista"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "_Predefinições"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "Guardar as Actuais..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "Guardar as definições actuais no ficheiro especificado"
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "Carrega na memória o ficheiro com as predefinições"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "Apaga o ficheiro com as predefinições"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "Relê a pasta de Pré-Definidos"
 
-#: ../plug-ins/gimpressionist/preview.c:173
-#: ../plug-ins/gimpressionist/repaint.c:1183
+#: ../plug-ins/picmanressionist/preview.c:173
+#: ../plug-ins/picmanressionist/repaint.c:1183
 #: ../plug-ins/imagemap/imap_polygon.c:514
 #: ../plug-ins/lighting/lighting-ui.c:1073
 msgid "_Update"
 msgstr "Act_ualizar"
 
-#: ../plug-ins/gimpressionist/preview.c:179
+#: ../plug-ins/picmanressionist/preview.c:179
 msgid "Refresh the Preview window"
 msgstr "Restaurar a janela da Ante-visão"
 
-#: ../plug-ins/gimpressionist/preview.c:187
+#: ../plug-ins/picmanressionist/preview.c:187
 msgid "Revert to the original image"
 msgstr "Reverte para a imagem original"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "_Tamanho"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 msgid "Size variants:"
 msgstr "Variações de tamanho:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "O número de tamanhos dos pincéis a utilizar"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "Tamanho mínimo:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "O menor pincel que irá ser criado"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "Tamanho máximo:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "O maior pincel que irá ser criado"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr "Trabalhar na cópia"
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "Deixar o valor (brilho) da região determinar o tamanho da pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr ""
 "A distância a partir do centro da imagem determina o tamanho da pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "Seleccionar um tamanho aleatório para cada pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "Deixar a direcção a partir do centro determinar o tamanho da pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "A matiz da região determina o tamanho da pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr ""
 "Será seleccionado um tamanho de pincel que melhor corresponda ao traços da "
 "imagem original"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "Especificar manualmente o tamanho da pincelada"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "Abre o Editor do Mapa de Tamanho"
 
-#: ../plug-ins/gimpressionist/sizemap.c:400
+#: ../plug-ins/picmanressionist/sizemap.c:400
 msgid "Size Map Editor"
 msgstr "Editor de Mapa de Tamanho"
 
-#: ../plug-ins/gimpressionist/sizemap.c:429
+#: ../plug-ins/picmanressionist/sizemap.c:429
 msgid "Smvectors"
 msgstr "Vectores SM"
 
-#: ../plug-ins/gimpressionist/sizemap.c:439
+#: ../plug-ins/picmanressionist/sizemap.c:439
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -10617,39 +10617,39 @@ msgstr ""
 "mover o vector SM seleccionado, no botão direito para apontar em direcção ao "
 "rato e no botão central para adicionar um novo vector pequeno."
 
-#: ../plug-ins/gimpressionist/sizemap.c:481
+#: ../plug-ins/picmanressionist/sizemap.c:481
 msgid "Select previous smvector"
 msgstr "Selecciona vector SM anterior"
 
-#: ../plug-ins/gimpressionist/sizemap.c:488
+#: ../plug-ins/picmanressionist/sizemap.c:488
 msgid "Select next smvector"
 msgstr "Selecciona vector SM seguinte"
 
-#: ../plug-ins/gimpressionist/sizemap.c:495
+#: ../plug-ins/picmanressionist/sizemap.c:495
 msgid "Add new smvector"
 msgstr "Adicionar novo vector SM"
 
-#: ../plug-ins/gimpressionist/sizemap.c:502
+#: ../plug-ins/picmanressionist/sizemap.c:502
 msgid "Delete selected smvector"
 msgstr "Apagar vector SM seleccionado"
 
-#: ../plug-ins/gimpressionist/sizemap.c:515
+#: ../plug-ins/picmanressionist/sizemap.c:515
 msgid "Change the angle of the selected smvector"
 msgstr "Alterar o ângulo do vector SM seleccionado"
 
-#: ../plug-ins/gimpressionist/sizemap.c:522
+#: ../plug-ins/picmanressionist/sizemap.c:522
 msgid "S_trength:"
 msgstr "Resis_tência:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:526
+#: ../plug-ins/picmanressionist/sizemap.c:526
 msgid "Change the strength of the selected smvector"
 msgstr "Alterar a resistência do vector SM seleccionado"
 
-#: ../plug-ins/gimpressionist/sizemap.c:533
+#: ../plug-ins/picmanressionist/sizemap.c:533
 msgid "St_rength exp.:"
 msgstr "_Resistência exponencial:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:549
+#: ../plug-ins/picmanressionist/sizemap.c:549
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -10937,8 +10937,8 @@ msgstr "Clarões _Secundários"
 
 #: ../plug-ins/help-browser/dialog.c:185
 #: ../plug-ins/help-browser/dialog.c:1114
-msgid "GIMP Help Browser"
-msgstr "Navegador da Ajuda GIMP"
+msgid "PICMAN Help Browser"
+msgstr "Navegador da Ajuda PICMAN"
 
 #: ../plug-ins/help-browser/dialog.c:563
 msgid "Go back one page"
@@ -10993,8 +10993,8 @@ msgid "Toggle the visibility of the sidebar"
 msgstr "Alternar a visibilidade da barra lateral"
 
 #: ../plug-ins/help-browser/dialog.c:655
-msgid "Visit the GIMP documentation website"
-msgstr "Visitar a página web da documentação do GIMP"
+msgid "Visit the PICMAN documentation website"
+msgstr "Visitar a página web da documentação do PICMAN"
 
 #: ../plug-ins/help-browser/dialog.c:1155
 msgid "Find:"
@@ -11010,40 +11010,40 @@ msgctxt "search"
 msgid "_Next"
 msgstr "_Seguinte"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr "As páginas de ajuda sobre '%s' não estão disponíveis"
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
-msgstr "O manual de utilizador do GIMP não está disponível."
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
+msgstr "O manual de utilizador do PICMAN não está disponível."
 
-#: ../plug-ins/help/gimphelpdomain.c:187
+#: ../plug-ins/help/picmanhelpdomain.c:187
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 "Por favor instale o pacote de Ajuda adicional ou use o manual de utilizador "
-"online em at http://docs.gimp.org/."
+"online em at http://docs.picman.org/."
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr ""
 "Talvez precise de instalar os pacotes GIO da interface de software e o "
 "pacote GVFS ?"
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "ID de tópico da ajuda '%s' desconhecida"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "A carregar índice a partir de '%s'"
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11272,7 +11272,7 @@ msgid "Clear"
 msgstr "Limpar"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "Criar"
 
@@ -11297,41 +11297,41 @@ msgid "Edit Object"
 msgstr "Editar Objecto"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
-msgstr "Utilizar Guias GIMP"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
+msgstr "Utilizar Guias PICMAN"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "Al_ternadas"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "T_odas"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "Adicionar Guias Adicionais"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "Margem _Esquerda"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "Margem _Direita"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "Margem _Superior"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "Margem _Inferior"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "URL _Base:"
 
@@ -11763,8 +11763,8 @@ msgid "Grid Settings..."
 msgstr "Configurações Grelha..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
-msgstr "Utilizar Guias GIMP..."
+msgid "Use PICMAN Guides..."
+msgstr "Utilizar Guias PICMAN..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
 msgid "Create Guides..."

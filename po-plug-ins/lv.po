@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-12-07 18:10+0000\n"
 "PO-Revision-Date: 2011-12-17 22:17+0200\n"
 "Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
@@ -423,8 +423,8 @@ msgid "Optimizing animation"
 msgstr "Optimizē animāciju"
 
 #: ../plug-ins/common/animation-play.c:169
-msgid "Preview a GIMP layer-based animation"
-msgstr "Priekšsaktīt uz slāņiem balstītu GIMP animāciju"
+msgid "Preview a PICMAN layer-based animation"
+msgstr "Priekšsaktīt uz slāņiem balstītu PICMAN animāciju"
 
 #: ../plug-ins/common/animation-play.c:174
 msgid "_Playback..."
@@ -619,7 +619,7 @@ msgstr "_Vertikāls"
 #: ../plug-ins/file-psd/psd-image-res-load.c:1001
 #: ../plug-ins/file-psd/psd-load.c:1637 ../plug-ins/file-sgi/sgi.c:407
 #: ../plug-ins/gfig/gfig-dialog.c:1306
-#: ../plug-ins/gimpressionist/general.c:139
+#: ../plug-ins/picmanressionist/general.c:139
 #: ../plug-ins/map-object/map-object-apply.c:252 ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1156
 msgid "Background"
@@ -1030,8 +1030,8 @@ msgstr "Ielādēt kanālu miksera iestatījumus"
 #: ../plug-ins/common/file-xmc.c:663 ../plug-ins/common/file-xmc.c:848
 #: ../plug-ins/common/file-xwd.c:433 ../plug-ins/common/sphere-designer.c:2010
 #: ../plug-ins/file-bmp/bmp-read.c:153 ../plug-ins/file-faxg3/faxg3.c:229
-#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-gimp.c:459
-#: ../plug-ins/file-fli/fli-gimp.c:496 ../plug-ins/file-ico/ico-load.c:651
+#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-picman.c:459
+#: ../plug-ins/file-fli/fli-picman.c:496 ../plug-ins/file-ico/ico-load.c:651
 #: ../plug-ins/file-ico/ico-load.c:729 ../plug-ins/file-jpeg/jpeg-load.c:117
 #: ../plug-ins/file-jpeg/jpeg-load.c:889 ../plug-ins/file-psd/psd-load.c:130
 #: ../plug-ins/file-psd/psd-thumb-load.c:79
@@ -1040,8 +1040,8 @@ msgstr "Ielādēt kanālu miksera iestatījumus"
 #: ../plug-ins/flame/flame.c:411
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1865
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:926
-#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1367
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1070,7 +1070,7 @@ msgstr "Saglabāt kanālu miksera iestatījumus"
 #: ../plug-ins/common/file-xmc.c:1455 ../plug-ins/common/file-xwd.c:619
 #: ../plug-ins/common/sphere-designer.c:2121
 #: ../plug-ins/file-bmp/bmp-write.c:306 ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:750 ../plug-ins/file-ico/ico-save.c:1007
+#: ../plug-ins/file-fli/fli-picman.c:750 ../plug-ins/file-ico/ico-save.c:1007
 #: ../plug-ins/file-jpeg/jpeg-save.c:332 ../plug-ins/file-psd/psd-save.c:1652
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:166
 #: ../plug-ins/file-xjt/xjt.c:1276 ../plug-ins/file-xjt/xjt.c:1715
@@ -1105,7 +1105,7 @@ msgid "Checkerboard"
 msgstr "Dambretes galdiņš"
 
 #: ../plug-ins/common/checkerboard.c:413 ../plug-ins/common/file-xmc.c:1162
-#: ../plug-ins/gimpressionist/sizemap.c:510
+#: ../plug-ins/picmanressionist/sizemap.c:510
 msgid "_Size:"
 msgstr "Izmēr_s:"
 
@@ -1309,8 +1309,8 @@ msgstr "Nejaušie no sēklas (koplietots)"
 
 #: ../plug-ins/common/cml-explorer.c:300 ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "Tonis"
 
@@ -1321,8 +1321,8 @@ msgstr "Piesātinājums"
 
 #: ../plug-ins/common/cml-explorer.c:302 ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "Vērtība"
 
@@ -2232,8 +2232,8 @@ msgstr "Liekšana ar līknēm"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1262
-#: ../plug-ins/gimpressionist/orientmap.c:590
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:590
+#: ../plug-ins/picmanressionist/sizemap.c:459
 #: ../plug-ins/print/print-page-layout.c:171
 msgid "Preview"
 msgstr "Priekšskatījums"
@@ -2819,7 +2819,7 @@ msgstr "_Rādiuss 1:"
 msgid "R_adius 2:"
 msgstr "Rā_diuss 2:"
 
-#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "_Invertēt"
 
@@ -3026,7 +3026,7 @@ msgstr "Ielādēt KISS paleti"
 #: ../plug-ins/common/file-xbm.c:742 ../plug-ins/common/file-xmc.c:675
 #: ../plug-ins/common/file-xpm.c:352 ../plug-ins/common/file-xwd.c:524
 #: ../plug-ins/file-bmp/bmp-read.c:158 ../plug-ins/file-faxg3/faxg3.c:213
-#: ../plug-ins/file-fli/fli-gimp.c:501 ../plug-ins/file-ico/ico-load.c:644
+#: ../plug-ins/file-fli/fli-picman.c:501 ../plug-ins/file-ico/ico-load.c:644
 #: ../plug-ins/file-jpeg/jpeg-load.c:123 ../plug-ins/file-psd/psd-load.c:135
 #: ../plug-ins/file-sgi/sgi.c:330 ../plug-ins/file-xjt/xjt.c:3333
 #, c-format
@@ -3054,7 +3054,7 @@ msgstr "Neatbalstīts bitu dziļums (%d)!"
 #: ../plug-ins/common/file-xbm.c:1041 ../plug-ins/common/file-xmc.c:1460
 #: ../plug-ins/common/file-xpm.c:638 ../plug-ins/common/file-xwd.c:624
 #: ../plug-ins/file-bmp/bmp-write.c:317 ../plug-ins/file-fits/fits.c:481
-#: ../plug-ins/file-fli/fli-gimp.c:718 ../plug-ins/file-ico/ico-save.c:1001
+#: ../plug-ins/file-fli/fli-picman.c:718 ../plug-ins/file-ico/ico-save.c:1001
 #: ../plug-ins/file-jpeg/jpeg-save.c:289 ../plug-ins/file-psd/psd-save.c:1657
 #: ../plug-ins/file-sgi/sgi.c:576 ../plug-ins/file-xjt/xjt.c:1696
 #, c-format
@@ -3161,8 +3161,8 @@ msgid "Cannot operate on unknown image types."
 msgstr "Nevar darboties ar nezināmiem attēlu veidiem."
 
 #: ../plug-ins/common/file-gbr.c:154 ../plug-ins/common/file-gbr.c:175
-msgid "GIMP brush"
-msgstr "GIMP ota"
+msgid "PICMAN brush"
+msgstr "PICMAN ota"
 
 #: ../plug-ins/common/file-gbr.c:399 ../plug-ins/common/file-pat.c:418
 #, c-format
@@ -3175,8 +3175,8 @@ msgstr "Neatbalstīts otas formāts"
 
 #: ../plug-ins/common/file-gbr.c:447
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "Kļūda GIMP otas failā '%s'"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "Kļūda PICMAN otas failā '%s'"
 
 #: ../plug-ins/common/file-gbr.c:455
 #, c-format
@@ -3190,8 +3190,8 @@ msgid "Unnamed"
 msgstr "Bez nosaukuma"
 
 #: ../plug-ins/common/file-gbr.c:653
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP otas ir vai nu GRAYSCALE vai arī RGBA"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN otas ir vai nu GRAYSCALE vai arī RGBA"
 
 #: ../plug-ins/common/file-gbr.c:770
 msgid "Brush"
@@ -3203,7 +3203,7 @@ msgid "Spacing:"
 msgstr "Atstatums:"
 
 #: ../plug-ins/common/file-gbr.c:795 ../plug-ins/common/file-gih.c:888
-#: ../plug-ins/common/file-pat.c:568 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:568 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "Apraksts:"
 
@@ -3341,16 +3341,16 @@ msgid "The default comment is limited to %d characters."
 msgstr "Noklusētais komentārs nevar pārsniegt %d rakstzīmes."
 
 #: ../plug-ins/common/file-gih.c:209 ../plug-ins/common/file-gih.c:230
-msgid "GIMP brush (animated)"
-msgstr "GIMP ota (animēta)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMAN ota (animēta)"
 
 #: ../plug-ins/common/file-gih.c:480
-msgid "Error in GIMP brush pipe file."
-msgstr "Kļūda, GIMP otu virtenes failā."
+msgid "Error in PICMAN brush pipe file."
+msgstr "Kļūda, PICMAN otu virtenes failā."
 
 #: ../plug-ins/common/file-gih.c:546
-msgid "GIMP brush file appears to be corrupted."
-msgstr "Izskatās, ka GIMP otu fails ir bojāts."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "Izskatās, ka PICMAN otu fails ir bojāts."
 
 #: ../plug-ins/common/file-gih.c:696
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -3726,8 +3726,8 @@ msgid "MNG animation"
 msgstr "MNG animācija"
 
 #: ../plug-ins/common/file-pat.c:123 ../plug-ins/common/file-pat.c:145
-msgid "GIMP pattern"
-msgstr "GIMP raksts"
+msgid "PICMAN pattern"
+msgstr "PICMAN raksts"
 
 #: ../plug-ins/common/file-pat.c:378
 #, c-format
@@ -4026,16 +4026,16 @@ msgid "Invalid X resolution."
 msgstr "Nederīga X izšķirtspēja."
 
 #: ../plug-ins/common/file-pnm.c:555
-msgid "Image width is larger than GIMP can handle."
-msgstr "Attēla platums ir lielāks, nekā GIMP var pavilkt."
+msgid "Image width is larger than PICMAN can handle."
+msgstr "Attēla platums ir lielāks, nekā PICMAN var pavilkt."
 
 #: ../plug-ins/common/file-pnm.c:562
 msgid "Invalid Y resolution."
 msgstr "Nederīga Y izšķirtspēja."
 
 #: ../plug-ins/common/file-pnm.c:564
-msgid "Image height is larger than GIMP can handle."
-msgstr "Attēla augstums ir lielāks, nekā GIMP var pavilkt."
+msgid "Image height is larger than PICMAN can handle."
+msgstr "Attēla augstums ir lielāks, nekā PICMAN var pavilkt."
 
 #: ../plug-ins/common/file-pnm.c:574
 msgid "Unsupported maximum value."
@@ -4089,12 +4089,12 @@ msgstr "PostScript saglabāšana nevar apstrādāt failus ar alfa kanāliem"
 #, c-format
 msgid ""
 "Error starting Ghostscript. Make sure that Ghostscript is installed and - if "
-"necessary - use the environment variable GS_PROG to tell GIMP about its "
+"necessary - use the environment variable GS_PROG to tell PICMAN about its "
 "location.\n"
 "(%s)"
 msgstr ""
 "Kļūda, startējot Ghostscript. Pārliecinieties, ka Ghostscript ir uzinstalēts "
-"un, ja nepieciešams, izmantojiet vides mainīgo GS_PROG, lai informētu GIMP "
+"un, ja nepieciešams, izmantojiet vides mainīgo GS_PROG, lai informētu PICMAN "
 "par tā atrašanās vietu.\n"
 "(%s)"
 
@@ -4159,8 +4159,8 @@ msgid "B/W"
 msgstr "M/B"
 
 #: ../plug-ins/common/file-ps.c:3235 ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "Krāsa"
@@ -4400,10 +4400,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Attēla platums ir lielāks, nekā GIMP var pavilkt"
+"Attēla platums ir lielāks, nekā PICMAN var pavilkt"
 
 #: ../plug-ins/common/file-sunras.c:473 ../plug-ins/common/file-xbm.c:841
 #: ../plug-ins/common/file-xwd.c:508
@@ -4420,10 +4420,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Attēla augstums ir lielāks, nekā GIMP var pavilkt"
+"Attēla augstums ir lielāks, nekā PICMAN var pavilkt"
 
 #: ../plug-ins/common/file-sunras.c:520
 msgid "This image depth is not supported"
@@ -4522,8 +4522,8 @@ msgstr "Im_portēt ceļus"
 
 #: ../plug-ins/common/file-svg.c:944
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
-msgstr "Importēt SVG ceļu elementus, lai tos varētu lietot ar GIMP ceļu rīku"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
+msgstr "Importēt SVG ceļu elementus, lai tos varētu lietot ar PICMAN ceļu rīku"
 
 #: ../plug-ins/common/file-svg.c:952
 msgid "Merge imported paths"
@@ -4597,12 +4597,12 @@ msgstr "TIFF kanāls"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "Brīdinājums:\n"
-"Attēlam, ko ielādējat, ir 16 biti katram kanālam. GIMP var apstrādāt tikai 8 "
+"Attēlam, ko ielādējat, ir 16 biti katram kanālam. PICMAN var apstrādāt tikai 8 "
 "bitus, tāpēc tie tiks pārveidoti. Šīs pārveidošanas dēļ informācija tiks "
 "zaudēta."
 
@@ -7371,7 +7371,7 @@ msgid "Use the background color"
 msgstr "Lietot fona krāsu"
 
 #: ../plug-ins/common/sphere-designer.c:293
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "Vienlaidus"
 
@@ -7467,7 +7467,7 @@ msgstr "Krāsu izvēles dialogs"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2763
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:553
 msgid "Scale:"
 msgstr "Mērogs:"
@@ -7761,10 +7761,10 @@ msgstr "Saglabāts"
 
 #: ../plug-ins/common/unit-editor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr ""
-"Mērvienības definīcija pirms GIMP iziešanas tiks saglabāta tikai tad, ja šī "
+"Mērvienības definīcija pirms PICMAN iziešanas tiks saglabāta tikai tad, ja šī "
 "kolonna ir atzīmēta."
 
 #: ../plug-ins/common/unit-editor.c:96
@@ -7773,9 +7773,9 @@ msgstr "ID"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
+"This string will be used to identify a unit in PICMAN's configuration files."
 msgstr ""
-"Šī virkne tiks izmantota, lai identificētu mērvienību GIMP konfigurācijas "
+"Šī virkne tiks izmantota, lai identificētu mērvienību PICMAN konfigurācijas "
 "failos."
 
 #: ../plug-ins/common/unit-editor.c:98
@@ -7845,8 +7845,8 @@ msgid "Create a new unit using the currently selected unit as template"
 msgstr "Izveidot jaunu mērvienību no izvēlētās mērvienības kā sagataves"
 
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
-msgstr "Izveidot vai mainīt GIMP mērvienības "
+msgid "Create or alter units used in PICMAN"
+msgstr "Izveidot vai mainīt PICMAN mērvienības "
 
 #: ../plug-ins/common/unit-editor.c:150
 msgid "U_nits"
@@ -8537,7 +8537,7 @@ msgstr "A_bas"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Lielākas vērtības ierobežo efektu uz mazākiem attēla laukumiem"
 
-#: ../plug-ins/common/wind.c:1025 ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/common/wind.c:1025 ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "_Stiprums:"
 
@@ -8604,12 +8604,12 @@ msgstr "_Nerakstīt krāsu telpas informāciju"
 #: ../plug-ins/file-bmp/bmp-write.c:885
 msgid ""
 "Some applications can not read BMP images that include color space "
-"information. GIMP writes color space information by default. Enabling this "
-"option will cause GIMP to not write color space information to the file."
+"information. PICMAN writes color space information by default. Enabling this "
+"option will cause PICMAN to not write color space information to the file."
 msgstr ""
 "Dažas lietotnes nevar nolasīt BMP attēlus, kas iekļauj krāsu telpas "
-"informāciju. GIMP pēc noklusējuma raksta krāsu telpas informāciju. Šīs "
-"opcijas aktivēšana liks GIMP nerakstīt krāsu telpas informāciju failā."
+"informāciju. PICMAN pēc noklusējuma raksta krāsu telpas informāciju. Šīs "
+"opcijas aktivēšana liks PICMAN nerakstīt krāsu telpas informāciju failā."
 
 #. Advanced Options
 #: ../plug-ins/file-bmp/bmp-write.c:901 ../plug-ins/file-jpeg/jpeg-save.c:901
@@ -8683,34 +8683,34 @@ msgctxt "composing"
 msgid "None"
 msgstr "Nekāda"
 
-#: ../plug-ins/file-fli/fli-gimp.c:166 ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166 ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr "AutoDesk FLIC animācija"
 
-#: ../plug-ins/file-fli/fli-gimp.c:561
+#: ../plug-ins/file-fli/fli-picman.c:561
 #, c-format
 msgid "Frame (%i)"
 msgstr "Kadrs (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr "Diemžēl var saglabāt tikai INDEXED un GRAY attēlus."
 
-#: ../plug-ins/file-fli/fli-gimp.c:847
+#: ../plug-ins/file-fli/fli-picman.c:847
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - ielādēt kadru steku"
 
-#: ../plug-ins/file-fli/fli-gimp.c:876 ../plug-ins/file-fli/fli-gimp.c:932
+#: ../plug-ins/file-fli/fli-picman.c:876 ../plug-ins/file-fli/fli-picman.c:932
 msgctxt "frame-range"
 msgid "From:"
 msgstr "No:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:885 ../plug-ins/file-fli/fli-gimp.c:941
+#: ../plug-ins/file-fli/fli-picman.c:885 ../plug-ins/file-fli/fli-picman.c:941
 msgctxt "frame-range"
 msgid "To:"
 msgstr "Līdz:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:915
+#: ../plug-ins/file-fli/fli-picman.c:915
 msgid "GFLI 1.3"
 msgstr "GFLI 1.3"
 
@@ -8783,8 +8783,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "Spriežot pēc EXIF datiem, attēls ir pagriezts."
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:426
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "Vai vēlaties, lai GIMP šo attēlu pagriež standarta virzienā?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "Vai vēlaties, lai PICMAN šo attēlu pagriež standarta virzienā?"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:247
 msgid "JPEG preview"
@@ -9033,8 +9033,8 @@ msgstr ""
 "spraudnis to neatbalsta; tā vietā lietojiet parasto režīmu."
 
 #: ../plug-ins/file-psd/psd-save.c:634
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
-msgstr "Kļūda: nevar pārveidot GIMP pamata attēla tipu uz PSD režīmu"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
+msgstr "Kļūda: nevar pārveidot PICMAN pamata attēla tipu uz PSD režīmu"
 
 #: ../plug-ins/file-psd/psd-save.c:1622
 #, c-format
@@ -9196,8 +9196,8 @@ msgid "URI"
 msgstr "URI"
 
 #: ../plug-ins/file-xjt/xjt.c:485 ../plug-ins/file-xjt/xjt.c:503
-msgid "GIMP compressed XJT image"
-msgstr "GIMP saspiests XJT attēls"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMAN saspiests XJT attēls"
 
 #: ../plug-ins/file-xjt/xjt.c:733
 #, c-format
@@ -9309,8 +9309,8 @@ msgstr "_Sajaukt"
 msgid "Same"
 msgstr "Tas pats"
 
-#: ../plug-ins/flame/flame.c:746 ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/flame/flame.c:746 ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "Nejaušs"
 
@@ -9459,16 +9459,16 @@ msgid "C_amera"
 msgstr "K_amera"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
-#: ../plug-ins/gfig/gfig-dialog.c:277 ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/gfig/gfig-dialog.c:277 ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"Nav %s iekš gimprc:\n"
+"Nav %s iekš picmanrc:\n"
 "Failam %s jāpievieno apmēram šāds\n"
 "(%s \"%s\")\n"
 "ieraksts."
@@ -10005,7 +10005,7 @@ msgid "Max undo:"
 msgstr "Maks. atsaukšanas:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1305
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "Caurspīdīgs"
 
@@ -10101,7 +10101,7 @@ msgid "Left"
 msgstr "Kreisā"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1738
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "Virziens:"
 
@@ -10162,295 +10162,295 @@ msgstr ""
 msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr "Kļūda, mēģinot atvērt pagaidu failu '%s' trokšņa ielādēšanai: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:243
+#: ../plug-ins/picmanressionist/brush.c:243
 msgid "Can only save drawables!"
 msgstr "Var saglabāt tikai uzzīmējamos!"
 
-#: ../plug-ins/gimpressionist/brush.c:248
+#: ../plug-ins/picmanressionist/brush.c:248
 msgid "Save Brush"
 msgstr "Saglabāt otu"
 
-#: ../plug-ins/gimpressionist/brush.c:503
+#: ../plug-ins/picmanressionist/brush.c:503
 msgid "_Brush"
 msgstr "_Ota"
 
-#: ../plug-ins/gimpressionist/brush.c:540
+#: ../plug-ins/picmanressionist/brush.c:540
 msgid "Gamma:"
 msgstr "Gamma:"
 
-#: ../plug-ins/gimpressionist/brush.c:558
+#: ../plug-ins/picmanressionist/brush.c:558
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Maina gammu (gaišumu) izvēlētajai otai"
 
-#: ../plug-ins/gimpressionist/brush.c:566
+#: ../plug-ins/picmanressionist/brush.c:566
 msgid "Select:"
 msgstr "Izvēlēties:"
 
-#: ../plug-ins/gimpressionist/brush.c:595
+#: ../plug-ins/picmanressionist/brush.c:595
 msgid "Aspect ratio:"
 msgstr "Izmēra attiecība:"
 
-#: ../plug-ins/gimpressionist/brush.c:599
+#: ../plug-ins/picmanressionist/brush.c:599
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Norāda otas izmēra attiecību"
 
-#: ../plug-ins/gimpressionist/brush.c:608
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:608
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "Reljefs:"
 
-#: ../plug-ins/gimpressionist/brush.c:612
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:612
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "Norāda, kādu gofrēšanas apjomu veikt attēlam (procentos)"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "Krā_sa"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "_Vidējais zem otas"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "_Otas vidus"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "Krāsu aprēķina, no visu pikseļu vidējā zem otas"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "Ņem krāsu no pikseļa, kas atrodas zem otas centra"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "Krāsas troks_nis:"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "Krāsai pievieno nejaušu troksni"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3530
 msgid "_General"
 msgstr "Vispārī_gi"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "Paturēt oriģinālu"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "Paturēt sākotnējo attēlu kā fonu"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "No papīra"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "Kopēt izvēlētā papīra tekstūru kā fonu"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "Vienkrāsains fons"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "Izmantot caurspīdīgu fonu; būs redzami tikai otas vilkumi"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "Krāsot malas"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "Izvēlas, vai novietot vilkumus līdz pašām attēla malām"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
+#: ../plug-ins/picmanressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "Flīzējams"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "Izvēlas, vai iegūtajam attēlam vajadzētu būt vienlaidus flīzējamam"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "Krītošā ēna"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "Pievienot ēnas efektu katram otas vilcienam"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "Malu apēnošana:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "Cik ļoti apēnot katra otas vilkuma malu"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "Ēnu apēnošana:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "Cik daudz \"apēnot\" krītošo ēnu"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "Ēnas dziļums:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr ""
 "Krītošās ēnas dziļums, tas ir, cik tālu no objekta tai vajadzētu atrasties"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "Ēnu aizmiglošana:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "Cik daudz aizmiglot krītošo ēnu"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "Novirzes slieksnis:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "Adaptīvās izvēles glābšanas vērtība"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "Veic dažādas mākslinieciskas darbības"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "_GIMPresionists..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "_PICMANresionists..."
 
-#: ../plug-ins/gimpressionist/gimp.c:164
+#: ../plug-ins/picmanressionist/picman.c:164
 msgid "The selection does not intersect the active layer or mask."
 msgstr "Iezīmējums nešķeļas ar aktīvo slāni vai masku."
 
-#: ../plug-ins/gimpressionist/gimp.c:391
+#: ../plug-ins/picmanressionist/picman.c:391
 msgid "Painting"
 msgstr "Glezno"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPresionists"
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANresionists"
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "Or_ientācija"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "Virzieni:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "Virzienu (t.i. otu) skaits, ko izmantot"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "Sākuma leņķis:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "Pirmās veidojamās otas sākuma leņķis"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "Leņķa garums:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "Pirmās veidojamās otas leņķa garums"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "Ļaut apgabala vērtībai (gaišums) noteikt vilkuma virzienu"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "Rādiuss"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "Attālums no attēla vidus nosaka vilkuma virzienu"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "Izvēlas nejaušu virzienu katram vilkumam"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "Radiāls"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "Ļaut virzienam no vidus noteikt vilkuma virzienu"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "Plūst"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "Vilkums seko plūšanas rakstam"
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "Apgabala tonis noteikts vilkuma virzienu"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "Adaptīvs"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "Izvēlēts virziens, kas visvairāk atbilst sākotnējam attēlam"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "Pašrocīgs"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "Pašrocīgi noteikt vilkuma virzienu"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "Atver virzienu kartes redaktoru"
 
-#: ../plug-ins/gimpressionist/orientmap.c:523
+#: ../plug-ins/picmanressionist/orientmap.c:523
 msgid "Orientation Map Editor"
 msgstr "Virzienu kartes redaktors"
 
-#: ../plug-ins/gimpressionist/orientmap.c:552
+#: ../plug-ins/picmanressionist/orientmap.c:552
 msgid "Vectors"
 msgstr "Vektori"
 
-#: ../plug-ins/gimpressionist/orientmap.c:564
+#: ../plug-ins/picmanressionist/orientmap.c:564
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -10459,288 +10459,288 @@ msgstr ""
 "klikšķis, lai norādītu to uz peles pusi; vidējais klikšķis, lai pievienotu "
 "jaunu vektoru."
 
-#: ../plug-ins/gimpressionist/orientmap.c:588
-#: ../plug-ins/gimpressionist/sizemap.c:457
+#: ../plug-ins/picmanressionist/orientmap.c:588
+#: ../plug-ins/picmanressionist/sizemap.c:457
 msgid "Adjust the preview's brightness"
 msgstr "Pielāgot priekšskatījuma gaišumu"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "Izvēlēties iepriekšējo vektoru"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "Izvēlēties nākamo vektoru"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:489
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:489
 msgid "A_dd"
 msgstr "Pie_vienot"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "Pievienot jaunu vektoru"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:496
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:496
 msgid "_Kill"
 msgstr "Li_kvidēt"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "Dzēst izvēlēto vektoru"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "Tips"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "_Normāls"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "Virp_x"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "Virpulis_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "Virpulis_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:541
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:541
 msgid "_Voronoi"
 msgstr "_Voronoi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
 msgstr "Voronoi režīmā tikai tuvākajam vektoram ir kaut kāda ietekme"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "L_eņķis:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "Maina izvēlētā vektora leņķi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "_Leņķa nobīde:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr "Nobīda visus vektorus ar doto leņķi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "Mainīt izvēlētā vektora stiprumu"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "S_tipruma eksponente:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:536
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:536
 msgid "Change the exponent of the strength"
 msgstr "Maina eksponentes stiprumu"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "P_apīrs"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "Invertē papīra tekstūru"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "_Pārklāt"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "Uzlikt papīru kāds tas ir (bez gofrēšanas)"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "Norāda tekstūras mērogu (procentos no oriģinālā faila)"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "N_ovietojums"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "Novietojums"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "Nejauši"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "Vienmērīgi izvietots"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "Pa attēlu novieto nejaušus vilkumus "
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "Vilkumi ir vienmērīgi izvietoti pa attēlu"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "Vidū"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "Fokusēt otas vilkumus ap attēla vidu"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "Vilkuma _blīvums:"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "Otu vilkumu relatīvais blīvums"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:648
+#: ../plug-ins/picmanressionist/ppmtool.c:648
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "Neizdevās saglabāt PPM failu '%s': %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "Saglabāt pašreizējo"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Gimpresionista noklusējumi"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Picmanresionista noklusējumi"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "_Regulējumi"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "Saglabāt pašreizējo..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "Saglabāt šos iestatījumus norādītajā failā"
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "Ielasa izvēlētos regulējumus atmiņā"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "Dzēš izvēlēto regulējumu"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "Atkārtoti nolasa regulējumu mapi"
 
-#: ../plug-ins/gimpressionist/preview.c:174
-#: ../plug-ins/gimpressionist/repaint.c:1182
+#: ../plug-ins/picmanressionist/preview.c:174
+#: ../plug-ins/picmanressionist/repaint.c:1182
 #: ../plug-ins/imagemap/imap_polygon.c:515
 #: ../plug-ins/lighting/lighting-ui.c:1082
 msgid "_Update"
 msgstr "Atja_unināt"
 
-#: ../plug-ins/gimpressionist/preview.c:180
+#: ../plug-ins/picmanressionist/preview.c:180
 msgid "Refresh the Preview window"
 msgstr "Atsvaidzināt priekšskatījuma logu"
 
-#: ../plug-ins/gimpressionist/preview.c:188
+#: ../plug-ins/picmanressionist/preview.c:188
 msgid "Revert to the original image"
 msgstr "Atgriezties atpakaļ pie sākotnējā attēla"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "Izmēr_s"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 msgid "Size variants:"
 msgstr "Izmēra varianti:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "Izmantojamo otu izmēru skaits"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "Minimālais izmērs:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "Mazākā izveidojamā ota"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "Maksimālais izmērs:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "Lielākā izveidojamā ota"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr "Izmērs ir atkarīgs no:"
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "Ļaut apgabala vērtībai (gaišums) noteikt vilkuma izmēru"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr "Attālums no attēla vidus nosaka vilkuma izmēru"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "Izvēlas nejaušu izmēru katram vilkumam"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "Ļaut virzienam no vidus noteikt vilkuma izmēru"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "Apgabala tonis noteikts vilkuma izmēru"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "Izvēlēts otas izmērs, kas visvairāk atbilst sākotnējam attēlam"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "Pašrocīgi noteikt vilkuma izmēru"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "Atver izmēru kartes redaktoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:397
+#: ../plug-ins/picmanressionist/sizemap.c:397
 msgid "Size Map Editor"
 msgstr "Izmēru kartes redaktoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:426
+#: ../plug-ins/picmanressionist/sizemap.c:426
 msgid "Smvectors"
 msgstr "Smvektori"
 
-#: ../plug-ins/gimpressionist/sizemap.c:436
+#: ../plug-ins/picmanressionist/sizemap.c:436
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -10749,39 +10749,39 @@ msgstr ""
 "labais klikšķis, lai norādītu to uz peles pusi; vidējais klikšķis, lai "
 "pievienotu jaunu smvektoru."
 
-#: ../plug-ins/gimpressionist/sizemap.c:480
+#: ../plug-ins/picmanressionist/sizemap.c:480
 msgid "Select previous smvector"
 msgstr "Izvēlēties iepriekšējo smvektoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:487
+#: ../plug-ins/picmanressionist/sizemap.c:487
 msgid "Select next smvector"
 msgstr "Izvēlēties nākamo smvektoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:494
+#: ../plug-ins/picmanressionist/sizemap.c:494
 msgid "Add new smvector"
 msgstr "Pievienot jaunu smvektoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:501
+#: ../plug-ins/picmanressionist/sizemap.c:501
 msgid "Delete selected smvector"
 msgstr "Dzēst izvēlēto smvektoru"
 
-#: ../plug-ins/gimpressionist/sizemap.c:514
+#: ../plug-ins/picmanressionist/sizemap.c:514
 msgid "Change the angle of the selected smvector"
 msgstr "Maina izvēlētā smvektora leņķi"
 
-#: ../plug-ins/gimpressionist/sizemap.c:521
+#: ../plug-ins/picmanressionist/sizemap.c:521
 msgid "S_trength:"
 msgstr "S_tiprums:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:525
+#: ../plug-ins/picmanressionist/sizemap.c:525
 msgid "Change the strength of the selected smvector"
 msgstr "Maina izvēlētā smvektora stiprumu"
 
-#: ../plug-ins/gimpressionist/sizemap.c:532
+#: ../plug-ins/picmanressionist/sizemap.c:532
 msgid "St_rength exp.:"
 msgstr "Stip_ruma eksponente:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:548
+#: ../plug-ins/picmanressionist/sizemap.c:548
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -11067,8 +11067,8 @@ msgstr "Otrai_s PA"
 
 #: ../plug-ins/help-browser/dialog.c:184
 #: ../plug-ins/help-browser/dialog.c:1110
-msgid "GIMP Help Browser"
-msgstr "GIMP palīdzības pārlūks"
+msgid "PICMAN Help Browser"
+msgstr "PICMAN palīdzības pārlūks"
 
 #: ../plug-ins/help-browser/dialog.c:559
 msgid "Go back one page"
@@ -11123,8 +11123,8 @@ msgid "Toggle the visibility of the sidebar"
 msgstr "Pārslēgt sānu joslas redzamību"
 
 #: ../plug-ins/help-browser/dialog.c:651
-msgid "Visit the GIMP documentation website"
-msgstr "Apmeklēt GIMP dokumentācijas tīmekļa vietni"
+msgid "Visit the PICMAN documentation website"
+msgstr "Apmeklēt PICMAN dokumentācijas tīmekļa vietni"
 
 #: ../plug-ins/help-browser/dialog.c:1151
 msgid "Find:"
@@ -11140,38 +11140,38 @@ msgctxt "search"
 msgid "_Next"
 msgstr "_Nākošais"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr "'%s' palīdzības lapas nav pieejamas."
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
-msgstr "GIMP lietotāja rokasgrāmata nav pieejama."
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
+msgstr "PICMAN lietotāja rokasgrāmata nav pieejama."
 
-#: ../plug-ins/help/gimphelpdomain.c:187
+#: ../plug-ins/help/picmanhelpdomain.c:187
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 "Lūdzu, instalējiet papildu palīdzības pakotnes, vai izmantojiet tiešsaistes "
-"rokasgrāmatu adresē http://docs.gimp.org/."
+"rokasgrāmatu adresē http://docs.picman.org/."
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr "Iespējams, ka trūkst GIO aizmugure, un ka jāinstalē GVFS?"
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "Nezināms palīdzības ID '%s'"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "Ielādē rādītāju no '%s'"
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11398,7 +11398,7 @@ msgid "Clear"
 msgstr "Attīrīt"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "Izveidot"
 
@@ -11423,41 +11423,41 @@ msgid "Edit Object"
 msgstr "Rediģēt objektu"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
-msgstr "Lietot Gimp palīglīnijas"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
+msgstr "Lietot Picman palīglīnijas"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "Ka_tru otro"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "_Visas"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "Pievienot papildu palīglīniju"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "Kr_eisā mala"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "Labā _mala"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "A_ugšējā mala"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "Apakšē_jā mala"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "_Bāzes URL:"
 
@@ -11890,8 +11890,8 @@ msgid "Grid Settings..."
 msgstr "Režģa iestatījumi..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
-msgstr "Lietot GIMP palīglīnijas..."
+msgid "Use PICMAN Guides..."
+msgstr "Lietot PICMAN palīglīnijas..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
 msgid "Create Guides..."

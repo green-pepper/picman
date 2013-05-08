@@ -1,0 +1,1123 @@
+# Translation of picman-libpicman to Croatiann
+# Copyright (C) Croatiann team
+# Translators: Automatski Prijevod <>,Denis Lackovic <delacko@fly.srk.fer.hr>,Diana Ćorluka <dina@iskrameco.hr>,Nikola Planinac <>,pr pr <delacko@192.168.0.1>,Robert Sedak <robert.sedak@sk.tel.hr>,
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman 0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-02-02 19:53+0100\n"
+"PO-Revision-Date: 2004-03-20 14:49+CET\n"
+"Last-Translator: auto\n"
+"Language-Team: Croatian <lokalizacija@linux.hr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: TransDict server\n"
+
+#: ../libpicman/picmanbrushmenu.c:129
+msgid "Brush Selection"
+msgstr "Odabir Kista"
+
+#: ../libpicman/picmanbrushmenu.c:158 ../libpicman/picmanpatternmenu.c:142
+msgid "_Browse..."
+msgstr "_Pretraži..."
+
+#: ../libpicman/picmanexport.c:215 ../libpicman/picmanexport.c:251
+#, c-format
+msgid "%s can't handle layers"
+msgstr "%s ne može rukovati sa slojeva"
+
+#: ../libpicman/picmanexport.c:216 ../libpicman/picmanexport.c:225
+#: ../libpicman/picmanexport.c:234
+msgid "Merge Visible Layers"
+msgstr "Stopi Vidljive Slojeve"
+
+#: ../libpicman/picmanexport.c:224
+#, c-format
+msgid "%s can't handle layer offsets, size or opacity"
+msgstr "%s ne može rukovati sa pomakom slojeva, veličinom  ili prozirnošću"
+
+#: ../libpicman/picmanexport.c:233 ../libpicman/picmanexport.c:242
+#, c-format
+msgid "%s can only handle layers as animation frames"
+msgstr "%s može rukovati sa slojevima samo kao okvirima animacije"
+
+#: ../libpicman/picmanexport.c:234 ../libpicman/picmanexport.c:243
+msgid "Save as Animation"
+msgstr "Spremi kao Animaciju"
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:252
+#: ../libpicman/picmanexport.c:261
+msgid "Flatten Image"
+msgstr "Izravnaj sliku"
+
+#: ../libpicman/picmanexport.c:260
+#, c-format
+msgid "%s can't handle transparency"
+msgstr "%s ne može rukovati prozirnost"
+
+#: ../libpicman/picmanexport.c:269
+#, c-format
+msgid "%s can't handle layer masks"
+msgstr "%s ne može rukovati s maskama slojeva"
+
+#: ../libpicman/picmanexport.c:270
+msgid "Apply Layer Masks"
+msgstr "Primijeni maske slojeva"
+
+#: ../libpicman/picmanexport.c:278
+#, c-format
+msgid "%s can only handle RGB images"
+msgstr "%s može rukovati samo sa RGB slikama"
+
+#: ../libpicman/picmanexport.c:279 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:326
+msgid "Convert to RGB"
+msgstr "Konverzija u RGB"
+
+#: ../libpicman/picmanexport.c:287
+#, c-format
+msgid "%s can only handle grayscale images"
+msgstr "%s može rukovati samo sa sivim slikama"
+
+#: ../libpicman/picmanexport.c:288 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:338
+msgid "Convert to Grayscale"
+msgstr "Konverzija u Skalu Sive"
+
+#: ../libpicman/picmanexport.c:296
+#, c-format
+msgid "%s can only handle indexed images"
+msgstr "%s može rukovati samo indeksirane slike"
+
+#: ../libpicman/picmanexport.c:297 ../libpicman/picmanexport.c:326
+#: ../libpicman/picmanexport.c:336
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Konvertiraj u Indeksirano koristeći standardne\n"
+"postavke.(Najbolje je ručno podešavanje)"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s can only handle bitmap (two color) indexed images"
+msgstr "%s može rukovati samo s indeksiranim slikama kao bitmapa (dvije boje)"
+
+#: ../libpicman/picmanexport.c:307
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Pretvorite u indeksirane koristeći uobičajene postavke\n"
+"(Napravite to ručno da namještavanje rezultata)"
+
+#: ../libpicman/picmanexport.c:316
+#, c-format
+msgid "%s can only handle RGB or grayscale images"
+msgstr "%s može rukovati samo s RGB i sivim slikama"
+
+#: ../libpicman/picmanexport.c:325
+#, c-format
+msgid "%s can only handle RGB or indexed images"
+msgstr "%s može rukovati samo s RGB ili indeksiranim slikama"
+
+#: ../libpicman/picmanexport.c:335
+#, c-format
+msgid "%s can only handle grayscale or indexed images"
+msgstr "%s može rukovati samo sa sivim ili indeksirane slikama"
+
+#: ../libpicman/picmanexport.c:346
+#, c-format
+msgid "%s needs an alpha channel"
+msgstr "%s treba alfa kanal"
+
+#: ../libpicman/picmanexport.c:347
+msgid "Add Alpha Channel"
+msgstr "Dodaj Alfa Kanal"
+
+#: ../libpicman/picmanexport.c:381
+msgid "Confirm Save"
+msgstr "Potvrdite snimanje"
+
+#: ../libpicman/picmanexport.c:387
+msgid "Confirm"
+msgstr "Potvrdi"
+
+#: ../libpicman/picmanexport.c:454
+msgid "Export File"
+msgstr "Izvezi Datoteku"
+
+#: ../libpicman/picmanexport.c:458
+msgid "_Ignore"
+msgstr "_Zanemari"
+
+#: ../libpicman/picmanexport.c:460
+msgid "_Export"
+msgstr "_Izvoz"
+
+#. the headline
+#: ../libpicman/picmanexport.c:482
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Vaša slika mora biti izvežena prije spremanja kao %s iz sljedećih razloga:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:553
+msgid "The export conversion won't modify your original image."
+msgstr "Izvozna konverzija neće modificirati originalnu sliku."
+
+#: ../libpicman/picmanexport.c:653
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Vi ste pred spremanjem sloja maske kao %s.\n"
+"Ovo neće sačuvati vidljive slojeve"
+
+#: ../libpicman/picmanexport.c:659
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Vi ste pred spremanjem kanala kao (označeno spremljeno) kao %s.\n"
+"Ovo neće sačuvati vidljive slojeve."
+
+#: ../libpicman/picmanfontmenu.c:89
+msgid "Font Selection"
+msgstr "Odabir pisma"
+
+#: ../libpicman/picmangradientmenu.c:104
+msgid "Gradient Selection"
+msgstr "Odabir Gradijenta"
+
+#: ../libpicman/picmanmenu.c:406 ../libpicmanwidgets/picmanintstore.c:181
+msgid "(Empty)"
+msgstr ""
+
+#: ../libpicman/picmanpalettemenu.c:91
+#, fuzzy
+msgid "Palette Selection"
+msgstr "Odabir Uzorka"
+
+#: ../libpicman/picmanpatternmenu.c:113
+msgid "Pattern Selection"
+msgstr "Odabir Uzorka"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "posto"
+
+#: ../libpicmanbase/picmanbaseenums.c:26
+#, fuzzy
+msgid "_White (full opacity)"
+msgstr "_Bijela (Neprozirna)"
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+#, fuzzy
+msgid "_Black (full transparency)"
+msgstr "_Crna (Potpuno prozirna)"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#, fuzzy
+msgid "Layer's _alpha channel"
+msgstr "Alfa Kanal Sloja"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#, fuzzy
+msgid "_Transfer layer's alpha channel"
+msgstr "_Prenesi alfa kanal sloja"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "_Selection"
+msgstr "_Odabir"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#, fuzzy
+msgid "_Grayscale copy of layer"
+msgstr "Siva kopija sloja "
+
+#: ../libpicmanbase/picmanbaseenums.c:61
+msgid "FG to BG (RGB)"
+msgstr "FG u BG (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:62
+msgid "FG to BG (HSV)"
+msgstr "FG u BG (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+#, fuzzy
+msgid "FG to transparent"
+msgstr "FG u Prozirno"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+#, fuzzy
+msgid "Custom gradient"
+msgstr "Posebni Gradijent"
+
+#: ../libpicmanbase/picmanbaseenums.c:93
+#, fuzzy
+msgid "FG color fill"
+msgstr "Ispuna Prednjeg plana Bojom"
+
+#: ../libpicmanbase/picmanbaseenums.c:94
+#, fuzzy
+msgid "BG color fill"
+msgstr "Ispuna Pozadine Bojom"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+#, fuzzy
+msgid "Pattern fill"
+msgstr "Ispuna Uzorkom"
+
+#: ../libpicmanbase/picmanbaseenums.c:125
+msgid "Add to the current selection"
+msgstr "/Dodaj u trenutačni odabir"
+
+#: ../libpicmanbase/picmanbaseenums.c:126
+msgid "Subtract from the current selection"
+msgstr "Izbaci iz trenutnog odabira"
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+msgid "Replace the current selection"
+msgstr "Repliciraj odabir"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Intersect with the current selection"
+msgstr "Presijeci sa trenutačnim odabirom"
+
+#: ../libpicmanbase/picmanbaseenums.c:160 ../libpicmanwidgets/picmancolorscales.c:168
+#: ../libpicmanwidgets/picmancolorselect.c:352
+msgid "Red"
+msgstr "Crvena"
+
+#: ../libpicmanbase/picmanbaseenums.c:161 ../libpicmanwidgets/picmancolorscales.c:169
+#: ../libpicmanwidgets/picmancolorselect.c:353
+msgid "Green"
+msgstr "Zelena"
+
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmancolorscales.c:170
+#: ../libpicmanwidgets/picmancolorselect.c:354
+msgid "Blue"
+msgstr "Plava"
+
+#: ../libpicmanbase/picmanbaseenums.c:163
+msgid "Gray"
+msgstr "Siva"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanbase/picmanbaseenums.c:436
+msgid "Indexed"
+msgstr "Indeksirano"
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmancolorscales.c:171
+#: ../libpicmanwidgets/picmancolorselect.c:355
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:194
+msgid "Small"
+msgstr "Malen"
+
+#: ../libpicmanbase/picmanbaseenums.c:195
+msgid "Medium"
+msgstr "Srednje"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Large"
+msgstr "Veliko"
+
+#: ../libpicmanbase/picmanbaseenums.c:228
+msgid "Light Checks"
+msgstr "Kontrola Svjetla"
+
+#: ../libpicmanbase/picmanbaseenums.c:229
+msgid "Mid-Tone Checks"
+msgstr "Kontrola Srednjih Tonova"
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+msgid "Dark Checks"
+msgstr "Provjera Tamnog"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "White Only"
+msgstr "Samo Bijelo"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Gray Only"
+msgstr "Samo Sivo"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Black Only"
+msgstr "Samo Crno"
+
+#: ../libpicmanbase/picmanbaseenums.c:261
+#, fuzzy
+msgid "Image source"
+msgstr "Izvor slike"
+
+#: ../libpicmanbase/picmanbaseenums.c:262
+#, fuzzy
+msgid "Pattern source"
+msgstr "Izvor Uzorka"
+
+#: ../libpicmanbase/picmanbaseenums.c:290
+msgid "Dodge"
+msgstr "Smicanje"
+
+#: ../libpicmanbase/picmanbaseenums.c:291
+msgid "Burn"
+msgstr "Zažari"
+
+#: ../libpicmanbase/picmanbaseenums.c:328 ../libpicmanbase/picmanbaseenums.c:468
+msgid "Linear"
+msgstr "Linearni"
+
+#: ../libpicmanbase/picmanbaseenums.c:329
+#, fuzzy
+msgid "Bi-linear"
+msgstr "Bi-linearno"
+
+#: ../libpicmanbase/picmanbaseenums.c:330
+msgid "Radial"
+msgstr "Radijalno"
+
+#: ../libpicmanbase/picmanbaseenums.c:331
+msgid "Square"
+msgstr "Kvadrat"
+
+#: ../libpicmanbase/picmanbaseenums.c:332
+#, fuzzy
+msgid "Conical (sym)"
+msgstr "Konično (simetrično)"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+#, fuzzy
+msgid "Conical (asym)"
+msgstr "Konično(asimetrično)"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+#, fuzzy
+msgid "Shaped (angular)"
+msgstr "Oblikovanje (kutno)"
+
+#: ../libpicmanbase/picmanbaseenums.c:335
+#, fuzzy
+msgid "Shaped (spherical)"
+msgstr "Oblikovanje (sferično)"
+
+#: ../libpicmanbase/picmanbaseenums.c:336
+#, fuzzy
+msgid "Shaped (dimpled)"
+msgstr "Oblikovanje (namreškano)"
+
+#: ../libpicmanbase/picmanbaseenums.c:337
+#, fuzzy
+msgid "Spiral (cw)"
+msgstr "Spiralno (smjer kazaljke)"
+
+#: ../libpicmanbase/picmanbaseenums.c:338
+#, fuzzy
+msgid "Spiral (ccw)"
+msgstr "Spiralno (smjer kazaljke)"
+
+#: ../libpicmanbase/picmanbaseenums.c:367
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:368
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:369
+#, fuzzy
+msgid "Image file"
+msgstr "Veličina Slike"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "RGB color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:399 ../libpicmanbase/picmanbaseenums.c:434
+msgid "Grayscale"
+msgstr "Sivi tonovi"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgid "Indexed color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "RGB"
+msgstr "RBG"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "RGB-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:435
+msgid "Grayscale-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:437
+msgid "Indexed-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:467
+msgid "None (Fastest)"
+msgstr "Ništa (Najbrže) "
+
+#: ../libpicmanbase/picmanbaseenums.c:469
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:470
+#, fuzzy
+msgid "Lanczos (Best)"
+msgstr "Kubično (Sporo)"
+
+#: ../libpicmanbase/picmanbaseenums.c:498
+msgid "Constant"
+msgstr "Konstanta"
+
+#: ../libpicmanbase/picmanbaseenums.c:499
+msgid "Incremental"
+msgstr "Porast"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "None"
+msgstr "Nijedan"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+#, fuzzy
+msgid "Sawtooth wave"
+msgstr "Sawtooth val"
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+#, fuzzy
+msgid "Triangular wave"
+msgstr "Trokutasto valovito"
+
+#: ../libpicmanbase/picmanbaseenums.c:558
+msgid "Pixels"
+msgstr "Pikseli"
+
+#: ../libpicmanbase/picmanbaseenums.c:559
+#, fuzzy
+msgid "Points"
+msgstr "točaka"
+
+#: ../libpicmanbase/picmanbaseenums.c:588
+msgid "Shadows"
+msgstr "Sjene"
+
+#: ../libpicmanbase/picmanbaseenums.c:589
+msgid "Midtones"
+msgstr "Srednji tonovi"
+
+#: ../libpicmanbase/picmanbaseenums.c:590
+msgid "Highlights"
+msgstr "Visoki tonovi"
+
+#: ../libpicmanbase/picmanbaseenums.c:618
+#, fuzzy
+msgid "Forward (traditional)"
+msgstr "Unaprijed (Tradicionalno)"
+
+#: ../libpicmanbase/picmanbaseenums.c:619
+#, fuzzy
+msgid "Backward (corrective)"
+msgstr "Unazad (Ispravka)"
+
+#: ../libpicmanbase/picmanmemsize.c:177
+#, c-format
+msgid "%d Bytes"
+msgstr "%d bajtova"
+
+#: ../libpicmanbase/picmanmemsize.c:182
+#, c-format
+msgid "%.2f KB"
+msgstr "%.2f KB"
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.1f KB"
+msgstr "%.1f KB"
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%d KB"
+msgstr "%d KB"
+
+#: ../libpicmanbase/picmanmemsize.c:197
+#, c-format
+msgid "%.2f MB"
+msgstr "%.2f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.1f MB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%d MB"
+msgstr "%d MB"
+
+#: ../libpicmanbase/picmanmemsize.c:212
+#, c-format
+msgid "%.2f GB"
+msgstr "%.2f GB"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, c-format
+msgid "%.1f GB"
+msgstr "%.1f GB"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%d GB"
+msgstr "%d GB"
+
+#: ../libpicmanbase/picmanutils.c:169 ../libpicmanbase/picmanutils.c:174
+msgid "(invalid UTF-8 string)"
+msgstr "(neispravan UTF-8 string)"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:95
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "vrijednost za oznaku %s nije valjani UTF-8 string "
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:423
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "očekivan je 'da' ili 'ne' za logičku (boolean) oznaku %s, dobio '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:497
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "neispravna vrijednost '%s' za oznaku %s "
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:512
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "neispravna vrijednost '%ld' za oznaku %s "
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:581
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "prilikom obrade dijela '%s': %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467 ../libpicmanconfig/picmanscanner.c:513
+#: ../libpicmanconfig/picmanscanner.c:594
+msgid "fatal parse error"
+msgstr "kobna grešaka pri analizi "
+
+#: ../libpicmanconfig/picmanconfig-path.c:349
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Ne mogu proširiti ${%s} "
+
+#: ../libpicmanconfig/picmanconfigwriter.c:134
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Ne mogu stvoriti privremenu datoteku za '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:147
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Ne mogu otvoriti '%s' za pisanje: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:666
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Greška u pisanju u privremenu datoteku '%s': %s\n"
+"Orginalna datoteka nije mijenjana."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:674
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Greška prilikom pisanja u privremenu datoteku za '%s': %s\n"
+"Datoteka nije stvorena."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:685
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Greška prilikom pisanja u '%s': %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:703
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Ne mogu stvoriti '%s': %s"
+
+#: ../libpicmanconfig/picmanscanner.c:100
+#, c-format
+msgid "Could not open '%s' for reading: %s"
+msgstr "Ne mogu otvoriti '%s' za čitanje: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:270
+msgid "invalid UTF-8 string"
+msgstr "neispravni UTF-8 niz"
+
+#: ../libpicmanconfig/picmanscanner.c:621
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Greška prilikom parsiranja '%s' u liniji %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:177
+#, c-format
+msgid "Loading module: '%s'\n"
+msgstr "Učitavam modul: \"%s\"\n"
+
+#: ../libpicmanmodule/picmanmodule.c:193 ../libpicmanmodule/picmanmodule.c:212
+#: ../libpicmanmodule/picmanmodule.c:326 ../libpicmanmodule/picmanmodule.c:354
+#: ../libpicmanmodule/picmanmodule.c:478
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Greška kod učitavanja modula '%s': %s"
+
+#: ../libpicmanmodule/picmanmodule.c:282
+#, c-format
+msgid "Skipping module: '%s'\n"
+msgstr "Preskačem modul: '%s'\n"
+
+#: ../libpicmanmodule/picmanmodule.c:422
+msgid "Module error"
+msgstr "Greška modula"
+
+#: ../libpicmanmodule/picmanmodule.c:423
+msgid "Loaded"
+msgstr "Napunjeno"
+
+#: ../libpicmanmodule/picmanmodule.c:424
+msgid "Load failed"
+msgstr "Pogreška kod učitavanja"
+
+#: ../libpicmanmodule/picmanmodule.c:425
+msgid "Not loaded"
+msgstr "Nije učitano"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:227 ../libpicmanthumb/picmanthumb-utils.c:295
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Ne mogu stvoriti mapu sličica '%s'."
+
+#: ../libpicmanthumb/picmanthumbnail.c:919
+#, fuzzy, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Ne mogu stvoriti mapu sličica '%s'."
+
+#: ../libpicmanwidgets/picmancolorbutton.c:99
+#, fuzzy
+msgid "_Foreground Color"
+msgstr "_/Uzmi Boju Prednjeg Plana"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:103
+#, fuzzy
+msgid "_Background Color"
+msgstr "_/Boja Pozadine"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:107
+#, fuzzy
+msgid "Blac_k"
+msgstr "Crna"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:111
+#, fuzzy
+msgid "_White"
+msgstr "/B_ijela"
+
+#: ../libpicmanwidgets/picmancolorscales.c:133
+msgid "Scales"
+msgstr "Skale"
+
+#: ../libpicmanwidgets/picmancolorscales.c:155
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmancolorscales.c:156
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmancolorscales.c:157
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmancolorscales.c:158
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmancolorscales.c:159
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_G"
+msgstr "G"
+
+#: ../libpicmanwidgets/picmancolorscales.c:160
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmancolorscales.c:161
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmancolorscales.c:165
+#: ../libpicmanwidgets/picmancolorselect.c:349
+msgid "Hue"
+msgstr "Nijanse"
+
+#: ../libpicmanwidgets/picmancolorscales.c:166
+#: ../libpicmanwidgets/picmancolorselect.c:350 ../modules/cdisplay_proof.c:59
+msgid "Saturation"
+msgstr "Zasićenje"
+
+#: ../libpicmanwidgets/picmancolorscales.c:167
+#: ../libpicmanwidgets/picmancolorselect.c:351
+msgid "Value"
+msgstr "Vrijednost"
+
+#: ../libpicmanwidgets/picmancolorscales.c:243
+#, fuzzy
+msgid "Hexadecimal color notation as used in HTML and CSS"
+msgstr "Heksadecimalno naznačivanje boje koje se koristi u HTML-u"
+
+#: ../libpicmanwidgets/picmancolorscales.c:248
+msgid "HTML _Notation:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:203
+msgid "Current:"
+msgstr "Trenutno:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:225
+msgid "Old:"
+msgstr "Miješalica:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:351
+msgid "Select Folder"
+msgstr "Označi mapu"
+
+#: ../libpicmanwidgets/picmanfileentry.c:353
+msgid "Select File"
+msgstr "Odaberi Datoteku"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:232
+#, fuzzy
+msgid "Kilobytes"
+msgstr "Kilobajta"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:233
+#, fuzzy
+msgid "Megabytes"
+msgstr "Megabajta"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:234
+#, fuzzy
+msgid "Gigabytes"
+msgstr "gigabajta"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:243
+msgid "Writable"
+msgstr "Promjenjivo"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:252
+msgid "Folder"
+msgstr "Mapu"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:138
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Kliknite na kapaljku a onda kliknite na neku boju bilo gdje na vašem zaslonu "
+"za odabir te boje."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:126
+msgid "Check Size"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:133
+msgid "Check Style"
+msgstr ""
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:240
+msgid "_Preview"
+msgstr "Pregled"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "Sidro"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr "Sredina"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr "_Udvostruči"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr "_Uredi"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr "Povezano"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr "/Uredi/Ubaci kao Novu"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr "/Uredi/Ubaci u"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr "_Vrati izvorno"
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "Vidljivo"
+
+#: ../libpicmanwidgets/picmanstock.c:154 ../libpicmanwidgets/picmanstock.c:158
+msgid "_Stroke"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:170
+msgid "L_etter Spacing"
+msgstr "Razmak između slova"
+
+#: ../libpicmanwidgets/picmanstock.c:171
+msgid "L_ine Spacing"
+msgstr "Razmak između redaka"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "_Resize"
+msgstr "_Promjena veličine"
+
+#: ../libpicmanwidgets/picmanstock.c:188 ../libpicmanwidgets/picmanstock.c:292
+msgid "_Scale"
+msgstr "Uzorak:"
+
+#: ../libpicmanwidgets/picmanstock.c:271
+msgid "Crop"
+msgstr "Izreži"
+
+#: ../libpicmanwidgets/picmanstock.c:288
+msgid "_Transform"
+msgstr "_Transformacija"
+
+#: ../libpicmanwidgets/picmanstock.c:291
+msgid "_Rotate"
+msgstr "_Rotiraj"
+
+#: ../libpicmanwidgets/picmanstock.c:293
+msgid "_Shear"
+msgstr "_Striženje"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:302
+msgid "More..."
+msgstr "Više..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:612
+msgid "Unit Selection"
+msgstr "Odabir Mjere"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:655
+msgid "Unit"
+msgstr "Jedinica"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:659
+msgid "Factor"
+msgstr "Faktor"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1001
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Upotrebite ovu vrijednost za sjeme slučajno generiranog broja -- ovo će vam "
+"omogućiti ponavljanje date  slučajne operacije"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid "_New Seed"
+msgstr "_Novi Zametak"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1018
+msgid "Seed random number generator with a generated random number"
+msgstr "Sjeme slučajno generiranog broja sa slučajno generiranim brojem"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "_Randomize"
+msgstr "Nasumično"
+
+#: ../modules/cdisplay_colorblind.c:68
+#, fuzzy
+msgid "Protanopia (insensitivity to red"
+msgstr "Protanopia (neosjetljivost na crveno)"
+
+#: ../modules/cdisplay_colorblind.c:70
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopia (neosjetljivost na zeleno)"
+
+#: ../modules/cdisplay_colorblind.c:72
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tiranopia (neosjetljivost na plavo)"
+
+#: ../modules/cdisplay_colorblind.c:163
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Filter oponašanja oskudnosti boja (Brettel-Vienot-Mollon algoritam)"
+
+#: ../modules/cdisplay_colorblind.c:256
+msgid "Color Deficient Vision"
+msgstr "Pogled oskudnih boja"
+
+#: ../modules/cdisplay_colorblind.c:554
+msgid "Color _Deficiency Type:"
+msgstr "Vrsta _oskudnosti boje:"
+
+#: ../modules/cdisplay_gamma.c:105
+msgid "Gamma color display filter"
+msgstr "Filter Velikog Kontrasta Zaslona u Boji"
+
+#: ../modules/cdisplay_gamma.c:178
+msgid "Gamma"
+msgstr "Gama"
+
+#: ../modules/cdisplay_gamma.c:352
+msgid "_Gamma:"
+msgstr "_Gama:"
+
+#: ../modules/cdisplay_highcontrast.c:105
+msgid "High Contrast color display filter"
+msgstr "Filter Velikog Kontrasta Zaslona u Boji"
+
+#: ../modules/cdisplay_highcontrast.c:178
+msgid "Contrast"
+msgstr "Kontrast"
+
+#: ../modules/cdisplay_highcontrast.c:352
+msgid "Contrast C_ycles:"
+msgstr "_Kontrastni Ciklusi:"
+
+#: ../modules/cdisplay_proof.c:57
+msgid "Perceptual"
+msgstr "Osjetilno"
+
+#: ../modules/cdisplay_proof.c:58
+msgid "Relative Colorimetric"
+msgstr "Relativno kolorimetrijski"
+
+#: ../modules/cdisplay_proof.c:60
+msgid "Absolute Colorimetric"
+msgstr "Apsolutno kolorimetrijski"
+
+#: ../modules/cdisplay_proof.c:147
+msgid "Color proof filter using ICC color profile"
+msgstr "Filter probe u boji koji koristi ICC profil boja"
+
+#: ../modules/cdisplay_proof.c:251
+msgid "Color Proof"
+msgstr "Proba boja"
+
+#: ../modules/cdisplay_proof.c:462
+msgid "_Intent:"
+msgstr "_Namjera:"
+
+#: ../modules/cdisplay_proof.c:465
+msgid "Choose an ICC Color Profile"
+msgstr "Odaberite ICC profil boja"
+
+#: ../modules/cdisplay_proof.c:468
+msgid "_Profile:"
+msgstr "_Profil:"
+
+#: ../modules/cdisplay_proof.c:476
+msgid "_Black Point Compensation"
+msgstr "Zamijena za _crnu točku"
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr "Odabir CMYK boje"
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "CMYK"
+
+#: ../modules/colorsel_cmyk.c:147
+msgid "_C"
+msgstr "_C"
+
+#: ../modules/colorsel_cmyk.c:148
+msgid "_M"
+msgstr "_M"
+
+#: ../modules/colorsel_cmyk.c:149
+msgid "_Y"
+msgstr "_Y"
+
+#: ../modules/colorsel_cmyk.c:150
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/colorsel_cmyk.c:154
+msgid "Cyan"
+msgstr "Cijan"
+
+#: ../modules/colorsel_cmyk.c:155
+msgid "Magenta"
+msgstr "Magenta"
+
+#: ../modules/colorsel_cmyk.c:156
+msgid "Yellow"
+msgstr "žuta"
+
+#: ../modules/colorsel_cmyk.c:157
+msgid "Black"
+msgstr "Crna"
+
+#: ../modules/colorsel_cmyk.c:191
+#, fuzzy
+msgid "Black _Pullout:"
+msgstr "Izvlačenje crne (%):"
+
+#: ../modules/colorsel_cmyk.c:208
+msgid "The percentage of black to pull out of the colored inks."
+msgstr ""
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr "Odabir boje u stilu slikarskog trokuta"
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr "Trokut"
+
+#: ../modules/colorsel_water.c:88
+msgid "Watercolor style color selector"
+msgstr "Odabir boje u stilu vodene boje"
+
+#: ../modules/colorsel_water.c:154
+msgid "Watercolor"
+msgstr "Vodena boja"
+
+#: ../modules/colorsel_water.c:220
+msgid "Pressure"
+msgstr "Pritisak"

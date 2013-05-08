@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,27 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimperrorconsole.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimptextbuffer.h"
+#include "widgets/picmanerrorconsole.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmantextbuffer.h"
 
 #include "error-console-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void   error_console_save_response (GtkWidget        *dialog,
                                            gint              response_id,
-                                           GimpErrorConsole *console);
+                                           PicmanErrorConsole *console);
 
 
 /*  public functions  */
@@ -48,7 +48,7 @@ void
 error_console_clear_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (data);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (data);
   GtkTextIter       start_iter;
   GtkTextIter       end_iter;
 
@@ -60,7 +60,7 @@ void
 error_console_select_all_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (data);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (data);
   GtkTextIter       start_iter;
   GtkTextIter       end_iter;
 
@@ -73,14 +73,14 @@ error_console_save_cmd_callback (GtkAction *action,
                                  gint       value,
                                  gpointer   data)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (data);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (data);
   GtkFileChooser   *chooser;
 
   if (value && ! gtk_text_buffer_get_selection_bounds (console->text_buffer,
                                                        NULL, NULL))
     {
-      gimp_message_literal (console->gimp,
-			    G_OBJECT (console), GIMP_MESSAGE_WARNING,
+      picman_message_literal (console->picman,
+			    G_OBJECT (console), PICMAN_MESSAGE_WARNING,
 			    _("Cannot save. Nothing is selected."));
       return;
     }
@@ -116,7 +116,7 @@ error_console_save_cmd_callback (GtkAction *action,
                          gtk_widget_get_screen (GTK_WIDGET (console)));
 
   gtk_window_set_position (GTK_WINDOW (chooser), GTK_WIN_POS_MOUSE);
-  gtk_window_set_role (GTK_WINDOW (chooser), "gimp-save-errors");
+  gtk_window_set_role (GTK_WINDOW (chooser), "picman-save-errors");
 
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_OK);
   gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
@@ -128,8 +128,8 @@ error_console_save_cmd_callback (GtkAction *action,
                     G_CALLBACK (gtk_true),
                     NULL);
 
-  gimp_help_connect (GTK_WIDGET (chooser), gimp_standard_help_func,
-                     GIMP_HELP_ERRORS_DIALOG, NULL);
+  picman_help_connect (GTK_WIDGET (chooser), picman_standard_help_func,
+                     PICMAN_HELP_ERRORS_DIALOG, NULL);
 
   gtk_widget_show (GTK_WIDGET (chooser));
 }
@@ -140,7 +140,7 @@ error_console_save_cmd_callback (GtkAction *action,
 static void
 error_console_save_response (GtkWidget        *dialog,
                              gint              response_id,
-                             GimpErrorConsole *console)
+                             PicmanErrorConsole *console)
 {
   if (response_id == GTK_RESPONSE_OK)
     {
@@ -149,13 +149,13 @@ error_console_save_response (GtkWidget        *dialog,
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-      if (! gimp_text_buffer_save (GIMP_TEXT_BUFFER (console->text_buffer),
+      if (! picman_text_buffer_save (PICMAN_TEXT_BUFFER (console->text_buffer),
                                    filename,
                                    console->save_selection, &error))
         {
-          gimp_message (console->gimp, G_OBJECT (dialog), GIMP_MESSAGE_ERROR,
+          picman_message (console->picman, G_OBJECT (dialog), PICMAN_MESSAGE_ERROR,
                         _("Error writing file '%s':\n%s"),
-                        gimp_filename_to_utf8 (filename),
+                        picman_filename_to_utf8 (filename),
                         error->message);
           g_clear_error (&error);
           g_free (filename);

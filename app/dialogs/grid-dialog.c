@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +22,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-grid.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpgrid.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-grid.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmangrid.h"
 
-#include "widgets/gimpgrideditor.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmangrideditor.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "grid-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define GRID_RESPONSE_RESET 1
@@ -61,34 +61,34 @@ static void  grid_dialog_response (GtkWidget *widget,
 
 
 GtkWidget *
-grid_dialog_new (GimpImage   *image,
-                 GimpContext *context,
+grid_dialog_new (PicmanImage   *image,
+                 PicmanContext *context,
                  GtkWidget   *parent)
 {
-  GimpGrid  *grid;
-  GimpGrid  *grid_backup;
+  PicmanGrid  *grid;
+  PicmanGrid  *grid_backup;
   GtkWidget *dialog;
   GtkWidget *editor;
   gdouble    xres;
   gdouble    yres;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  grid = gimp_image_get_grid (GIMP_IMAGE (image));
-  grid_backup = gimp_config_duplicate (GIMP_CONFIG (grid));
+  grid = picman_image_get_grid (PICMAN_IMAGE (image));
+  grid_backup = picman_config_duplicate (PICMAN_CONFIG (grid));
 
-  dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (image), context,
-                                     _("Configure Grid"), "gimp-grid-configure",
-                                     GIMP_STOCK_GRID, _("Configure Image Grid"),
+  dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (image), context,
+                                     _("Configure Grid"), "picman-grid-configure",
+                                     PICMAN_STOCK_GRID, _("Configure Image Grid"),
                                      parent,
-                                     gimp_standard_help_func,
-                                     GIMP_HELP_IMAGE_GRID,
+                                     picman_standard_help_func,
+                                     PICMAN_HELP_IMAGE_GRID,
 
-                                     GIMP_STOCK_RESET, GRID_RESPONSE_RESET,
+                                     PICMAN_STOCK_RESET, GRID_RESPONSE_RESET,
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                      GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -106,7 +106,7 @@ grid_dialog_new (GimpImage   *image,
                     G_CALLBACK (grid_dialog_response),
                     dialog);
 
-  editor = gimp_grid_editor_new (grid, context, xres, yres);
+  editor = picman_grid_editor_new (grid, context, xres, yres);
   gtk_container_set_border_width (GTK_CONTAINER (editor), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                       editor, TRUE, TRUE, 0);
@@ -130,9 +130,9 @@ grid_dialog_response (GtkWidget  *widget,
                       gint        response_id,
                       GtkWidget  *dialog)
 {
-  GimpImage *image;
-  GimpImage *grid;
-  GimpGrid  *grid_backup;
+  PicmanImage *image;
+  PicmanImage *grid;
+  PicmanGrid  *grid_backup;
 
   image       = g_object_get_data (G_OBJECT (dialog), "image");
   grid        = g_object_get_data (G_OBJECT (dialog), "grid");
@@ -141,22 +141,22 @@ grid_dialog_response (GtkWidget  *widget,
   switch (response_id)
     {
     case GRID_RESPONSE_RESET:
-      gimp_config_sync (G_OBJECT (image->gimp->config->default_grid),
+      picman_config_sync (G_OBJECT (image->picman->config->default_grid),
                         G_OBJECT (grid), 0);
       break;
 
     case GTK_RESPONSE_OK:
-      if (! gimp_config_is_equal_to (GIMP_CONFIG (grid_backup),
-                                     GIMP_CONFIG (grid)))
+      if (! picman_config_is_equal_to (PICMAN_CONFIG (grid_backup),
+                                     PICMAN_CONFIG (grid)))
         {
-          gimp_image_undo_push_image_grid (image, _("Grid"), grid_backup);
+          picman_image_undo_push_image_grid (image, _("Grid"), grid_backup);
         }
 
       gtk_widget_destroy (dialog);
       break;
 
     default:
-      gimp_image_set_grid (GIMP_IMAGE (image), grid_backup, FALSE);
+      picman_image_set_grid (PICMAN_IMAGE (image), grid_backup, FALSE);
       gtk_widget_destroy (dialog);
     }
 }

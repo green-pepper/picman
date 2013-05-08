@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC      "file-header-save"
 #define PLUG_IN_BINARY "file-header"
-#define PLUG_IN_ROLE   "gimp-file-header"
+#define PLUG_IN_ROLE   "picman-file-header"
 
 
 /* Declare some local functions.
@@ -37,15 +37,15 @@
 static void       query      (void);
 static void       run        (const gchar      *name,
                               gint              nparams,
-                              const GimpParam  *param,
+                              const PicmanParam  *param,
                               gint             *nreturn_vals,
-                              GimpParam       **return_vals);
+                              PicmanParam       **return_vals);
 static gboolean   save_image (const gchar      *filename,
                               gint32            image_ID,
                               gint32            drawable_ID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -59,16 +59,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves files as C unsigned character array",
                           "FIXME: write help",
                           "Spencer Kimball & Peter Mattis",
@@ -76,24 +76,24 @@ query (void)
                           "1997",
                           N_("C source code header"),
                           "INDEXED, RGB",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "text/x-chdr");
-  gimp_register_save_handler (SAVE_PROC, "h", "");
+  picman_register_file_handler_mime (SAVE_PROC, "text/x-chdr");
+  picman_register_save_handler (SAVE_PROC, "h", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[2];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
@@ -102,14 +102,14 @@ run (const gchar      *name,
 
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, SAVE_PROC) == 0)
     {
       gint32           image_ID;
       gint32           drawable_ID;
-      GimpExportReturn export = GIMP_EXPORT_CANCEL;
+      PicmanExportReturn export = PICMAN_EXPORT_CANCEL;
 
       image_ID    = param[1].data.d_int32;
       drawable_ID = param[2].data.d_int32;
@@ -117,15 +117,15 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED);
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -136,15 +136,15 @@ run (const gchar      *name,
 
       if (! save_image (param[3].data.d_string, image_ID, drawable_ID))
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   values[0].data.d_status = status;
@@ -157,7 +157,7 @@ save_image (const gchar *filename,
 {
   GeglBuffer    *buffer;
   const Babl    *format;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   FILE          *fp;
   gint           x, y, b, c;
   const gchar   *backslash = "\\\\";
@@ -174,22 +174,22 @@ save_image (const gchar *filename,
   if ((fp = g_fopen (filename, "w")) == NULL)
     return FALSE;
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
   width  = gegl_buffer_get_width  (buffer);
   height = gegl_buffer_get_height (buffer);
 
-  drawable_type = gimp_drawable_type (drawable_ID);
+  drawable_type = picman_drawable_type (drawable_ID);
 
-  fprintf (fp, "/*  GIMP header image file format (%s): %s  */\n\n",
-           GIMP_RGB_IMAGE == drawable_type ? "RGB" : "INDEXED", filename);
+  fprintf (fp, "/*  PICMAN header image file format (%s): %s  */\n\n",
+           PICMAN_RGB_IMAGE == drawable_type ? "RGB" : "INDEXED", filename);
   fprintf (fp, "static unsigned int width = %d;\n", width);
   fprintf (fp, "static unsigned int height = %d;\n\n", height);
   fprintf (fp, "/*  Call this macro repeatedly.  After each use, the pixel data can be extracted  */\n\n");
 
   switch (drawable_type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       fprintf (fp,
                "#define HEADER_PIXEL(data,pixel) {\\\n"
                "pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \\\n"
@@ -241,7 +241,7 @@ save_image (const gchar *filename,
       fprintf (fp, "\";\n");
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       fprintf (fp,
                "#define HEADER_PIXEL(data,pixel) {\\\n"
                "pixel[0] = header_data_cmap[(unsigned char)data[0]][0]; \\\n"
@@ -249,7 +249,7 @@ save_image (const gchar *filename,
                "pixel[2] = header_data_cmap[(unsigned char)data[0]][2]; \\\n"
                "data ++; }\n\n");
       /* save colormap */
-      cmap = gimp_image_get_colormap (image_ID, &colors);
+      cmap = picman_image_get_colormap (image_ID, &colors);
 
       fprintf (fp, "static char header_data_cmap[256][3] = {");
       fprintf (fp, "\n\t{%3d,%3d,%3d}", (int)cmap[0], (int)cmap[1], (int)cmap[2]);

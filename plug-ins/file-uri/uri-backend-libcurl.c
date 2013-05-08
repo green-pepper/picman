@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * libcurl backend for the URI plug-in
@@ -27,12 +27,12 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "uri-backend.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*  private variables  */
@@ -46,7 +46,7 @@ static gchar *user_agent          = NULL;
 gboolean
 uri_backend_init (const gchar  *plugin_name,
                   gboolean      run,
-                  GimpRunMode   run_mode,
+                  PicmanRunMode   run_mode,
                   GError      **error)
 {
   GString                *protocols;
@@ -69,7 +69,7 @@ uri_backend_init (const gchar  *plugin_name,
     }
 
   supported_protocols = g_string_free (protocols, FALSE);
-  user_agent = g_strconcat ("GIMP/", GIMP_VERSION, NULL);
+  user_agent = g_strconcat ("PICMAN/", PICMAN_VERSION, NULL);
 
   return TRUE;
 }
@@ -124,16 +124,16 @@ progress_callback (void   *clientp,
   if (dltotal > 0.0)
     {
       memsize = g_format_size (dltotal);
-      gimp_progress_set_text_printf (_("Downloading %s of image data"),
+      picman_progress_set_text_printf (_("Downloading %s of image data"),
                                      memsize);
-      gimp_progress_update (dlnow / dltotal);
+      picman_progress_update (dlnow / dltotal);
     }
   else
     {
       memsize = g_format_size (dlnow);
-      gimp_progress_set_text_printf (_("Downloaded %s of image data"),
+      picman_progress_set_text_printf (_("Downloaded %s of image data"),
                                      memsize);
-      gimp_progress_pulse ();
+      picman_progress_pulse ();
     }
 
   g_free (memsize);
@@ -145,7 +145,7 @@ progress_callback (void   *clientp,
 gboolean
 uri_backend_load_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   FILE      *out_file;
@@ -158,13 +158,13 @@ uri_backend_load_image (const gchar  *uri,
   gboolean   is_ftp    = FALSE;
   gboolean   is_gopher = FALSE;
 
-  gimp_progress_init (_("Connecting to server"));
+  picman_progress_init (_("Connecting to server"));
 
   if ((out_file = g_fopen (tmpname, "wb")) == NULL)
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (tmpname),  g_strerror (errno));
+                   picman_filename_to_utf8 (tmpname),  g_strerror (errno));
       return FALSE;
     }
 
@@ -249,7 +249,7 @@ uri_backend_load_image (const gchar  *uri,
     }
 
   fclose (out_file);
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
   curl_easy_cleanup (curl_handle);
 
   return TRUE;
@@ -259,7 +259,7 @@ uri_backend_load_image (const gchar  *uri,
 gboolean
 uri_backend_save_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "not implemented");
@@ -269,7 +269,7 @@ uri_backend_save_image (const gchar  *uri,
 
 gchar *
 uri_backend_map_image (const gchar  *uri,
-                       GimpRunMode   run_mode)
+                       PicmanRunMode   run_mode)
 {
   return NULL;
 }

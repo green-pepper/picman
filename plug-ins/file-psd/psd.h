@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,22 +41,22 @@
 #define LOAD_THUMB_PROC                 "file-psd-load-thumb"
 #define SAVE_PROC                       "file-psd-save"
 #define PLUG_IN_BINARY                  "file-psd"
-#define PLUG_IN_ROLE                    "gimp-file-psd"
+#define PLUG_IN_ROLE                    "picman-file-psd"
 
 #define DECODE_XMP_PROC                 "plug-in-metadata-decode-xmp"
 
-#define GIMP_PARASITE_COMMENT           "gimp-comment"
-#define GIMP_PARASITE_ICC_PROFILE       "icc-profile"
-#define GIMP_PARASITE_EXIF              "exif-data"
-#define GIMP_PARASITE_IPTC              "iptc-data"
+#define PICMAN_PARASITE_COMMENT           "picman-comment"
+#define PICMAN_PARASITE_ICC_PROFILE       "icc-profile"
+#define PICMAN_PARASITE_EXIF              "exif-data"
+#define PICMAN_PARASITE_IPTC              "iptc-data"
 
-#define METADATA_PARASITE               "gimp-metadata"
-#define METADATA_MARKER                 "GIMP_XMP_1"
+#define METADATA_PARASITE               "picman-metadata"
+#define METADATA_MARKER                 "PICMAN_XMP_1"
 
 #define PSD_PARASITE_DUOTONE_DATA       "psd-duotone-data"
 
-/* Copied from app/base/gimpimage-quick-mask.h - internal identifier for quick mask channel */
-#define GIMP_IMAGE_QUICK_MASK_NAME      "Qmask"
+/* Copied from app/base/picmanimage-quick-mask.h - internal identifier for quick mask channel */
+#define PICMAN_IMAGE_QUICK_MASK_NAME      "Qmask"
 
 #define MAX_RAW_SIZE    0               /* FIXME all images are raw if 0 */
 
@@ -470,7 +470,7 @@ typedef struct
 /* PSD Layer data structure */
 typedef struct
 {
-  gboolean              drop;                   /* Do not add layer to GIMP image */
+  gboolean              drop;                   /* Do not add layer to PICMAN image */
   gint32                top;                    /* Layer top */
   gint32                left;                   /* Layer left */
   gint32                bottom;                 /* Layer bottom */
@@ -506,7 +506,7 @@ typedef struct
 /* PSD Channel data structure */
 typedef struct
 {
-  GimpRGB       gimp_color;             /* Gimp RGB color */
+  PicmanRGB       picman_color;             /* Picman RGB color */
   gint16        opacity;                /* Opacity */
   guchar        ps_kind;                /* PS type flag */
   gint16        ps_cspace;              /* PS colour space */
@@ -541,7 +541,7 @@ typedef struct
   guint32               columns;                /* Number of columns: 1 - 30000 */
   guint16               bps;                    /* Bits per channel: 1, 8 or 16 */
   guint16               color_mode;             /* Image colour mode: {PSDColorMode} */
-  GimpImageBaseType     base_type;              /* Image base colour mode: (GIMP) */
+  PicmanImageBaseType     base_type;              /* Image base colour mode: (PICMAN) */
   guint16               comp_mode;              /* Merged image compression mode */
   guchar               *color_map;              /* Colour map data */
   guint32               color_map_len;          /* Colour map data length */

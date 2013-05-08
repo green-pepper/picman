@@ -7,9 +7,9 @@ PDBGEN
 
 What is this?
 It's a tool to automate much of the drudge work of making PDB interfaces
-to GIMP internals. Right now, it generates PDB description records,
+to PICMAN internals. Right now, it generates PDB description records,
 argument marshallers (with sanity checking) for the app side, as well
-as libgimp wrappers for C plugins. It's written so that extending it
+as libpicman wrappers for C plugins. It's written so that extending it
 to provide support for CORBA and other languages suited to static
 autogeneration.
 
@@ -31,11 +31,11 @@ do to help you do this. However, at the simplest level, you don't need
 to know perl at all to make PDB descriptors.
 
 Annotated description:
-For example, we will look at gimp_display_new, specified in gdisplay.pdb.
+For example, we will look at picman_display_new, specified in gdisplay.pdb.
 
 sub display_new { 
 
-We start with the name of our PDB function (not including the "gimp_" prefix).
+We start with the name of our PDB function (not including the "picman_" prefix).
 
     $blurb = 'Create a new display for the specified image.';
 
@@ -44,9 +44,9 @@ This directly corresponds to the "blurb" field in the ProcRecord.
     $help = <<'HELP';
 Creates a new display for the specified image. If the image already has a
 display, another is added. Multiple displays are handled transparently by the
-GIMP. The newly created display is returned and can be subsequently destroyed
-with a call to 'gimp-display-delete'. This procedure only makes sense for use
-with the GIMP UI.
+PICMAN. The newly created display is returned and can be subsequently destroyed
+with a call to 'picman-display-delete'. This procedure only makes sense for use
+with the PICMAN UI.
 HELP
 
 This is the help field. Notice because it is a long string, we used HERE

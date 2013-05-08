@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,34 +20,34 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "window-actions.h"
 #include "window-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  private functions  */
 
 static void   window_actions_display_opened (GdkDisplayManager *manager,
                                              GdkDisplay        *display,
-                                             GimpActionGroup   *group);
+                                             PicmanActionGroup   *group);
 static void   window_actions_display_closed (GdkDisplay        *display,
                                              gboolean           is_error,
-                                             GimpActionGroup   *group);
+                                             PicmanActionGroup   *group);
 
 
 /*  public functions  */
 
 void
-window_actions_setup (GimpActionGroup *group,
+window_actions_setup (PicmanActionGroup *group,
                       const gchar     *move_to_screen_help_id)
 {
   GdkDisplayManager *manager = gdk_display_manager_get ();
@@ -76,7 +76,7 @@ window_actions_setup (GimpActionGroup *group,
 }
 
 void
-window_actions_update (GimpActionGroup *group,
+window_actions_update (PicmanActionGroup *group,
                        GtkWidget       *window)
 {
   const gchar *group_name;
@@ -86,16 +86,16 @@ window_actions_update (GimpActionGroup *group,
   group_name = gtk_action_group_get_name (GTK_ACTION_GROUP (group));
 
 #define SET_ACTIVE(action,active) \
-        gimp_action_group_set_action_active (group, action, (active) != 0)
+        picman_action_group_set_action_active (group, action, (active) != 0)
 #define SET_VISIBLE(action,active) \
-        gimp_action_group_set_action_visible (group, action, (active) != 0)
+        picman_action_group_set_action_visible (group, action, (active) != 0)
 
   if (GTK_IS_WINDOW (window))
     {
       GdkScreen  *screen;
       gchar      *screen_name;
 
-#ifndef GIMP_UNSTABLE
+#ifndef PICMAN_UNSTABLE
       {
         GdkDisplay *display;
 
@@ -104,7 +104,7 @@ window_actions_update (GimpActionGroup *group,
       }
 #else
       show_menu = TRUE;
-#endif /* !GIMP_UNSTABLE */
+#endif /* !PICMAN_UNSTABLE */
 
       if (! show_menu)
         {
@@ -140,9 +140,9 @@ window_actions_update (GimpActionGroup *group,
 static void
 window_actions_display_opened (GdkDisplayManager *manager,
                                GdkDisplay        *display,
-                               GimpActionGroup   *group)
+                               PicmanActionGroup   *group)
 {
-  GimpRadioActionEntry *entries;
+  PicmanRadioActionEntry *entries;
   const gchar          *help_id;
   const gchar          *group_name;
   GSList               *radio_group;
@@ -155,7 +155,7 @@ window_actions_display_opened (GdkDisplayManager *manager,
 
   n_screens = gdk_display_get_n_screens (display);
 
-  entries = g_new0 (GimpRadioActionEntry, n_screens);
+  entries = g_new0 (PicmanRadioActionEntry, n_screens);
 
   for (i = 0; i < n_screens; i++)
     {
@@ -166,7 +166,7 @@ window_actions_display_opened (GdkDisplayManager *manager,
 
       entries[i].name        = g_strdup_printf ("%s-move-to-screen-%s",
                                                 group_name, screen_name);
-      entries[i].stock_id    = GIMP_STOCK_MOVE_TO_SCREEN;
+      entries[i].stock_id    = PICMAN_STOCK_MOVE_TO_SCREEN;
       entries[i].label       = g_strdup_printf (_("Screen %s"), screen_name);
       entries[i].accelerator = NULL;
       entries[i].tooltip     = g_strdup_printf (_("Move this window to "
@@ -179,7 +179,7 @@ window_actions_display_opened (GdkDisplayManager *manager,
 
   radio_group = g_object_get_data (G_OBJECT (group),
                                    "change-to-screen-radio-group");
-  radio_group = gimp_action_group_add_radio_actions (group, NULL,
+  radio_group = picman_action_group_add_radio_actions (group, NULL,
                                                      entries, n_screens,
                                                      radio_group, 0,
                                                      G_CALLBACK (window_move_to_screen_cmd_callback));
@@ -211,7 +211,7 @@ window_actions_display_opened (GdkDisplayManager *manager,
 static void
 window_actions_display_closed (GdkDisplay      *display,
                                gboolean         is_error,
-                               GimpActionGroup *group)
+                               PicmanActionGroup *group)
 {
   const gchar *group_name;
   gint         n_screens;

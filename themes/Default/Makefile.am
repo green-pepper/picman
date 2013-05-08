@@ -2,7 +2,7 @@
 
 SUBDIRS = images
 
-themedatadir = $(gimpdatadir)/themes/Default
+themedatadir = $(picmandatadir)/themes/Default
 
 themedata_DATA = gtkrc
 

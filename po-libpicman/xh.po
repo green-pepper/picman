@@ -1,0 +1,1186 @@
+# Xhosa translation of picman-libpicman
+# Copyright (C) 2005 Canonical Ltd.
+# This file is distributed under the same license as the picman package.
+# Translation by Canonical Ltd <translations@canonical.com> with thanks to
+# Translation World CC in South Africa, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman20-libpicman\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-13 16:08+0200\n"
+"PO-Revision-Date: 2005-03-30 21:33+0200\n"
+"Last-Translator: Canonical Ltd <translations@canonical.com>\n"
+"Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../libpicman/picmanbrushmenu.c:140
+msgid "Brush Selection"
+msgstr "uKhetho lweBhrashi"
+
+#: ../libpicman/picmanbrushmenu.c:180 ../libpicman/picmanpatternmenu.c:165
+msgid "_Browse..."
+msgstr "_Khangela..."
+
+#: ../libpicman/picmanexport.c:215 ../libpicman/picmanexport.c:251
+#, c-format
+msgid "%s can't handle layers"
+msgstr "%s ayikwazi ukukhombisa imaleko"
+
+#: ../libpicman/picmanexport.c:216 ../libpicman/picmanexport.c:225
+#: ../libpicman/picmanexport.c:234
+msgid "Merge Visible Layers"
+msgstr "Dibanisa imaleko ebonakalayo"
+
+#: ../libpicman/picmanexport.c:224
+#, c-format
+msgid "%s can't handle layer offsets, size or opacity"
+msgstr ""
+"%s ayikwazi ukukhombisa okungamiselwanga komaleko, isayizi okanye ulwalamano "
+"lotshintshiselwano"
+
+#: ../libpicman/picmanexport.c:233 ../libpicman/picmanexport.c:242
+#, c-format
+msgid "%s can only handle layers as animation frames"
+msgstr "%s inokukhombisa kuphela imaleko njengee-frames zolinganiso"
+
+#: ../libpicman/picmanexport.c:234 ../libpicman/picmanexport.c:243
+msgid "Save as Animation"
+msgstr "Gcina njengooPopayi"
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:252
+#: ../libpicman/picmanexport.c:261
+msgid "Flatten Image"
+msgstr "Yenza mcaba umfanekiso"
+
+# ze does not mean transparent
+#: ../libpicman/picmanexport.c:260
+#, c-format
+msgid "%s can't handle transparency"
+msgstr "%s ayikhombisi ukuba ze"
+
+#: ../libpicman/picmanexport.c:269
+#, c-format
+msgid "%s can't handle layer masks"
+msgstr "%s ayikwazi ukukhombisa iimaski zemaleko"
+
+#: ../libpicman/picmanexport.c:270
+msgid "Apply Layer Masks"
+msgstr "Sebenzisa iiMaski zeMaleko"
+
+#: ../libpicman/picmanexport.c:278
+#, c-format
+msgid "%s can only handle RGB images"
+msgstr "%s inokukhombisa kuphela imifanekiso ye-RGB"
+
+#: ../libpicman/picmanexport.c:279 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:326
+msgid "Convert to RGB"
+msgstr "Guqulela kwi-RGB"
+
+#: ../libpicman/picmanexport.c:287
+#, c-format
+msgid "%s can only handle grayscale images"
+msgstr "%s inokukhombisa kuphela imifanekiso ye-grayscale"
+
+#: ../libpicman/picmanexport.c:288 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:338
+msgid "Convert to Grayscale"
+msgstr "Ququlela kwi-Grayscale"
+
+#: ../libpicman/picmanexport.c:296
+#, c-format
+msgid "%s can only handle indexed images"
+msgstr "%s inokukhombisa kuphela imifanekiso enesikhombisi"
+
+#: ../libpicman/picmanexport.c:297 ../libpicman/picmanexport.c:326
+#: ../libpicman/picmanexport.c:336
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Guqulela kweziKhombisayo usebenzisa imimiselo emiselweyo\n"
+"(Yenzele kuxwebhu ukufumana iziphumo)"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s can only handle bitmap (two color) indexed images"
+msgstr ""
+"%s inokukhombisa kuphela imifanekiso enesikhombisi se-bitmap (imibala "
+"emibini)"
+
+#: ../libpicman/picmanexport.c:307
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Guqulela kwisikhombisi usebenzisa imimiselo emiselweyo ye-bitmap\n"
+"(Yenza ngoxwebu ukufumana isiphumo)"
+
+#: ../libpicman/picmanexport.c:316
+#, c-format
+msgid "%s can only handle RGB or grayscale images"
+msgstr "%s inokukhombisa i-RGB kuphela okanye imifanekiso ye-grayscale"
+
+#: ../libpicman/picmanexport.c:325
+#, c-format
+msgid "%s can only handle RGB or indexed images"
+msgstr "%s inokukhombisa kuphela i-RGB okanye imifanekiso enesikhombisi"
+
+#: ../libpicman/picmanexport.c:335
+#, c-format
+msgid "%s can only handle grayscale or indexed images"
+msgstr "%s inokukhombisa i-grayscale okanye imifanekiso enesikhombisi"
+
+#: ../libpicman/picmanexport.c:346
+#, c-format
+msgid "%s needs an alpha channel"
+msgstr "%s ifuna i-alpha channel"
+
+#: ../libpicman/picmanexport.c:347
+msgid "Add Alpha Channel"
+msgstr "Yongeza i-Alpha Channel"
+
+#: ../libpicman/picmanexport.c:381
+msgid "Confirm Save"
+msgstr "Qinisekisa ukuGcina"
+
+#: ../libpicman/picmanexport.c:387
+msgid "Confirm"
+msgstr "Qinisekisa"
+
+#: ../libpicman/picmanexport.c:459
+msgid "Export File"
+msgstr "iFayili yokuhambisa"
+
+#: ../libpicman/picmanexport.c:463
+msgid "_Ignore"
+msgstr "_Ungayihoyi"
+
+#: ../libpicman/picmanexport.c:465
+msgid "_Export"
+msgstr "_Hambisa"
+
+# kufuneka
+#. the headline
+#: ../libpicman/picmanexport.c:493
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Umfanekiso wakho kufuneja uhanjiswe phambi kokuba ugcinwe njenge %s ngenxa "
+"yezi zizathu zilandelayo:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:564
+msgid "The export conversion won't modify your original image."
+msgstr "Uguqulo lokuhanjiswa ngeke kulungise umfanekiso wokuqala."
+
+#: ../libpicman/picmanexport.c:664
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Sele uza kugcina imaski yomaleko njenge %s.\n"
+"Oku ngeke kugcine iimaleko ezibonakalayo."
+
+#: ../libpicman/picmanexport.c:670
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Uza kugcina isiqhagamshelanisi (ukhetho olugciniweyo) as %s.\n"
+"Oku akuyi kuyigcina imaleko ebonakalayo."
+
+#: ../libpicman/picmanfontmenu.c:100
+msgid "Font Selection"
+msgstr "uKhetho lweFonti"
+
+#: ../libpicman/picmangradientmenu.c:115
+msgid "Gradient Selection"
+msgstr "uKhetho lwe-Gradient"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:181
+msgid "(Empty)"
+msgstr "(Akukho nto)"
+
+#: ../libpicman/picmanpalettemenu.c:102
+msgid "Palette Selection"
+msgstr "Ukhetho lwengqokelela yezixhobo"
+
+#: ../libpicman/picmanpatternmenu.c:125
+msgid "Pattern Selection"
+msgstr "Ukhetho lwePateni"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "ipesenti"
+
+#: ../libpicmanbase/picmanbaseenums.c:26
+msgid "_White (full opacity)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+msgid "_Black (full transparency)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#, fuzzy
+msgid "Layer's _alpha channel"
+msgstr "%s ifuna i-alpha channel"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#, fuzzy
+msgid "_Transfer layer's alpha channel"
+msgstr "%s ifuna i-alpha channel"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#, fuzzy
+msgid "_Selection"
+msgstr "uKhetho lweFonti"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Grayscale copy of layer"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:61
+msgid "FG to BG (RGB)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:62
+msgid "FG to BG (HSV)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+msgid "FG to transparent"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "Custom gradient"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:93
+#, fuzzy
+msgid "FG color fill"
+msgstr "Umbala we-RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:94
+#, fuzzy
+msgid "BG color fill"
+msgstr "Umbala we-RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+#, fuzzy
+msgid "Pattern fill"
+msgstr "Ukhetho lwePateni"
+
+#: ../libpicmanbase/picmanbaseenums.c:125
+#, fuzzy
+msgid "Add to the current selection"
+msgstr "Ukhetho lwePateni"
+
+#: ../libpicmanbase/picmanbaseenums.c:126
+msgid "Subtract from the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+#, fuzzy
+msgid "Replace the current selection"
+msgstr "Ukhetho lwePateni"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Intersect with the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:160 ../libpicmanwidgets/picmancolorscales.c:168
+#: ../libpicmanwidgets/picmancolorselect.c:352
+msgid "Red"
+msgstr "Bomvu"
+
+#: ../libpicmanbase/picmanbaseenums.c:161 ../libpicmanwidgets/picmancolorscales.c:169
+#: ../libpicmanwidgets/picmancolorselect.c:353
+msgid "Green"
+msgstr "luHlaza okweNgca"
+
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmancolorscales.c:170
+#: ../libpicmanwidgets/picmancolorselect.c:354
+msgid "Blue"
+msgstr "luHlaza okwesiBhaka-bhaka"
+
+#: ../libpicmanbase/picmanbaseenums.c:163
+#, fuzzy
+msgid "Gray"
+msgstr "Ngwevu kuPhela"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanbase/picmanbaseenums.c:436
+msgid "Indexed"
+msgstr "Enesikhombisi"
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmancolorscales.c:171
+#: ../libpicmanwidgets/picmancolorselect.c:355
+msgid "Alpha"
+msgstr "i-Alpha"
+
+#: ../libpicmanbase/picmanbaseenums.c:194
+msgid "Small"
+msgstr "Ncinane"
+
+#: ../libpicmanbase/picmanbaseenums.c:195
+msgid "Medium"
+msgstr "Phakathi"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Large"
+msgstr "Nkulu"
+
+#: ../libpicmanbase/picmanbaseenums.c:228
+msgid "Light Checks"
+msgstr "Okunemigca enqamlezileyo okukhanyayo"
+
+#: ../libpicmanbase/picmanbaseenums.c:229
+msgid "Mid-Tone Checks"
+msgstr "Okunemigca enqamlezileyo okuphakathi"
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+msgid "Dark Checks"
+msgstr "Okunemigca enqamlezileyo okumdaka"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "White Only"
+msgstr "Mhlophe kuPhela"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Gray Only"
+msgstr "Ngwevu kuPhela"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Black Only"
+msgstr "Mnyama kuPhela"
+
+#: ../libpicmanbase/picmanbaseenums.c:261
+msgid "Image source"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:262
+msgid "Pattern source"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:290
+msgid "Dodge"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:291
+msgid "Burn"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:328 ../libpicmanbase/picmanbaseenums.c:468
+#, fuzzy
+msgid "Linear"
+msgstr "Nxulumene"
+
+#: ../libpicmanbase/picmanbaseenums.c:329
+msgid "Bi-linear"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:330
+msgid "Radial"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:331
+msgid "Square"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:332
+msgid "Conical (sym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgid "Conical (asym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgid "Shaped (angular)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:335
+msgid "Shaped (spherical)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:336
+msgid "Shaped (dimpled)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:337
+msgid "Spiral (cw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:338
+msgid "Spiral (ccw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:367
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:368
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:369
+msgid "Image file"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "RGB color"
+msgstr "Umbala we-RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:399 ../libpicmanbase/picmanbaseenums.c:434
+msgid "Grayscale"
+msgstr "i-Grayscale"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgid "Indexed color"
+msgstr "Umbala onesikhombisi"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "RGB"
+msgstr "i-RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "RGB-alpha"
+msgstr "i-RGB-alpha"
+
+#: ../libpicmanbase/picmanbaseenums.c:435
+msgid "Grayscale-alpha"
+msgstr "i-Grayscale-alpha"
+
+#: ../libpicmanbase/picmanbaseenums.c:437
+msgid "Indexed-alpha"
+msgstr "i-Indexed-alpha"
+
+#: ../libpicmanbase/picmanbaseenums.c:467
+msgid "None (Fastest)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:469
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:470
+msgid "Lanczos (Best)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:498
+#, fuzzy
+msgid "Constant"
+msgstr "Ukuchasana"
+
+#: ../libpicmanbase/picmanbaseenums.c:499
+msgid "Incremental"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "None"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "Sawtooth wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+#, fuzzy
+msgid "Triangular wave"
+msgstr "uNxantathu"
+
+#: ../libpicmanbase/picmanbaseenums.c:558
+msgid "Pixels"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:559
+msgid "Points"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:588
+msgid "Shadows"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:589
+#, fuzzy
+msgid "Midtones"
+msgstr "Okunemigca enqamlezileyo okuphakathi"
+
+#: ../libpicmanbase/picmanbaseenums.c:590
+msgid "Highlights"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:618
+msgid "Forward (traditional)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:619
+msgid "Backward (corrective)"
+msgstr ""
+
+#: ../libpicmanbase/picmanmemsize.c:177
+#, c-format
+msgid "%d Bytes"
+msgstr "ii-%d Bytes"
+
+#: ../libpicmanbase/picmanmemsize.c:182
+#, c-format
+msgid "%.2f KB"
+msgstr "i-%.2f KB"
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.1f KB"
+msgstr "i-%.1f KB"
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%d KB"
+msgstr "i-%d KB"
+
+#: ../libpicmanbase/picmanmemsize.c:197
+#, c-format
+msgid "%.2f MB"
+msgstr "i-%.2f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.1f MB"
+msgstr "i-%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%d MB"
+msgstr "i-%d MB"
+
+#: ../libpicmanbase/picmanmemsize.c:212
+#, c-format
+msgid "%.2f GB"
+msgstr "i-%.2f GB"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, c-format
+msgid "%.1f GB"
+msgstr "i-%.1f GB"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%d GB"
+msgstr "i-%d GB"
+
+#: ../libpicmanbase/picmanutils.c:169 ../libpicmanbase/picmanutils.c:174
+msgid "(invalid UTF-8 string)"
+msgstr "(uluhlu lwamagama UTF-8 olungasebenziyo)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:40
+msgid "Mode of operation for color management."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "Sets the color profile for the display."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid "Sets default RGB workspace color profile."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:46
+msgid "Sets the CMYK color profile used to convert between RGB and CMYK."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:48
+msgid "Sets the color profile used when printing."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "Sets how colors are mapped for your display."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Sets how colors are converted from workspace to simulation device."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56 ../modules/cdisplay_proof.c:55
+msgid "Perceptual"
+msgstr "Ngokuqondakalayo"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57 ../modules/cdisplay_proof.c:56
+msgid "Relative Colorimetric"
+msgstr "i-Colorimetric eNxulumeneyo"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+#: ../libpicmanwidgets/picmancolorscales.c:166
+#: ../libpicmanwidgets/picmancolorselect.c:350 ../modules/cdisplay_proof.c:57
+msgid "Saturation"
+msgstr "Ukugcwala"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59 ../modules/cdisplay_proof.c:58
+msgid "Absolute Colorimetric"
+msgstr "i-Colorimetric ePheleleyo"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:88
+msgid "Ask"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:89
+msgid "Use embedded profile"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:90
+#, fuzzy
+msgid "Convert to RGB workspace"
+msgstr "Guqulela kwi-RGB"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:95
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr ""
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:423
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:497
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:512
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:581
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-iface.c:453
+#: ../libpicmanconfig/picmanconfig-iface.c:466 ../libpicmanconfig/picmanscanner.c:515
+#: ../libpicmanconfig/picmanscanner.c:596
+msgid "fatal parse error"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-path.c:376
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:135
+#, fuzzy, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Khange idale i-thumbnail ye- %s: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:148
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:667
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:675
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:686
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:704
+#, fuzzy, c-format
+msgid "Could not create '%s': %s"
+msgstr "Khange idale i-thumbnail ye- %s: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:102
+#, c-format
+msgid "Could not open '%s' for reading: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:272
+#, fuzzy
+msgid "invalid UTF-8 string"
+msgstr "(uluhlu lwamagama UTF-8 olungasebenziyo)"
+
+#: ../libpicmanconfig/picmanscanner.c:623
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:180
+#, c-format
+msgid "Loading module: '%s'\n"
+msgstr "Imodyuli yokufaka: '%s'\n"
+
+#: ../libpicmanmodule/picmanmodule.c:197 ../libpicmanmodule/picmanmodule.c:216
+#: ../libpicmanmodule/picmanmodule.c:330 ../libpicmanmodule/picmanmodule.c:358
+#: ../libpicmanmodule/picmanmodule.c:482
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "iModyuli '%s' faka impazamo: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:286
+#, c-format
+msgid "Skipping module: '%s'\n"
+msgstr "Ukutsiba imodyuli: '%s'\n"
+
+#: ../libpicmanmodule/picmanmodule.c:426
+msgid "Module error"
+msgstr "Impazamo yeModyuli"
+
+#: ../libpicmanmodule/picmanmodule.c:427
+msgid "Loaded"
+msgstr "Ifakiwe"
+
+#: ../libpicmanmodule/picmanmodule.c:428
+msgid "Load failed"
+msgstr "Ukufaka akuphumelelanga"
+
+#: ../libpicmanmodule/picmanmodule.c:429
+msgid "Not loaded"
+msgstr "Ayifakwanga"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:125
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:249 ../libpicmanthumb/picmanthumb-utils.c:317
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Ayiphumelelangha ukudala isiqulathi zifayili se-thumbnail '%s'."
+
+#: ../libpicmanthumb/picmanthumbnail.c:919
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Khange idale i-thumbnail ye- %s: %s"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:99
+msgid "_Foreground Color"
+msgstr "_Umbala wokungaPhambili"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:103
+msgid "_Background Color"
+msgstr "_Umbala wokungaSemva"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:107
+msgid "Blac_k"
+msgstr "Mnyam_a"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:111
+msgid "_White"
+msgstr "_Mhlophe"
+
+#: ../libpicmanwidgets/picmancolorscales.c:133
+msgid "Scales"
+msgstr "Imilinganiselo"
+
+#: ../libpicmanwidgets/picmancolorscales.c:155
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmancolorscales.c:156
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmancolorscales.c:157
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmancolorscales.c:158
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmancolorscales.c:159
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmancolorscales.c:160
+#: ../libpicmanwidgets/picmancolorselect.c:345
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmancolorscales.c:161
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmancolorscales.c:165
+#: ../libpicmanwidgets/picmancolorselect.c:349
+msgid "Hue"
+msgstr "i-Hue"
+
+#: ../libpicmanwidgets/picmancolorscales.c:167
+#: ../libpicmanwidgets/picmancolorselect.c:351
+msgid "Value"
+msgstr "Ixabiso"
+
+#: ../libpicmanwidgets/picmancolorscales.c:243
+msgid "Hexadecimal color notation as used in HTML and CSS"
+msgstr ""
+"Ubhalo-manani lombala we-Hexadecimal njengoko kusetyenziswa kwi-HTML ne-CSS"
+
+#: ../libpicmanwidgets/picmancolorscales.c:248
+msgid "HTML _Notation:"
+msgstr "Ubhalo lwamanani _lwe-HTML:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:203
+msgid "Current:"
+msgstr "Yangoku:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:225
+msgid "Old:"
+msgstr "Ndala:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:351
+msgid "Select Folder"
+msgstr "Khetha isiQulathi ziFayili"
+
+#: ../libpicmanwidgets/picmanfileentry.c:353
+msgid "Select File"
+msgstr "Khetha iFayili"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:232
+msgid "Kilobytes"
+msgstr "ii-Kilobytes"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:233
+msgid "Megabytes"
+msgstr "ii-Megabytes"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:234
+msgid "Gigabytes"
+msgstr "ii-Gigabytes"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:243
+msgid "Writable"
+msgstr "Kuyabhaleka"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:252
+msgid "Folder"
+msgstr "Isiqulathi ziFayili"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:138
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Cofa i-eyedropper, uze ke ucofe umbala nokuba kuphi na kwisikrini sakho "
+"ukukhetha umbala."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:126
+msgid "Check Size"
+msgstr "Khangela iSayizi"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:133
+msgid "Check Style"
+msgstr "Khangela isiMbo"
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:240
+msgid "_Preview"
+msgstr "_Jonga phambi koshicilelo"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1728
+#, c-format
+msgid "This text input field is limited to %d characters."
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "i-Ankile"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr "M_bindini"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr "_ePhindwe kabini"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr "_Hlela"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr "Nxulumene"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr "Yincamathisele njengeNtsha"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr "Ncamathisela kwi"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr "_Vula kwakhona ungayikhuphanga kumbane"
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "Okubonakalayo"
+
+#: ../libpicmanwidgets/picmanstock.c:154 ../libpicmanwidgets/picmanstock.c:158
+msgid "_Stroke"
+msgstr "_Umgca"
+
+#: ../libpicmanwidgets/picmanstock.c:170
+msgid "L_etter Spacing"
+msgstr "Ukuvula isithuba seL_eta"
+
+#: ../libpicmanwidgets/picmanstock.c:171
+msgid "L_ine Spacing"
+msgstr "Ukuvula isithuba sem_igca"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "_Resize"
+msgstr "_Tshintsha isayizi"
+
+#: ../libpicmanwidgets/picmanstock.c:188 ../libpicmanwidgets/picmanstock.c:294
+msgid "_Scale"
+msgstr "_Umlinganiselo"
+
+#: ../libpicmanwidgets/picmanstock.c:273
+msgid "Crop"
+msgstr "Intonga"
+
+#: ../libpicmanwidgets/picmanstock.c:290
+msgid "_Transform"
+msgstr "_Tshintsha"
+
+#: ../libpicmanwidgets/picmanstock.c:293
+msgid "_Rotate"
+msgstr "_Jikelezisa"
+
+#: ../libpicmanwidgets/picmanstock.c:295
+msgid "_Shear"
+msgstr "_Cheba"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:302
+msgid "More..."
+msgstr "Ngaphezulu..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:612
+msgid "Unit Selection"
+msgstr "UKhetho lweYunithi"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:660
+msgid "Unit"
+msgstr "iYunithi"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:664
+msgid "Factor"
+msgstr "iFekta"
+
+# Please translate "random"
+#: ../libpicmanwidgets/picmanwidgets.c:1001
+#, fuzzy
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Sebenzisa eli xabiso kusetyenziso lwenombolo yembewu engakhethiyo - oku "
+"kwenza ukuba uphinde umsebenzi \"random\" onikiweyo"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid "_New Seed"
+msgstr "_Okunokusetyenziswa okuTsha"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1018
+msgid "Seed random number generator with a generated random number"
+msgstr ""
+"Sebenzisa inombolo yesisebenzisi engakhethiyo kunye nenombolo engakhethiyo "
+"yesisebenzisi"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "_Randomize"
+msgstr "_Ngakhethiyo"
+
+#: ../modules/cdisplay_colorblind.c:67
+#, fuzzy
+msgid "Protanopia (insensitivity to red"
+msgstr "i-Protanopia (ayinabo ubuntununtunu kububomvu)"
+
+#: ../modules/cdisplay_colorblind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "i-Deuteranopia (ayinabo ubuntununtunu bokuluhlaza okwengca)"
+
+#: ../modules/cdisplay_colorblind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "i-Tritanopia (ayinabo ubuntununtunu bokuluhlaza okwesibhakabhaka)"
+
+#: ../modules/cdisplay_colorblind.c:200
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr ""
+"Isihluzi solinganiso kwentsilelo yombala (Brettel-Vienot-Mollon algorithm)"
+
+#: ../modules/cdisplay_colorblind.c:290
+msgid "Color Deficient Vision"
+msgstr "Umbono wokuNqongophala koMbala"
+
+#: ../modules/cdisplay_colorblind.c:503
+msgid "Color _Deficiency Type:"
+msgstr "Uhlobo lokuNqongophala _koMbala:"
+
+#: ../modules/cdisplay_gamma.c:91
+msgid "Gamma color display filter"
+msgstr "Isihluzi esibonisa umbala se-Gamma"
+
+#: ../modules/cdisplay_gamma.c:160
+msgid "Gamma"
+msgstr "i-Gamma"
+
+#: ../modules/cdisplay_gamma.c:251
+msgid "_Gamma:"
+msgstr "i-_Gamma:"
+
+#: ../modules/cdisplay_highcontrast.c:91
+msgid "High Contrast color display filter"
+msgstr "Isihluzi esibonisa umbala sokuChasana okuPhezulu"
+
+#: ../modules/cdisplay_highcontrast.c:160
+msgid "Contrast"
+msgstr "Ukuchasana"
+
+#: ../modules/cdisplay_highcontrast.c:251
+msgid "Contrast C_ycles:"
+msgstr "iZ_angqa zokuChasana:"
+
+#: ../modules/cdisplay_lcms.c:95
+#, fuzzy
+msgid "Color management display filter using ICC color profiles"
+msgstr "Isihluzi sesikhuseli sombala kusetyenziswa inkangeleko yombala we-ICC"
+
+#: ../modules/cdisplay_lcms.c:163
+msgid "Color Management"
+msgstr ""
+
+#: ../modules/cdisplay_proof.c:127
+msgid "Color proof filter using ICC color profile"
+msgstr "Isihluzi sesikhuseli sombala kusetyenziswa inkangeleko yombala we-ICC"
+
+#: ../modules/cdisplay_proof.c:221
+msgid "Color Proof"
+msgstr "iISkhuseli soMbala"
+
+#: ../modules/cdisplay_proof.c:346
+msgid "_Intent:"
+msgstr "_Ukuzimisela:"
+
+#: ../modules/cdisplay_proof.c:350
+msgid "Choose an ICC Color Profile"
+msgstr "Khetha iNkangeleko yoMbala we-ICC"
+
+#: ../modules/cdisplay_proof.c:353
+msgid "_Profile:"
+msgstr "i_Nkangeleko:"
+
+#: ../modules/cdisplay_proof.c:358
+msgid "_Black Point Compensation"
+msgstr "i_Mbuyekezo yeChokoza eliMnyama"
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr "Isikhethi sombala se-CMYK"
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "i-CMYK"
+
+#: ../modules/colorsel_cmyk.c:147
+msgid "_C"
+msgstr "_C"
+
+#: ../modules/colorsel_cmyk.c:148
+msgid "_M"
+msgstr "_M"
+
+#: ../modules/colorsel_cmyk.c:149
+msgid "_Y"
+msgstr "_Y"
+
+#: ../modules/colorsel_cmyk.c:150
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/colorsel_cmyk.c:154
+msgid "Cyan"
+msgstr "i-Cyan"
+
+#: ../modules/colorsel_cmyk.c:155
+msgid "Magenta"
+msgstr "i-Magenta"
+
+#: ../modules/colorsel_cmyk.c:156
+msgid "Yellow"
+msgstr "Qanda"
+
+#: ../modules/colorsel_cmyk.c:157
+msgid "Black"
+msgstr "Mnyama"
+
+#: ../modules/colorsel_cmyk.c:191
+msgid "Black _Pullout:"
+msgstr "Okukhutshwayo _okuMnyama:"
+
+#: ../modules/colorsel_cmyk.c:208
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Ipesenti yobumnyama yokuba uyikhuphe kwii-inki ezimbala-bala."
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr "Isikhethi mbala sikanxantathu sesimbo sokupeyinta"
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr "uNxantathu"
+
+#: ../modules/colorsel_water.c:88
+msgid "Watercolor style color selector"
+msgstr "Isimbo sesikhethi mbala sepeyinti yokuzoba exutywa namanzi"
+
+#: ../modules/colorsel_water.c:154
+msgid "Watercolor"
+msgstr "Ipeyinti yokuzoba exutywa namanzi"
+
+#: ../modules/colorsel_water.c:220
+msgid "Pressure"
+msgstr "Uxinzelelo"

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 #define __GUI_UNIQUE_H__
 
 #ifdef G_OS_WIN32
-#define GIMP_UNIQUE_WIN32_WINDOW_CLASS  L"GimpWin32UniqueHandler"
-#define GIMP_UNIQUE_WIN32_WINDOW_NAME   L"GimpProxy"
+#define PICMAN_UNIQUE_WIN32_WINDOW_CLASS  L"PicmanWin32UniqueHandler"
+#define PICMAN_UNIQUE_WIN32_WINDOW_NAME   L"PicmanProxy"
 #endif
 
 
-void  gui_unique_init (Gimp *gimp);
+void  gui_unique_init (Picman *picman);
 void  gui_unique_exit (void);
 
 

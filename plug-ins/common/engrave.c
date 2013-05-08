@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Eiichi Takamori
  * Copyright (C) 1996, 1997 Torsten Martinsen
@@ -19,17 +19,17 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
 
 #define PLUG_IN_PROC    "plug-in-engrave"
 #define PLUG_IN_BINARY  "engrave"
-#define PLUG_IN_ROLE    "gimp-engrave"
+#define PLUG_IN_ROLE    "picman-engrave"
 #define SCALE_WIDTH     125
 #define TILE_CACHE_SIZE  16
 
@@ -42,34 +42,34 @@ typedef struct
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static gboolean  engrave_dialog (GimpDrawable *drawable);
+static gboolean  engrave_dialog (PicmanDrawable *drawable);
 
-static void      engrave        (GimpDrawable *drawable,
-                                 GimpPreview  *preview);
+static void      engrave        (PicmanDrawable *drawable,
+                                 PicmanPreview  *preview);
 
 #if 0
-static void      engrave_large  (GimpDrawable *drawable,
+static void      engrave_large  (PicmanDrawable *drawable,
                                  gint          height,
                                  gboolean      limit,
-                                 GimpPreview  *preview);
+                                 PicmanPreview  *preview);
 #endif
 
-static void      engrave_small  (GimpDrawable *drawable,
+static void      engrave_small  (PicmanDrawable *drawable,
                                  gint          height,
                                  gboolean      limit,
                                  gint          tile_width,
-                                 GimpPreview  *preview);
+                                 PicmanPreview  *preview);
 
 static void      engrave_sub    (gint          height,
                                  gboolean      limit,
                                  gint          bpp,
                                  gint          num_channels);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -88,16 +88,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"             },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                   },
-    { GIMP_PDB_INT32,    "height",   "Resolution in pixels"             },
-    { GIMP_PDB_INT32,    "limit",    "Limit line width { TRUE, FALSE }" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"             },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                   },
+    { PICMAN_PDB_INT32,    "height",   "Resolution in pixels"             },
+    { PICMAN_PDB_INT32,    "limit",    "Limit line width { TRUE, FALSE }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate an antique engraving"),
                           "Creates a black-and-white 'engraved' version of an image as seen in old illustrations",
                           "Spencer Kimball & Peter Mattis, Eiichi Takamori, Torsten Martinsen",
@@ -105,24 +105,24 @@ query (void)
                           "1995,1996,1997",
                           N_("En_grave..."),
                           "RGBA, GRAYA",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -131,70 +131,70 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
 
       /*  First acquire information with a dialog  */
       if (!engrave_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           pvals.height = param[3].data.d_int32;
           pvals.limit  = (param[4].data.d_int32) ? TRUE : FALSE;
         }
-      if ((status == GIMP_PDB_SUCCESS) &&
+      if ((status == PICMAN_PDB_SUCCESS) &&
           pvals.height < 0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Engraving"));
+      picman_progress_init (_("Engraving"));
 
       engrave (drawable, NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &pvals, sizeof (EngraveValues));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &pvals, sizeof (EngraveValues));
     }
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
-engrave_dialog (GimpDrawable *drawable)
+engrave_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -204,11 +204,11 @@ engrave_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Engrave"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Engrave"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -220,7 +220,7 @@ engrave_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -228,7 +228,7 @@ engrave_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -241,16 +241,16 @@ engrave_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Height:"), SCALE_WIDTH, 0,
                               pvals.height, 2.0, 16.0, 1.0, 4.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pvals.height);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Limit line width"));
@@ -259,15 +259,15 @@ engrave_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &pvals.limit);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -277,14 +277,14 @@ engrave_dialog (GimpDrawable *drawable)
 /*  Engrave interface functions  */
 
 static void
-engrave (GimpDrawable *drawable,
-         GimpPreview  *preview)
+engrave (PicmanDrawable *drawable,
+         PicmanPreview  *preview)
 {
   gint     tile_width;
   gint     height;
   gboolean limit;
 
-  tile_width = gimp_tile_width();
+  tile_width = picman_tile_width();
   height = pvals.height;
   limit = pvals.limit;
   /* [DindinX] this test is always false since
@@ -299,12 +299,12 @@ engrave (GimpDrawable *drawable,
 
 #if 0
 static void
-engrave_large (GimpDrawable *drawable,
+engrave_large (PicmanDrawable *drawable,
                gint          height,
                gboolean      limit,
-               GimpPreview  *preview)
+               PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   guchar       *src_row, *dest_row;
   guchar       *src, *dest;
   gulong       *average;
@@ -315,9 +315,9 @@ engrave_large (GimpDrawable *drawable,
   gint          progress, max_progress;
   gpointer      pr;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
-  bpp = (gimp_drawable_is_rgb (drawable->drawable_id)) ? 3 : 1;
+  bpp = (picman_drawable_is_rgb (drawable->drawable_id)) ? 3 : 1;
   average = g_new (gulong, bpp);
 
   /* Initialize progress */
@@ -331,15 +331,15 @@ engrave_large (GimpDrawable *drawable,
           y_step = height - (y % height);
           y_step = MIN (y_step, x2 - x);
 
-          gimp_pixel_rgn_init (&src_rgn, drawable, x, y, 1, y_step,
+          picman_pixel_rgn_init (&src_rgn, drawable, x, y, 1, y_step,
                                FALSE, FALSE);
           for (b = 0; b < bpp; b++)
             average[b] = 0;
           count = 0;
 
-          for (pr = gimp_pixel_rgns_register (1, &src_rgn);
+          for (pr = picman_pixel_rgns_register (1, &src_rgn);
                pr != NULL;
-               pr = gimp_pixel_rgns_process(pr))
+               pr = picman_pixel_rgns_process(pr))
             {
               src_row = src_rgn.data;
               for (row = 0; row < src_rgn.h; row++)
@@ -356,7 +356,7 @@ engrave_large (GimpDrawable *drawable,
                 }
               /* Update progress */
               progress += src_rgn.w * src_rgn.h;
-              gimp_progress_update ((double) progress / (double) max_progress);
+              picman_progress_update ((double) progress / (double) max_progress);
             }
 
           if (count > 0)
@@ -366,15 +366,15 @@ engrave_large (GimpDrawable *drawable,
           if (bpp < 3)
             inten = average[0] / 254.0 * height;
           else
-            inten = GIMP_RGB_LUMINANCE (average[0],
+            inten = PICMAN_RGB_LUMINANCE (average[0],
                                         average[1],
                                         average[2]) / 254.0 * height;
 
-          gimp_pixel_rgn_init (&dest_rgn,
+          picman_pixel_rgn_init (&dest_rgn,
                                drawable, x, y, 1, y_step, TRUE, TRUE);
-          for (pr = gimp_pixel_rgns_register (1, &dest_rgn);
+          for (pr = picman_pixel_rgns_register (1, &dest_rgn);
                pr != NULL;
-               pr = gimp_pixel_rgns_process(pr))
+               pr = picman_pixel_rgns_process(pr))
             {
               dest_row = dest_rgn.data;
               for (row = 0; row < dest_rgn.h; row++)
@@ -394,7 +394,7 @@ engrave_large (GimpDrawable *drawable,
                 }
               /* Update progress */
               progress += dest_rgn.w * dest_rgn.h;
-              gimp_progress_update((double) progress / (double) max_progress);
+              picman_progress_update((double) progress / (double) max_progress);
             }
         }
     }
@@ -402,9 +402,9 @@ engrave_large (GimpDrawable *drawable,
   g_free (average);
 
   /*  update the engraved region  */
-  gimp_drawable_flush( drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+  picman_drawable_flush( drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
 }
 #endif
 
@@ -418,13 +418,13 @@ typedef struct
 static PixelArea area;
 
 static void
-engrave_small (GimpDrawable *drawable,
+engrave_small (PicmanDrawable *drawable,
                gint          line_height,
                gboolean      limit,
                gint          tile_width,
-               GimpPreview  *preview)
+               PicmanPreview  *preview)
 {
-  GimpPixelRgn src_rgn, dest_rgn;
+  PicmanPixelRgn src_rgn, dest_rgn;
   gint         bpp, num_channels;
   gint         x1, y1, x2, y2;
   gint         width, height;
@@ -440,22 +440,22 @@ engrave_small (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
       width  = x2 - x1;
       height = y2 - y1;
     }
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
   /* Initialize progress */
@@ -463,7 +463,7 @@ engrave_small (GimpDrawable *drawable,
   max_progress = width * height;
 
   bpp = drawable->bpp;
-  num_channels = (gimp_drawable_is_rgb (drawable->drawable_id)) ? 3 : 1;
+  num_channels = (picman_drawable_is_rgb (drawable->drawable_id)) ? 3 : 1;
 
   area.width = (tile_width / line_height) * line_height;
   area.data = g_new(guchar, (glong) bpp * area.width * area.width);
@@ -475,19 +475,19 @@ engrave_small (GimpDrawable *drawable,
       area.h = MIN(area.h, y2 - area.y);
       for (area.x = x1; area.x < x2; ++area.x)
         {
-          gimp_pixel_rgn_get_rect (&src_rgn, area.data, area.x, area.y, 1,
+          picman_pixel_rgn_get_rect (&src_rgn, area.data, area.x, area.y, 1,
                                    area.h);
 
           engrave_sub (line_height, limit, bpp, num_channels);
 
-          gimp_pixel_rgn_set_rect (&dest_rgn, area.data,
+          picman_pixel_rgn_set_rect (&dest_rgn, area.data,
                                    area.x, area.y, 1, area.h);
         }
       if (!preview)
         {
           /* Update progress */
           progress += area.h * width;
-          gimp_progress_update ((double) progress / (double) max_progress);
+          picman_progress_update ((double) progress / (double) max_progress);
         }
     }
 
@@ -496,15 +496,15 @@ engrave_small (GimpDrawable *drawable,
   /*  update the engraved region  */
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &dest_rgn);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
     }
 }
 
@@ -560,7 +560,7 @@ engrave_sub (gint height,
       if (num_channels == 1)
         inten = average[0] / 254.0 * height;
       else
-        inten = GIMP_RGB_LUMINANCE (average[0],
+        inten = PICMAN_RGB_LUMINANCE (average[0],
                                     average[1],
                                     average[2]) / 254.0 * height;
 

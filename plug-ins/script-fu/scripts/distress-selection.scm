@@ -31,21 +31,21 @@
 
   (let (
        (theImage inImage)
-       (theWidth (car (gimp-image-width inImage)))
-       (theHeight (car (gimp-image-height inImage)))
+       (theWidth (car (picman-image-width inImage)))
+       (theHeight (car (picman-image-height inImage)))
        (theLayer 0)
-       (theMode (car (gimp-image-base-type inImage)))
+       (theMode (car (picman-image-base-type inImage)))
        )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
-    (gimp-image-undo-group-start theImage)
+    (picman-context-push)
+    (picman-context-set-defaults)
+    (picman-image-undo-group-start theImage)
 
     (if (= theMode GRAY)
       (set! theMode GRAYA-IMAGE)
       (set! theMode RGBA-IMAGE)
     )
-    (set! theLayer (car (gimp-layer-new theImage
+    (set! theLayer (car (picman-layer-new theImage
                                         theWidth
                                         theHeight
                                         theMode
@@ -53,22 +53,22 @@
                                         100
                                         NORMAL-MODE)))
 
-    (gimp-image-insert-layer theImage theLayer 0 0)
+    (picman-image-insert-layer theImage theLayer 0 0)
 
-    (if (= FALSE (car (gimp-selection-is-empty theImage)))
-        (gimp-edit-fill theLayer BACKGROUND-FILL)
+    (if (= FALSE (car (picman-selection-is-empty theImage)))
+        (picman-edit-fill theLayer BACKGROUND-FILL)
     )
 
-    (gimp-selection-invert theImage)
+    (picman-selection-invert theImage)
 
-    (if (= FALSE (car (gimp-selection-is-empty theImage)))
-        (gimp-edit-clear theLayer)
+    (if (= FALSE (car (picman-selection-is-empty theImage)))
+        (picman-edit-clear theLayer)
     )
 
-    (gimp-selection-invert theImage)
-    (gimp-selection-none inImage)
+    (picman-selection-invert theImage)
+    (picman-selection-none inImage)
 
-    (gimp-layer-scale theLayer
+    (picman-layer-scale theLayer
                       (/ theWidth inGranu)
                       (/ theHeight inGranu)
                       TRUE)
@@ -81,19 +81,19 @@
 
     (plug-in-gauss-iir RUN-NONINTERACTIVE
            theImage theLayer inSmooth inSmoothH inSmoothV)
-    (gimp-layer-scale theLayer theWidth theHeight TRUE)
+    (picman-layer-scale theLayer theWidth theHeight TRUE)
     (plug-in-threshold-alpha RUN-NONINTERACTIVE theImage theLayer inThreshold)
     (plug-in-gauss-iir RUN-NONINTERACTIVE theImage theLayer 1 TRUE TRUE)
-    (gimp-image-select-item inImage CHANNEL-OP-REPLACE theLayer)
-    (gimp-image-remove-layer theImage theLayer)
-    (if (and (= (car (gimp-item-is-channel inDrawable)) TRUE)
-             (= (car (gimp-item-is-layer-mask inDrawable)) FALSE))
-      (gimp-image-set-active-channel theImage inDrawable)
+    (picman-image-select-item inImage CHANNEL-OP-REPLACE theLayer)
+    (picman-image-remove-layer theImage theLayer)
+    (if (and (= (car (picman-item-is-channel inDrawable)) TRUE)
+             (= (car (picman-item-is-layer-mask inDrawable)) FALSE))
+      (picman-image-set-active-channel theImage inDrawable)
       )
-    (gimp-image-undo-group-end theImage)
+    (picman-image-undo-group-end theImage)
 
-    (gimp-displays-flush)
-    (gimp-context-pop)
+    (picman-displays-flush)
+    (picman-context-pop)
   )
 )
 

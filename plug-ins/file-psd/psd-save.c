@@ -1,6 +1,6 @@
 /*
  * PSD Save Plugin version 1.0 (BETA)
- * This GIMP plug-in is designed to save Adobe Photoshop(tm) files (.PSD)
+ * This PICMAN plug-in is designed to save Adobe Photoshop(tm) files (.PSD)
  *
  * Monigotes
  *
@@ -40,7 +40,7 @@
  *       - Cleaned up and GNUstylized.
  *       - Translated all comments and vars in Spanish to English.
  *
- *  2005-2-11 Jay Cox <jaycox@gimp.org>
+ *  2005-2-11 Jay Cox <jaycox@picman.org>
  *       Rewrote all the code that deals with pixels to be stingy with
  *       memory and opperate on tile-size chunks.  Create a flattened
  *       copy of the image when necessary. Fixes file corruption bug
@@ -70,17 +70,17 @@
 
 #include <glib/gstdio.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* *** DEFINES *** */
 
 #define SAVE_PROC      "file-psd-save"
 #define PLUG_IN_BINARY "file-psd-save"
-#define PLUG_IN_ROLE   "gimp-file-psd-save"
+#define PLUG_IN_ROLE   "picman-file-psd-save"
 
 /* set to TRUE if you want debugging, FALSE otherwise */
 #define DEBUG FALSE
@@ -118,7 +118,7 @@ typedef struct PsdImageData
   gint32               image_height;
   gint32               image_width;
 
-  GimpImageBaseType    baseType;
+  PicmanImageBaseType    baseType;
 
   gint32               merged_layer;/* Merged image,
                                        to be used for the image data section */
@@ -141,13 +141,13 @@ static PSD_Image_Data PSDImageData;
 static void   query                (void);
 static void   run                  (const gchar      *name,
                                     gint              nparams,
-                                    const GimpParam  *param,
+                                    const PicmanParam  *param,
                                     gint             *nreturn_vals,
-                                    GimpParam       **return_vals);
+                                    PicmanParam       **return_vals);
 
 static void   psd_lmode_layer      (gint32         idLayer,
                                     gchar         *psdMode);
-static void   reshuffle_cmap_write (guchar        *mapGimp);
+static void   reshuffle_cmap_write (guchar        *mapPicman);
 static void   save_header          (FILE          *fd,
                                     gint32         image_id);
 static void   save_color_mode_data (FILE          *fd,
@@ -193,7 +193,7 @@ static void   write_pixel_data     (FILE          *fd,
 static gint32 create_merged_image  (gint32         imageID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -208,43 +208,43 @@ MAIN()
 static void
 query (void)
 {
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_INT32,    "compression",  "Compression type: { NONE (0), LZW (1), PACKBITS (2)" },
-    { GIMP_PDB_INT32,    "fill-order",   "Fill Order: { MSB to LSB (0), LSB to MSB (1)" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "compression",  "Compression type: { NONE (0), LZW (1), PACKBITS (2)" },
+    { PICMAN_PDB_INT32,    "fill-order",   "Fill Order: { MSB to LSB (0), LSB to MSB (1)" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves files in the Photoshop(tm) PSD file format",
-                          "This filter saves files of Adobe Photoshop(tm) native PSD format.  These files may be of any image type supported by GIMP, with or without layers, layer masks, aux channels and guides.",
+                          "This filter saves files of Adobe Photoshop(tm) native PSD format.  These files may be of any image type supported by PICMAN, with or without layers, layer masks, aux channels and guides.",
                           "Monigotes",
                           "Monigotes",
                           "2000",
                           N_("Photoshop image"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-psd");
-  gimp_register_save_handler (SAVE_PROC, "psd", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-psd");
+  picman_register_save_handler (SAVE_PROC, "psd", "");
 }
 
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpRunMode       run_mode;
+  static PicmanParam  values[2];
+  PicmanRunMode       run_mode;
   GError           *error = NULL;
 
   run_mode = param[0].data.d_int32;
@@ -252,14 +252,14 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
 
   if (strcmp (name, SAVE_PROC) == 0)
     {
       gint32           image_id;
       gint32           drawable_id;
-      GimpExportReturn export = GIMP_EXPORT_IGNORE;
+      PicmanExportReturn export = PICMAN_EXPORT_IGNORE;
 
       IFDBG printf ("\n---------------- %s ----------------\n",
                     param[3].data.d_string);
@@ -269,20 +269,20 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_id, &drawable_id, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA   |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYERS  |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS);
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_id, &drawable_id, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA   |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYERS  |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYER_MASKS);
 
-          if (export == GIMP_EXPORT_CANCEL)
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -293,22 +293,22 @@ run (const gchar      *name,
 
       if (save_image (param[3].data.d_string, image_id, &error))
         {
-          values[0].data.d_status = GIMP_PDB_SUCCESS;
+          values[0].data.d_status = PICMAN_PDB_SUCCESS;
         }
       else
         {
-          values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+          values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
           if (error)
             {
               *nreturn_vals = 2;
-              values[1].type          = GIMP_PDB_STRING;
+              values[1].type          = PICMAN_PDB_STRING;
               values[1].data.d_string = error->message;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_id);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_id);
     }
 }
 
@@ -316,59 +316,59 @@ static void
 psd_lmode_layer (gint32  idLayer,
                  gchar  *psdMode)
 {
-  switch (gimp_layer_get_mode (idLayer))
+  switch (picman_layer_get_mode (idLayer))
     {
-    case GIMP_NORMAL_MODE:
+    case PICMAN_NORMAL_MODE:
       strcpy (psdMode, "norm");
       break;
-    case GIMP_DARKEN_ONLY_MODE:
+    case PICMAN_DARKEN_ONLY_MODE:
       strcpy (psdMode, "dark");
       break;
-    case GIMP_LIGHTEN_ONLY_MODE:
+    case PICMAN_LIGHTEN_ONLY_MODE:
       strcpy (psdMode, "lite");
       break;
-    case GIMP_HUE_MODE:
+    case PICMAN_HUE_MODE:
       strcpy (psdMode, "hue ");
       break;
-    case GIMP_SATURATION_MODE:
+    case PICMAN_SATURATION_MODE:
       strcpy (psdMode, "sat ");
       break;
-    case GIMP_COLOR_MODE:
+    case PICMAN_COLOR_MODE:
       strcpy (psdMode, "colr");
       break;
-    case GIMP_ADDITION_MODE:
+    case PICMAN_ADDITION_MODE:
       strcpy (psdMode, "lddg");
       break;
-    case GIMP_MULTIPLY_MODE:
+    case PICMAN_MULTIPLY_MODE:
       strcpy (psdMode, "mul ");
       break;
-    case GIMP_SCREEN_MODE:
+    case PICMAN_SCREEN_MODE:
       strcpy (psdMode, "scrn");
       break;
-    case GIMP_DISSOLVE_MODE:
+    case PICMAN_DISSOLVE_MODE:
       strcpy (psdMode, "diss");
       break;
-    case GIMP_DIFFERENCE_MODE:
+    case PICMAN_DIFFERENCE_MODE:
       strcpy (psdMode, "diff");
       break;
-    case GIMP_VALUE_MODE:                  /* ? */
+    case PICMAN_VALUE_MODE:                  /* ? */
       strcpy (psdMode, "lum ");
       break;
-    case GIMP_HARDLIGHT_MODE:
+    case PICMAN_HARDLIGHT_MODE:
       strcpy (psdMode, "hLit");
       break;
-    case GIMP_SOFTLIGHT_MODE:
+    case PICMAN_SOFTLIGHT_MODE:
       strcpy (psdMode, "sLit");
       break;
-    case GIMP_OVERLAY_MODE:
+    case PICMAN_OVERLAY_MODE:
       strcpy (psdMode, "over");
       break;
     default:
       {
         const gchar *nick = "?";
 
-        gimp_enum_get_value (GIMP_TYPE_LAYER_MODE_EFFECTS,
-                             gimp_layer_get_mode (idLayer),
+        picman_enum_get_value (PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                             picman_layer_get_mode (idLayer),
                              NULL, &nick, NULL, NULL);
 
         g_message (_("Unable to save layer with mode '%s'.  Either the PSD "
@@ -445,7 +445,7 @@ xfwrite (FILE          *fd,
   if (fwrite (buf, len, 1, fd) == 0)
     {
       g_printerr ("%s: Error while writing '%s'\n", G_STRFUNC, why);
-      gimp_quit ();
+      picman_quit ();
     }
 }
 
@@ -465,7 +465,7 @@ write_gchar (FILE        *fd,
   if (fwrite (&b, 1, 2, fd) == 0)
     {
       g_printerr ("%s: Error while writing '%s'\n", G_STRFUNC, why);
-      gimp_quit ();
+      picman_quit ();
     }
   fseek (fd, pos + 1, SEEK_SET);
 }
@@ -486,7 +486,7 @@ write_gint16 (FILE        *fd,
   if (fwrite (&b, 1, 2, fd) == 0)
     {
       g_printerr ("%s: Error while writing '%s'\n", G_STRFUNC, why);
-      gimp_quit ();
+      picman_quit ();
     }
 }
 
@@ -508,7 +508,7 @@ write_gint32 (FILE        *fd,
   if (fwrite (&b, 1, 4, fd) == 0)
     {
       g_printerr ("%s: Error while writing '%s'\n", G_STRFUNC, why);
-      gimp_quit ();
+      picman_quit ();
     }
 }
 
@@ -620,28 +620,28 @@ pack_pb_line (guchar *start,
 }
 
 static gint
-gimpBaseTypeToPsdMode (GimpImageBaseType gimpBaseType)
+picmanBaseTypeToPsdMode (PicmanImageBaseType picmanBaseType)
 {
-  switch (gimpBaseType)
+  switch (picmanBaseType)
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       return 3;                                         /* RGB */
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       return 1;                                         /* Grayscale */
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       return 2;                                         /* Indexed */
     default:
-      g_message (_("Error: Can't convert GIMP base imagetype to PSD mode"));
-      IFDBG printf ("PSD Save: gimpBaseType value is %d, "
-                    "can't convert to PSD mode", gimpBaseType);
-      gimp_quit ();
+      g_message (_("Error: Can't convert PICMAN base imagetype to PSD mode"));
+      IFDBG printf ("PSD Save: picmanBaseType value is %d, "
+                    "can't convert to PSD mode", picmanBaseType);
+      picman_quit ();
       return 3;                            /* Return RGB by default */
     }
 }
 
 
 static gint
-nChansLayer (gint gimpBaseType,
+nChansLayer (gint picmanBaseType,
              gint hasAlpha,
              gint hasMask)
 {
@@ -651,13 +651,13 @@ nChansLayer (gint gimpBaseType,
   incAlpha = (hasAlpha == 0) ? 0 : 1;
   incMask = (hasMask == 0) ? 0 : 1;
 
-  switch (gimpBaseType)
+  switch (picmanBaseType)
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       return 3 + incAlpha + incMask;     /* R,G,B & Alpha & Mask (if any) */
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       return 1 + incAlpha + incMask;     /* G & Alpha & Mask (if any) */
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       return 1 + incAlpha + incMask;     /* I & Alpha & Mask (if any) */
     default:
       return 0;                          /* Return 0 channels by default */
@@ -666,7 +666,7 @@ nChansLayer (gint gimpBaseType,
 
 
 static void
-reshuffle_cmap_write (guchar *mapGimp)
+reshuffle_cmap_write (guchar *mapPicman)
 {
   guchar *mapPSD;
   gint    i;
@@ -675,14 +675,14 @@ reshuffle_cmap_write (guchar *mapGimp)
 
   for (i = 0; i < 256; i++)
     {
-      mapPSD[i] = mapGimp[i * 3];
-      mapPSD[i + 256] = mapGimp[i * 3 + 1];
-      mapPSD[i + 512] = mapGimp[i * 3 + 2];
+      mapPSD[i] = mapPicman[i * 3];
+      mapPSD[i + 256] = mapPicman[i * 3 + 1];
+      mapPSD[i + 512] = mapPicman[i * 3 + 2];
     }
 
   for (i = 0; i < 768; i++)
     {
-      mapGimp[i] = mapPSD[i];
+      mapPicman[i] = mapPSD[i];
     }
 
   g_free (mapPSD);
@@ -705,13 +705,13 @@ save_header (FILE   *fd,
   write_gint16 (fd, 0, "reserved 1");      /* and 2 bytes for a short */
   write_gint16 (fd, (PSDImageData.nChannels +
                      nChansLayer (PSDImageData.baseType,
-                     gimp_drawable_has_alpha (PSDImageData.merged_layer), 0)),
+                     picman_drawable_has_alpha (PSDImageData.merged_layer), 0)),
                 "channels");
   write_gint32 (fd, PSDImageData.image_height, "rows");
   write_gint32 (fd, PSDImageData.image_width, "columns");
-  write_gint16 (fd, 8, "depth");  /* Apparently GIMP only supports 8 bit deep
+  write_gint16 (fd, 8, "depth");  /* Apparently PICMAN only supports 8 bit deep
                                      PSD images.  */
-  write_gint16 (fd, gimpBaseTypeToPsdMode (PSDImageData.baseType), "mode");
+  write_gint16 (fd, picmanBaseTypeToPsdMode (PSDImageData.baseType), "mode");
 }
 
 
@@ -729,11 +729,11 @@ save_color_mode_data (FILE   *fd,
 
   switch (PSDImageData.baseType)
     {
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       IFDBG printf ("\tImage type: INDEXED\n");
 
-      cmap = gimp_image_get_colormap (image_id, &nColors);
-      IFDBG printf ("\t\tLength of colormap returned by gimp_image_get_colormap: %d\n", nColors);
+      cmap = picman_image_get_colormap (image_id, &nColors);
+      IFDBG printf ("\t\tLength of colormap returned by picman_image_get_colormap: %d\n", nColors);
 
       if (nColors == 0)
         {
@@ -784,14 +784,14 @@ save_resources (FILE   *fd,
   gint32        idActLayer;          /* Id of the active layer */
   guint         nActiveLayer = 0;    /* Number of the active layer */
   gboolean      ActiveLayerPresent;  /* TRUE if there's an active layer */
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
 
   glong         eof_pos;             /* Position for End of file */
   glong         rsc_pos;             /* Position for Lengths of Resources section */
   glong         name_sec;            /* Position for Lengths of Channel Names */
 
 
-  /* Only relevant resources in GIMP are: 0x03EE, 0x03F0 & 0x0400 */
+  /* Only relevant resources in PICMAN are: 0x03EE, 0x03F0 & 0x0400 */
   /* For Adobe Photoshop version 4.0 these can also be considered:
      0x0408, 0x040A & 0x040B (1006, 1008, 1024, 1032, 1034, and 1035) */
 
@@ -800,12 +800,12 @@ save_resources (FILE   *fd,
 
   /* Get the image title from its filename */
 
-  fileName = gimp_image_get_filename (image_id);
+  fileName = picman_image_get_filename (image_id);
   IFDBG printf ("\tImage title: %s\n", fileName);
 
   /* Get the active layer number id */
 
-  idActLayer = gimp_image_get_active_layer (image_id);
+  idActLayer = picman_image_get_active_layer (image_id);
   IFDBG printf ("\tCurrent layer id: %d\n", idActLayer);
 
   ActiveLayerPresent = FALSE;
@@ -835,7 +835,7 @@ save_resources (FILE   *fd,
   /* --------------- Write Channel names --------------- */
 
   if (PSDImageData.nChannels > 0 ||
-      gimp_drawable_has_alpha (PSDImageData.merged_layer))
+      picman_drawable_has_alpha (PSDImageData.merged_layer))
     {
       xfwrite (fd, "8BIM", 4, "imageresources signature");
       write_gint16 (fd, 0x03EE, "0x03EE Id"); /* 1006 */
@@ -850,12 +850,12 @@ save_resources (FILE   *fd,
     /* Write all strings */
 
     /* if the merged_image contains transparency, write a name for it first */
-    if (gimp_drawable_has_alpha (PSDImageData.merged_layer))
+    if (picman_drawable_has_alpha (PSDImageData.merged_layer))
       write_string (fd, "Transparency", "channel name");
 
     for (i = PSDImageData.nChannels - 1; i >= 0; i--)
     {
-      char *chName = gimp_item_get_name (PSDImageData.lChannels[i]);
+      char *chName = picman_item_get_name (PSDImageData.lChannels[i]);
       write_string (fd, chName, "channel name");
       g_free (chName);
     }
@@ -879,13 +879,13 @@ save_resources (FILE   *fd,
   }
 
   /* --------------- Write Guides --------------- */
-  if (gimp_image_find_next_guide(image_id, 0))
+  if (picman_image_find_next_guide(image_id, 0))
     {
       gint n_guides = 0;
       gint guide_id =0;
 
       /* Count the guides */
-      while ((guide_id = gimp_image_find_next_guide(image_id, guide_id)))
+      while ((guide_id = picman_image_find_next_guide(image_id, guide_id)))
         n_guides++;
 
       xfwrite (fd, "8BIM", 4, "imageresources signature");
@@ -900,12 +900,12 @@ save_resources (FILE   *fd,
       write_gint32 (fd, n_guides, "number of guides");
 
       /* write the guides */
-      while ((guide_id = gimp_image_find_next_guide(image_id, guide_id)))
+      while ((guide_id = picman_image_find_next_guide(image_id, guide_id)))
         {
           gchar orientation;
           gint32 position;
-          orientation = gimp_image_get_guide_orientation(image_id, guide_id);
-          position    = 32 * gimp_image_get_guide_position(image_id, guide_id);
+          orientation = picman_image_get_guide_orientation(image_id, guide_id);
+          position    = 32 * picman_image_get_guide_position(image_id, guide_id);
           orientation ^= 1; /* in the psd vert =0 , horiz = 1 */
           write_gint32 (fd, position, "Position of guide");
           write_gchar (fd, orientation, "Orientation of guide");
@@ -922,15 +922,15 @@ save_resources (FILE   *fd,
   {
     gdouble xres = 0, yres = 0;
     guint32 xres_fix, yres_fix;
-    GimpUnit g_unit;
+    PicmanUnit g_unit;
     gint16 psd_unit;
 
-    g_unit = gimp_image_get_unit (image_id);
-    gimp_image_get_resolution (image_id, &xres, &yres);
+    g_unit = picman_image_get_unit (image_id);
+    picman_image_get_resolution (image_id, &xres, &yres);
 
-    if (g_unit == GIMP_UNIT_MM)
+    if (g_unit == PICMAN_UNIT_MM)
       {
-        gdouble factor = gimp_unit_get_factor (g_unit) / 10.0;
+        gdouble factor = picman_unit_get_factor (g_unit) / 10.0;
 
         xres /= factor;
         yres /= factor;
@@ -975,18 +975,18 @@ save_resources (FILE   *fd,
     }
 
   /* --------------- Write ICC profile data ------------------- */
-  parasite = gimp_image_get_parasite (image_id, "icc-profile");
+  parasite = picman_image_get_parasite (image_id, "icc-profile");
   if (parasite)
     {
-      gint32 profile_length = gimp_parasite_data_size (parasite);
+      gint32 profile_length = picman_parasite_data_size (parasite);
 
       xfwrite (fd, "8BIM", 4, "imageresources signature");
       write_gint16 (fd, 0x040f, "0x040f Id");
       write_gint16 (fd, 0, "Id name"); /* Set to null string (two zeros) */
       write_gint32 (fd, profile_length, "0x040f resource size");
-      xfwrite (fd, gimp_parasite_data (parasite), profile_length, "ICC profile");
+      xfwrite (fd, picman_parasite_data (parasite), profile_length, "ICC profile");
 
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
 
 
@@ -1079,21 +1079,21 @@ save_layer_and_mask (FILE   *fd,
 
   /* Layer structure section */
 
-  if (gimp_drawable_has_alpha (PSDImageData.merged_layer))
+  if (picman_drawable_has_alpha (PSDImageData.merged_layer))
     write_gint16 (fd, -PSDImageData.nLayers, "Layer structure count");
   else
     write_gint16 (fd, PSDImageData.nLayers, "Layer structure count");
 
   /* Layer records section */
-  /* GIMP layers must be written in reverse order */
+  /* PICMAN layers must be written in reverse order */
 
   for (i = PSDImageData.nLayers - 1; i >= 0; i--)
     {
       gint hasMask = 0;
 
-      gimp_drawable_offsets (PSDImageData.lLayers[i], &offset_x, &offset_y);
-      layerWidth = gimp_drawable_width (PSDImageData.lLayers[i]);
-      layerHeight = gimp_drawable_height (PSDImageData.lLayers[i]);
+      picman_drawable_offsets (PSDImageData.lLayers[i], &offset_x, &offset_y);
+      layerWidth = picman_drawable_width (PSDImageData.lLayers[i]);
+      layerHeight = picman_drawable_height (PSDImageData.lLayers[i]);
 
       PSDImageData.layersDim[i].left = offset_x;
       PSDImageData.layersDim[i].top = offset_y;
@@ -1113,9 +1113,9 @@ save_layer_and_mask (FILE   *fd,
       write_gint32 (fd, (PSDImageData.layersDim[i].width +
                         PSDImageData.layersDim[i].left), "Layer right");
 
-      hasMask = (gimp_layer_get_mask(PSDImageData.lLayers[i]) == -1 ) ? 0 : 1;
+      hasMask = (picman_layer_get_mask(PSDImageData.lLayers[i]) == -1 ) ? 0 : 1;
       nChannelsLayer = nChansLayer (PSDImageData.baseType,
-                                    gimp_drawable_has_alpha (PSDImageData.lLayers[i]),
+                                    picman_drawable_has_alpha (PSDImageData.lLayers[i]),
                                     hasMask);
 
 
@@ -1126,11 +1126,11 @@ save_layer_and_mask (FILE   *fd,
 
       ChannelLengthPos[i] = g_new (glong, nChannelsLayer);
 
-      /* Try with gimp_drawable_bpp() */
+      /* Try with picman_drawable_bpp() */
 
       for (j = 0; j < nChannelsLayer; j++)
         {
-          if (gimp_drawable_has_alpha (PSDImageData.lLayers[i]))
+          if (picman_drawable_has_alpha (PSDImageData.lLayers[i]))
             idChannel = j - 1;
           else
             idChannel = j;
@@ -1157,16 +1157,16 @@ save_layer_and_mask (FILE   *fd,
       IFDBG printf ("\t\tBlend mode: %s\n", blendMode);
       xfwrite (fd, blendMode, 4, "blend mode key");
 
-      layerOpacity = (gimp_layer_get_opacity (PSDImageData.lLayers[i]) * 255.0) / 100.0;
+      layerOpacity = (picman_layer_get_opacity (PSDImageData.lLayers[i]) * 255.0) / 100.0;
       IFDBG printf ("\t\tOpacity: %u\n", layerOpacity);
       write_gchar (fd, layerOpacity, "Opacity");
 
-      /* Apparently this field is not used in GIMP */
+      /* Apparently this field is not used in PICMAN */
       write_gchar (fd, 0, "Clipping");
 
       flags = 0;
-      if (gimp_layer_get_lock_alpha (PSDImageData.lLayers[i])) flags |= 1;
-      if (! gimp_item_get_visible (PSDImageData.lLayers[i])) flags |= 2;
+      if (picman_layer_get_lock_alpha (PSDImageData.lLayers[i])) flags |= 1;
+      if (! picman_item_get_visible (PSDImageData.lLayers[i])) flags |= 2;
       IFDBG printf ("\t\tFlags: %u\n", flags);
       write_gchar (fd, flags, "Flags");
 
@@ -1176,17 +1176,17 @@ save_layer_and_mask (FILE   *fd,
       ExtraDataPos = ftell (fd); /* Position of Extra Data size */
       write_gint32 (fd, 0, "Extra data size");
 
-      mask = gimp_layer_get_mask (PSDImageData.lLayers[i]);
+      mask = picman_layer_get_mask (PSDImageData.lLayers[i]);
       if (mask  >= 0)
         {
-          gboolean apply = gimp_layer_get_apply_mask (PSDImageData.lLayers[i]);
+          gboolean apply = picman_layer_get_apply_mask (PSDImageData.lLayers[i]);
 
           IFDBG printf ("\t\tLayer mask size: %d\n", 20);
           write_gint32 (fd, 20,                        "Layer mask size");
           write_gint32 (fd, 0,                         "Layer mask top");
           write_gint32 (fd, 0,                         "Layer mask left");
-          write_gint32 (fd, gimp_drawable_height(mask),"Layer mask bottom");
-          write_gint32 (fd, gimp_drawable_width(mask), "Layer mask right");
+          write_gint32 (fd, picman_drawable_height(mask),"Layer mask bottom");
+          write_gint32 (fd, picman_drawable_width(mask), "Layer mask right");
           write_gchar  (fd, 0,                         "Layer mask default color");
           flags = (1                    |  /* position relative to layer */
                    (apply ? 0 : 1) << 1 |  /* layer mask disabled        */
@@ -1205,7 +1205,7 @@ save_layer_and_mask (FILE   *fd,
       write_gint32 (fd, 0, "Layer blending size");
       IFDBG printf ("\t\tLayer blending size: %d\n", 0);
 
-      layerName = gimp_item_get_name (PSDImageData.lLayers[i]);
+      layerName = picman_item_get_name (PSDImageData.lLayers[i]);
       write_pascalstring (fd, layerName, 4, "layer name");
       IFDBG printf ("\t\tLayer name: %s\n", layerName);
 
@@ -1227,7 +1227,7 @@ save_layer_and_mask (FILE   *fd,
 
 
   /* Channel image data section */
-  /* Gimp layers must be written in reverse order */
+  /* Picman layers must be written in reverse order */
 
   for (i = PSDImageData.nLayers - 1; i >= 0; i--)
     {
@@ -1265,12 +1265,12 @@ write_pixel_data (FILE   *fd,
                   glong  *ChanLenPosition,
                   gint32  ltable_offset)
 {
-  GimpPixelRgn region;      /* Image region */
+  PicmanPixelRgn region;      /* Image region */
   guchar *data;             /* Temporary copy of pixel data */
 
-  gint32 tile_height = gimp_tile_height();
+  gint32 tile_height = picman_tile_height();
 
-  GimpDrawable *drawable = gimp_drawable_get (drawableID);
+  PicmanDrawable *drawable = picman_drawable_get (drawableID);
 
   gint32 height = drawable->height;
   gint32 width  = drawable->width;
@@ -1287,11 +1287,11 @@ write_pixel_data (FILE   *fd,
   IFDBG printf (" Function: write_pixel_data, drw %d, lto %d\n",
                 drawableID, ltable_offset);
 
-  if ( gimp_drawable_has_alpha  (drawableID) &&
-      !gimp_drawable_is_indexed (drawableID))
+  if ( picman_drawable_has_alpha  (drawableID) &&
+      !picman_drawable_is_indexed (drawableID))
     colors -= 1;
 
-  gimp_tile_cache_ntiles (2* (drawable->width / gimp_tile_width () + 1));
+  picman_tile_cache_ntiles (2* (drawable->width / picman_tile_width () + 1));
 
   LengthsTable = g_new (gint16, height);
   rledata = g_new (guchar, (MIN (height, tile_height) *
@@ -1299,7 +1299,7 @@ write_pixel_data (FILE   *fd,
 
   data = g_new (guchar, MIN(height, tile_height) * width * bytes);
 
-  gimp_pixel_rgn_init (&region, drawable, 0, 0,
+  picman_pixel_rgn_init (&region, drawable, 0, 0,
                        width, height, FALSE, FALSE);
 
   for (i = 0; i < bytes; i++)
@@ -1347,7 +1347,7 @@ write_pixel_data (FILE   *fd,
       for (y = 0; y < height; y += tile_height)
         {
           int tlen;
-            gimp_pixel_rgn_get_rect (&region, data, 0, y,
+            picman_pixel_rgn_get_rect (&region, data, 0, y,
                                    width, MIN(height - y, tile_height));
           tlen = get_compress_channel_data (&data[chan],
                                              width,
@@ -1376,16 +1376,16 @@ write_pixel_data (FILE   *fd,
     }
 
   /* Write layer mask, as last channel, id -2 */
-  if (gimp_item_is_layer (drawableID))
+  if (picman_item_is_layer (drawableID))
     {
-      gint32 maskID = gimp_layer_get_mask (drawableID);
+      gint32 maskID = picman_layer_get_mask (drawableID);
 
       if (maskID != -1)
         {
-          GimpDrawable *mdrawable = gimp_drawable_get (maskID);
+          PicmanDrawable *mdrawable = picman_drawable_get (maskID);
           len = 0;
 
-          gimp_pixel_rgn_init (&region, mdrawable, 0, 0,
+          picman_pixel_rgn_init (&region, mdrawable, 0, 0,
                                width, height, FALSE, FALSE);
 
           if (ChanLenPosition)
@@ -1415,7 +1415,7 @@ write_pixel_data (FILE   *fd,
           for (y = 0; y < height; y += tile_height)
             {
               int tlen;
-              gimp_pixel_rgn_get_rect (&region, data, 0, y,
+              picman_pixel_rgn_get_rect (&region, data, 0, y,
                                        width, MIN(height - y, tile_height));
               tlen = get_compress_channel_data (&data[0],
                                                 width,
@@ -1446,11 +1446,11 @@ write_pixel_data (FILE   *fd,
           fseek (fd, 0, SEEK_END);
           IF_DEEP_DBG printf ("\t\t\t\t. Cur pos %ld\n", ftell(fd));
 
-          gimp_drawable_detach (mdrawable);
+          picman_drawable_detach (mdrawable);
         }
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   g_free (data);
   g_free (rledata);
@@ -1473,10 +1473,10 @@ save_data (FILE   *fd,
 
   ChanCount = (PSDImageData.nChannels +
                nChansLayer (PSDImageData.baseType,
-                            gimp_drawable_has_alpha (PSDImageData.merged_layer),
+                            picman_drawable_has_alpha (PSDImageData.merged_layer),
                             0));
 
-  imageHeight = gimp_image_height (image_id);
+  imageHeight = picman_image_height (image_id);
 
   write_gint16 (fd, 1, "RLE compression");
 
@@ -1493,7 +1493,7 @@ save_data (FILE   *fd,
                     NULL, offset);
 
   chan = nChansLayer (PSDImageData.baseType,
-                      gimp_drawable_has_alpha(PSDImageData.merged_layer), 0);
+                      picman_drawable_has_alpha(PSDImageData.merged_layer), 0);
 
   for (i = PSDImageData.nChannels - 1; i >= 0; i--)
     {
@@ -1510,22 +1510,22 @@ create_merged_image (gint32 image_id)
 {
   gint32  projection;
 
-  projection = gimp_layer_new_from_visible (image_id, image_id, SAVE_PROC);
+  projection = picman_layer_new_from_visible (image_id, image_id, SAVE_PROC);
 
-  if (gimp_image_base_type (image_id) != GIMP_INDEXED)
+  if (picman_image_base_type (image_id) != PICMAN_INDEXED)
     {
-      GimpDrawable *drawable = gimp_drawable_get (projection);
-      GimpPixelRgn  region;
+      PicmanDrawable *drawable = picman_drawable_get (projection);
+      PicmanPixelRgn  region;
       gboolean      transparency_found = FALSE;
       gpointer      pr;
 
-      gimp_pixel_rgn_init (&region, drawable,
+      picman_pixel_rgn_init (&region, drawable,
                            0, 0, drawable->width, drawable->height,
                            TRUE, FALSE);
 
-      for (pr = gimp_pixel_rgns_register (1, &region);
+      for (pr = picman_pixel_rgns_register (1, &region);
            pr != NULL;
-           pr = gimp_pixel_rgns_process (pr))
+           pr = picman_pixel_rgns_process (pr))
         {
           guchar *data = region.data;
           gint    y;
@@ -1557,15 +1557,15 @@ create_merged_image (gint32 image_id)
             }
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
 
       if (! transparency_found)
-        gimp_layer_flatten (projection);
+        picman_layer_flatten (projection);
     }
   else
     {
-      if (gimp_drawable_has_alpha (projection))
-        gimp_layer_flatten (projection);  /* PSDs don't support transparency information in indexed images*/
+      if (picman_drawable_has_alpha (projection))
+        picman_layer_flatten (projection);  /* PSDs don't support transparency information in indexed images*/
     }
 
   return projection;
@@ -1579,22 +1579,22 @@ get_image_data (FILE   *fd,
 
   PSDImageData.compression = FALSE;
 
-  PSDImageData.image_height = gimp_image_height (image_id);
+  PSDImageData.image_height = picman_image_height (image_id);
   IFDBG printf ("\tGot number of rows: %d\n", PSDImageData.image_height);
 
-  PSDImageData.image_width = gimp_image_width (image_id);
+  PSDImageData.image_width = picman_image_width (image_id);
   IFDBG printf ("\tGot number of cols: %d\n", PSDImageData.image_width);
 
-  PSDImageData.baseType = gimp_image_base_type (image_id);
+  PSDImageData.baseType = picman_image_base_type (image_id);
   IFDBG printf ("\tGot base type: %d\n", PSDImageData.baseType);
 
   PSDImageData.merged_layer = create_merged_image (image_id);
 
-  PSDImageData.lChannels = gimp_image_get_channels (image_id,
+  PSDImageData.lChannels = picman_image_get_channels (image_id,
                                                     &PSDImageData.nChannels);
   IFDBG printf ("\tGot number of channels: %d\n", PSDImageData.nChannels);
 
-  PSDImageData.lLayers = gimp_image_get_layers (image_id,
+  PSDImageData.lLayers = picman_image_get_layers (image_id,
                                                 &PSDImageData.nLayers);
   IFDBG printf ("\tGot number of layers: %d\n", PSDImageData.nLayers);
 
@@ -1612,33 +1612,33 @@ save_image (const gchar  *filename,
   gint32 *layers;
   gint    nlayers;
   gint    i;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
   IFDBG printf (" Function: save_image\n");
 
-  if (gimp_image_width (image_id) > 30000 ||
-      gimp_image_height (image_id) > 30000)
+  if (picman_image_width (image_id) > 30000 ||
+      picman_image_height (image_id) > 30000)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Unable to save '%s'.  The PSD file format does not "
                      "support images that are more than 30,000 pixels wide "
                      "or tall."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return FALSE;
     }
 
  /* Need to check each of the layers size individually also */
-  layers = gimp_image_get_layers (image_id, &nlayers);
+  layers = picman_image_get_layers (image_id, &nlayers);
   for (i = 0; i < nlayers; i++)
     {
-      drawable = gimp_drawable_get (layers[i]);
+      drawable = picman_drawable_get (layers[i]);
       if (drawable->width > 30000 || drawable->height > 30000)
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Unable to save '%s'.  The PSD file format does not "
                          "support images with layers that are more than 30,000 "
                          "pixels wide or tall."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           g_free (layers);
           return FALSE;
         }
@@ -1651,15 +1651,15 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   IFDBG g_print ("\tFile '%s' has been opened\n",
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
 
   get_image_data (fd, image_id);
   save_header (fd, image_id);
@@ -1668,7 +1668,7 @@ save_image (const gchar  *filename,
 
   /* PSD format does not support layers in indexed images */
 
-  if (PSDImageData.baseType == GIMP_INDEXED)
+  if (PSDImageData.baseType == PICMAN_INDEXED)
     write_gint32 (fd, 0, "layers info section length");
   else
     save_layer_and_mask (fd, image_id);
@@ -1679,7 +1679,7 @@ save_image (const gchar  *filename,
 
   /* Delete merged image now */
 
-  gimp_item_delete (PSDImageData.merged_layer);
+  picman_item_delete (PSDImageData.merged_layer);
 
   IFDBG printf ("----- Closing PSD file, done -----\n\n");
 

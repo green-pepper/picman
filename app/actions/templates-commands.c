@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,40 +20,40 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage-new.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage-new.h"
+#include "core/picmantemplate.h"
 
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
-#include "widgets/gimptemplateeditor.h"
-#include "widgets/gimptemplateview.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
+#include "widgets/picmantemplateeditor.h"
+#include "widgets/picmantemplateview.h"
 
 #include "dialogs/template-options-dialog.h"
 
 #include "actions.h"
 #include "templates-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
 {
-  GimpContext   *context;
-  GimpContainer *container;
-  GimpTemplate  *template;
+  PicmanContext   *context;
+  PicmanContainer *container;
+  PicmanTemplate  *template;
 } TemplateDeleteData;
 
 
@@ -77,22 +77,22 @@ void
 templates_create_image_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  Gimp                *gimp;
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpTemplate        *template;
-  return_if_no_gimp(gimp,data);
+  Picman                *picman;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanTemplate        *template;
+  return_if_no_picman(picman,data);
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  template = gimp_context_get_template (context);
+  template = picman_context_get_template (context);
 
-  if (template && gimp_container_have (container, GIMP_OBJECT (template)))
+  if (template && picman_container_have (container, PICMAN_OBJECT (template)))
     {
-      gimp_image_new_from_template (gimp, template, context);
-      gimp_image_new_set_last_template (gimp, template);
+      picman_image_new_from_template (picman, template, context);
+      picman_image_new_set_last_template (picman, template);
     }
 }
 
@@ -100,19 +100,19 @@ void
 templates_new_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpContainerEditor   *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext           *context;
+  PicmanContainerEditor   *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext           *context;
   TemplateOptionsDialog *options;
 
-  context = gimp_container_view_get_context (editor->view);
+  context = picman_container_view_get_context (editor->view);
 
   options = template_options_dialog_new (NULL, context,
                                          GTK_WIDGET (editor),
                                          _("New Template"),
-                                         "gimp-template-new",
-                                         GIMP_STOCK_TEMPLATE,
+                                         "picman-template-new",
+                                         PICMAN_STOCK_TEMPLATE,
                                          _("Create a New Template"),
-                                         GIMP_HELP_TEMPLATE_NEW);
+                                         PICMAN_HELP_TEMPLATE_NEW);
 
   g_signal_connect (options->dialog, "response",
                     G_CALLBACK (templates_new_response),
@@ -125,26 +125,26 @@ void
 templates_duplicate_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpTemplate        *template;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanTemplate        *template;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  template = gimp_context_get_template (context);
+  template = picman_context_get_template (context);
 
-  if (template && gimp_container_have (container, GIMP_OBJECT (template)))
+  if (template && picman_container_have (container, PICMAN_OBJECT (template)))
     {
-      GimpTemplate *new_template;
+      PicmanTemplate *new_template;
 
-      new_template = gimp_config_duplicate (GIMP_CONFIG (template));
+      new_template = picman_config_duplicate (PICMAN_CONFIG (template));
 
-      gimp_container_add (container, GIMP_OBJECT (new_template));
-      gimp_context_set_by_type (context,
-                                gimp_container_get_children_type (container),
-                                GIMP_OBJECT (new_template));
+      picman_container_add (container, PICMAN_OBJECT (new_template));
+      picman_context_set_by_type (context,
+                                picman_container_get_children_type (container),
+                                PICMAN_OBJECT (new_template));
       g_object_unref (new_template);
 
       templates_edit_cmd_callback (action, data);
@@ -155,27 +155,27 @@ void
 templates_edit_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpTemplate        *template;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanTemplate        *template;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  template = gimp_context_get_template (context);
+  template = picman_context_get_template (context);
 
-  if (template && gimp_container_have (container, GIMP_OBJECT (template)))
+  if (template && picman_container_have (container, PICMAN_OBJECT (template)))
     {
       TemplateOptionsDialog *options;
 
       options = template_options_dialog_new (template, context,
                                              GTK_WIDGET (editor),
                                              _("Edit Template"),
-                                             "gimp-template-edit",
+                                             "picman-template-edit",
                                              GTK_STOCK_EDIT,
                                              _("Edit Template"),
-                                             GIMP_HELP_TEMPLATE_EDIT);
+                                             PICMAN_HELP_TEMPLATE_EDIT);
 
       g_signal_connect (options->dialog, "response",
                         G_CALLBACK (templates_edit_response),
@@ -189,17 +189,17 @@ void
 templates_delete_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpTemplate        *template;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanTemplate        *template;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  template = gimp_context_get_template (context);
+  template = picman_context_get_template (context);
 
-  if (template && gimp_container_have (container, GIMP_OBJECT (template)))
+  if (template && picman_container_have (container, PICMAN_OBJECT (template)))
     {
       TemplateDeleteData *delete_data = g_slice_new (TemplateDeleteData);
       GtkWidget          *dialog;
@@ -209,9 +209,9 @@ templates_delete_cmd_callback (GtkAction *action,
       delete_data->template  = template;
 
       dialog =
-        gimp_message_dialog_new (_("Delete Template"), GTK_STOCK_DELETE,
+        picman_message_dialog_new (_("Delete Template"), GTK_STOCK_DELETE,
                                  GTK_WIDGET (editor), 0,
-                                 gimp_standard_help_func, NULL,
+                                 picman_standard_help_func, NULL,
 
                                  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                  GTK_STOCK_DELETE, GTK_RESPONSE_OK,
@@ -234,11 +234,11 @@ templates_delete_cmd_callback (GtkAction *action,
                         G_CALLBACK (templates_delete_response),
                         delete_data);
 
-      gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+      picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                          _("Are you sure you want to delete "
                                            "template '%s' from the list and "
                                            "from disk?"),
-                                         gimp_object_get_name (template));
+                                         picman_object_get_name (template));
       gtk_widget_show (dialog);
     }
 }
@@ -253,13 +253,13 @@ templates_new_response (GtkWidget             *dialog,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpTemplateEditor *editor = GIMP_TEMPLATE_EDITOR (options->editor);
-      GimpTemplate       *template;
+      PicmanTemplateEditor *editor = PICMAN_TEMPLATE_EDITOR (options->editor);
+      PicmanTemplate       *template;
 
-      template = gimp_template_editor_get_template (editor);
+      template = picman_template_editor_get_template (editor);
 
-      gimp_container_add (options->gimp->templates, GIMP_OBJECT (template));
-      gimp_context_set_template (gimp_get_user_context (options->gimp),
+      picman_container_add (options->picman->templates, PICMAN_OBJECT (template));
+      picman_context_set_template (picman_get_user_context (options->picman),
                                  template);
     }
 
@@ -273,12 +273,12 @@ templates_edit_response (GtkWidget             *dialog,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpTemplateEditor *editor = GIMP_TEMPLATE_EDITOR (options->editor);
-      GimpTemplate       *template;
+      PicmanTemplateEditor *editor = PICMAN_TEMPLATE_EDITOR (options->editor);
+      PicmanTemplate       *template;
 
-      template = gimp_template_editor_get_template (editor);
+      template = picman_template_editor_get_template (editor);
 
-      gimp_config_sync (G_OBJECT (template),
+      picman_config_sync (G_OBJECT (template),
                         G_OBJECT (options->template), 0);
     }
 
@@ -292,25 +292,25 @@ templates_delete_response (GtkWidget          *dialog,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpObject *new_active = NULL;
+      PicmanObject *new_active = NULL;
 
       if (delete_data->template ==
-          gimp_context_get_template (delete_data->context))
+          picman_context_get_template (delete_data->context))
         {
-          new_active = gimp_container_get_neighbor_of (delete_data->container,
-                                                       GIMP_OBJECT (delete_data->template));
+          new_active = picman_container_get_neighbor_of (delete_data->container,
+                                                       PICMAN_OBJECT (delete_data->template));
         }
 
-      if (gimp_container_have (delete_data->container,
-                               GIMP_OBJECT (delete_data->template)))
+      if (picman_container_have (delete_data->container,
+                               PICMAN_OBJECT (delete_data->template)))
         {
           if (new_active)
-            gimp_context_set_by_type (delete_data->context,
-                                      gimp_container_get_children_type (delete_data->container),
+            picman_context_set_by_type (delete_data->context,
+                                      picman_container_get_children_type (delete_data->container),
                                       new_active);
 
-          gimp_container_remove (delete_data->container,
-                                 GIMP_OBJECT (delete_data->template));
+          picman_container_remove (delete_data->container,
+                                 PICMAN_OBJECT (delete_data->template));
         }
     }
 

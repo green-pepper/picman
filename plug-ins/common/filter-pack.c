@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Copyright (C) Pavel Grinfeld (pavel@ml.com)
  *
@@ -25,15 +25,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC       "plug-in-filter-pack"
 #define PLUG_IN_BINARY     "filter-pack"
-#define PLUG_IN_ROLE       "gimp-filter-pack"
+#define PLUG_IN_ROLE       "picman-filter-pack"
 
 #define MAX_PREVIEW_SIZE   125
 #define MAX_ROUGHNESS      128
@@ -143,8 +143,8 @@ typedef struct
 static void           fp_show_hide_frame          (GtkWidget     *button,
                                                    GtkWidget     *frame);
 
-static ReducedImage * fp_reduce_image             (GimpDrawable  *drawable,
-                                                   GimpDrawable  *mask,
+static ReducedImage * fp_reduce_image             (PicmanDrawable  *drawable,
+                                                   PicmanDrawable  *mask,
                                                    gint           longer_size,
                                                    gint           selection);
 
@@ -179,7 +179,7 @@ static void           fp_init_filter_packs        (void);
 static void           fp_preview_scale_update     (GtkAdjustment *adjustment,
                                                    gdouble       *scale_val);
 
-static void           fp                          (GimpDrawable  *drawable);
+static void           fp                          (PicmanDrawable  *drawable);
 static GtkWidget *    fp_create_bna               (void);
 static GtkWidget *    fp_create_rough             (void);
 static GtkWidget *    fp_create_range             (void);
@@ -283,17 +283,17 @@ static FPValues fpvals =
   { FALSE, FALSE, FALSE } /* touched */
 };
 
-static GimpDrawable *drawable = NULL;
-static GimpDrawable *mask     = NULL;
+static PicmanDrawable *drawable = NULL;
+static PicmanDrawable *mask     = NULL;
 
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -306,14 +306,14 @@ MAIN()
 static void
 query (void)
 {
-  GimpParamDef args[] =
+  PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (used for indexed images)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                        }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (used for indexed images)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                        }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Interactively modify the image colors"),
                           "Interactively modify the image colors.",
                           "Pavel Grinfeld (pavel@ml.com)",
@@ -321,7 +321,7 @@ query (void)
                           "27th March 1997",
                           N_("_Filter Pack..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -331,13 +331,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
-  GimpRunMode       run_mode;
+  static PicmanParam  values[1];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode       run_mode;
 
   *nreturn_vals = 1;
   *return_vals = values;
@@ -346,75 +346,75 @@ run (const gchar      *name,
 
   INIT_I18N ();
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   fp_init_filter_packs();
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (gimp_selection_is_empty (param[1].data.d_image))
+  if (picman_selection_is_empty (param[1].data.d_image))
     mask = NULL;
   else
-    mask = gimp_drawable_get (gimp_image_get_selection (param[1].data.d_image));
+    mask = picman_drawable_get (picman_image_get_selection (param[1].data.d_image));
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &fpvals);
+      picman_get_data (PLUG_IN_PROC, &fpvals);
 
-      if (gimp_drawable_is_indexed (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id) )
+      if (picman_drawable_is_indexed (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id) )
         {
-          gimp_message (_("FP can only be used on RGB images."));
-          status = GIMP_PDB_EXECUTION_ERROR;
+          picman_message (_("FP can only be used on RGB images."));
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
       else if (! fp_dialog())
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
-      gimp_message (_("FP can only be run interactively."));
-      status = GIMP_PDB_CALLING_ERROR;
+    case PICMAN_RUN_NONINTERACTIVE:
+      picman_message (_("FP can only be run interactively."));
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &fpvals);
+      picman_get_data (PLUG_IN_PROC, &fpvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
-          gimp_progress_init (_("Applying filter pack"));
-          gimp_tile_cache_ntiles (2 * (drawable->width /
-                                       gimp_tile_width () + 1));
+          picman_progress_init (_("Applying filter pack"));
+          picman_tile_cache_ntiles (2 * (drawable->width /
+                                       picman_tile_width () + 1));
           fp (drawable);
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &fpvals, sizeof (FPValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &fpvals, sizeof (FPValues));
 
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
   if (mask)
-    gimp_drawable_detach (mask);
+    picman_drawable_detach (mask);
 
   values[0].data.d_status = status;
 }
@@ -427,16 +427,16 @@ fp_func (const guchar *src,
 {
   gint    bytenum, k;
   gint    JudgeBy, Intensity = 0, P[3];
-  GimpRGB rgb;
-  GimpHSV hsv;
+  PicmanRGB rgb;
+  PicmanHSV hsv;
   gint    M, m, middle;
 
   P[0] = src[0];
   P[1] = src[1];
   P[2] = src[2];
 
-  gimp_rgb_set_uchar (&rgb, (guchar) P[0], (guchar) P[1], (guchar) P[2]);
-  gimp_rgb_to_hsv (&rgb, &hsv);
+  picman_rgb_set_uchar (&rgb, (guchar) P[0], (guchar) P[1], (guchar) P[2]);
+  picman_rgb_to_hsv (&rgb, &hsv);
 
   for (JudgeBy = BY_HUE; JudgeBy < JUDGE_BY; JudgeBy++)
     {
@@ -496,9 +496,9 @@ fp_func (const guchar *src,
 }
 
 static void
-fp (GimpDrawable *drawable)
+fp (PicmanDrawable *drawable)
 {
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, fp_func, NULL);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, fp_func, NULL);
 }
 
 /***********************************************************/
@@ -569,7 +569,7 @@ fp_create_circle_palette (GtkWidget *parent)
 
   win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-  gimp_help_connect (win, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+  picman_help_connect (win, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
   gtk_window_set_title (GTK_WINDOW (win), _("Hue Variations"));
   gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parent));
@@ -626,7 +626,7 @@ fp_create_rough (void)
   GtkWidget     *frame, *vbox, *scale;
   GtkAdjustment *data;
 
-  frame = gimp_frame_new (_("Roughness"));
+  frame = picman_frame_new (_("Roughness"));
   gtk_widget_show (frame);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -656,7 +656,7 @@ static void
 fp_change_current_range (GtkWidget *widget,
                          gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
@@ -671,7 +671,7 @@ fp_create_range (void)
 {
   GtkWidget *frame;
 
-  frame = gimp_int_radio_group_new (TRUE, _("Affected Range"),
+  frame = picman_int_radio_group_new (TRUE, _("Affected Range"),
                                     G_CALLBACK (fp_change_current_range),
                                     &fpvals.intensity_range, fpvals.intensity_range,
 
@@ -691,7 +691,7 @@ fp_create_control (void)
 {
   GtkWidget *frame, *box;
 
-  frame = gimp_frame_new (_("Windows"));
+  frame = picman_frame_new (_("Windows"));
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_container_add (GTK_CONTAINER (frame), box);
@@ -727,7 +727,7 @@ fp_create_lnd (GtkWidget *parent)
 
   win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-  gimp_help_connect (win, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+  picman_help_connect (win, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
   gtk_window_set_title (GTK_WINDOW (win), _("Value Variations"));
   gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parent));
@@ -772,7 +772,7 @@ fp_create_msnls (GtkWidget *parent)
 
   win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-  gimp_help_connect (win, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+  picman_help_connect (win, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
   gtk_window_set_title (GTK_WINDOW (win), _("Saturation Variations"));
   gtk_window_set_transient_for (GTK_WINDOW (win), GTK_WINDOW (parent));
@@ -812,7 +812,7 @@ static void
 fp_change_current_pixels_by (GtkWidget *widget,
                              gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
@@ -827,7 +827,7 @@ fp_create_pixels_select_by (void)
 {
   GtkWidget *frame;
 
-  frame = gimp_int_radio_group_new (TRUE, _("Select Pixels By"),
+  frame = picman_int_radio_group_new (TRUE, _("Select Pixels By"),
                                     G_CALLBACK (fp_change_current_pixels_by),
                                     &fpvals.value_by,
                                     fpvals.value_by,
@@ -847,7 +847,7 @@ static void
 fp_change_selection (GtkWidget *widget,
                      gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
@@ -860,7 +860,7 @@ fp_create_show (void)
 {
   GtkWidget *frame;
 
-  frame = gimp_int_radio_group_new (TRUE, _("Show"),
+  frame = picman_int_radio_group_new (TRUE, _("Show"),
                                     G_CALLBACK (fp_change_selection),
                                     &fpvals.selection_only,
                                     fpvals.selection_only,
@@ -886,7 +886,7 @@ fp_create_preview (GtkWidget **preview,
   gtk_frame_set_shadow_type (GTK_FRAME (*frame), GTK_SHADOW_IN);
   gtk_widget_show (*frame);
 
-  *preview = gimp_preview_area_new ();
+  *preview = picman_preview_area_new ();
   gtk_widget_set_size_request (*preview, preview_width, preview_height);
   g_signal_connect (*preview, "size-allocate",
                     G_CALLBACK (fp_preview_size_allocate), NULL);
@@ -1196,13 +1196,13 @@ fp_dialog (void)
                              fpvals.preview_size,
                              fpvals.selection_only);
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dlg = gimp_dialog_new (_("Filter Pack Simulation"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Filter Pack Simulation"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
-                         GIMP_STOCK_RESET, RESPONSE_RESET,
+                         PICMAN_STOCK_RESET, RESPONSE_RESET,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -1214,7 +1214,7 @@ fp_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   g_signal_connect (dlg, "response",
                     G_CALLBACK (fp_response),
@@ -1300,7 +1300,7 @@ fp_advanced_dialog (GtkWidget *parent)
 
   AW.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-  gimp_help_connect (AW.window, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+  picman_help_connect (AW.window, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
   gtk_window_set_title (GTK_WINDOW (AW.window),
                         _("Advanced Filter Pack Options"));
@@ -1315,7 +1315,7 @@ fp_advanced_dialog (GtkWidget *parent)
   gtk_container_add (GTK_CONTAINER (AW.window), hbox);
   gtk_widget_show (hbox);
 
-  frame = gimp_frame_new (_("Affected Range"));
+  frame = picman_frame_new (_("Affected Range"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1341,7 +1341,7 @@ fp_advanced_dialog (GtkWidget *parent)
   gtk_container_add (GTK_CONTAINER (alignment), innermost_vbox);
   gtk_widget_show (innermost_vbox);
 
-  AW.aliasing_preview = gimp_preview_area_new ();
+  AW.aliasing_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (AW.aliasing_preview, 256, MAX_ROUGHNESS);
   gtk_box_pack_start (GTK_BOX (innermost_vbox),
                       AW.aliasing_preview, TRUE, TRUE, 0);
@@ -1349,7 +1349,7 @@ fp_advanced_dialog (GtkWidget *parent)
 
   fp_create_smoothness_graph (AW.aliasing_preview);
 
-  AW.range_preview = gimp_preview_area_new ();
+  AW.range_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (AW.range_preview, 256, RANGE_HEIGHT);
   gtk_box_pack_start(GTK_BOX (innermost_vbox),
                      AW.range_preview, TRUE, TRUE, 0);
@@ -1386,7 +1386,7 @@ fp_advanced_dialog (GtkWidget *parent)
       if (!(i % 4))
         {
           gtk_label_set_text (GTK_LABEL(label), gettext (rangeNames[i/4]));
-          gimp_label_set_attributes (GTK_LABEL (label),
+          picman_label_set_attributes (GTK_LABEL (label),
                                      PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                                      -1);
           gtk_misc_set_alignment (GTK_MISC (label), 1.0, 1.0);
@@ -1415,7 +1415,7 @@ fp_advanced_dialog (GtkWidget *parent)
 
   /******************* MISC OPTIONS ***************************/
 
-  frame = gimp_frame_new (_("Preview Size"));
+  frame = picman_frame_new (_("Preview Size"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1611,8 +1611,8 @@ fp_reset_filter_packs (void)
 }
 
 static ReducedImage *
-fp_reduce_image (GimpDrawable *drawable,
-                 GimpDrawable *mask,
+fp_reduce_image (PicmanDrawable *drawable,
+                 PicmanDrawable *mask,
                  gint          longer_size,
                  gint          selection)
 {
@@ -1621,10 +1621,10 @@ fp_reduce_image (GimpDrawable *drawable,
   ReducedImage *temp = g_new0 (ReducedImage, 1);
   guchar       *tempRGB, *src_row, *tempmask, *src_mask_row, R, G, B;
   gint          i, j, whichcol, whichrow;
-  GimpPixelRgn  srcPR, srcMask;
+  PicmanPixelRgn  srcPR, srcMask;
   gdouble      *tempHSV;
-  GimpRGB       rgb;
-  GimpHSV       hsv;
+  PicmanRGB       rgb;
+  PicmanHSV       hsv;
 
   switch (selection)
     {
@@ -1636,15 +1636,15 @@ fp_reduce_image (GimpDrawable *drawable,
       break;
 
     case 1:
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x, &y, &width, &height))
         return temp;
       break;
 
     case 2:
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x, &y, &width, &height) ||
-          ! gimp_rectangle_intersect (x - width / 2, y - height / 2,
+          ! picman_rectangle_intersect (x - width / 2, y - height / 2,
                                       2 * width, 2 * height,
                                       0, 0, drawable->width, drawable->height,
                                       &x, &y, &width, &height))
@@ -1673,11 +1673,11 @@ fp_reduce_image (GimpDrawable *drawable,
   src_row      = g_new (guchar, width * bytes);
   src_mask_row = g_new (guchar, width);
 
-  gimp_pixel_rgn_init (&srcPR, drawable, x, y, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&srcPR, drawable, x, y, width, height, FALSE, FALSE);
 
   if (mask)
     {
-      gimp_pixel_rgn_init (&srcMask, mask, x, y, width, height, FALSE, FALSE);
+      picman_pixel_rgn_init (&srcMask, mask, x, y, width, height, FALSE, FALSE);
     }
   else
     {
@@ -1688,10 +1688,10 @@ fp_reduce_image (GimpDrawable *drawable,
     {
       whichrow = (gdouble) i * (gdouble) height / (gdouble) RH;
 
-      gimp_pixel_rgn_get_row (&srcPR, src_row, x, y + whichrow, width);
+      picman_pixel_rgn_get_row (&srcPR, src_row, x, y + whichrow, width);
 
       if (mask)
-        gimp_pixel_rgn_get_row (&srcMask, src_mask_row, x, y + whichrow, width);
+        picman_pixel_rgn_get_row (&srcMask, src_mask_row, x, y + whichrow, width);
 
       for (j = 0; j < RW; j++)
         {
@@ -1703,8 +1703,8 @@ fp_reduce_image (GimpDrawable *drawable,
           G = src_row[whichcol * bytes + 1];
           B = src_row[whichcol * bytes + 2];
 
-          gimp_rgb_set_uchar (&rgb, R, G, B);
-          gimp_rgb_to_hsv (&rgb, &hsv);
+          picman_rgb_set_uchar (&rgb, R, G, B);
+          picman_rgb_to_hsv (&rgb, &hsv);
 
           tempRGB[i * RW * bytes + j * bytes + 0] = R;
           tempRGB[i * RW * bytes + j * bytes + 1] = G;
@@ -1865,9 +1865,9 @@ fp_render_preview (GtkWidget *preview,
         }
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, RW, RH,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           a,
                           RW * 4);
   g_free (a);
@@ -1971,9 +1971,9 @@ fp_create_smoothness_graph (GtkWidget *preview)
         }
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, 256, MAX_ROUGHNESS,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           data,
                           256 * 3);
 }
@@ -1989,8 +1989,8 @@ fp_range_preview_spill (GtkWidget *preview,
     {
       for (j = 0; j < 256; j++)
         {
-          GimpRGB rgb;
-          GimpHSV hsv;
+          PicmanRGB rgb;
+          PicmanHSV hsv;
 
           if (! ((j + 1) % 32))
             {
@@ -2009,24 +2009,24 @@ fp_range_preview_spill (GtkWidget *preview,
                   break;
 
                 case BY_HUE:
-                  gimp_hsv_set (&hsv,
+                  picman_hsv_set (&hsv,
                                 ((j - fpvals.offset + 256) % 256) / 255.0,
                                 1.0,
                                 0.5);
-                  gimp_hsv_to_rgb (&hsv, &rgb);
-                  gimp_rgb_get_uchar (&rgb,
+                  picman_hsv_to_rgb (&hsv, &rgb);
+                  picman_rgb_get_uchar (&rgb,
                                       &data[3 * (i * 256 + j) + 0],
                                       &data[3 * (i * 256 + j) + 1],
                                       &data[3 * (i * 256 + j) + 2]);
                   break;
 
                 case BY_SAT:
-                  gimp_hsv_set (&hsv,
+                  picman_hsv_set (&hsv,
                                 0.5,
                                 ((j - (gint) fpvals.offset + 256) % 256) / 255.0,
                                 0.5);
-                  gimp_hsv_to_rgb (&hsv, &rgb);
-                  gimp_rgb_get_uchar (&rgb,
+                  picman_hsv_to_rgb (&hsv, &rgb);
+                  picman_rgb_get_uchar (&rgb,
                                       &data[3 * (i * 256 + j) + 0],
                                       &data[3 * (i * 256 + j) + 1],
                                       &data[3 * (i * 256 + j) + 2]);
@@ -2036,9 +2036,9 @@ fp_range_preview_spill (GtkWidget *preview,
         }
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, 256, RANGE_HEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           data,
                           256 * 3);
 }

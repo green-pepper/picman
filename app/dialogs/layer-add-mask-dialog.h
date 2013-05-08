@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,17 +25,17 @@ struct _LayerAddMaskDialog
 {
   GtkWidget       *dialog;
 
-  GimpLayer       *layer;
-  GimpAddMaskType  add_mask_type;
-  GimpChannel     *channel;
+  PicmanLayer       *layer;
+  PicmanAddMaskType  add_mask_type;
+  PicmanChannel     *channel;
   gboolean         invert;
 };
 
 
-LayerAddMaskDialog * layer_add_mask_dialog_new (GimpLayer       *layer,
-                                                GimpContext     *context,
+LayerAddMaskDialog * layer_add_mask_dialog_new (PicmanLayer       *layer,
+                                                PicmanContext     *context,
                                                 GtkWidget       *parent,
-                                                GimpAddMaskType  add_mask_type,
+                                                PicmanAddMaskType  add_mask_type,
                                                 gboolean         invert);
 
 

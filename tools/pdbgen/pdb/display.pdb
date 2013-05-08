@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub display_is_valid {
     $blurb = 'Returns TRUE if the display is valid.';
@@ -51,9 +51,9 @@ sub display_new {
     $help = <<'HELP';
 Creates a new display for the specified image. If the image already has a
 display, another is added. Multiple displays are handled transparently by
-GIMP. The newly created display is returned and can be subsequently destroyed
-with a call to gimp_display_delete(). This procedure only makes sense for use
-with the GIMP UI.
+PICMAN. The newly created display is returned and can be subsequently destroyed
+with a call to picman_display_delete(). This procedure only makes sense for use
+with the PICMAN UI.
 HELP
 
     &std_pdb_misc;
@@ -71,14 +71,14 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_image_flush (image);
+  picman_image_flush (image);
 
-  display = gimp_create_display (gimp, image, GIMP_UNIT_PIXEL, 1.0);
+  display = picman_create_display (picman, image, PICMAN_UNIT_PIXEL, 1.0);
 
   if (display)
     {
       /* the first display takes ownership of the image */
-      if (gimp_image_get_display_count (image) == 1)
+      if (picman_image_get_display_count (image) == 1)
         g_object_unref (image);
     }
   else
@@ -110,7 +110,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_delete_display (gimp, display);
+  picman_delete_display (picman, display);
 }
 CODE
     );
@@ -141,7 +141,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  window = (gint32) gimp_get_display_window_id (gimp, display);
+  window = (gint32) picman_get_display_window_id (picman, display);
 }
 CODE
     );
@@ -159,11 +159,11 @@ HELP
     &std_pdb_misc;
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer.h") ],
+        headers => [ qw("core/picmancontainer.h") ],
         code    => <<'CODE'
 
 {
-  gimp_container_foreach (gimp->images, (GFunc) gimp_image_flush, NULL);
+  picman_container_foreach (picman->images, (GFunc) picman_image_flush, NULL);
 }
 CODE
     );
@@ -192,15 +192,15 @@ HELP
 	code => <<'CODE'
 {
   success = (old_image != new_image    &&
-             gimp_image_get_display_count (old_image) > 0 &&
-             gimp_image_get_display_count (new_image) == 0);
+             picman_image_get_display_count (old_image) > 0 &&
+             picman_image_get_display_count (new_image) == 0);
 
   if (success)
     {
-      gimp_reconnect_displays (gimp, old_image, new_image);
+      picman_reconnect_displays (picman, old_image, new_image);
 
       /* take ownership of the image */
-      if (gimp_image_get_display_count (new_image) > 0)
+      if (picman_image_get_display_count (new_image) > 0)
         g_object_unref (new_image);
     }
 }
@@ -209,7 +209,7 @@ CODE
 }
 
 
-@headers = qw("core/gimp.h");
+@headers = qw("core/picman.h");
 
 @procs = qw(display_is_valid
             display_new
@@ -221,7 +221,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Display procedures';
-$doc_title = 'gimpdisplay';
+$doc_title = 'picmandisplay';
 $doc_short_desc = 'Functions to create, delete and flush displays (views) on an image.';
 $doc_long_desc = 'Functions to create, delete and flush displays (views) on an image.';
 

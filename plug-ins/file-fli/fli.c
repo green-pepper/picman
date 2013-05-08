@@ -19,7 +19,7 @@
 
 /*
  * This code can be used to read and write FLI movies. It is currently
- * only used for the GIMP fli plug-in, but it can be used for other
+ * only used for the PICMAN fli plug-in, but it can be used for other
  * programs, too.
  */
 

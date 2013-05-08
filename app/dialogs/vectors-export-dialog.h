@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,12 +25,12 @@ struct _VectorsExportDialog
 {
   GtkWidget *dialog;
 
-  GimpImage *image;
+  PicmanImage *image;
   gboolean   active_only;
 };
 
 
-VectorsExportDialog * vectors_export_dialog_new (GimpImage *image,
+VectorsExportDialog * vectors_export_dialog_new (PicmanImage *image,
                                                  GtkWidget *parent,
                                                  gboolean   active_only);
 

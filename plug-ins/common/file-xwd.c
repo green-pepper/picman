@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * XWD reading and writing code Copyright (C) 1996 Peter Kirchgessner
  * (email: peter@kirchgessner.net, WWW: http://www.kirchgessner.net)
@@ -37,9 +37,9 @@
  * PK = Peter Kirchgessner, ME = Mattias Engdegård
  * V 1.00, PK, xx-Aug-96: First try
  * V 1.01, PK, 03-Sep-96: Check for bitmap_bit_order
- * V 1.90, PK, 17-Mar-97: Upgrade to work with GIMP V0.99
+ * V 1.90, PK, 17-Mar-97: Upgrade to work with PICMAN V0.99
  *                        Use visual class 3 to write indexed image
- *                        Set gimp b/w-colormap if no xwdcolormap present
+ *                        Set picman b/w-colormap if no xwdcolormap present
  * V 1.91, PK, 05-Apr-97: Return all arguments, even in case of an error
  * V 1.92, PK, 12-Oct-97: No progress bars for non-interactive mode
  * V 1.93, PK, 11-Apr-98: Fix problem with overwriting memory
@@ -55,16 +55,16 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-xwd-load"
 #define SAVE_PROC      "file-xwd-save"
 #define PLUG_IN_BINARY "file-xwd"
-#define PLUG_IN_ROLE   "gimp-file-xwd"
+#define PLUG_IN_ROLE   "picman-file-xwd"
 
 
 typedef gulong  L_CARD32;
@@ -140,9 +140,9 @@ typedef struct
 static void   query               (void);
 static void   run                 (const gchar      *name,
                                    gint              nparams,
-                                   const GimpParam  *param,
+                                   const PicmanParam  *param,
                                    gint             *nreturn_vals,
-                                   GimpParam       **return_vals);
+                                   PicmanParam       **return_vals);
 
 static gint32 load_image          (const gchar      *filename,
                                    GError          **error);
@@ -153,11 +153,11 @@ static gint   save_image          (const gchar      *filename,
 static gint32 create_new_image    (const gchar      *filename,
                                    guint             width,
                                    guint             height,
-                                   GimpImageBaseType type,
-                                   GimpImageType     gdtype,
+                                   PicmanImageBaseType type,
+                                   PicmanImageType     gdtype,
                                    gint32           *layer_ID,
-                                   GimpDrawable    **drawable,
-                                   GimpPixelRgn     *pixel_rgn);
+                                   PicmanDrawable    **drawable,
+                                   PicmanPixelRgn     *pixel_rgn);
 
 static int      set_pixelmap      (gint,
                                    L_XWDCOLOR *,
@@ -233,7 +233,7 @@ static gint save_rgb         (FILE *,
                               gint32);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -243,7 +243,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
 
 
 /* The run mode */
-static GimpRunMode l_run_mode;
+static PicmanRunMode l_run_mode;
 
 
 MAIN ()
@@ -253,28 +253,28 @@ static void
 query (void)
 
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Output image" }
+    { PICMAN_PDB_IMAGE,  "image",        "Output image" }
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Loads files in the XWD (X Window Dump) format",
                           "Loads files in the XWD (X Window Dump) format. "
                           "XWD image files are produced by the program xwd. "
@@ -284,18 +284,18 @@ query (void)
                           "1996",
                           N_("X window dump"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-xwindowdump");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-xwindowdump");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "xwd",
                                     "",
                                     "4,long,0x00000007");
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Saves files in the XWD (X Window Dump) format",
                           "XWD saving handles all image types except "
                           "those with alpha channels.",
@@ -304,28 +304,28 @@ query (void)
                           "1996",
                           N_("X window dump"),
                           "RGB, GRAY, INDEXED",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-xwindowdump");
-  gimp_register_save_handler (SAVE_PROC, "xwd", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-xwindowdump");
+  picman_register_save_handler (SAVE_PROC, "xwd", "");
 }
 
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   l_run_mode = run_mode = param[0].data.d_int32;
@@ -335,8 +335,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -345,12 +345,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
@@ -361,16 +361,16 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      (GIMP_EXPORT_CAN_HANDLE_RGB |
-                                       GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                       GIMP_EXPORT_CAN_HANDLE_INDEXED));
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      (PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                       PICMAN_EXPORT_CAN_HANDLE_GRAY |
+                                       PICMAN_EXPORT_CAN_HANDLE_INDEXED));
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -381,42 +381,42 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /* No additional data to retrieve */
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams != 5)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (! save_image (param[3].data.d_string, image_ID, drawable_ID,
                             &error))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CANCEL;
+      status = PICMAN_PDB_CANCEL;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -438,7 +438,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -447,7 +447,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Could not read XWD header from '%s'"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (ifp);
       return -1;
     }
@@ -494,17 +494,17 @@ load_image (const gchar  *filename,
   if (xwdhdr.l_pixmap_width <= 0)
     {
       g_message (_("'%s':\nNo image width specified"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       g_free (xwdcolmap);
       fclose (ifp);
       return (-1);
     }
 
-  if (xwdhdr.l_pixmap_width > GIMP_MAX_IMAGE_SIZE
-      || xwdhdr.l_bytes_per_line > GIMP_MAX_IMAGE_SIZE * 3)
+  if (xwdhdr.l_pixmap_width > PICMAN_MAX_IMAGE_SIZE
+      || xwdhdr.l_bytes_per_line > PICMAN_MAX_IMAGE_SIZE * 3)
     {
-      g_message (_("'%s':\nImage width is larger than GIMP can handle"),
-                 gimp_filename_to_utf8 (filename));
+      g_message (_("'%s':\nImage width is larger than PICMAN can handle"),
+                 picman_filename_to_utf8 (filename));
       g_free (xwdcolmap);
       fclose (ifp);
       return (-1);
@@ -513,23 +513,23 @@ load_image (const gchar  *filename,
   if (xwdhdr.l_pixmap_height <= 0)
     {
       g_message (_("'%s':\nNo image height specified"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       g_free (xwdcolmap);
       fclose (ifp);
       return (-1);
     }
 
-  if (xwdhdr.l_pixmap_height > GIMP_MAX_IMAGE_SIZE)
+  if (xwdhdr.l_pixmap_height > PICMAN_MAX_IMAGE_SIZE)
     {
-      g_message (_("'%s':\nImage height is larger than GIMP can handle"),
-                 gimp_filename_to_utf8 (filename));
+      g_message (_("'%s':\nImage height is larger than PICMAN can handle"),
+                 picman_filename_to_utf8 (filename));
       g_free (xwdcolmap);
       fclose (ifp);
       return (-1);
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   depth = xwdhdr.l_pixmap_depth;
   bpp   = xwdhdr.l_bits_per_pixel;
@@ -576,7 +576,7 @@ load_image (const gchar  *filename,
         }
       break;
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   fclose (ifp);
 
@@ -587,7 +587,7 @@ load_image (const gchar  *filename,
     g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                  _("XWD-file %s has format %d, depth %d and bits per pixel %d. "
                    "Currently this is not supported."),
-                 gimp_filename_to_utf8 (filename),
+                 picman_filename_to_utf8 (filename),
                  (gint) xwdhdr.l_pixmap_format, depth, bpp);
 
   return image_ID;
@@ -600,13 +600,13 @@ save_image (const gchar  *filename,
             GError      **error)
 {
   FILE          *ofp;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   gint           retval;
 
-  drawable_type = gimp_drawable_type (drawable_ID);
+  drawable_type = picman_drawable_type (drawable_ID);
 
   /*  Make sure we're not saving an image with an alpha channel  */
-  if (gimp_drawable_has_alpha (drawable_ID))
+  if (picman_drawable_has_alpha (drawable_ID))
     {
       g_message (_("Cannot save images with alpha channels."));
       return FALSE;
@@ -614,9 +614,9 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_GRAY_IMAGE:
-    case GIMP_RGB_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
+    case PICMAN_GRAY_IMAGE:
+    case PICMAN_RGB_IMAGE:
       break;
     default:
       g_message (_("Cannot operate on unknown image types."));
@@ -630,29 +630,29 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       retval = save_index (ofp, image_ID, drawable_ID, 0);
       break;
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       retval = save_index (ofp, image_ID, drawable_ID, 1);
       break;
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       retval = save_rgb (ofp, image_ID, drawable_ID);
       break;
     default:
       retval = FALSE;
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   fclose (ofp);
 
@@ -1074,10 +1074,10 @@ set_bw_color_table (gint32 image_ID)
   static guchar BWColorMap[2*3] = { 255, 255, 255, 0, 0, 0 };
 
 #ifdef XWD_COL_DEBUG
-  printf ("Set GIMP b/w-colortable:\n");
+  printf ("Set PICMAN b/w-colortable:\n");
 #endif
 
-  gimp_image_set_colormap (image_ID, BWColorMap, 2);
+  picman_image_set_colormap (image_ID, BWColorMap, 2);
 }
 
 
@@ -1177,13 +1177,13 @@ set_color_table (gint32           image_ID,
     }
 
 #ifdef XWD_COL_DEBUG
-  printf ("Set GIMP colortable:\n");
+  printf ("Set PICMAN colortable:\n");
   for (j = 0; j < 256; j++)
     printf ("%3d: 0x%02x 0x%02x 0x%02x\n", j,
             ColorMap[j*3], ColorMap[j*3+1], ColorMap[j*3+2]);
 #endif
 
-  gimp_image_set_colormap (image_ID, ColorMap, 256);
+  picman_image_set_colormap (image_ID, ColorMap, 256);
 }
 
 
@@ -1194,23 +1194,23 @@ static gint32
 create_new_image (const gchar         *filename,
                   guint                width,
                   guint                height,
-                  GimpImageBaseType    type,
-                  GimpImageType        gdtype,
+                  PicmanImageBaseType    type,
+                  PicmanImageType        gdtype,
                   gint32              *layer_ID,
-                  GimpDrawable       **drawable,
-                  GimpPixelRgn        *pixel_rgn)
+                  PicmanDrawable       **drawable,
+                  PicmanPixelRgn        *pixel_rgn)
 {
   gint32        image_ID;
 
-  image_ID = gimp_image_new (width, height, type);
-  gimp_image_set_filename (image_ID, filename);
+  image_ID = picman_image_new (width, height, type);
+  picman_image_set_filename (image_ID, filename);
 
-  *layer_ID = gimp_layer_new (image_ID, "Background", width, height,
-                              gdtype, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, *layer_ID, -1, 0);
+  *layer_ID = picman_layer_new (image_ID, "Background", width, height,
+                              gdtype, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, *layer_ID, -1, 0);
 
-  *drawable = gimp_drawable_get (*layer_ID);
-  gimp_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
+  *drawable = picman_drawable_get (*layer_ID);
+  picman_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
                        (*drawable)->height, TRUE, FALSE);
 
   return image_ID;
@@ -1235,8 +1235,8 @@ load_xwd_f2_d1_b1 (const gchar     *filename,
   guchar          *data, *scanline;
   gint             err = 0;
   gint32           layer_ID, image_ID;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f2_d1_b1 (%s)\n", filename);
@@ -1245,11 +1245,11 @@ load_xwd_f2_d1_b1 (const gchar     *filename,
   width  = xwdhdr->l_pixmap_width;
   height = xwdhdr->l_pixmap_height;
 
-  image_ID = create_new_image (filename, width, height, GIMP_INDEXED,
-                               GIMP_INDEXED_IMAGE, &layer_ID, &drawable,
+  image_ID = create_new_image (filename, width, height, PICMAN_INDEXED,
+                               PICMAN_INDEXED_IMAGE, &layer_ID, &drawable,
                                &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width);
 
   scanline = g_new (guchar, xwdhdr->l_bytes_per_line + 8);
@@ -1336,11 +1336,11 @@ load_xwd_f2_d1_b1 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1354,7 +1354,7 @@ load_xwd_f2_d1_b1 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -1374,8 +1374,8 @@ load_xwd_f2_d8_b8 (const gchar     *filename,
   guchar       *dest, *data;
   gint          err = 0;
   gint32        layer_ID, image_ID;
-  GimpPixelRgn  pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn  pixel_rgn;
+  PicmanDrawable *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f2_d8_b8 (%s)\n", filename);
@@ -1401,11 +1401,11 @@ load_xwd_f2_d8_b8 (const gchar     *filename,
     }
 
   image_ID = create_new_image (filename, width, height,
-                               grayscale ? GIMP_GRAY : GIMP_INDEXED,
-                               grayscale ? GIMP_GRAY_IMAGE : GIMP_INDEXED_IMAGE,
+                               grayscale ? PICMAN_GRAY : PICMAN_INDEXED,
+                               grayscale ? PICMAN_GRAY_IMAGE : PICMAN_INDEXED_IMAGE,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width);
 
   if (!grayscale)
@@ -1440,11 +1440,11 @@ load_xwd_f2_d8_b8 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((gdouble) (i + 1) / (gdouble) height);
+        picman_progress_update ((gdouble) (i + 1) / (gdouble) height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1456,7 +1456,7 @@ load_xwd_f2_d8_b8 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -1481,8 +1481,8 @@ load_xwd_f2_d16_b16 (const gchar     *filename,
   guchar          *ColorMap, *cm, *data;
   gint             err = 0;
   gint32           layer_ID, image_ID;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f2_d16_b16 (%s)\n", filename);
@@ -1491,14 +1491,14 @@ load_xwd_f2_d16_b16 (const gchar     *filename,
   width  = xwdhdr->l_pixmap_width;
   height = xwdhdr->l_pixmap_height;
 
-  image_ID = create_new_image (filename, width, height, GIMP_RGB,
-                               GIMP_RGB_IMAGE, &layer_ID, &drawable,
+  image_ID = create_new_image (filename, width, height, PICMAN_RGB,
+                               PICMAN_RGB_IMAGE, &layer_ID, &drawable,
                                &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * 3);
 
-  /* Get memory for mapping 16 bit XWD-pixel to GIMP-RGB */
+  /* Get memory for mapping 16 bit XWD-pixel to PICMAN-RGB */
   maxval = 0x10000 * 3;
   ColorMap = g_new0 (guchar, maxval);
 
@@ -1524,7 +1524,7 @@ load_xwd_f2_d16_b16 (const gchar     *filename,
   maxblue = 0; while (bluemask >> (blueshift + maxblue)) maxblue++;
   maxblue = (1 << maxblue) - 1;
 
-  /* Built up the array to map XWD-pixel value to GIMP-RGB */
+  /* Built up the array to map XWD-pixel value to PICMAN-RGB */
   for (red = 0; red <= maxred; red++)
     {
       redval = (red * 255) / maxred;
@@ -1599,11 +1599,11 @@ load_xwd_f2_d16_b16 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1615,7 +1615,7 @@ load_xwd_f2_d16_b16 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -1643,8 +1643,8 @@ load_xwd_f2_d24_b32 (const gchar      *filename,
   PIXEL_MAP        pixel_map;
   gint             err = 0;
   gint32           layer_ID, image_ID;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f2_d24_b32 (%s)\n", filename);
@@ -1686,15 +1686,15 @@ load_xwd_f2_d24_b32 (const gchar      *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("XWD-file %s is corrupt."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
-  image_ID = create_new_image (filename, width, height, GIMP_RGB,
-                               GIMP_RGB_IMAGE, &layer_ID, &drawable,
+  image_ID = create_new_image (filename, width, height, PICMAN_RGB,
+                               PICMAN_RGB_IMAGE, &layer_ID, &drawable,
                                &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * 3);
 
   /* Set map-arrays for red, green, blue */
@@ -1761,11 +1761,11 @@ load_xwd_f2_d24_b32 (const gchar      *filename,
             getc (ifp);
 
           if ((i % 20) == 0)
-            gimp_progress_update ((gdouble) (i + 1) / (gdouble) height);
+            picman_progress_update ((gdouble) (i + 1) / (gdouble) height);
 
           if ((scan_lines == tile_height) || ((i+1) == height))
             {
-              gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+              picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                        width, scan_lines);
               scan_lines = 0;
               dest = data;
@@ -1811,11 +1811,11 @@ load_xwd_f2_d24_b32 (const gchar      *filename,
             getc (ifp);
 
           if ((i % 20) == 0)
-            gimp_progress_update ((gdouble) (i + 1) / (gdouble) height);
+            picman_progress_update ((gdouble) (i + 1) / (gdouble) height);
 
           if ((scan_lines == tile_height) || ((i+1) == height))
             {
-              gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+              picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                        width, scan_lines);
               scan_lines = 0;
               dest = data;
@@ -1828,7 +1828,7 @@ load_xwd_f2_d24_b32 (const gchar      *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -1854,8 +1854,8 @@ load_xwd_f2_d32_b32 (const gchar     *filename,
   PIXEL_MAP        pixel_map;
   gint             err = 0;
   gint32           layer_ID, image_ID;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f2_d32_b32 (%s)\n", filename);
@@ -1864,11 +1864,11 @@ load_xwd_f2_d32_b32 (const gchar     *filename,
   width  = xwdhdr->l_pixmap_width;
   height = xwdhdr->l_pixmap_height;
 
-  image_ID = create_new_image (filename, width, height, GIMP_RGB,
-                               GIMP_RGBA_IMAGE, &layer_ID, &drawable,
+  image_ID = create_new_image (filename, width, height, PICMAN_RGB,
+                               PICMAN_RGBA_IMAGE, &layer_ID, &drawable,
                                &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * 4);
 
   redmask   = xwdhdr->l_red_mask;
@@ -1970,11 +1970,11 @@ load_xwd_f2_d32_b32 (const gchar     *filename,
         getc (ifp);
 
       if ((i % 20) == 0)
-        gimp_progress_update ((gdouble) (i + 1) / (gdouble) height);
+        picman_progress_update ((gdouble) (i + 1) / (gdouble) height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1986,7 +1986,7 @@ load_xwd_f2_d32_b32 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -2017,8 +2017,8 @@ load_xwd_f1_d24_b1 (const gchar      *filename,
   PIXEL_MAP        pixel_map;
   gint             err = 0;
   gint32           layer_ID, image_ID;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("load_xwd_f1_d24_b1 (%s)\n", filename);
@@ -2082,7 +2082,7 @@ load_xwd_f1_d24_b1 (const gchar      *filename,
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("XWD-file %s is corrupt."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
 
@@ -2096,11 +2096,11 @@ load_xwd_f1_d24_b1 (const gchar      *filename,
     }
 
   image_ID = create_new_image (filename, width, height,
-                               indexed ? GIMP_INDEXED : GIMP_RGB,
-                               indexed ? GIMP_INDEXED_IMAGE : GIMP_RGB_IMAGE,
+                               indexed ? PICMAN_INDEXED : PICMAN_RGB,
+                               indexed ? PICMAN_INDEXED_IMAGE : PICMAN_RGB_IMAGE,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * bytes_per_pixel);
 
   ncols = xwdhdr->l_colormap_entries;
@@ -2237,9 +2237,9 @@ load_xwd_f1_d24_b1 (const gchar      *filename,
             }
         }
 
-      gimp_progress_update ((gdouble) tile_end / (gdouble) height);
+      picman_progress_update ((gdouble) tile_end / (gdouble) height);
 
-      gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, tile_start,
+      picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, tile_start,
                                width, tile_end-tile_start+1);
     }
 
@@ -2249,7 +2249,7 @@ load_xwd_f1_d24_b1 (const gchar      *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return err ? -1 : image_ID;
 }
@@ -2267,19 +2267,19 @@ save_index (FILE    *ofp,
   guchar          *data, *src, *cmap;
   L_XWDFILEHEADER  xwdhdr;
   L_XWDCOLOR       xwdcolmap[256];
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("save_index ()\n");
 #endif
 
-  drawable      = gimp_drawable_get (drawable_ID);
+  drawable      = picman_drawable_get (drawable_ID);
   width         = drawable->width;
   height        = drawable->height;
-  tile_height   = gimp_tile_height ();
+  tile_height   = picman_tile_height ();
 
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
 
   /* allocate a buffer for retrieving information from the pixel region  */
   src = data = g_new (guchar, tile_height * width * drawable->bpp);
@@ -2306,7 +2306,7 @@ save_index (FILE    *ofp,
   else
     {
       vclass = 3;
-      cmap = gimp_image_get_colormap (image_ID, &ncolors);
+      cmap = picman_image_get_colormap (image_ID, &ncolors);
 
       for (j = 0; j < ncolors; j++)
         {
@@ -2355,7 +2355,7 @@ save_index (FILE    *ofp,
         {
           gint scan_lines = (i + tile_height - 1 < height) ? tile_height : (height - i);
 
-          gimp_pixel_rgn_get_rect (&pixel_rgn, data, 0, i, width, scan_lines);
+          picman_pixel_rgn_get_rect (&pixel_rgn, data, 0, i, width, scan_lines);
           src = data;
         }
 
@@ -2367,12 +2367,12 @@ save_index (FILE    *ofp,
       src += width;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((gdouble) i / (gdouble) height);
+        picman_progress_update ((gdouble) i / (gdouble) height);
     }
 
   g_free (data);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   if (ferror (ofp))
     {
@@ -2393,19 +2393,19 @@ save_rgb (FILE   *ofp,
   glong            tmp = 0;
   guchar          *data, *src;
   L_XWDFILEHEADER  xwdhdr;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
 
 #ifdef XWD_DEBUG
   printf ("save_rgb ()\n");
 #endif
 
-  drawable      = gimp_drawable_get (drawable_ID);
+  drawable      = picman_drawable_get (drawable_ID);
   width         = drawable->width;
   height        = drawable->height;
-  tile_height   = gimp_tile_height ();
+  tile_height   = picman_tile_height ();
 
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
 
   /* allocate a buffer for retrieving information from the pixel region  */
   src = data = g_new (guchar, tile_height * width * drawable->bpp);
@@ -2451,7 +2451,7 @@ save_rgb (FILE   *ofp,
         {
           gint scan_lines = (i + tile_height - 1 < height) ? tile_height : (height - i);
 
-          gimp_pixel_rgn_get_rect (&pixel_rgn, data, 0, i, width, scan_lines);
+          picman_pixel_rgn_get_rect (&pixel_rgn, data, 0, i, width, scan_lines);
           src = data;
         }
 
@@ -2463,12 +2463,12 @@ save_rgb (FILE   *ofp,
       src += width * 3;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((gdouble) i / (gdouble) height);
+        picman_progress_update ((gdouble) i / (gdouble) height);
     }
 
   g_free (data);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   if (ferror (ofp))
     {

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,25 +20,25 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimppalette.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
+#include "core/picmanpalette.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpcontainertreeview.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpdatafactoryview.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpview.h"
+#include "widgets/picmancontainertreeview.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmandatafactoryview.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanview.h"
 
 #include "actions.h"
 #include "palettes-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -57,23 +57,23 @@ palettes_import_cmd_callback (GtkAction *action,
   GtkWidget *widget;
   return_if_no_widget (widget, data);
 
-  gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                   gtk_widget_get_screen (widget),
                                   NULL /*ui_manager*/,
-                                  "gimp-palette-import-dialog", -1, TRUE);
+                                  "picman-palette-import-dialog", -1, TRUE);
 }
 
 void
 palettes_merge_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
   GtkWidget           *dialog;
 
-  dialog = gimp_query_string_box (_("Merge Palette"),
+  dialog = picman_query_string_box (_("Merge Palette"),
                                   GTK_WIDGET (editor),
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_PALETTE_MERGE,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_PALETTE_MERGE,
                                   _("Enter a name for the merged palette"),
                                   NULL,
                                   G_OBJECT (editor), "destroy",
@@ -92,45 +92,45 @@ palettes_merge_callback (GtkWidget   *widget,
 {
   /* FIXME: reimplement palettes_merge_callback() */
 #if 0
-  GimpContainerEditor *editor;
-  GimpPalette         *palette;
-  GimpPalette         *new_palette;
+  PicmanContainerEditor *editor;
+  PicmanPalette         *palette;
+  PicmanPalette         *new_palette;
   GList               *sel_list;
 
-  editor = (GimpContainerEditor *) data;
+  editor = (PicmanContainerEditor *) data;
 
-  sel_list = GTK_LIST (GIMP_CONTAINER_LIST_VIEW (editor->view)->gtk_list)->selection;
+  sel_list = GTK_LIST (PICMAN_CONTAINER_LIST_VIEW (editor->view)->gtk_list)->selection;
 
   if (! sel_list)
     {
-      gimp_message_literal (gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    "Can't merge palettes because "
 			    "there are no palettes selected.");
       return;
     }
 
-  new_palette = GIMP_PALETTE (gimp_palette_new (palette_name, FALSE));
+  new_palette = PICMAN_PALETTE (picman_palette_new (palette_name, FALSE));
 
   while (sel_list)
     {
-      GimpListItem *list_item;
+      PicmanListItem *list_item;
 
-      list_item = GIMP_LIST_ITEM (sel_list->data);
+      list_item = PICMAN_LIST_ITEM (sel_list->data);
 
-      palette = (GimpPalette *) GIMP_VIEW (list_item->preview)->viewable;
+      palette = (PicmanPalette *) PICMAN_VIEW (list_item->preview)->viewable;
 
       if (palette)
         {
           GList *cols;
 
-          for (cols = gimp_palette_get_colors (palette);
+          for (cols = picman_palette_get_colors (palette);
                cols;
                cols = g_list_next (cols))
             {
-              GimpPaletteEntry *entry = cols->data;
+              PicmanPaletteEntry *entry = cols->data;
 
-              gimp_palette_add_entry (new_palette,
+              picman_palette_add_entry (new_palette,
                                       entry->name,
                                       &entry->color);
             }
@@ -139,7 +139,7 @@ palettes_merge_callback (GtkWidget   *widget,
       sel_list = sel_list->next;
     }
 
-  gimp_container_add (editor->view->container,
-                      GIMP_OBJECT (new_palette));
+  picman_container_add (editor->view->container,
+                      PICMAN_OBJECT (new_palette));
 #endif
 }

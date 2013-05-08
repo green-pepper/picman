@@ -1,5 +1,5 @@
 /*
- * This is a plugin for GIMP.
+ * This is a plugin for PICMAN.
  *
  * Copyright (C) 1997 Xavier Bouchoux
  *
@@ -28,15 +28,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-sinus"
 #define PLUG_IN_BINARY "sinus"
-#define PLUG_IN_ROLE   "gimp-sinus"
+#define PLUG_IN_ROLE   "picman-sinus"
 
 
 /*
@@ -65,8 +65,8 @@ typedef struct
   glong     perturbation;
   glong     colorization;
   glong     colors;
-  GimpRGB   col1;
-  GimpRGB   col2;
+  PicmanRGB   col1;
+  PicmanRGB   col2;
   gboolean  random_seed;
 } SinusVals;
 
@@ -107,9 +107,9 @@ typedef struct
 
 static gboolean          drawable_is_grayscale = FALSE;
 static mwPreview        *thePreview;
-static GimpDrawable     *drawable;
+static PicmanDrawable     *drawable;
 
-/*  preview stuff -- to be removed as soon as we have a real libgimp preview  */
+/*  preview stuff -- to be removed as soon as we have a real libpicman preview  */
 
 #define PREVIEW_SIZE 100
 
@@ -117,16 +117,16 @@ static gboolean do_preview = TRUE;
 
 static GtkWidget        * mw_preview_new   (GtkWidget    *parent,
                                             mwPreview    *mwp);
-static mwPreview * mw_preview_build_virgin (GimpDrawable *drw);
+static mwPreview * mw_preview_build_virgin (PicmanDrawable *drw);
 
 /* Declare functions */
 
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 static void sinus (void);
 
 static gdouble linear   (gdouble v);
@@ -148,7 +148,7 @@ static void compute_block_x (guchar *dest_row,
                                             params *p),
                              params *p);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -161,28 +161,28 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable" },
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable" },
 
-    { GIMP_PDB_FLOAT,    "xscale",      "Scale value for x axis" },
-    { GIMP_PDB_FLOAT,    "yscale",      "Scale value dor y axis" },
-    { GIMP_PDB_FLOAT,    "complex",     "Complexity factor" },
-    { GIMP_PDB_INT32,    "seed",        "Seed value for random number generator" },
-    { GIMP_PDB_INT32,    "tiling",      "If set, the pattern generated will tile" },
-    { GIMP_PDB_INT32,    "perturb",     "If set, the pattern is a little more distorted..." },
-    { GIMP_PDB_INT32,    "colors",      "where to take the colors (0= B&W,  1= fg/bg, 2= col1/col2)"},
-    { GIMP_PDB_COLOR,    "col1",        "fist color (sometimes unused)" },
-    { GIMP_PDB_COLOR,    "col2",        "second color (sometimes unused)" },
-    { GIMP_PDB_FLOAT,    "alpha1",      "alpha for the first color (used if the drawable has an alpha chanel)" },
-    { GIMP_PDB_FLOAT,    "alpha2",      "alpha for the second color (used if the drawable has an alpha chanel)" },
-    { GIMP_PDB_INT32,    "blend",       "0= linear, 1= bilinear, 2= sinusoidal" },
-    { GIMP_PDB_FLOAT,    "blend-power", "Power used to strech the blend" }
+    { PICMAN_PDB_FLOAT,    "xscale",      "Scale value for x axis" },
+    { PICMAN_PDB_FLOAT,    "yscale",      "Scale value dor y axis" },
+    { PICMAN_PDB_FLOAT,    "complex",     "Complexity factor" },
+    { PICMAN_PDB_INT32,    "seed",        "Seed value for random number generator" },
+    { PICMAN_PDB_INT32,    "tiling",      "If set, the pattern generated will tile" },
+    { PICMAN_PDB_INT32,    "perturb",     "If set, the pattern is a little more distorted..." },
+    { PICMAN_PDB_INT32,    "colors",      "where to take the colors (0= B&W,  1= fg/bg, 2= col1/col2)"},
+    { PICMAN_PDB_COLOR,    "col1",        "fist color (sometimes unused)" },
+    { PICMAN_PDB_COLOR,    "col2",        "second color (sometimes unused)" },
+    { PICMAN_PDB_FLOAT,    "alpha1",      "alpha for the first color (used if the drawable has an alpha chanel)" },
+    { PICMAN_PDB_FLOAT,    "alpha2",      "alpha for the second color (used if the drawable has an alpha chanel)" },
+    { PICMAN_PDB_INT32,    "blend",       "0= linear, 1= bilinear, 2= sinusoidal" },
+    { PICMAN_PDB_FLOAT,    "blend-power", "Power used to strech the blend" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Generate complex sinusoidal textures"),
                           "FIX ME: sinus help",
                           "Xavier Bouchoux",
@@ -190,55 +190,55 @@ query (void)
                           "1997",
                           N_("_Sinus..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[1];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N ();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
 
       /* In order to prepare the dialog I need to know whether it's grayscale or not */
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
       thePreview = mw_preview_build_virgin(drawable);
-      drawable_is_grayscale = gimp_drawable_is_gray (drawable->drawable_id);
+      drawable_is_grayscale = picman_drawable_is_gray (drawable->drawable_id);
 
       if (! sinus_dialog ())
         return;
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 17)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -251,8 +251,8 @@ run (const gchar      *name,
           svals.colors       = param[9].data.d_int32;
           svals.col1         = param[10].data.d_color;
           svals.col2         = param[11].data.d_color;
-          gimp_rgb_set_alpha (&svals.col1, param[12].data.d_float);
-          gimp_rgb_set_alpha (&svals.col2, param[13].data.d_float);
+          picman_rgb_set_alpha (&svals.col1, param[12].data.d_float);
+          picman_rgb_set_alpha (&svals.col2, param[13].data.d_float);
           svals.colorization = param[14].data.d_int32;
           svals.blend_power  = param[15].data.d_float;
 
@@ -261,9 +261,9 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
 
       if (svals.random_seed)
         svals.seed = g_random_int ();
@@ -274,32 +274,32 @@ run (const gchar      *name,
     }
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  Make sure that the drawable is gray or RGB */
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id) ||
-       gimp_drawable_is_gray (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id) ||
+       picman_drawable_is_gray (drawable->drawable_id)))
     {
-      gimp_progress_init (_("Sinus: rendering"));
-      gimp_tile_cache_ntiles (1);
+      picman_progress_init (_("Sinus: rendering"));
+      picman_tile_cache_ntiles (1);
       sinus ();
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &svals, sizeof (SinusVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &svals, sizeof (SinusVals));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /*
@@ -309,8 +309,8 @@ run (const gchar      *name,
 static void
 prepare_coef (params *p)
 {
-  GimpRGB color1;
-  GimpRGB color2;
+  PicmanRGB color1;
+  PicmanRGB color2;
   gdouble scalex = svals.scalex;
   gdouble scaley = svals.scaley;
   GRand *gr;
@@ -374,8 +374,8 @@ prepare_coef (params *p)
 
   if (drawable_is_grayscale)
     {
-      gimp_rgb_set (&color1, 1.0, 1.0, 1.0);
-      gimp_rgb_set (&color2, 0.0, 0.0, 0.0);
+      picman_rgb_set (&color1, 1.0, 1.0, 1.0);
+      picman_rgb_set (&color2, 0.0, 0.0, 0.0);
     }
   else
     {
@@ -384,19 +384,19 @@ prepare_coef (params *p)
         case USE_COLORS:
           break;
         case B_W:
-          gimp_rgb_set (&color1, 1.0, 1.0, 1.0);
-          gimp_rgb_set (&color2, 0.0, 0.0, 0.0);
+          picman_rgb_set (&color1, 1.0, 1.0, 1.0);
+          picman_rgb_set (&color2, 0.0, 0.0, 0.0);
           break;
         case USE_FG_BG:
-          gimp_context_get_background (&color1);
-          gimp_context_get_foreground (&color2);
+          picman_context_get_background (&color1);
+          picman_context_get_foreground (&color2);
           break;
         }
     }
 
-  gimp_rgba_get_uchar (&color1, &p->r, &p->g, &p->b, &p->a);
+  picman_rgba_get_uchar (&color1, &p->r, &p->g, &p->b, &p->a);
 
-  gimp_rgba_subtract (&color2, &color1);
+  picman_rgba_subtract (&color2, &color1);
   p->dr = color2.r * 255.0;
   p->dg = color2.g * 255.0;
   p->db = color2.b * 255.0;
@@ -410,27 +410,27 @@ sinus (void)
 {
   params  p;
   gint    bytes;
-  GimpPixelRgn dest_rgn;
+  PicmanPixelRgn dest_rgn;
   gint     x1, y1, x2, y2;
   gpointer pr;
   gint progress, max_progress;
 
   prepare_coef(&p);
 
-  gimp_drawable_mask_bounds(drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds(drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   p.width = drawable->width;
   p.height = drawable->height;
   bytes = drawable->bpp;
 
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, x2 - x1, y2 - y1, TRUE,TRUE);
   progress = 0;
   max_progress = (x2 - x1) * (y2 - y1);
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       switch (bytes)
         {
@@ -456,13 +456,13 @@ sinus (void)
           break;
         }
       progress += dest_rgn.w * dest_rgn.h;
-      gimp_progress_update ((double) progress / (double) max_progress);
+      picman_progress_update ((double) progress / (double) max_progress);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
 }
 
 static gdouble
@@ -559,17 +559,17 @@ static void
 alpha_scale_cb (GtkAdjustment *adj,
                 gpointer       data)
 {
-  GimpColorButton *color_button;
-  GimpRGB          color;
+  PicmanColorButton *color_button;
+  PicmanRGB          color;
 
   if (!data)
     return;
 
-  color_button = GIMP_COLOR_BUTTON (data);
+  color_button = PICMAN_COLOR_BUTTON (data);
 
-  gimp_color_button_get_color (GIMP_COLOR_BUTTON (color_button), &color);
-  gimp_rgb_set_alpha (&color, gtk_adjustment_get_value (adj));
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (color_button), &color);
+  picman_color_button_get_color (PICMAN_COLOR_BUTTON (color_button), &color);
+  picman_rgb_set_alpha (&color, gtk_adjustment_get_value (adj));
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (color_button), &color);
 }
 
 static void
@@ -577,11 +577,11 @@ alpha_scale_update (GtkWidget *color_button,
                     gpointer   data)
 {
   GtkAdjustment *adj;
-  GimpRGB        color;
+  PicmanRGB        color;
 
   adj = GTK_ADJUSTMENT (data);
 
-  gimp_color_button_get_color (GIMP_COLOR_BUTTON (color_button), &color);
+  picman_color_button_get_color (PICMAN_COLOR_BUTTON (color_button), &color);
   gtk_adjustment_set_value (adj, color.a);
 
   sinus_do_preview (NULL);
@@ -591,7 +591,7 @@ static void
 sinus_toggle_button_update (GtkWidget *widget,
                             gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
   sinus_do_preview (NULL);
 }
 
@@ -599,7 +599,7 @@ static void
 sinus_radio_button_update (GtkWidget *widget,
                            gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
   sinus_do_preview (NULL);
 }
 
@@ -607,7 +607,7 @@ static void
 sinus_double_adjustment_update (GtkAdjustment *adjustment,
                                 gpointer       data)
 {
-  gimp_double_adjustment_update (adjustment, data);
+  picman_double_adjustment_update (adjustment, data);
   sinus_do_preview (NULL);
 }
 
@@ -642,13 +642,13 @@ sinus_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   /* Create Main window with a vbox */
   /* ============================== */
-  dlg = gimp_dialog_new (_("Sinus"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Sinus"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -660,7 +660,7 @@ sinus_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   main_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_hbox), 12);
@@ -688,7 +688,7 @@ sinus_dialog (void)
   page = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (page), 12);
 
-  frame = gimp_frame_new (_("Drawing Settings"));
+  frame = picman_frame_new (_("Drawing Settings"));
   gtk_box_pack_start (GTK_BOX (page), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -697,7 +697,7 @@ sinus_dialog (void)
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_container_add (GTK_CONTAINER(frame), table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_X scale:"), 140, 8,
                               svals.scalex, 0.0001, 100.0, 0.0001, 5, 4,
                               TRUE, 0, 0,
@@ -706,7 +706,7 @@ sinus_dialog (void)
                     G_CALLBACK (sinus_double_adjustment_update),
                     &svals.scalex);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Y scale:"), 140, 8,
                               svals.scaley, 0.0001, 100.0, 0.0001, 5, 4,
                               TRUE, 0, 0,
@@ -715,7 +715,7 @@ sinus_dialog (void)
                     G_CALLBACK (sinus_double_adjustment_update),
                     &svals.scaley);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("Co_mplexity:"), 140, 8,
                               svals.cmplx, 0.0, 15.0, 0.01, 5, 2,
                               TRUE, 0, 0,
@@ -726,7 +726,7 @@ sinus_dialog (void)
 
   gtk_widget_show (table);
 
-  frame= gimp_frame_new (_("Calculation Settings"));
+  frame= picman_frame_new (_("Calculation Settings"));
   gtk_box_pack_start (GTK_BOX (page), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -737,14 +737,14 @@ sinus_dialog (void)
   table = gtk_table_new (3, 1, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
-  hbox = gimp_random_seed_new (&svals.seed, &svals.random_seed);
-  label = gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  hbox = picman_random_seed_new (&svals.seed, &svals.random_seed);
+  label = picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                      _("R_andom seed:"), 1.0, 0.5,
                                      hbox, 1, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label),
-                                 GIMP_RANDOM_SEED_SPINBUTTON (hbox));
+                                 PICMAN_RANDOM_SEED_SPINBUTTON (hbox));
 
-  g_signal_connect (GIMP_RANDOM_SEED_SPINBUTTON_ADJ (hbox),
+  g_signal_connect (PICMAN_RANDOM_SEED_SPINBUTTON_ADJ (hbox),
                     "value-changed", G_CALLBACK (sinus_random_update), NULL);
   gtk_widget_show (table);
 
@@ -757,7 +757,7 @@ sinus_dialog (void)
                     G_CALLBACK (sinus_toggle_button_update),
                     &svals.tiling);
 
-  vbox2 = gimp_int_radio_group_new (FALSE, NULL,
+  vbox2 = picman_int_radio_group_new (FALSE, NULL,
                                     G_CALLBACK (sinus_radio_button_update),
                                     &svals.perturbation, svals.perturbation,
 
@@ -780,7 +780,7 @@ sinus_dialog (void)
 
   if (drawable_is_grayscale)
     {
-      frame = gimp_frame_new (_("Colors"));
+      frame = picman_frame_new (_("Colors"));
       gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
       gtk_widget_show (frame);
 
@@ -796,7 +796,7 @@ sinus_dialog (void)
     }
   else
     {
-      frame = gimp_int_radio_group_new (TRUE, _("Colors"),
+      frame = picman_int_radio_group_new (TRUE, _("Colors"),
                                         G_CALLBACK (sinus_radio_button_update),
                                         &svals.colors, svals.colors,
 
@@ -817,42 +817,42 @@ sinus_dialog (void)
       hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
       gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 
-      push_col1 = gimp_color_button_new (_("First color"), 32, 32,
+      push_col1 = picman_color_button_new (_("First color"), 32, 32,
                                          &svals.col1,
-                                         GIMP_COLOR_AREA_SMALL_CHECKS);
+                                         PICMAN_COLOR_AREA_SMALL_CHECKS);
       gtk_box_pack_start (GTK_BOX (hbox), push_col1, FALSE, FALSE, 0);
       gtk_widget_show (push_col1);
 
       g_signal_connect (push_col1, "color-changed",
-                        G_CALLBACK (gimp_color_button_get_color),
+                        G_CALLBACK (picman_color_button_get_color),
                         &svals.col1);
 
-      push_col2 = gimp_color_button_new (_("Second color"), 32, 32,
+      push_col2 = picman_color_button_new (_("Second color"), 32, 32,
                                          &svals.col2,
-                                         GIMP_COLOR_AREA_SMALL_CHECKS);
+                                         PICMAN_COLOR_AREA_SMALL_CHECKS);
       gtk_box_pack_start (GTK_BOX (hbox), push_col2, FALSE, FALSE, 0);
       gtk_widget_show (push_col2);
 
       g_signal_connect (push_col2, "color-changed",
-                        G_CALLBACK (gimp_color_button_get_color),
+                        G_CALLBACK (picman_color_button_get_color),
                         &svals.col2);
 
       gtk_widget_show (hbox);
     }
 
-  frame = gimp_frame_new (_("Alpha Channels"));
+  frame = picman_frame_new (_("Alpha Channels"));
   gtk_box_pack_start (GTK_BOX (page), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   gtk_widget_set_sensitive (frame,
-                            gimp_drawable_has_alpha (drawable->drawable_id));
+                            picman_drawable_has_alpha (drawable->drawable_id));
 
   table = gtk_table_new (2, 3, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_container_add (GTK_CONTAINER (frame), table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("F_irst color:"), 0, 0,
                               svals.col1.a, 0.0, 1.0, 0.01, 0.1, 2,
                               TRUE, 0, 0,
@@ -867,7 +867,7 @@ sinus_dialog (void)
                       G_CALLBACK (alpha_scale_update),
                       adj);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("S_econd color:"), 0, 0,
                               svals.col2.a, 0.0, 1.0, 0.01, 0.1, 2,
                               TRUE, 0, 0,
@@ -893,7 +893,7 @@ sinus_dialog (void)
   page = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (page), 12);
 
-  frame = gimp_frame_new (_("Blend Settings"));
+  frame = picman_frame_new (_("Blend Settings"));
   gtk_box_pack_start (GTK_BOX (page), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -902,7 +902,7 @@ sinus_dialog (void)
   gtk_widget_show (vbox);
 
   frame =
-    gimp_int_radio_group_new (TRUE, _("Gradient"),
+    picman_int_radio_group_new (TRUE, _("Gradient"),
                               G_CALLBACK (sinus_radio_button_update),
                               &svals.colorization, svals.colorization,
 
@@ -919,7 +919,7 @@ sinus_dialog (void)
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
   gtk_box_pack_start (GTK_BOX (vbox), table, TRUE, TRUE, 0);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Exponent:"), 0, 0,
                               svals.blend_power, -7.5, 7.5, 0.01, 5.0, 2,
                               TRUE, 0, 0,
@@ -938,7 +938,7 @@ sinus_dialog (void)
 
   sinus_do_preview (preview);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dlg);
 
@@ -982,9 +982,9 @@ sinus_do_preview (GtkWidget *widget)
                        thePreview->height, 1, assign_block_1, &p);
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (theWidget),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (theWidget),
                           0, 0, thePreview->width, thePreview->height,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           buf,
                           rowsize);
   g_free (buf);
@@ -994,12 +994,12 @@ static void
 mw_preview_toggle_callback (GtkWidget *widget,
                             gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
   sinus_do_preview (NULL);
 }
 
 static mwPreview *
-mw_preview_build_virgin (GimpDrawable *drw)
+mw_preview_build_virgin (PicmanDrawable *drw)
 {
   mwPreview *mwp;
 
@@ -1042,7 +1042,7 @@ mw_preview_new (GtkWidget *parent,
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, mwp->width, mwp->height);
   gtk_container_add (GTK_CONTAINER (frame), preview);
   gtk_widget_show (preview);

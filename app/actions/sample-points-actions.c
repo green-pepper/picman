@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,28 +19,28 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsamplepointeditor.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansamplepointeditor.h"
 
 #include "sample-points-actions.h"
 #include "sample-points-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry sample_points_actions[] =
+static const PicmanActionEntry sample_points_actions[] =
 {
-  { "sample-points-popup", GIMP_STOCK_SAMPLE_POINT,
+  { "sample-points-popup", PICMAN_STOCK_SAMPLE_POINT,
     NC_("sample-points-action", "Sample Point Menu"), NULL, NULL, NULL,
-    GIMP_HELP_SAMPLE_POINT_DIALOG }
+    PICMAN_HELP_SAMPLE_POINT_DIALOG }
 };
 
-static const GimpToggleActionEntry sample_points_toggle_actions[] =
+static const PicmanToggleActionEntry sample_points_toggle_actions[] =
 {
   { "sample-points-sample-merged", NULL,
     NC_("sample-points-action", "_Sample Merged"), "",
@@ -48,33 +48,33 @@ static const GimpToggleActionEntry sample_points_toggle_actions[] =
         "Use the composite color of all visible layers"),
     G_CALLBACK (sample_points_sample_merged_cmd_callback),
     TRUE,
-    GIMP_HELP_SAMPLE_POINT_SAMPLE_MERGED }
+    PICMAN_HELP_SAMPLE_POINT_SAMPLE_MERGED }
 };
 
 
 void
-sample_points_actions_setup (GimpActionGroup *group)
+sample_points_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "sample-points-action",
+  picman_action_group_add_actions (group, "sample-points-action",
                                  sample_points_actions,
                                  G_N_ELEMENTS (sample_points_actions));
 
-  gimp_action_group_add_toggle_actions (group, "sample-points-action",
+  picman_action_group_add_toggle_actions (group, "sample-points-action",
                                         sample_points_toggle_actions,
                                         G_N_ELEMENTS (sample_points_toggle_actions));
 }
 
 void
-sample_points_actions_update (GimpActionGroup *group,
+sample_points_actions_update (PicmanActionGroup *group,
                               gpointer         data)
 {
-  GimpSamplePointEditor *editor = GIMP_SAMPLE_POINT_EDITOR (data);
+  PicmanSamplePointEditor *editor = PICMAN_SAMPLE_POINT_EDITOR (data);
 
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_ACTIVE ("sample-points-sample-merged",
-              gimp_sample_point_editor_get_sample_merged (editor));
+              picman_sample_point_editor_get_sample_merged (editor));
 
 #undef SET_ACTIVE
 }

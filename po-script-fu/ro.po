@@ -1,4 +1,4 @@
-# Romanian GIMP translation
+# Romanian PICMAN translation
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # Robert Claudiu Gheorghe <rgheorghe AT writeme DOT com>, 2001.
 # Nandor Licker <lickernandor DOT yahoo.com>, 2010-2011.
@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-02-09 21:14+0000\n"
 "PO-Revision-Date: 2011-12-05 10:26+0200\n"
 "Last-Translator: Cristian Secară <cristi AT secarica DOT ro>\n"
@@ -36,8 +36,8 @@ msgid "_Start Server..."
 msgstr "Pornește _serverul..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP Online"
+msgid "_PICMAN Online"
+msgstr "_PICMAN Online"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -76,8 +76,8 @@ msgid "_Beveled Pattern"
 msgstr "Model _teșit"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -257,19 +257,19 @@ msgstr "Dală"
 msgid "Wrap"
 msgstr "Întoarse la capăt"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Spirograf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Cerc"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Creion"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Culoare uniformă"
 
@@ -1182,8 +1182,8 @@ msgstr "IIR"
 #~ msgid "_Fuzzy Border..."
 #~ msgstr "Chenar di_fuz..."
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Semn de carte către saitul web GIMP"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Semn de carte către saitul web PICMAN"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Semn de carte către manualul de utilizare"
@@ -1859,8 +1859,8 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "Tip"
 
-#~ msgid "_Spyrogimp..."
-#~ msgstr "_Spirogimp..."
+#~ msgid "_Spyropicman..."
+#~ msgstr "_Spiropicman..."
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
 #~ msgstr ""

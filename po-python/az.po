@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python\n"
+"Project-Id-Version: picman-python\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-13 21:07+0200\n"
 "PO-Revision-Date: 2001-12-21 17:40GMT+0200\n"
@@ -15,20 +15,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:43
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:43
 msgid "Python Console"
 msgstr "Python Konsolu"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:75
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:75
 #, fuzzy
 msgid "_Browse..."
 msgstr "Gəz..."
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:217
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:217
 #, fuzzy
-msgid "Gimp-Python Console"
+msgid "Picman-Python Console"
 msgstr "Python Konsolu"
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:218
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:218
 msgid "Interactive Python Development"
 msgstr ""

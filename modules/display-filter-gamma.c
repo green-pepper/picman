@@ -1,5 +1,5 @@
-/* GIMP - The GNU Image Manipulation Program
- * Copyright (C) 1999 Manish Singh <yosh@gimp.org>
+/* PICMAN - The GNU Image Manipulation Program
+ * Copyright (C) 1999 Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 #define DEFAULT_GAMMA 1.0
@@ -44,7 +44,7 @@ typedef struct _CdisplayGammaClass CdisplayGammaClass;
 
 struct _CdisplayGamma
 {
-  GimpColorDisplay  parent_instance;
+  PicmanColorDisplay  parent_instance;
 
   gdouble           gamma;
   guchar            lookup[256];
@@ -52,7 +52,7 @@ struct _CdisplayGamma
 
 struct _CdisplayGammaClass
 {
-  GimpColorDisplayClass  parent_instance;
+  PicmanColorDisplayClass  parent_instance;
 };
 
 
@@ -74,18 +74,18 @@ static void        cdisplay_gamma_get_property    (GObject            *object,
                                                    GValue             *value,
                                                    GParamSpec         *pspec);
 
-static void        cdisplay_gamma_convert_surface (GimpColorDisplay   *display,
+static void        cdisplay_gamma_convert_surface (PicmanColorDisplay   *display,
                                                    cairo_surface_t    *surface);
-static GtkWidget * cdisplay_gamma_configure       (GimpColorDisplay   *display);
+static GtkWidget * cdisplay_gamma_configure       (PicmanColorDisplay   *display);
 static void        cdisplay_gamma_set_gamma       (CdisplayGamma      *gamma,
                                                    gdouble             value);
 
 
-static const GimpModuleInfo cdisplay_gamma_info =
+static const PicmanModuleInfo cdisplay_gamma_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("Gamma color display filter"),
-  "Manish Singh <yosh@gimp.org>",
+  "Manish Singh <yosh@picman.org>",
   "v0.2",
   "(c) 1999, released under the GPL",
   "October 14, 2000"
@@ -93,17 +93,17 @@ static const GimpModuleInfo cdisplay_gamma_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (CdisplayGamma, cdisplay_gamma,
-                       GIMP_TYPE_COLOR_DISPLAY)
+                       PICMAN_TYPE_COLOR_DISPLAY)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &cdisplay_gamma_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   cdisplay_gamma_register_type (module);
 
@@ -114,19 +114,19 @@ static void
 cdisplay_gamma_class_init (CdisplayGammaClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpColorDisplayClass *display_class = GIMP_COLOR_DISPLAY_CLASS (klass);
+  PicmanColorDisplayClass *display_class = PICMAN_COLOR_DISPLAY_CLASS (klass);
 
   object_class->get_property     = cdisplay_gamma_get_property;
   object_class->set_property     = cdisplay_gamma_set_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_GAMMA,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_GAMMA,
                                    "gamma", NULL,
                                    0.01, 10.0, DEFAULT_GAMMA,
                                    0);
 
   display_class->name            = _("Gamma");
-  display_class->help_id         = "gimp-colordisplay-gamma";
-  display_class->stock_id        = GIMP_STOCK_DISPLAY_FILTER_GAMMA;
+  display_class->help_id         = "picman-colordisplay-gamma";
+  display_class->stock_id        = PICMAN_STOCK_DISPLAY_FILTER_GAMMA;
 
   display_class->convert_surface = cdisplay_gamma_convert_surface;
   display_class->configure       = cdisplay_gamma_configure;
@@ -181,7 +181,7 @@ cdisplay_gamma_set_property (GObject      *object,
 }
 
 static void
-cdisplay_gamma_convert_surface (GimpColorDisplay *display,
+cdisplay_gamma_convert_surface (PicmanColorDisplay *display,
                                 cairo_surface_t  *surface)
 {
   CdisplayGamma  *gamma  = CDISPLAY_GAMMA (display);
@@ -215,11 +215,11 @@ cdisplay_gamma_convert_surface (GimpColorDisplay *display,
       i = width;
       while (i--)
         {
-          GIMP_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
           r = gamma->lookup[r];
           g = gamma->lookup[g];
           b = gamma->lookup[b];
-          GIMP_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
           buf += 4;
         }
       buf += skip;
@@ -227,7 +227,7 @@ cdisplay_gamma_convert_surface (GimpColorDisplay *display,
 }
 
 static GtkWidget *
-cdisplay_gamma_configure (GimpColorDisplay *display)
+cdisplay_gamma_configure (PicmanColorDisplay *display)
 {
   CdisplayGamma *gamma = CDISPLAY_GAMMA (display);
   GtkWidget     *hbox;
@@ -240,7 +240,7 @@ cdisplay_gamma_configure (GimpColorDisplay *display)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_prop_spin_button_new (G_OBJECT (gamma), "gamma",
+  spinbutton = picman_prop_spin_button_new (G_OBJECT (gamma), "gamma",
                                           0.1, 1.0, 3);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
   gtk_widget_show (spinbutton);
@@ -272,6 +272,6 @@ cdisplay_gamma_set_gamma (CdisplayGamma *gamma,
         }
 
       g_object_notify (G_OBJECT (gamma), "gamma");
-      gimp_color_display_changed (GIMP_COLOR_DISPLAY (gamma));
+      picman_color_display_changed (PICMAN_COLOR_DISPLAY (gamma));
     }
 }

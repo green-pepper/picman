@@ -1,0 +1,13 @@
+/*.la
+/*.lo
+/.deps
+/.libs
+/Makefile
+/Makefile.in
+/_libs
+/picman-wilber-pixbufs.h
+/picmanwidgetsmarshal.c
+/picmanwidgetsmarshal.h
+/makefile.mingw
+/test-eevl*
+/test-preview-area

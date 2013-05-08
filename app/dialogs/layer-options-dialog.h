@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,22 +28,22 @@ struct _LayerOptionsDialog
   GtkWidget    *size_se;
   GtkWidget    *rename_toggle;
 
-  GimpFillType  fill_type;
+  PicmanFillType  fill_type;
   gint          xsize;
   gint          ysize;
 
-  GimpImage    *image;
-  GimpContext  *context;
-  GimpLayer    *layer;
+  PicmanImage    *image;
+  PicmanContext  *context;
+  PicmanLayer    *layer;
 };
 
 
-LayerOptionsDialog * layer_options_dialog_new (GimpImage    *image,
-                                               GimpLayer    *layer,
-                                               GimpContext  *context,
+LayerOptionsDialog * layer_options_dialog_new (PicmanImage    *image,
+                                               PicmanLayer    *layer,
+                                               PicmanContext  *context,
                                                GtkWidget    *parent,
                                                const gchar  *layer_name,
-                                               GimpFillType  layer_fill_type,
+                                               PicmanFillType  layer_fill_type,
                                                const gchar  *title,
                                                const gchar  *role,
                                                const gchar  *stock_id,

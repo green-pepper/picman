@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,188 +25,188 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimplist.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpstrokeoptions.h"
-#include "vectors/gimpanchor.h"
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpvectors-compat.h"
-#include "vectors/gimpvectors-import.h"
-#include "vectors/gimpvectors.h"
+#include "core/picmanimage.h"
+#include "core/picmanlist.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanstrokeoptions.h"
+#include "vectors/picmananchor.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanvectors-compat.h"
+#include "vectors/picmanvectors-import.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-path_list_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+path_list_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 num_paths = 0;
   gchar **path_list = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      path_list = gimp_container_get_name_array (gimp_image_get_vectors (image),
+      path_list = picman_container_get_name_array (picman_image_get_vectors (image),
                                                  &num_paths);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_paths);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), path_list, num_paths);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_paths);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), path_list, num_paths);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_get_current_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+path_get_current_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gchar *name = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_active_vectors (image);
+      PicmanVectors *vectors = picman_image_get_active_vectors (image);
 
       if (vectors)
-        name = g_strdup (gimp_object_get_name (vectors));
+        name = g_strdup (picman_object_get_name (vectors));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_set_current_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+path_set_current_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        gimp_image_set_active_vectors (image, vectors);
+        picman_image_set_active_vectors (image, vectors);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_delete_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+path_delete_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        gimp_image_remove_vectors (image, vectors, TRUE, NULL);
+        picman_image_remove_vectors (image, vectors, TRUE, NULL);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_get_points_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_get_points_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *name;
   gint32 path_type = 0;
   gint32 path_closed = 0;
   gint32 num_path_point_details = 0;
   gdouble *points_pairs = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
         {
-          GimpVectorsCompatPoint *points;
+          PicmanVectorsCompatPoint *points;
           gint num_points;
 
           path_type = 1; /* BEZIER (1.2 compat) */
 
-          points = gimp_vectors_compat_get_points (vectors, &num_points,
+          points = picman_vectors_compat_get_points (vectors, &num_points,
                                                    &path_closed);
 
           num_path_point_details = num_points * 3;
@@ -236,38 +236,38 @@ path_get_points_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), path_type);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), path_closed);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), num_path_point_details);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 4), points_pairs, num_path_point_details);
+      g_value_set_int (picman_value_array_index (return_vals, 1), path_type);
+      g_value_set_int (picman_value_array_index (return_vals, 2), path_closed);
+      g_value_set_int (picman_value_array_index (return_vals, 3), num_path_point_details);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 4), points_pairs, num_path_point_details);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_set_points_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_set_points_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
   gint32 num_path_points;
   const gdouble *points_pairs;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
-  num_path_points = g_value_get_int (gimp_value_array_index (args, 3));
-  points_pairs = gimp_value_get_floatarray (gimp_value_array_index (args, 4));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
+  num_path_points = g_value_get_int (picman_value_array_index (args, 3));
+  points_pairs = picman_value_get_floatarray (picman_value_array_index (args, 4));
 
   if (success)
     {
@@ -280,15 +280,15 @@ path_set_points_invoker (GimpProcedure         *procedure,
 
       if (success)
         {
-          GimpVectors            *vectors;
+          PicmanVectors            *vectors;
           const gdouble          *curr_point_pair;
-          GimpVectorsCompatPoint *points;
+          PicmanVectorsCompatPoint *points;
           gint                    n_points;
           gint                    i;
 
           n_points = num_path_points / 3;
 
-          points = g_new0 (GimpVectorsCompatPoint, n_points);
+          points = g_new0 (PicmanVectorsCompatPoint, n_points);
 
           for (i = 0, curr_point_pair = points_pairs;
                i < n_points;
@@ -299,52 +299,52 @@ path_set_points_invoker (GimpProcedure         *procedure,
               points[i].type = curr_point_pair[2];
             }
 
-          vectors = gimp_vectors_compat_new (image, name, points, n_points,
+          vectors = picman_vectors_compat_new (image, name, points, n_points,
                                              closed);
 
           g_free (points);
 
           if (vectors)
-            success = gimp_image_add_vectors (image, vectors, NULL, 0, TRUE);
+            success = picman_image_add_vectors (image, vectors, NULL, 0, TRUE);
           else
             success = FALSE;
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_stroke_current_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+path_stroke_current_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpVectors  *vectors  = gimp_image_get_active_vectors (image);
-      GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+      PicmanVectors  *vectors  = picman_image_get_active_vectors (image);
+      PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
       if (vectors && drawable &&
-          gimp_pdb_item_is_modifyable (GIMP_ITEM (drawable),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_modifyable (PICMAN_ITEM (drawable),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+          PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
           g_object_set (options,
-                        "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                        "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                         NULL);
 
-          success = gimp_item_stroke (GIMP_ITEM (vectors),
+          success = picman_item_stroke (PICMAN_ITEM (vectors),
                                       drawable, context, options, TRUE, TRUE,
                                       progress, error);
 
@@ -354,48 +354,48 @@ path_stroke_current_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_get_point_at_dist_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+path_get_point_at_dist_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gdouble distance;
   gint32 x_point = 0;
   gint32 y_point = 0;
   gdouble slope = 0.0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  distance = g_value_get_double (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  distance = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors;
-      GimpStroke  *stroke;
+      PicmanVectors *vectors;
+      PicmanStroke  *stroke;
       gdouble      distance_along;
       gdouble      stroke_length;
       gdouble      stroke_distance;
-      GimpCoords   position;
+      PicmanCoords   position;
 
-      vectors = gimp_image_get_active_vectors (image);
+      vectors = picman_image_get_active_vectors (image);
 
       if (vectors)
         {
           distance_along = 0.0;
-          stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+          stroke = picman_vectors_stroke_get_next (vectors, NULL);
 
           while (stroke != NULL )
             {
-              stroke_length = gimp_stroke_get_length (stroke, 0.5);
+              stroke_length = picman_stroke_get_length (stroke, 0.5);
 
               if (distance_along + stroke_length < distance)
                 {
@@ -406,7 +406,7 @@ path_get_point_at_dist_invoker (GimpProcedure         *procedure,
                   stroke_distance = distance - distance_along;
                   stroke_distance = stroke_distance < 0 ? 0: stroke_distance;
 
-                  if (!gimp_stroke_get_point_at_dist (stroke, stroke_distance, 0.5,
+                  if (!picman_stroke_get_point_at_dist (stroke, stroke_distance, 0.5,
                                                       &position, &slope))
                     {
                       success = FALSE;
@@ -421,7 +421,7 @@ path_get_point_at_dist_invoker (GimpProcedure         *procedure,
                     }
                 }
 
-              stroke = gimp_vectors_stroke_get_next (vectors, stroke);
+              stroke = picman_vectors_stroke_get_next (vectors, stroke);
             }
         }
       else
@@ -430,199 +430,199 @@ path_get_point_at_dist_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), x_point);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), y_point);
-      g_value_set_double (gimp_value_array_index (return_vals, 3), slope);
+      g_value_set_int (picman_value_array_index (return_vals, 1), x_point);
+      g_value_set_int (picman_value_array_index (return_vals, 2), y_point);
+      g_value_set_double (picman_value_array_index (return_vals, 3), slope);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_get_tattoo_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_get_tattoo_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *name;
   gint32 tattoo = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        tattoo = gimp_item_get_tattoo (GIMP_ITEM (vectors));
+        tattoo = picman_item_get_tattoo (PICMAN_ITEM (vectors));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), tattoo);
+    g_value_set_int (picman_value_array_index (return_vals, 1), tattoo);
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_set_tattoo_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_set_tattoo_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
   gint32 tattovalue;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
-  tattovalue = g_value_get_int (gimp_value_array_index (args, 2));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
+  tattovalue = g_value_get_int (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        gimp_item_set_tattoo (GIMP_ITEM (vectors), tattovalue);
+        picman_item_set_tattoo (PICMAN_ITEM (vectors), tattovalue);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-get_path_by_tattoo_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+get_path_by_tattoo_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 tattoo;
   gchar *name = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  tattoo = g_value_get_int (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  tattoo = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_tattoo (image, tattoo);
+      PicmanVectors *vectors = picman_image_get_vectors_by_tattoo (image, tattoo);
 
       if (vectors)
-        name = g_strdup (gimp_object_get_name (vectors));
+        name = g_strdup (picman_object_get_name (vectors));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_get_locked_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_get_locked_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *name;
   gboolean locked = FALSE;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        locked = gimp_item_get_linked (GIMP_ITEM (vectors));
+        locked = picman_item_get_linked (PICMAN_ITEM (vectors));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), locked);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), locked);
 
   return return_vals;
 }
 
-static GimpValueArray *
-path_set_locked_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+path_set_locked_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
   gboolean locked;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
-  locked = g_value_get_boolean (gimp_value_array_index (args, 2));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
+  locked = g_value_get_boolean (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        gimp_item_set_linked (GIMP_ITEM (vectors), locked, TRUE);
+        picman_item_set_linked (PICMAN_ITEM (vectors), locked, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_to_selection_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+path_to_selection_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *name;
   gint32 op;
   gboolean antialias;
@@ -630,20 +630,20 @@ path_to_selection_invoker (GimpProcedure         *procedure,
   gdouble feather_radius_x;
   gdouble feather_radius_y;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
-  op = g_value_get_enum (gimp_value_array_index (args, 2));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 3));
-  feather = g_value_get_boolean (gimp_value_array_index (args, 4));
-  feather_radius_x = g_value_get_double (gimp_value_array_index (args, 5));
-  feather_radius_y = g_value_get_double (gimp_value_array_index (args, 6));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
+  op = g_value_get_enum (picman_value_array_index (args, 2));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 3));
+  feather = g_value_get_boolean (picman_value_array_index (args, 4));
+  feather_radius_x = g_value_get_double (picman_value_array_index (args, 5));
+  feather_radius_y = g_value_get_double (picman_value_array_index (args, 6));
 
   if (success)
     {
-      GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+      PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
       if (vectors)
-        gimp_item_to_selection (GIMP_ITEM (vectors),
+        picman_item_to_selection (PICMAN_ITEM (vectors),
                                 op,
                                 antialias,
                                 feather,
@@ -653,618 +653,618 @@ path_to_selection_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-path_import_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+path_import_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *filename;
   gboolean merge;
   gboolean scale;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 1));
-  merge = g_value_get_boolean (gimp_value_array_index (args, 2));
-  scale = g_value_get_boolean (gimp_value_array_index (args, 3));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 1));
+  merge = g_value_get_boolean (picman_value_array_index (args, 2));
+  scale = g_value_get_boolean (picman_value_array_index (args, 3));
 
   if (success)
     {
-      success = gimp_vectors_import_file (image, filename,
+      success = picman_vectors_import_file (image, filename,
                                           merge, scale, NULL, -1, NULL, NULL);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_paths_procs (GimpPDB *pdb)
+register_paths_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-path-list
+   * picman-path-list
    */
-  procedure = gimp_procedure_new (path_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-list",
-                                     "Deprecated: Use 'gimp-image-get-vectors' instead.",
-                                     "Deprecated: Use 'gimp-image-get-vectors' instead.",
+  procedure = picman_procedure_new (path_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-list",
+                                     "Deprecated: Use 'picman-image-get-vectors' instead.",
+                                     "Deprecated: Use 'picman-image-get-vectors' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-get-vectors");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-get-vectors");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to list the paths from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-paths",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-paths",
                                                           "num paths",
                                                           "The number of paths returned.",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("path-list",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("path-list",
                                                                  "path list",
                                                                  "List of the paths belonging to this image",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-get-current
+   * picman-path-get-current
    */
-  procedure = gimp_procedure_new (path_get_current_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-get-current");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-get-current",
-                                     "Deprecated: Use 'gimp-image-get-active-vectors' instead.",
-                                     "Deprecated: Use 'gimp-image-get-active-vectors' instead.",
+  procedure = picman_procedure_new (path_get_current_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-get-current");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-get-current",
+                                     "Deprecated: Use 'picman-image-get-active-vectors' instead.",
+                                     "Deprecated: Use 'picman-image-get-active-vectors' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-get-active-vectors");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-get-active-vectors");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to get the current path from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the current path.",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-set-current
+   * picman-path-set-current
    */
-  procedure = gimp_procedure_new (path_set_current_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-set-current");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-set-current",
-                                     "Deprecated: Use 'gimp-image-set-active-vectors' instead.",
-                                     "Deprecated: Use 'gimp-image-set-active-vectors' instead.",
+  procedure = picman_procedure_new (path_set_current_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-set-current");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-set-current",
+                                     "Deprecated: Use 'picman-image-set-active-vectors' instead.",
+                                     "Deprecated: Use 'picman-image-set-active-vectors' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-set-active-vectors");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-set-active-vectors");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image in which a path will become current",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path to make current.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-delete
+   * picman-path-delete
    */
-  procedure = gimp_procedure_new (path_delete_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-delete");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-delete",
-                                     "Deprecated: Use 'gimp-image-remove-vectors' instead.",
-                                     "Deprecated: Use 'gimp-image-remove-vectors' instead.",
+  procedure = picman_procedure_new (path_delete_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-delete");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-delete",
+                                     "Deprecated: Use 'picman-image-remove-vectors' instead.",
+                                     "Deprecated: Use 'picman-image-remove-vectors' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-remove-vectors");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-remove-vectors");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to delete the path from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path to delete.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-get-points
+   * picman-path-get-points
    */
-  procedure = gimp_procedure_new (path_get_points_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-get-points");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-get-points",
-                                     "Deprecated: Use 'gimp-vectors-stroke-get-points' instead.",
-                                     "Deprecated: Use 'gimp-vectors-stroke-get-points' instead.",
+  procedure = picman_procedure_new (path_get_points_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-get-points");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-get-points",
+                                     "Deprecated: Use 'picman-vectors-stroke-get-points' instead.",
+                                     "Deprecated: Use 'picman-vectors-stroke-get-points' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-stroke-get-points");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-stroke-get-points");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to list the paths from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path whose points should be listed.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("path-type",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("path-type",
                                                           "path type",
                                                           "The type of the path. Currently only one type (1 = Bezier) is supported",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("path-closed",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("path-closed",
                                                           "path closed",
                                                           "Return if the path is closed. (0 = path open, 1 = path closed)",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-path-point-details",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-path-point-details",
                                                           "num path point details",
                                                           "The number of points returned. Each point is made up of (x, y, pnt_type) of floats.",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("points-pairs",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("points-pairs",
                                                                 "points pairs",
                                                                 "The points in the path represented as 3 floats. The first is the x pos, next is the y pos, last is the type of the pnt. The type field is dependent on the path type. For beziers (type 1 paths) the type can either be (1.0 = BEZIER_ANCHOR, 2.0 = BEZIER_CONTROL, 3.0 = BEZIER_MOVE). Note all points are returned in pixel resolution.",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-set-points
+   * picman-path-set-points
    */
-  procedure = gimp_procedure_new (path_set_points_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-set-points");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-set-points",
-                                     "Deprecated: Use 'gimp-vectors-stroke-new-from-points' instead.",
-                                     "Deprecated: Use 'gimp-vectors-stroke-new-from-points' instead.",
+  procedure = picman_procedure_new (path_set_points_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-set-points");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-set-points",
+                                     "Deprecated: Use 'picman-vectors-stroke-new-from-points' instead.",
+                                     "Deprecated: Use 'picman-vectors-stroke-new-from-points' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-stroke-new-from-points");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-stroke-new-from-points");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to set the paths in",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path to create. If it exists then a unique name will be created - query the list of paths if you want to make sure that the name of the path you create is unique. This will be set as the current path.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("ptype",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("ptype",
                                                       "ptype",
                                                       "The type of the path. Currently only one type (1 = Bezier) is supported.",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-path-points",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-path-points",
                                                       "num path points",
                                                       "The number of elements in the array, i.e. the number of points in the path * 3. Each point is made up of (x, y, type) of floats. Currently only the creation of bezier curves is allowed. The type parameter must be set to (1) to indicate a BEZIER type curve. Note that for BEZIER curves, points must be given in the following order: ACCACCAC... If the path is not closed the last control point is missed off. Points consist of three control points (control/anchor/control) so for a curve that is not closed there must be at least two points passed (2 x,y pairs). If (num_path_points/3) % 3 = 0 then the path is assumed to be closed and the points are ACCACCACCACC.",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("points-pairs",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("points-pairs",
                                                             "points pairs",
                                                             "The points in the path represented as 3 floats. The first is the x pos, next is the y pos, last is the type of the pnt. The type field is dependent on the path type. For beziers (type 1 paths) the type can either be (1.0 = BEZIER_ANCHOR, 2.0 = BEZIER_CONTROL, 3.0= BEZIER_MOVE). Note all points are returned in pixel resolution.",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-stroke-current
+   * picman-path-stroke-current
    */
-  procedure = gimp_procedure_new (path_stroke_current_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-stroke-current");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-stroke-current",
-                                     "Deprecated: Use 'gimp-edit-stroke-vectors' instead.",
-                                     "Deprecated: Use 'gimp-edit-stroke-vectors' instead.",
+  procedure = picman_procedure_new (path_stroke_current_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-stroke-current");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-stroke-current",
+                                     "Deprecated: Use 'picman-edit-stroke-vectors' instead.",
+                                     "Deprecated: Use 'picman-edit-stroke-vectors' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-edit-stroke-vectors");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-edit-stroke-vectors");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image which contains the path to stroke",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-get-point-at-dist
+   * picman-path-get-point-at-dist
    */
-  procedure = gimp_procedure_new (path_get_point_at_dist_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-get-point-at-dist");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-get-point-at-dist",
-                                     "Deprecated: Use 'gimp-vectors-stroke-get-point-at-dist' instead.",
-                                     "Deprecated: Use 'gimp-vectors-stroke-get-point-at-dist' instead.",
+  procedure = picman_procedure_new (path_get_point_at_dist_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-get-point-at-dist");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-get-point-at-dist",
+                                     "Deprecated: Use 'picman-vectors-stroke-get-point-at-dist' instead.",
+                                     "Deprecated: Use 'picman-vectors-stroke-get-point-at-dist' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-stroke-get-point-at-dist");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-stroke-get-point-at-dist");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image the paths belongs to",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("distance",
                                                     "distance",
                                                     "The distance along the path.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("x-point",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("x-point",
                                                           "x point",
                                                           "The x position of the point.",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("y-point",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("y-point",
                                                           "y point",
                                                           "The y position of the point.",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("slope",
                                                         "slope",
                                                         "The slope (dy / dx) at the specified point.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-get-tattoo
+   * picman-path-get-tattoo
    */
-  procedure = gimp_procedure_new (path_get_tattoo_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-get-tattoo");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-get-tattoo",
-                                     "Deprecated: Use 'gimp-vectors-get-tattoo' instead.",
-                                     "Deprecated: Use 'gimp-vectors-get-tattoo' instead.",
+  procedure = picman_procedure_new (path_get_tattoo_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-get-tattoo");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-get-tattoo",
+                                     "Deprecated: Use 'picman-vectors-get-tattoo' instead.",
+                                     "Deprecated: Use 'picman-vectors-get-tattoo' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-get-tattoo");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-get-tattoo");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path whose tattoo should be obtained.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("tattoo",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("tattoo",
                                                           "tattoo",
                                                           "The tattoo associated with the named path.",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-set-tattoo
+   * picman-path-set-tattoo
    */
-  procedure = gimp_procedure_new (path_set_tattoo_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-set-tattoo");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-set-tattoo",
-                                     "Deprecated: Use 'gimp-vectors-set-tattoo' instead.",
-                                     "Deprecated: Use 'gimp-vectors-set-tattoo' instead.",
+  procedure = picman_procedure_new (path_set_tattoo_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-set-tattoo");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-set-tattoo",
+                                     "Deprecated: Use 'picman-vectors-set-tattoo' instead.",
+                                     "Deprecated: Use 'picman-vectors-set-tattoo' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-set-tattoo");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-set-tattoo");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "the name of the path whose tattoo should be set",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("tattovalue",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("tattovalue",
                                                       "tattovalue",
                                                       "The tattoo associated with the name path. Only values returned from 'path_get_tattoo' should be used here",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-get-path-by-tattoo
+   * picman-get-path-by-tattoo
    */
-  procedure = gimp_procedure_new (get_path_by_tattoo_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-get-path-by-tattoo");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-get-path-by-tattoo",
-                                     "Deprecated: Use 'gimp-image-get-vectors-by-tattoo' instead.",
-                                     "Deprecated: Use 'gimp-image-get-vectors-by-tattoo' instead.",
+  procedure = picman_procedure_new (get_path_by_tattoo_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-get-path-by-tattoo");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-get-path-by-tattoo",
+                                     "Deprecated: Use 'picman-image-get-vectors-by-tattoo' instead.",
+                                     "Deprecated: Use 'picman-image-get-vectors-by-tattoo' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-image-get-vectors-by-tattoo");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-image-get-vectors-by-tattoo");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("tattoo",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("tattoo",
                                                       "tattoo",
                                                       "The tattoo of the required path.",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The name of the path with the specified tattoo.",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-get-locked
+   * picman-path-get-locked
    */
-  procedure = gimp_procedure_new (path_get_locked_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-get-locked");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-get-locked",
-                                     "Deprecated: Use 'gimp-vectors-get-linked' instead.",
-                                     "Deprecated: Use 'gimp-vectors-get-linked' instead.",
+  procedure = picman_procedure_new (path_get_locked_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-get-locked");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-get-locked",
+                                     "Deprecated: Use 'picman-vectors-get-linked' instead.",
+                                     "Deprecated: Use 'picman-vectors-get-linked' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-get-linked");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-get-linked");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path whose locked status should be obtained.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("locked",
                                                          "locked",
                                                          "TRUE if the path is locked, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-set-locked
+   * picman-path-set-locked
    */
-  procedure = gimp_procedure_new (path_set_locked_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-set-locked");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-set-locked",
-                                     "Deprecated: Use 'gimp-vectors-set-linked' instead.",
-                                     "Deprecated: Use 'gimp-vectors-set-linked' instead.",
+  procedure = picman_procedure_new (path_set_locked_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-set-locked");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-set-locked",
+                                     "Deprecated: Use 'picman-vectors-set-linked' instead.",
+                                     "Deprecated: Use 'picman-vectors-set-linked' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-set-linked");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-set-linked");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "the name of the path whose locked status should be set",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("locked",
                                                      "locked",
                                                      "Whether the path is locked",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-to-selection
+   * picman-path-to-selection
    */
-  procedure = gimp_procedure_new (path_to_selection_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-to-selection");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-to-selection",
-                                     "Deprecated: Use 'gimp-vectors-to-selection' instead.",
-                                     "Deprecated: Use 'gimp-vectors-to-selection' instead.",
+  procedure = picman_procedure_new (path_to_selection_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-to-selection");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-to-selection",
+                                     "Deprecated: Use 'picman-vectors-to-selection' instead.",
+                                     "Deprecated: Use 'picman-vectors-to-selection' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-to-selection");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-to-selection");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the path which should be made into selection.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("op",
                                                   "op",
                                                   "The desired operation with current selection",
-                                                  GIMP_TYPE_CHANNEL_OPS,
-                                                  GIMP_CHANNEL_OP_ADD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CHANNEL_OPS,
+                                                  PICMAN_CHANNEL_OP_ADD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialias selection.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("feather",
                                                      "feather",
                                                      "Feather selection.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-x",
                                                     "feather radius x",
                                                     "Feather radius x.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("feather-radius-y",
                                                     "feather radius y",
                                                     "Feather radius y.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-path-import
+   * picman-path-import
    */
-  procedure = gimp_procedure_new (path_import_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-path-import");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-path-import",
-                                     "Deprecated: Use 'gimp-vectors-import-from-file' instead.",
-                                     "Deprecated: Use 'gimp-vectors-import-from-file' instead.",
+  procedure = picman_procedure_new (path_import_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-path-import");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-path-import",
+                                     "Deprecated: Use 'picman-vectors-import-from-file' instead.",
+                                     "Deprecated: Use 'picman-vectors-import-from-file' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-vectors-import-from-file");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-vectors-import-from-file");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the SVG file to import.",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("merge",
                                                      "merge",
                                                      "Merge paths into a single vectors object.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("scale",
                                                      "scale",
                                                      "Scale the SVG to image dimensions.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

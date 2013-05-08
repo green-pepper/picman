@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub edit_cut {
     $blurb = 'Cut from the specified drawable.';
@@ -22,10 +22,10 @@ sub edit_cut {
     $help = <<'HELP';
 If there is a selection in the image, then the area specified by the
 selection is cut from the specified drawable and placed in an internal
-GIMP edit buffer. It can subsequently be retrieved using the
-gimp_edit_paste() command. If there is no selection, then the
+PICMAN edit buffer. It can subsequently be retrieved using the
+picman_edit_paste() command. If there is no selection, then the
 specified drawable will be removed and its contents stored in the
-internal GIMP edit buffer. This procedure will fail if the selected area
+internal PICMAN edit buffer. This procedure will fail if the selected area
 lies completely outside the bounds of the current drawable and there is
 nothing to copy from.
 HELP
@@ -46,19 +46,19 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
       GError    *my_error = NULL;
 
-      non_empty = gimp_edit_cut (image, drawable, context, &my_error) != NULL;
+      non_empty = picman_edit_cut (image, drawable, context, &my_error) != NULL;
 
       if (! non_empty)
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
@@ -76,9 +76,9 @@ sub edit_copy {
     $help = <<'HELP';
 If there is a selection in the image, then the area specified by the
 selection is copied from the specified drawable and placed in an
-internal GIMP edit buffer. It can subsequently be retrieved using the
-gimp_edit_paste() command.  If there is no selection, then the
-specified drawable's contents will be stored in the internal GIMP edit
+internal PICMAN edit buffer. It can subsequently be retrieved using the
+picman_edit_paste() command.  If there is no selection, then the
+specified drawable's contents will be stored in the internal PICMAN edit
 buffer. This procedure will fail if the selected area lies completely
 outside the bounds of the current drawable and there is nothing to
 copy from.
@@ -100,17 +100,17 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
     {
-      GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
       GError    *my_error = NULL;
 
-      non_empty = gimp_edit_copy (image, drawable, context, &my_error) != NULL;
+      non_empty = picman_edit_copy (image, drawable, context, &my_error) != NULL;
 
       if (! non_empty)
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
@@ -127,10 +127,10 @@ sub edit_copy_visible {
 
     $help = <<'HELP';
 If there is a selection in the image, then the area specified by the
-selection is copied from the projection and placed in an internal GIMP
+selection is copied from the projection and placed in an internal PICMAN
 edit buffer. It can subsequently be retrieved using the
-gimp_edit_paste() command. If there is no selection, then the
-projection's contents will be stored in the internal GIMP edit buffer.
+picman_edit_paste() command. If there is no selection, then the
+projection's contents will be stored in the internal PICMAN edit buffer.
 HELP
 
     &mitch_pdb_misc('2004', '2.2');
@@ -150,12 +150,12 @@ HELP
 {
   GError *my_error = NULL;
 
-  non_empty = gimp_edit_copy_visible (image, context, &my_error) != NULL;
+  non_empty = picman_edit_copy_visible (image, context, &my_error) != NULL;
 
   if (! non_empty)
     {
-      gimp_message_literal (gimp,
-                            G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+      picman_message_literal (picman,
+                            G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                             my_error->message);
       g_clear_error (&my_error);
     }
@@ -168,9 +168,9 @@ sub edit_paste {
     $blurb = 'Paste buffer to the specified drawable.';
 
     $help = <<'HELP';
-This procedure pastes a copy of the internal GIMP edit buffer to the
-specified drawable. The GIMP edit buffer will be empty unless a call
-was previously made to either gimp_edit_cut() or gimp_edit_copy(). The
+This procedure pastes a copy of the internal PICMAN edit buffer to the
+specified drawable. The PICMAN edit buffer will be empty unless a call
+was previously made to either picman_edit_cut() or picman_edit_copy(). The
 "paste_into" option specifies whether to clear the current image
 selection, or to paste the buffer "behind" the selection. This allows
 the selection to act as a mask for the pasted buffer. Anywhere that
@@ -201,13 +201,13 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp->global_buffer &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman->global_buffer &&
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      floating_sel = gimp_edit_paste (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                      drawable, gimp->global_buffer,
+      floating_sel = picman_edit_paste (picman_item_get_image (PICMAN_ITEM (drawable)),
+                                      drawable, picman->global_buffer,
                                       paste_into, -1, -1, -1, -1);
 
       if (! floating_sel)
@@ -224,9 +224,9 @@ sub edit_paste_as_new {
     $blurb = 'Paste buffer to a new image.';
 
     $help = <<'HELP';
-This procedure pastes a copy of the internal GIMP edit buffer to a new
-image.  The GIMP edit buffer will be empty unless a call was
-previously made to either gimp_edit_cut() or gimp_edit_copy(). This
+This procedure pastes a copy of the internal PICMAN edit buffer to a new
+image.  The PICMAN edit buffer will be empty unless a call was
+previously made to either picman_edit_cut() or picman_edit_copy(). This
 procedure returns the new image or -1 if the edit buffer was empty.
 HELP
 
@@ -239,9 +239,9 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp->global_buffer)
+  if (picman->global_buffer)
     {
-      image = gimp_image_new_from_buffer (gimp, NULL, gimp->global_buffer);
+      image = picman_image_new_from_buffer (picman, NULL, picman->global_buffer);
 
       if (! image)
         success = FALSE;
@@ -259,7 +259,7 @@ sub edit_named_cut {
     $blurb = 'Cut into a named buffer.';
 
     $help = <<'HELP';
-This procedure works like gimp_edit_cut(), but additionally stores the
+This procedure works like picman_edit_cut(), but additionally stores the
 cut buffer into a named buffer that will stay available for later
 pasting, regardless of any intermediate copy or cut operations.
 HELP
@@ -281,14 +281,14 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
       GError    *my_error = NULL;
 
-      real_name = (gchar *) gimp_edit_named_cut (image, buffer_name,
+      real_name = (gchar *) picman_edit_named_cut (image, buffer_name,
                                                  drawable, context, &my_error);
 
       if (real_name)
@@ -297,8 +297,8 @@ HELP
         }
       else
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
@@ -314,7 +314,7 @@ sub edit_named_copy {
     $blurb = 'Copy into a named buffer.';
 
     $help = <<'HELP';
-This procedure works like gimp_edit_copy(), but additionally stores the
+This procedure works like picman_edit_copy(), but additionally stores the
 copied buffer into a named buffer that will stay available for later
 pasting, regardless of any intermediate copy or cut operations.
 HELP
@@ -336,12 +336,12 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
     {
-      GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
       GError    *my_error = NULL;
 
-      real_name = (gchar *) gimp_edit_named_copy (image, buffer_name,
+      real_name = (gchar *) picman_edit_named_copy (image, buffer_name,
                                                   drawable, context, &my_error);
 
       if (real_name)
@@ -350,8 +350,8 @@ HELP
         }
       else
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
@@ -367,7 +367,7 @@ sub edit_named_copy_visible {
     $blurb = 'Copy from the projection into a named buffer.';
 
     $help = <<'HELP';
-This procedure works like gimp_edit_copy_visible(), but additionally
+This procedure works like picman_edit_copy_visible(), but additionally
 stores the copied buffer into a named buffer that will stay available
 for later pasting, regardless of any intermediate copy or cut
 operations.
@@ -393,7 +393,7 @@ HELP
 {
   GError *my_error = NULL;
 
-  real_name = (gchar *) gimp_edit_named_copy_visible (image, buffer_name,
+  real_name = (gchar *) picman_edit_named_copy_visible (image, buffer_name,
                                                       context, &my_error);
 
   if (real_name)
@@ -402,8 +402,8 @@ HELP
     }
   else
     {
-      gimp_message_literal (gimp,
-                            G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+      picman_message_literal (picman,
+                            G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                             my_error->message);
       g_clear_error (&my_error);
     }
@@ -416,7 +416,7 @@ sub edit_named_paste {
     $blurb = 'Paste named buffer to the specified drawable.';
 
     $help = <<'HELP';
-This procedure works like gimp_edit_paste() but pastes a named buffer
+This procedure works like picman_edit_paste() but pastes a named buffer
 instead of the global buffer.
 HELP
 
@@ -439,14 +439,14 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  GimpBuffer *buffer = gimp_pdb_get_buffer (gimp, buffer_name, error);
+  PicmanBuffer *buffer = picman_pdb_get_buffer (picman, buffer_name, error);
 
   if (buffer &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      floating_sel = gimp_edit_paste (gimp_item_get_image (GIMP_ITEM (drawable)),
+      floating_sel = picman_edit_paste (picman_item_get_image (PICMAN_ITEM (drawable)),
                                       drawable, buffer,
                                       paste_into, -1, -1, -1, -1);
       if (! floating_sel)
@@ -463,7 +463,7 @@ sub edit_named_paste_as_new {
     $blurb = 'Paste named buffer to a new image.';
 
     $help = <<'HELP';
-This procedure works like gimp_edit_paste_as_new() but pastes a named buffer
+This procedure works like picman_edit_paste_as_new() but pastes a named buffer
 instead of the global buffer.
 HELP
 
@@ -482,11 +482,11 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  GimpBuffer *buffer = gimp_pdb_get_buffer (gimp, buffer_name, error);
+  PicmanBuffer *buffer = picman_pdb_get_buffer (picman, buffer_name, error);
 
   if (buffer)
     {
-      image = gimp_image_new_from_buffer (gimp, NULL, buffer);
+      image = picman_image_new_from_buffer (picman, NULL, buffer);
 
       if (! image)
         success = FALSE;
@@ -519,13 +519,13 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      success = gimp_edit_clear (image, drawable, context);
+      success = picman_edit_clear (image, drawable, context);
     }
   else
     success = FALSE;
@@ -544,7 +544,7 @@ fill mode is background, the current background color is used. Other
 fill modes should not be used. This procedure only affects regions
 within a selection if there is a selection active. If you want to fill
 the whole drawable, regardless of the selection, use
-gimp_drawable_fill().
+picman_drawable_fill().
 HELP
 
     &std_pdb_misc;
@@ -554,22 +554,22 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => "The drawable to fill to" },
-	{ name => 'fill_type', type => 'enum GimpFillType',
+	{ name => 'fill_type', type => 'enum PicmanFillType',
 	  desc => 'The type of fill' }
     );
 
     %invoke = (
 	code => <<CODE
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      success = gimp_edit_fill (image, drawable, context,
-                                (GimpFillType) fill_type,
-                                GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+      success = picman_edit_fill (image, drawable, context,
+                                (PicmanFillType) fill_type,
+                                PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
     }
   else
     success = FALSE;
@@ -604,9 +604,9 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The affected drawable' },
-	{ name => 'fill_mode', type => 'enum GimpBucketFillMode',
+	{ name => 'fill_mode', type => 'enum PicmanBucketFillMode',
 	  desc => 'The type of fill' },
-	{ name => paint_mode, type => 'enum GimpLayerModeEffects',
+	{ name => paint_mode, type => 'enum PicmanLayerModeEffects',
 	  desc => 'The paint application mode' },
 	{ name => 'opacity', type => '0 <= float <= 100',
 	  desc => 'The opacity of the final bucket fill' },
@@ -628,44 +628,44 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw ("core/gimpdrawable-bucket-fill.h"
-	                 "core/gimpchannel.h") ],
+        headers => [ qw ("core/picmandrawable-bucket-fill.h"
+	                 "core/picmanchannel.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+      if (! picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          GimpFillType fill_type = GIMP_FG_BUCKET_FILL;
+          PicmanFillType fill_type = PICMAN_FG_BUCKET_FILL;
 
           switch (fill_mode)
             {
-            case GIMP_FG_BUCKET_FILL:
-              fill_type = GIMP_FOREGROUND_FILL;
+            case PICMAN_FG_BUCKET_FILL:
+              fill_type = PICMAN_FOREGROUND_FILL;
               break;
 
-            case GIMP_BG_BUCKET_FILL:
-              fill_type = GIMP_BACKGROUND_FILL;
+            case PICMAN_BG_BUCKET_FILL:
+              fill_type = PICMAN_BACKGROUND_FILL;
               break;
 
-            case GIMP_PATTERN_BUCKET_FILL:
-              fill_type = GIMP_PATTERN_FILL;
+            case PICMAN_PATTERN_BUCKET_FILL:
+              fill_type = PICMAN_PATTERN_FILL;
               break;
             }
 
-          success = gimp_edit_fill (image, drawable, context, fill_type,
-                                    GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+          success = picman_edit_fill (image, drawable, context, fill_type,
+                                    PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
         }
       else
         {
-          success = gimp_drawable_bucket_fill (drawable, context, fill_mode,
+          success = picman_drawable_bucket_fill (drawable, context, fill_mode,
                                                paint_mode, opacity / 100.0,
                                                FALSE /* don't fill transparent */,
-                                               GIMP_SELECT_CRITERION_COMPOSITE,
+                                               PICMAN_SELECT_CRITERION_COMPOSITE,
 	                                       threshold / 255.0,
                                                sample_merged, x, y,
                                                error);
@@ -704,9 +704,9 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The affected drawable' },
-	{ name => 'fill_mode', type => 'enum GimpBucketFillMode',
+	{ name => 'fill_mode', type => 'enum PicmanBucketFillMode',
 	  desc => 'The type of fill' },
-	{ name => paint_mode, type => 'enum GimpLayerModeEffects',
+	{ name => paint_mode, type => 'enum PicmanLayerModeEffects',
 	  desc => 'The paint application mode' },
 	{ name => 'opacity', type => '0 <= float <= 100',
 	  desc => 'The opacity of the final bucket fill' },
@@ -721,7 +721,7 @@ HELP
 	  desc => "Whether to consider transparent pixels for filling.
 	           If TRUE, transparency is considered as a unique fillable
 		   color." },
-	{ name => 'select_criterion', type => 'enum GimpSelectCriterion',
+	{ name => 'select_criterion', type => 'enum PicmanSelectCriterion',
 	  desc => "The criterion used to determine color similarity.
 	           SELECT_CRITERION_COMPOSITE is the standard choice.
 		   " },
@@ -736,41 +736,41 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw ("core/gimpdrawable-bucket-fill.h"
-	                 "core/gimpchannel.h") ],
+        headers => [ qw ("core/picmandrawable-bucket-fill.h"
+	                 "core/picmanchannel.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-      if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+      if (! picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          GimpFillType fill_type = GIMP_FG_BUCKET_FILL;
+          PicmanFillType fill_type = PICMAN_FG_BUCKET_FILL;
 
           switch (fill_mode)
             {
-            case GIMP_FG_BUCKET_FILL:
-              fill_type = GIMP_FOREGROUND_FILL;
+            case PICMAN_FG_BUCKET_FILL:
+              fill_type = PICMAN_FOREGROUND_FILL;
               break;
 
-            case GIMP_BG_BUCKET_FILL:
-              fill_type = GIMP_BACKGROUND_FILL;
+            case PICMAN_BG_BUCKET_FILL:
+              fill_type = PICMAN_BACKGROUND_FILL;
               break;
 
-            case GIMP_PATTERN_BUCKET_FILL:
-              fill_type = GIMP_PATTERN_FILL;
+            case PICMAN_PATTERN_BUCKET_FILL:
+              fill_type = PICMAN_PATTERN_FILL;
               break;
             }
 
-          success = gimp_edit_fill (image, drawable, context, fill_type,
-                                    GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+          success = picman_edit_fill (image, drawable, context, fill_type,
+                                    PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
         }
       else
         {
-          success = gimp_drawable_bucket_fill (drawable, context, fill_mode,
+          success = picman_drawable_bucket_fill (drawable, context, fill_mode,
                                                paint_mode, opacity / 100.0,
                                                fill_transparent,
                                                select_criterion,
@@ -804,18 +804,18 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The affected drawable' },
-        { name => 'blend_mode', type => 'enum GimpBlendMode',
+        { name => 'blend_mode', type => 'enum PicmanBlendMode',
 	  desc => 'The type of blend' },
-	{ name => 'paint_mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'paint_mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The paint application mode' },
-	{ name => 'gradient_type',  type => 'enum GimpGradientType',
+	{ name => 'gradient_type',  type => 'enum PicmanGradientType',
 	  desc => 'The type of gradient' },
 	{ name => 'opacity', type => '0 <= float <= 100',
 	  desc => 'The opacity of the final blend' },
 	{ name => 'offset', type => '0 <= float',
 	  desc => 'Offset relates to the starting and ending coordinates
 		   specified for the blend. This parameter is mode dependent.' },
-	{ name => 'repeat', type => 'enum GimpRepeatMode',
+	{ name => 'repeat', type => 'enum PicmanRepeatMode',
 	  desc => 'Repeat mode' },
 	{ name => 'reverse', type => 'boolean',
 	  desc => 'Use the reverse gradient' },
@@ -838,12 +838,12 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpdrawable-blend.h") ],
+        headers => [ qw("core/picmandrawable-blend.h") ],
 	code => <<'CODE'
 {
-  success = (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                        GIMP_PDB_ITEM_CONTENT, error) &&
-             gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error));
+  success = (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                        PICMAN_PDB_ITEM_CONTENT, error) &&
+             picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error));
 
   if (success && supersample)
     {
@@ -857,9 +857,9 @@ HELP
   if (success)
     {
       if (progress)
-        gimp_progress_start (progress, _("Blending"), FALSE);
+        picman_progress_start (progress, _("Blending"), FALSE);
 
-      gimp_drawable_blend (drawable,
+      picman_drawable_blend (drawable,
                            context,
                            blend_mode,
                            paint_mode,
@@ -872,7 +872,7 @@ HELP
 	                   progress);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
     }
 }
 CODE
@@ -896,21 +896,21 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("core/gimpstrokeoptions.h") ],
+	headers => [ qw("core/picmanstrokeoptions.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpImage         *image   = gimp_item_get_image (GIMP_ITEM (drawable));
-      GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+      PicmanImage         *image   = picman_item_get_image (PICMAN_ITEM (drawable));
+      PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
       g_object_set (options,
-                    "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                    "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                     NULL);
 
-      success = gimp_item_stroke (GIMP_ITEM (gimp_image_get_mask (image)),
+      success = picman_item_stroke (PICMAN_ITEM (picman_image_get_mask (image)),
                                   drawable, context, options, TRUE, TRUE,
                                   progress, error);
 
@@ -941,23 +941,23 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("core/gimpstrokeoptions.h") ],
+	headers => [ qw("core/picmanstrokeoptions.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (vectors),
-                                 gimp_item_get_image (GIMP_ITEM (drawable)),
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+      picman_pdb_item_is_attached (PICMAN_ITEM (vectors),
+                                 picman_item_get_image (PICMAN_ITEM (drawable)),
                                  0, error))
     {
-      GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+      PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
       g_object_set (options,
-                    "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                    "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                     NULL);
 
-      success = gimp_item_stroke (GIMP_ITEM (vectors),
+      success = picman_item_stroke (PICMAN_ITEM (vectors),
                                   drawable, context, options, TRUE, TRUE,
                                   progress, error);
 
@@ -972,13 +972,13 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimp-edit.h"
-              "core/gimpimage.h"
-              "core/gimpimage-new.h"
-              "core/gimpprogress.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+              "core/picman.h"
+              "core/picman-edit.h"
+              "core/picmanimage.h"
+              "core/picmanimage-new.h"
+              "core/picmanprogress.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(edit_cut
             edit_copy edit_copy_visible
@@ -997,7 +997,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Edit procedures';
-$doc_title = 'gimpedit';
+$doc_title = 'picmanedit';
 $doc_short_desc = 'Edit menu functions (cut, copy, paste, clear, etc.)';
 $doc_long_desc = 'Edit menu functions (cut, copy, paste, clear, etc.)';
 

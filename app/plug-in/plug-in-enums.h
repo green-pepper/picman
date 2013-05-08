@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,32 +19,32 @@
 #define __PLUG_IN_ENUMS_H__
 
 
-#define GIMP_TYPE_PLUG_IN_IMAGE_TYPE (gimp_plug_in_image_type_get_type ())
+#define PICMAN_TYPE_PLUG_IN_IMAGE_TYPE (picman_plug_in_image_type_get_type ())
 
-GType gimp_plug_in_image_type_get_type (void) G_GNUC_CONST;
-
-typedef enum /*< pdb-skip >*/
-{
-  GIMP_PLUG_IN_RGB_IMAGE      = 1 << 0,
-  GIMP_PLUG_IN_GRAY_IMAGE     = 1 << 1,
-  GIMP_PLUG_IN_INDEXED_IMAGE  = 1 << 2,
-  GIMP_PLUG_IN_RGBA_IMAGE     = 1 << 3,
-  GIMP_PLUG_IN_GRAYA_IMAGE    = 1 << 4,
-  GIMP_PLUG_IN_INDEXEDA_IMAGE = 1 << 5
-} GimpPlugInImageType;
-
-
-#define GIMP_TYPE_PLUG_CALL_MODE (gimp_plug_in_call_mode_get_type ())
-
-GType gimp_plug_in_call_mode_get_type (void) G_GNUC_CONST;
+GType picman_plug_in_image_type_get_type (void) G_GNUC_CONST;
 
 typedef enum /*< pdb-skip >*/
 {
-  GIMP_PLUG_IN_CALL_NONE,
-  GIMP_PLUG_IN_CALL_RUN,
-  GIMP_PLUG_IN_CALL_QUERY,
-  GIMP_PLUG_IN_CALL_INIT
-} GimpPlugInCallMode;
+  PICMAN_PLUG_IN_RGB_IMAGE      = 1 << 0,
+  PICMAN_PLUG_IN_GRAY_IMAGE     = 1 << 1,
+  PICMAN_PLUG_IN_INDEXED_IMAGE  = 1 << 2,
+  PICMAN_PLUG_IN_RGBA_IMAGE     = 1 << 3,
+  PICMAN_PLUG_IN_GRAYA_IMAGE    = 1 << 4,
+  PICMAN_PLUG_IN_INDEXEDA_IMAGE = 1 << 5
+} PicmanPlugInImageType;
+
+
+#define PICMAN_TYPE_PLUG_CALL_MODE (picman_plug_in_call_mode_get_type ())
+
+GType picman_plug_in_call_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum /*< pdb-skip >*/
+{
+  PICMAN_PLUG_IN_CALL_NONE,
+  PICMAN_PLUG_IN_CALL_RUN,
+  PICMAN_PLUG_IN_CALL_QUERY,
+  PICMAN_PLUG_IN_CALL_INIT
+} PicmanPlugInCallMode;
 
 
 #endif /* __PLUG_IN_ENUMS_H__ */

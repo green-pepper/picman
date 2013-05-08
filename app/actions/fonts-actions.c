@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,52 +20,52 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
-#include "text/gimpfont.h"
+#include "text/picmanfont.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "fonts-actions.h"
 #include "fonts-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry fonts_actions[] =
+static const PicmanActionEntry fonts_actions[] =
 {
-  { "fonts-popup", GIMP_STOCK_FONT,
+  { "fonts-popup", PICMAN_STOCK_FONT,
     NC_("fonts-action", "Fonts Menu"), NULL, NULL, NULL,
-    GIMP_HELP_FONT_DIALOG },
+    PICMAN_HELP_FONT_DIALOG },
 
   { "fonts-refresh", GTK_STOCK_REFRESH,
     NC_("fonts-action", "_Rescan Font List"), "",
     NC_("fonts-action", "Rescan the installed fonts"),
     G_CALLBACK (fonts_refresh_cmd_callback),
-    GIMP_HELP_FONT_REFRESH }
+    PICMAN_HELP_FONT_REFRESH }
 };
 
 
 void
-fonts_actions_setup (GimpActionGroup *group)
+fonts_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "fonts-action",
+  picman_action_group_add_actions (group, "fonts-action",
                                  fonts_actions,
                                  G_N_ELEMENTS (fonts_actions));
 }
 
 void
-fonts_actions_update (GimpActionGroup *group,
+fonts_actions_update (PicmanActionGroup *group,
                       gpointer         data)
 {
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("fonts-refresh", TRUE);
 

@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-ccanalyze"
 #define PLUG_IN_BINARY "color-cube-analyze"
-#define PLUG_IN_ROLE   "gimp-color-cube-analyze"
+#define PLUG_IN_ROLE   "picman-color-cube-analyze"
 
 /* size of histogram image */
 #define PREWIDTH  256
@@ -46,12 +46,12 @@
 static void query (void);
 static void run   (const gchar      *name,
                    gint              n_params,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
 static void doDialog    (void);
-static void analyze     (GimpDrawable *drawable);
+static void analyze     (PicmanDrawable *drawable);
 
 static void histogram   (guchar  r,
                          guchar  g,
@@ -75,7 +75,7 @@ static gint       uniques = 0;
 static gint32     imageID;
 
 /* lets declare what we want to do */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -86,23 +86,23 @@ const GimpPlugInInfo PLUG_IN_INFO =
 /* run program */
 MAIN ()
 
-/* tell GIMP who we are */
+/* tell PICMAN who we are */
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" }
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_INT32, "num-colors", "Number of colors in the image" }
+    { PICMAN_PDB_INT32, "num-colors", "Number of colors in the image" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Analyze the set of colors in the image"),
                           "Analyze colorcube and print some information about "
                           "the current image (also displays a color-histogram)",
@@ -111,7 +111,7 @@ query (void)
                           "June 20th, 1997",
                           N_("Colorcube A_nalysis..."),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), G_N_ELEMENTS (return_vals),
                           args, return_vals);
 }
@@ -120,14 +120,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
 
   run_mode = param[0].data.d_int32;
 
@@ -136,51 +136,51 @@ run (const gchar      *name,
   *nreturn_vals = 2;
   *return_vals  = values;
 
-  if (run_mode == GIMP_RUN_NONINTERACTIVE)
+  if (run_mode == PICMAN_RUN_NONINTERACTIVE)
     {
       if (n_params != 3)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
       imageID  = param[1].data.d_image;
 
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id) ||
-          gimp_drawable_is_indexed (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id) ||
+          picman_drawable_is_indexed (drawable->drawable_id))
         {
           memset (hist_red, 0, sizeof (hist_red));
           memset (hist_green, 0, sizeof (hist_green));
           memset (hist_blue, 0, sizeof (hist_blue));
 
-          gimp_tile_cache_ntiles (2 *
-                                  (drawable->width / gimp_tile_width () + 1));
+          picman_tile_cache_ntiles (2 *
+                                  (drawable->width / picman_tile_width () + 1));
 
           analyze (drawable);
 
           /* show dialog after we analyzed image */
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
             doDialog ();
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
-  values[1].type          = GIMP_PDB_INT32;
+  values[1].type          = PICMAN_PDB_INT32;
   values[1].data.d_int32  = uniques;
 }
 
 /* do the analyzing */
 static void
-analyze (GimpDrawable *drawable)
+analyze (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  srcPR;
+  PicmanPixelRgn  srcPR;
   guchar       *src_row, *cmap;
   gint          x, y, numcol;
   gint          x1, y1, x2, y2;
@@ -191,13 +191,13 @@ analyze (GimpDrawable *drawable)
   gboolean      has_alpha;
   gboolean      has_sel;
   guchar       *sel;
-  GimpPixelRgn  selPR;
+  PicmanPixelRgn  selPR;
   gint          ofsx, ofsy;
-  GimpDrawable *selDrawable;
+  PicmanDrawable *selDrawable;
 
-  gimp_progress_init (_("Colorcube Analysis"));
+  picman_progress_init (_("Colorcube Analysis"));
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   /*
    * Get the size of the input image (this will/must be the same
@@ -207,19 +207,19 @@ analyze (GimpDrawable *drawable)
   height = drawable->height;
   bpp = drawable->bpp;
 
-  has_sel = !gimp_selection_is_empty (imageID);
-  gimp_drawable_offsets (drawable->drawable_id, &ofsx, &ofsy);
+  has_sel = !picman_selection_is_empty (imageID);
+  picman_drawable_offsets (drawable->drawable_id, &ofsx, &ofsy);
 
   /* initialize the pixel region */
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
 
-  cmap = gimp_image_get_colormap (imageID, &numcol);
-  gray = (gimp_drawable_is_gray (drawable->drawable_id) ||
-          gimp_item_is_channel (drawable->drawable_id));
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  cmap = picman_image_get_colormap (imageID, &numcol);
+  gray = (picman_drawable_is_gray (drawable->drawable_id) ||
+          picman_item_is_channel (drawable->drawable_id));
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
-  selDrawable = gimp_drawable_get (gimp_image_get_selection (imageID));
-  gimp_pixel_rgn_init (&selPR,
+  selDrawable = picman_drawable_get (picman_image_get_selection (imageID));
+  picman_pixel_rgn_init (&selPR,
                        selDrawable,
                        0, 0, width, height, FALSE, FALSE);
 
@@ -229,9 +229,9 @@ analyze (GimpDrawable *drawable)
 
   for (y = y1; y < y2; y++)
     {
-      gimp_pixel_rgn_get_row (&srcPR, src_row, x1, y, (x2 - x1));
+      picman_pixel_rgn_get_row (&srcPR, src_row, x1, y, (x2 - x1));
       if (has_sel)
-        gimp_pixel_rgn_get_row (&selPR, sel, x1 + ofsx, y + ofsy, (x2 - x1));
+        picman_pixel_rgn_get_row (&selPR, sel, x1 + ofsx, y + ofsy, (x2 - x1));
 
       for (x = 0; x < x2 - x1; x++)
         {
@@ -278,13 +278,13 @@ analyze (GimpDrawable *drawable)
 
       /* tell the user what we're doing */
       if ((y % 10) == 0)
-        gimp_progress_update ((gdouble) y / (gdouble) (y2 - y1));
+        picman_progress_update ((gdouble) y / (gdouble) (y2 - y1));
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   /* clean up */
-  gimp_drawable_detach (selDrawable);
+  picman_drawable_detach (selDrawable);
   g_free (src_row);
   g_free (sel);
 }
@@ -349,17 +349,17 @@ doDialog (void)
   GtkWidget *frame;
   GtkWidget *preview;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Colorcube Analysis"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Colorcube Analysis"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 
                             NULL);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -374,7 +374,7 @@ doDialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
 
   /* use preview for histogram window */
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, PREWIDTH, PREHEIGHT);
   gtk_container_add (GTK_CONTAINER (frame), preview);
 
@@ -393,7 +393,7 @@ doDialog (void)
 
   fillPreview (preview);
 
-  gimp_dialog_run (GIMP_DIALOG (dialog));
+  picman_dialog_run (PICMAN_DIALOG (dialog));
 
   gtk_widget_destroy (dialog);
 }
@@ -486,9 +486,9 @@ fillPreview (GtkWidget *preview)
     }
 
   /* move our data into the preview image */
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, PREWIDTH, PREHEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           image,
                           3 * PREWIDTH);
 

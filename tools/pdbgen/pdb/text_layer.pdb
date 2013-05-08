@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # New Text PDB API
@@ -24,9 +24,9 @@ sub text_layer_new {
     $help = <<'HELP';
 This procedure creates a new text layer. The arguments are kept as
 simple as necessary for the normal case. All text attributes, however,
-can be modified with the appropriate gimp_text_layer_set_*()
+can be modified with the appropriate picman_text_layer_set_*()
 procedures. The new layer still needs to be added to the image, as
-this is not automatic. Add the new layer using gimp_image_insert_layer().
+this is not automatic. Add the new layer using picman_image_insert_layer().
 HELP
 
     &marcus_pdb_misc('2008', '2.6');
@@ -52,12 +52,12 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpText *gimp_text;
-  GimpRGB   color;
+  PicmanText *picman_text;
+  PicmanRGB   color;
 
-  gimp_context_get_foreground (context, &color);
+  picman_context_get_foreground (context, &color);
   
-  gimp_text = g_object_new (GIMP_TYPE_TEXT,
+  picman_text = g_object_new (PICMAN_TYPE_TEXT,
                             "text",           text,
                             "font",           fontname,
                             "font-size",      size,
@@ -65,12 +65,12 @@ HELP
                             "color",          &color,
                             NULL);
   
-  layer = gimp_text_layer_new (image, gimp_text);
-  g_object_unref (gimp_text);
+  layer = picman_text_layer_new (image, picman_text);
+  g_object_unref (picman_text);
 
   if (! layer)
     {
-      g_set_error (error, GIMP_PDB_ERROR, GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error (error, PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                    _("Failed to create text layer"));
 
       success = FALSE;
@@ -102,9 +102,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "text", &text,
                     NULL);
     }
@@ -136,9 +136,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "text", text,
                            NULL);
@@ -178,9 +178,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "markup", &markup,
                     NULL);
     }
@@ -215,9 +215,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "font", &font,
                     NULL);
     }
@@ -249,9 +249,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "font", font,
                            NULL);
@@ -291,9 +291,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "font-size",      &font_size,
                     "font-size-unit", &unit,
                     NULL);
@@ -329,9 +329,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "font-size-unit", unit,
                            "font-size",      font_size,
@@ -347,7 +347,7 @@ CODE
 }
 
 sub text_layer_get_hinting {
-    &std_pdb_deprecated ('gimp-text-layer-get-hint-style');
+    &std_pdb_deprecated ('picman-text-layer-get-hint-style');
 
     @inargs = (
         { name => 'layer', type => 'layer',
@@ -364,9 +364,9 @@ sub text_layer_get_hinting {
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "hinting", &hinting,
                     NULL);
     }
@@ -380,7 +380,7 @@ CODE
 }
 
 sub text_layer_set_hinting {
-    &std_pdb_deprecated ('gimp-text-layer-set-hint-style');
+    &std_pdb_deprecated ('picman-text-layer-set-hint-style');
 
     $blurb = 'Enable/disable the use of hinting in a text layer.';
 
@@ -404,9 +404,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "hinting", hinting,
                            NULL);
@@ -442,9 +442,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "antialias", &antialias,
                     NULL);
     }
@@ -476,9 +476,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "antialias", antialias,
                            NULL);
@@ -509,16 +509,16 @@ HELP
     );
 
     @outargs = (
-        { name => 'style', type => 'enum GimpTextHintStyle',
+        { name => 'style', type => 'enum PicmanTextHintStyle',
           desc => 'The hint style used for font outlines' }
     );
     
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "hint-style", &style,
                     NULL);
     }
@@ -545,16 +545,16 @@ HELP
     @inargs = (
         { name => 'layer', type => 'layer',
           desc => 'The text layer' },
-        { name => 'style', type => 'enum GimpTextHintStyle',
+        { name => 'style', type => 'enum PicmanTextHintStyle',
           desc => 'The new hint style' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "hint-style", style,
                            NULL);
@@ -590,9 +590,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "kerning", &kerning,
                     NULL);
     }
@@ -624,9 +624,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "kerning", kerning,
                            NULL);
@@ -663,9 +663,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "language", &language,
                     NULL);
     }
@@ -698,9 +698,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "language", language,
                            NULL);
@@ -730,16 +730,16 @@ HELP
     );
 
     @outargs = (
-        { name => 'direction', type => 'enum GimpTextDirection',
+        { name => 'direction', type => 'enum PicmanTextDirection',
           desc => 'The based direction used for the text layer.' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "base-direction", &direction,
                     NULL);
     }
@@ -765,16 +765,16 @@ HELP
     @inargs = (
         { name => 'layer', type => 'layer',
           desc => 'The text layer' },
-        { name => 'direction', type => 'enum GimpTextDirection',
+        { name => 'direction', type => 'enum PicmanTextDirection',
           desc => 'The base direction of the text.' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "base-direction", direction,
                            NULL);
@@ -804,16 +804,16 @@ HELP
     );
 
     @outargs = (
-        { name => 'justify', type => 'enum GimpTextJustification',
+        { name => 'justify', type => 'enum PicmanTextJustification',
           desc => 'The justification used in the text layer.' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "justify", &justify,
                     NULL);
     }
@@ -839,16 +839,16 @@ HELP
     @inargs = (
         { name => 'layer', type => 'layer',
           desc => 'The text layer' },
-        { name => 'justify', type => 'enum GimpTextJustification',
+        { name => 'justify', type => 'enum PicmanTextJustification',
           desc => 'The justification for your text.' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "justify", justify,
                            NULL);
@@ -884,9 +884,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      color = gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer))->color;
+      color = picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer))->color;
     }
   else
     {
@@ -916,9 +916,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "color", &color,
                            NULL);
@@ -954,9 +954,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "indent", &indent,
                     NULL);
     }
@@ -988,9 +988,9 @@ HELP
      %invoke = (
          code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "indent", indent,
                            NULL);
@@ -1026,9 +1026,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "line-spacing", &line_spacing,
                     NULL);
     }
@@ -1060,9 +1060,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "line-spacing", line_spacing,
                            NULL);
@@ -1099,9 +1099,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
-      g_object_get (gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)),
+      g_object_get (picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)),
                     "letter-spacing", &letter_spacing,
                     NULL);
     }
@@ -1134,9 +1134,9 @@ HELP
     %invoke = (    
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
                            "letter-spacing", letter_spacing,
                            NULL);
@@ -1156,7 +1156,7 @@ sub text_layer_resize {
     $help = <<'HELP';
 This procedure changes the width and height of a text layer while
 keeping it as a text layer and not converting it to a bitmap like
-gimp_layer_resize() would do.
+picman_layer_resize() would do.
 HELP
 
     barak_pdb_misc('2009', '2.8');
@@ -1164,30 +1164,30 @@ HELP
     @inargs = (
         { name => 'layer', type => 'layer',
           desc => 'The text layer' },
-        { name => 'width', type => '0.0 <= float <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'width', type => '0.0 <= float <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The new box width in pixels' },
-        { name => 'height', type => '0.0 <= float <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'height', type => '0.0 <= float <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The new box height in pixels' },
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, GIMP_PDB_ITEM_CONTENT, error))
+  if (picman_pdb_layer_is_text_layer (layer, PICMAN_PDB_ITEM_CONTENT, error))
     {
-      GimpText *text = gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer));
+      PicmanText *text = picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer));
       gdouble   xres, yres;
 
-      gimp_image_get_resolution (gimp_item_get_image (GIMP_ITEM (layer)),
+      picman_image_get_resolution (picman_item_get_image (PICMAN_ITEM (layer)),
                                  &xres, &yres);
 
-      gimp_text_layer_set (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set (PICMAN_TEXT_LAYER (layer),
                            _("Set text layer attribute"),
-                           "box-mode",   GIMP_TEXT_BOX_FIXED,
-                           "box-width",  gimp_pixels_to_units (width,
+                           "box-mode",   PICMAN_TEXT_BOX_FIXED,
+                           "box-width",  picman_pixels_to_units (width,
                                                                text->box_unit,
                                                                xres),
-                           "box-height", gimp_pixels_to_units (height,
+                           "box-height", picman_pixels_to_units (height,
                                                                text->box_unit,
                                                                yres),
                            NULL);
@@ -1202,13 +1202,13 @@ CODE
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "core/gimpcontext.h"
-              "text/gimptext.h"
-              "text/gimptextlayer.h"
-              "gimppdb-utils.h"
-              "gimppdberror.h"
-              "gimp-intl.h");
+@headers = qw("libpicmanbase/picmanbase.h"
+              "core/picmancontext.h"
+              "text/picmantext.h"
+              "text/picmantextlayer.h"
+              "picmanpdb-utils.h"
+              "picmanpdberror.h"
+              "picman-intl.h");
 
 @procs = qw(text_layer_new
             text_layer_get_text
@@ -1246,7 +1246,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Text layer procedures';
-$doc_title = 'gimptextlayer';
+$doc_title = 'picmantextlayer';
 $doc_short_desc = 'Functions for querying and manipulating text layers.';
 $doc_long_desc = 'Functions for querying and manipulating text layers.';
 

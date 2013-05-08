@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,26 +20,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimptextbuffer.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmantextbuffer.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "tools/gimptexttool.h"
+#include "tools/picmantexttool.h"
 
 #include "text-tool-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -48,7 +48,7 @@ static void   text_tool_load_dialog_destroyed (GtkWidget    *dialog,
 					       GObject      *tool);
 static void   text_tool_load_dialog_response  (GtkWidget    *dialog,
 					       gint          response_id,
-					       GimpTextTool *tool);
+					       PicmanTextTool *tool);
 
 
 /*  public functions  */
@@ -57,48 +57,48 @@ void
 text_tool_cut_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_cut_clipboard (text_tool);
+  picman_text_tool_cut_clipboard (text_tool);
 }
 
 void
 text_tool_copy_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_copy_clipboard (text_tool);
+  picman_text_tool_copy_clipboard (text_tool);
 }
 
 void
 text_tool_paste_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_paste_clipboard (text_tool);
+  picman_text_tool_paste_clipboard (text_tool);
 }
 
 void
 text_tool_delete_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_delete_selection (text_tool);
+  picman_text_tool_delete_selection (text_tool);
 }
 
 void
 text_tool_load_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpTextTool   *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool   *text_tool = PICMAN_TEXT_TOOL (data);
   GtkWidget      *dialog;
   GtkWidget      *parent    = NULL;
   GtkFileChooser *chooser;
 
-  dialog = g_object_get_data (G_OBJECT (text_tool), "gimp-text-file-dialog");
+  dialog = g_object_get_data (G_OBJECT (text_tool), "picman-text-file-dialog");
 
   if (dialog)
     {
@@ -106,11 +106,11 @@ text_tool_load_cmd_callback (GtkAction *action,
       return;
     }
 
-  if (GIMP_TOOL (text_tool)->display)
+  if (PICMAN_TOOL (text_tool)->display)
     {
-      GimpDisplayShell *shell;
+      PicmanDisplayShell *shell;
 
-      shell = gimp_display_get_shell (GIMP_TOOL (text_tool)->display);
+      shell = picman_display_get_shell (PICMAN_TOOL (text_tool)->display);
 
       parent = gtk_widget_get_toplevel (GTK_WIDGET (shell));
     }
@@ -131,13 +131,13 @@ text_tool_load_cmd_callback (GtkAction *action,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  g_object_set_data (G_OBJECT (text_tool), "gimp-text-file-dialog", dialog);
+  g_object_set_data (G_OBJECT (text_tool), "picman-text-file-dialog", dialog);
 
   g_signal_connect (dialog, "destroy",
 		    G_CALLBACK (text_tool_load_dialog_destroyed),
 		    text_tool);
 
-  gtk_window_set_role (GTK_WINDOW (chooser), "gimp-text-load-file");
+  gtk_window_set_role (GTK_WINDOW (chooser), "picman-text-load-file");
   gtk_window_set_position (GTK_WINDOW (chooser), GTK_WIN_POS_MOUSE);
 
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_OK);
@@ -156,31 +156,31 @@ void
 text_tool_clear_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpTextTool  *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool  *text_tool = PICMAN_TEXT_TOOL (data);
   GtkTextBuffer *buffer    = GTK_TEXT_BUFFER (text_tool->buffer);
   GtkTextIter    start, end;
 
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_select_range (buffer, &start, &end);
-  gimp_text_tool_delete_selection (text_tool);
+  picman_text_tool_delete_selection (text_tool);
 }
 
 void
 text_tool_text_to_path_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_create_vectors (text_tool);
+  picman_text_tool_create_vectors (text_tool);
 }
 
 void
 text_tool_text_along_path_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
 
-  gimp_text_tool_create_vectors_warped (text_tool);
+  picman_text_tool_create_vectors_warped (text_tool);
 }
 
 void
@@ -188,13 +188,13 @@ text_tool_direction_cmd_callback (GtkAction *action,
                                   GtkAction *current,
                                   gpointer   data)
 {
-  GimpTextTool *text_tool = GIMP_TEXT_TOOL (data);
+  PicmanTextTool *text_tool = PICMAN_TEXT_TOOL (data);
   gint          value;
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   g_object_set (text_tool->proxy,
-		"base-direction", (GimpTextDirection) value,
+		"base-direction", (PicmanTextDirection) value,
 		NULL);
 }
 
@@ -205,13 +205,13 @@ static void
 text_tool_load_dialog_destroyed (GtkWidget *dialog,
 				 GObject   *tool)
 {
-  g_object_set_data (tool, "gimp-text-file-dialog", NULL);
+  g_object_set_data (tool, "picman-text-file-dialog", NULL);
 }
 
 static void
 text_tool_load_dialog_response (GtkWidget    *dialog,
 				gint          response_id,
-				GimpTextTool *tool)
+				PicmanTextTool *tool)
 {
   if (response_id == GTK_RESPONSE_OK)
     {
@@ -220,12 +220,12 @@ text_tool_load_dialog_response (GtkWidget    *dialog,
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-      if (! gimp_text_buffer_load (tool->buffer, filename, &error))
+      if (! picman_text_buffer_load (tool->buffer, filename, &error))
         {
-          gimp_message (GIMP_TOOL (tool)->tool_info->gimp, G_OBJECT (dialog),
-                        GIMP_MESSAGE_ERROR,
+          picman_message (PICMAN_TOOL (tool)->tool_info->picman, G_OBJECT (dialog),
+                        PICMAN_MESSAGE_ERROR,
                         _("Could not open '%s' for reading: %s"),
-                        gimp_filename_to_utf8 (filename),
+                        picman_filename_to_utf8 (filename),
                         error->message);
           g_clear_error (&error);
           g_free (filename);

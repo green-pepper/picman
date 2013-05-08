@@ -1,0 +1,1806 @@
+# translation of picman-libpicman.HEAD.po to Dzongkha
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Dorji Tashi <dorjee_doss@hotmail.com>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-03-19 21:49+0000\n"
+"PO-Revision-Date: 2007-03-27 14:33+0530\n"
+"Last-Translator: sonam pelden <sonaa_peldn@yahoo.com>\n"
+"Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2;plural=(n!=1)\n"
+"X-Generator: KBabel 1.10.2\n"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "པྱིར་གྱི་སེལ་འཐུ།"
+
+#: ../libpicman/picmanbrushselectbutton.c:911
+#: ../libpicman/picmanpatternselectbutton.c:712
+msgid "_Browse..."
+msgstr "བརྡ་འཚོལ།(_B)"
+
+#: ../libpicman/picmanexport.c:217
+#: ../libpicman/picmanexport.c:253
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%sཔ་ལག་ཨིན་ཚུ་གིས་བང་རིམ་ཚུ་ལེགས་སྐྱོང་འཐབ་མི་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:218
+#: ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236
+#: ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "མཐོང་ཚུགས་པའི་བང་རིམ་ཚུ་ མཉམ་བསྡོམས་འབད།"
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "%s པ་ལག་ཨིན་ཚུ་གིས་ པར་ལེན་ཚུ་དང་ ཚད་ཡང་ན་ དྭངས་སྒྲིབ་ཚུ་ལེགས་སྐྱོང་འཐབ་མི་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:235
+#: ../libpicman/picmanexport.c:244
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%sཔ་ལག་ཨིན་ཚུ་གིས་རྐྱངམ་ཅིག་ བང་རིམ་ཚུ་ བསྒུལ་བཟོ་གཞི་ཁྲམ་བཟུམ་སྦེ་ ལེགས་སྐྱོང་འཐབ་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:236
+#: ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "བསྒུལ་བཟོ་བཟུམ་སྦེ་ སྲུང་བཞག་འབད།"
+
+#: ../libpicman/picmanexport.c:245
+#: ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "གཟུགས་བརྙན་ལེབ་ཏེམ་བཟོ།"
+
+#: ../libpicman/picmanexport.c:262
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s པ་ལག་ཨིན་ཚུ་གིས་ དྭངས་གསལ་ ལེགས་སྐྱོང་འཐབ་མི་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:271
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s པ་ལག་ཨིན་ཚུ་གིས་ བང་རིམ་གི་གདོང་ཁེབས་ཚུ་ ལེགས་སྐྱོང་འཐབ་མི་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "བང་རིམ་གྱི་གདོང་ཁེབས་ཚུ་ འཇུག་སྤྱོད་འབད།"
+
+#: ../libpicman/picmanexport.c:280
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s པ་ལག་ཨིན་ཚུ་གིས་རྐྱངམ་ཅིག་ ཨཱར་བི་ཇི་གཟུགས་བརྙན་ཚུ་ ལེགས་སྐྱོང་འཐབ་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:281
+#: ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "ཨཱར་བི་ཇི་ལུ་ གཞི་བསྒྱུར་འབད།"
+
+#: ../libpicman/picmanexport.c:289
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%sཔ་ལག་ཨིན་གིས་རྐྱངམ་ཅིག་གཟུགས་བརྙན་གེརེ་སིཀེལ་དེ་ ལེགས་སྐྱོང་འཐབ་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:290
+#: ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "གེརེ་སིཀེལ་ལུ་གཞི་བསྒྱུར་འབད།"
+
+#: ../libpicman/picmanexport.c:298
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%sཔ་ལག་ཨིན་རྐྱངམ་ཅིག་གིས་ ཟུར་སྦྲགས་འབད་ཡོད་པའི་གཟུགས་བརྙན་ཚུ་ ལེགས་སྐྱོང་འཐབ་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:299
+#: ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"སྔོན་སྒྲིག་ སྒྲིག་སྟངས་ཚུ་ལག་ལེན་འཐབ་པའི་ཐོག་ལས་ ཟུར་སྦྲགས་འབད་ཡོད་མི་ལུ་ གཞི་བསྒྱུར་འབད།\n"
+"(གྲུབ་འབྲས་དེ་ ཊུ་ཡིན་འབད་ནིའི་དོན་ལུ་ ལག་ཐོག་ལས་འབད།)"
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "%sཔ་ལག་ཨིན་གིས་ བིཊི་མེབ་(ཚོས་གཞི་གཉིས་) ཟུར་སྦྲགས་འབད་ཡོད་པའི་ གཟུགས་བརྙན་ཚུ་ ལེགས་སྐྱོང་འཐབ་ཨིན། "
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"བིཊི་མེབ་ སྔོན་སྒྲིག་གི་སྒྲིག་སྟངས་ཚུ་ ལག་་ལེན་འཐབ་པའི་ཐོག་ལས་་ཟུར་སྦྲགས་འབད་ཡོད་མི་ལུ་ གཞི་བསྒྱུར་འབད།\n"
+"(གྲུབ་འབྲས་དེ་ཊུ་ཡིན་འབད་ནིའི་དོན་ལུ་ ལག་ཐོག་ལས་འབད།)"
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%sཔ་ལག་ཨིན་གིས་ཨཱར་བི་ཇི་ ཡང་ན་ གེརེ་སིཀེལ་གཟུགས་བརྙན་ཚུ་རྐྱངམ་ཅིག་ ལེགས་སྐྱོང་འཐབ་ཚུགས།"
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%sཔ་ལག་ཨིན་གིས་ཨཱར་བི་ཇི་དང་ ཟུར་སྦྲགས་འབད་ཡོད་པའི་གཟུགས་བརྙན་ཚུ་རྐྱངམ་ཅིག་ ལེགས་སྐྱོང་འཐབ་ཚུགསཔ་ཨིན།"
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "%s པ་ལག་ཨིན་གིས་ གེརེ་སིཀེལ་ཡང་ན་ ཟུར་སྦྲགས་འབད་ཡོད་པའི་ ཟགུགས་བརྙན་ཚུ་རྐྱངམ་ཅིག་ ལེགས་སྐྱོང་འཐབ་ཚུགཔ་ཨིན།"
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s པ་ལག་ཨིན་ལུ་ ཨལ་ཕའི་རྒྱུད་ལམ་ དགོས་མཁོ་ཡོདཔ་ཨིན།"
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "ཨཱལ་ཕ་རྒྱུ་་ལམ་དེ་ ཁ་སྐོང་རྐྱབས།"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "སྲུང་བཞག་འབད་ནི་ངེས་དཔྱད་འབད་ནི།"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "ངེས་དཔྱད་འབད་ནི།"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "ཡིག་སྣོད་ཕྱིར་འདྲེན་འབད།"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "སྣང་མེད་བཞག(_I)"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "ཕྱིར་འདྲེན།(_E)"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid "Your image should be exported before it can be saved as %s for the following reasons:"
+msgstr "འོག་ལུ་བཀོད་དེ་ཡོད་མི་རྒྱུ་མཚན་ཚུ་གི་དོན་ལུ་ %s་བཟུམ་སྦེ་སྲུང་བཞག་འབད་མ་ཚུགས་པའི་ཧེ་མ་ལས་ ཁྱོད་ཀྱི་གཟུགས་བརྙན་དེ་ཕྱིར་འདྲེན་འབད་དགོཔ་ཨིན།"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr "ཕྱིར་འདྲེན་གཞི་བསྒྱུར་གྱིས་ ཁྱོད་ཀྱི་གཟུགས་བརྙན་ངོ་མ་དེ་ ལེགས་བཅོས་མི་འབད།"
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"ཁྱོད་ཀྱིས་ བང་རིམ་གདོང་ཁེབས་ཅིག་%s་བཟུམ་སྦེ་སྲུང་བཞག་འབད་ནི་གུར་ལྷོད་སོང་ནུག\n"
+"འདི་གིས་ མཐོང་ཚུགས་པའི་བང་རིམ་ཚུ་ སྲུང་བཞག་མི་འབད།"
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"ཁྱོད་ཀྱིས་རྒྱུ་ལམ་(སྲུང་བཞག་འབད་ཡོད་པའི་རྒྱུ་ལམ་)་ཅིག་%s་བཟུམ་སྦེ་སྲུང་བཞག་འབད་ནི་གུར་ལྷོད་སོང་ནུག\n"
+"འདི་གིས་ མཐོང་ཚུགས་པའི་བང་རིམ་ཚུ་ སྲུང་བཞག་མི་འབད།"
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "ཡིག་གཟུགས་སེལ་འཐུ།"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "སེནསི།"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "སྟེགས་རིས་ སེལ་འཐུ།"
+
+#: ../libpicman/picmanmenu.c:450
+#: ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(སྟོངམ་)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "པེ་ལེཊི་སེལ་འཐུ།"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "དཔེ་གཞི་སེལ་འཐུ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "མིང་གི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "འགྲེལ་བཤད་ཀྱི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "གྲོགས་རམ་གྱི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "རྩོམ་སྒྲིག་གི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "འདྲ་བཤུས་དབང་ཆའི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "ཚེས་གྲངས་ཀྱི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "དབྱེ་བའི་ཐོག་ལས།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "མིང་གི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "འགྲེལ་བཤད་ཀྱི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "གྲོགས་རམ་གྱི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "རྩོམ་པ་པོའི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "འདྲ་བཤུས་དབང་ཆའི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "ཚེས་གྲངས་ཀྱི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "དབྱེ་བའི་ཐོག་ལས་ འཚོལ་ཞིབ་འབད་དོ།"
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d བྱ་སྒོའི་ལམ་ལུགས་ཚུ།"
+msgstr[1] "%d"
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "ཁྱོད་ཀྱི་འདྲི་དཔྱད་ཀྱི་ལུ་མཐུན་སྒྲིག་མིན་འདུག"
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "ཁྱོད་ཀྱི་འདྲི་དཔྱད་ཀྱི་དང་ %d བྱ་སྒོའི་ལམ་ལུགས་དེ་ མཐུན་སྒྲིག་འབདཝ་མས།"
+msgstr[1] "%d"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516
+#: ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "མཐུན་སྒྲིག་མིན་འདུག"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr "ཚད་བཟུང་།"
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "གནས་གོང་ཚུ་སླར་ལོག་གཏང་།"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "བརྡ་དོན་ཁ་སྐོང་།"
+
+#: ../libpicman/picmanprocview.c:210
+msgid "Author:"
+msgstr "རྩོམ་པ་པོ:"
+
+#: ../libpicman/picmanprocview.c:222
+msgid "Date:"
+msgstr "ཚེས་གྲངས:"
+
+#: ../libpicman/picmanprocview.c:234
+msgid "Copyright:"
+msgstr "འདྲ་བཤུས་དབང་ཆ:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "བརྒྱ་ཆ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+msgid "_White (full opacity)"
+msgstr "དཀརཔོ་(དྭངས་སྒྲིབ་ཆ་ཚང་)(_W)"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_Black (full transparency)"
+msgstr "ནགཔོ་(དྭངས་གསལ་ཆ་ཚང་།)(_B)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "Layer's _alpha channel"
+msgstr "བང་ིརམ་གྱི་ ཨཱལ་ཕ་རྒྱུ་ལམ།(_a)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "_Transfer layer's alpha channel"
+msgstr "བང་རིམ་གྱི་ ཨཱལ་ཕ་རྒྱ་ལམ་དེ་ གནས་སོར་གཏང་།(_T)"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Selection"
+msgstr "སེལ་འཐུ།(_S)"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Grayscale copy of layer"
+msgstr "བང་རིམ་གྱི་ གེརེ་སིཀེལ་འདྲ་བཤུས།(_G)"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "C_hannel"
+msgstr "རྒྱུ་ལམ:(_h)"
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+msgid "FG to BG (RGB)"
+msgstr "ཨེཕ་ཇི་ལས་བི་ཇི་ལུ་(ཨཱར་བི་ཇི།)"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (HSV)"
+msgstr "ཨེཕ་ཇི་ལས་བི་ཇི་ལུ་(ཨེཆ་ཨེསི་ཝི།)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to transparent"
+msgstr "ཨེཕ་ཇི་ལས་ དྭངས་གསལ་ལུ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "Custom gradient"
+msgstr "སྲོལ་སྒྲིག་སྟེགས་རིས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+msgid "FG color fill"
+msgstr "ཨེཕ་ཇི་་ཚོས་གཞི་བཀང་ནི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "BG color fill"
+msgstr "བི་ཇི་ ཚོས་གཞི་བཀང་ནི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "Pattern fill"
+msgstr "དཔེ་གཞི་ བཀང་ནི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+msgid "Add to the current selection"
+msgstr "ད་སྟོའི་སེལ་འཐུ་ལུ་ ཁ་སྐོང་རྐྱབས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Subtract from the current selection"
+msgstr "ད་སྟོའི་སེལ་འཐུའི་ནང་ལས་ ཕབ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Replace the current selection"
+msgstr "ད་ལྟོའི་སེལ་འཐུ་དེ་ ཚབ་བཙུགས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Intersect with the current selection"
+msgstr "ད་ལྟོའི་སེལ་འཐུ་དང་གཅིག་ཁར་ དུམ་བུར་གཅོད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:162
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "དམརཔོ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:163
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "ལྗང་ཁུ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:164
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "ཧོནམ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:165
+msgid "Gray"
+msgstr "སྐྱ་ཐལ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:166
+#: ../libpicmanbase/picmanbaseenums.c:531
+msgid "Indexed"
+msgstr "ཟུར་སྦྲགས་འབད་ཡོདཔ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "ཨཱལ་ཕ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Small"
+msgstr "ཆུང་ཀུ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Medium"
+msgstr "འབྲིང་མ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Large"
+msgstr "ཆེ་བ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+msgid "Light checks"
+msgstr "ཞིབ་དཔྱད་ཡང་བ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Mid-tone checks"
+msgstr "མིཌི་ཊོ་གི་ཞགབ་དཔྱད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Dark checks"
+msgstr "གྲིབ་གནག་གི་ཞིབ་དཔྱད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "White only"
+msgstr "དཀརཔོ་རྐྱངམ་ཅིག"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "Gray only"
+msgstr "སྐྱ་ཐལ་རྐྱངམ་ཅིག"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Black only"
+msgstr "ནགཔོ་རྐྱངམ་ཅིག"
+
+#: ../libpicmanbase/picmanbaseenums.c:263
+msgid "Image source"
+msgstr "གཟུགས་བརྙན་གྱི་ འབྱུང་ཁོངས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Pattern source"
+msgstr "དཔེ་གཞི་འབྱུང་ཁུངས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:293
+msgid "Lightness"
+msgstr "ཡང་བ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Luminosity"
+msgstr "འོད་ཤུགས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Average"
+msgstr "ཆ་སྙོམས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:323
+msgid "Dodge"
+msgstr "གཟུར་ཐབས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Burn"
+msgstr "བཙུགས་སྤྱོད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:388
+msgid "gradient|Linear"
+msgstr "སྟེགས་རིས་|ཐིག་གི་"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "Bi-linear"
+msgstr "རིང་ཚད་གཉིས་ཅན།"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Radial"
+msgstr "འོད་ཟེར་གྱི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:391
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "གྲུ་བཞི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:392
+msgid "Conical (sym)"
+msgstr "ཀོ་ནི་ཀཱལ།(sym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (asym)"
+msgstr "ཀོ་ནི་ཀཱལ།(asym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Shaped (angular)"
+msgstr "དབྱིབས་གཟུགངས་ཅན།(གྲུ་ཟུར་ཅན།)"
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (spherical)"
+msgstr "དབྱིབས་གཟུགས་ཅན།(ཟླུམ་གཟུགས་ཅན།)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (dimpled)"
+msgstr "དབྱིབས་གཟུགས་ཅན།(dimpled)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Spiral (cw)"
+msgstr "ནང་སྒྲིལ།(cw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (ccw)"
+msgstr "ནང་སྒྲིལ།(ccw)"
+
+#: ../libpicmanbase/picmanbaseenums.c:429
+msgid "Intersections (dots)"
+msgstr "དུམ་བུར་གཅོད་ནི། (dots)"
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (crosshairs)"
+msgstr "དུམ་བུར་གཅོད་ནི།(crosshairs)"
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Dashed"
+msgstr "སྦྲེལ་རྟགས་བཀལ་ཡོདཔ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Double dashed"
+msgstr "སྦྲེལ་རྟགས་གཉིས་ལྡན།"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Solid"
+msgstr "རགས་པ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:462
+msgid "Stock ID"
+msgstr "ཅ་མཛོད་ ཨའི་ཌི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Inline pixbuf"
+msgstr "ཨིན་ལའིན་ པར་ཁོངས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Image file"
+msgstr "གཟུགས་བརྙན་ཡིག་སྣོད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:493
+msgid "RGB color"
+msgstr "ཨཱར་བི་ཇི་ ཚོས་གཞི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:494
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "Grayscale"
+msgstr "གེརེ་སིཀེལ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:495
+msgid "Indexed color"
+msgstr "ཟུར་སྦྲགས་འབད་ཡོད་པའི་ ཚོས་གཞི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:527
+msgid "RGB"
+msgstr "ཨཱར་བི་ཇི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB-alpha"
+msgstr "ཨཱརཡ་བ་ིཇི་-ཨཱལ་ཕ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale-alpha"
+msgstr "གེརེ་སིཀེལ་-ཨཱལ་ཕ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed-alpha"
+msgstr "ཟུར་སྦྲགས་འབད་ཡོད་པའི་-ཨཱལ་ཕ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:562
+msgid "interpolation|None"
+msgstr "བསྐྱར་བསྣོན་|ཅི་མེད་"
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|Linear"
+msgstr "བསྐྱར་བསྣོན་|ཐིག་གི་"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "Cubic"
+msgstr "ཀུས་བིཀ"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Sinc (Lanczos3)"
+msgstr "སིངཀ་ (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:593
+msgid "Constant"
+msgstr "ཆད་མེད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Incremental"
+msgstr "ཡར་འཕར་ཅན།"
+
+#: ../libpicmanbase/picmanbaseenums.c:623
+#: ../modules/cdisplay_lcms.c:267
+msgid "None"
+msgstr "ཅི་་མེད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:624
+msgid "Sawtooth wave"
+msgstr "སྭོ་ཊུཏི་ ཝེབས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Triangular wave"
+msgstr "ཟུར་གསུམ་ཅན་གྱི་ཝེབས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:654
+msgid "Run interactively"
+msgstr "ཕན་ཚུན་འབྲེལ་བའི་ཐོག་ལས་ གཡོག་བཀོལ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run non-interactively"
+msgstr "ཕན་ཚུན་འབྲེལ་མེད་ཀྱི་ཐོག་ལས་ གཡོག་བཀོལ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run with last used values"
+msgstr "མཇུག་མམ་གྱི་ གནས་གོང་ཚུ་ལག་ལེན་འཐབ་པའི་ཐོག་ལས་ གཡོག་བཀོལ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:684
+msgid "Pixels"
+msgstr "པིག་སེལསི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Points"
+msgstr "ཡིག་ཚད་ཚུ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:714
+msgid "Shadows"
+msgstr "གྱིབ་མ་ཚུ།"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Midtones"
+msgstr "མིཌི་ཊོནིསི།"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Highlights"
+msgstr "གཙོ་དམིགས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:744
+msgid "Normal (Forward)"
+msgstr "སྤྱིར་གཏང་ (གདོང་བསྐྱོད་)"
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Corrective (Backward)"
+msgstr "ནོར་བཅོས་ཀྱི་ (རྒྱབ་བསྐྱོད་)"
+
+#: ../libpicmanbase/picmanbaseenums.c:775
+msgid "Adjust"
+msgstr "བདེ་སྒྲིག་"
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Clip"
+msgstr "འཛིན་ལྕགས་"
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Crop to result"
+msgstr "གྲུབ་འབྲས་ལུ་བཏོག་བཅོས་འབད་"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop with aspect"
+msgstr "རེ་བ་དང་ཅིག་ཁར་བཏོག་བཅོས་འབད་"
+
+#: ../libpicmanbase/picmanbaseenums.c:881
+msgid "Internal PICMAN procedure"
+msgstr "ནང་འཁོད་ ཇི་ཨའི་ཨེམ་པི་གི་ བྱ་སྒོའི་ལམ་ལུགས།"
+
+#: ../libpicmanbase/picmanbaseenums.c:882
+msgid "PICMAN Plug-In"
+msgstr "ཇི་ཨཱི་ཨེམ་པི་ པ་ལག་ཨིན།"
+
+#: ../libpicmanbase/picmanbaseenums.c:883
+msgid "PICMAN Extension"
+msgstr "ཇི་ཨཱི་ཨེམ་པི་ རྒྱ་བསྐྱེད།"
+
+#: ../libpicmanbase/picmanbaseenums.c:884
+msgid "Temporary Procedure"
+msgstr "གནས་སྐབས་ཀྱི་བྱ་སྒོའི་ལམ་ལུགས།"
+
+#: ../libpicmanbase/picmanmemsize.c:180
+#, c-format
+msgid "%d Byte"
+msgid_plural "%d Bytes"
+msgstr[0] "%d བཱའིཊི།"
+msgstr[1] "%d"
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.2f KB"
+msgstr "%2f ཀེ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%.1f KB"
+msgstr "%1f ཀེ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:194
+#, c-format
+msgid "%d KB"
+msgstr "%d ཀེ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.2f MB"
+msgstr "%2f ཨེམ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%.1f MB"
+msgstr "%1f ཨེམ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:209
+#, c-format
+msgid "%d MB"
+msgstr "%d ཨེམ་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, c-format
+msgid "%.2f GB"
+msgstr "%2f ཇི་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%.1f GB"
+msgstr "%1f ཇི་བི།"
+
+#: ../libpicmanbase/picmanmemsize.c:224
+#, c-format
+msgid "%d GB"
+msgstr "%d ཇི་བི"
+
+#: ../libpicmanbase/picmanutils.c:170
+#: ../libpicmanbase/picmanutils.c:175
+#: ../modules/cdisplay_lcms.c:259
+msgid "(invalid UTF-8 string)"
+msgstr "(ནུས་མེད་ཀྱི་ ཡུ་ཊི་ཨེཕ-༨ ་ཡིག་རྒྱུན།)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:40
+msgid "Mode of operation for color management."
+msgstr "ཚོས་གཞི་འཛིན་སྐྱོང་གི་དོན་ལུ་ བཀོལ་སྤྱོད་ཀྱི་ཐབས་ལམ།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "The color profile of your (primary) monitor."
+msgstr "ཁྱོད་རའི་(གཞི་རིམ་)ལྟ་རྟོག་པའི་ ཚོས་གཞི་གསལ་སྡུད།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid "When enabled, PICMAN will try to use the display color profile from the windowing system.  The configured monitor profile is then only used as a fallback."
+msgstr "ལྕོགས་ཅན་བཟོ་ཚར་ཞིནམ་ལས་ ཇི་ཨའི་ཨེམ་པི་གིས་ སྒོ་སྒྲིག་བཟི་ནིའི་རིམ་ལུགས་ནང་ལས་ བཀྲམ་སྟོན་ཚོས་གཞི་གསལ་སྡུད་དེ་ ལག་ལེན་འཐབ་ནི་ལུ་ འབད་རྩོལ་བསྐྱེད་འོང་། རིམ་སྒྲིག་འབད་ཡོད་པའི་ལྟ་རྟོག་པའི་གསལ་སྡུད་འདི་ དེ་ལས་ གློ་བུར་རྒྱབ་ཐག་སྦེ་ལག་ལེན་འཐབ་ཨིན།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:48
+msgid "The default RGB working space color profile."
+msgstr "སྔོན་སྒྲིག་ཨཱར་བི་ཇི་ ལཱ་གཡོག་གི་ཚོས་གཞི་གསལ་སྡུད།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "ཨཱར་བི་ཇི་དང་ སི་ཨིམ་ཝའི་ཀེ་ ་གཉིས་ཀྱི་བར་ན་གཞི་བསྒྱུར་འབད་ནིའི་དོན་ལུ་ལག་ལེན་འཐབ་ཡོད་པའི་ སི་ཨེམ་ཝའི་ཀེ་གི་ ཚོས་གཞི་གསལ་སྡུད།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "དཔར་བསྐྲུན་འབད་ཡོད་པའི་ཐོན་རིམ(སོཕཊི་པུརུཕ་).ཤུགས་སྐྱེད་འབད་ནིའི་དོན་ལུ་ལག་ལེན་འཐབ་ཡོད་མི་ ཚོས་གཞི་ གསལ་སྡུད།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "Sets how colors are mapped for your display."
+msgstr "ཁྱོད་རའི་བཀྲམ་སྟོན་གྱི་དོན་ལུ་ ཚོས་གཞི་ཚུ་ག་དེ་སྦེ་ས་ཁྲ་བཟོཝ་ཨིན་ན་སྟོནམ་ཨིན།"
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid "Sets how colors are converted from RGB working space to the print simulation device."
+msgstr "ཚོས་གཞི་ཚུ་ ལཱ་གཡོག་བར་སྟོང་ནང་ལས་ དཔར་བསྐྲུན་ཤུགས་སྐྱེད་ཐབས་འཕྲུལ་ནང་ལུ་ ག་དེ་སྦེ་གཞི་བསྒྱུར་འབད་ནི་ཨིན་ན་ གཞི་སྒྲིག་འབདཝ་ཨིན།"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr "ཚོས་གཞི་འཛིན་སྐྱོང་འཐབ་ནི་མེད།"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr "ཚོས་གཞི་འཛིན་སྐྱོང་འཐབ་ཡོད་པའི་བསྐྲམ་སྟོན།"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr "ཤུགས་སྐྱེད་ དཔར་བསྐྲུན་འབད།"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr "མངོན་སུམ་གྱི།"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr "འབྲེལ་བ་ཅན་གྱི་ཀོ་ལོ་རི་མི་ཊིཀ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "རེ་བ་|མཐའ་ཚད་"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr "ཀོ་ལོ་རི་མི་ཊིཀ་ ཡང་དག"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:96
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "ངོ་རྟགས་%s་གི་དོན་ལུ་གནས་གོང་དེ་ ཡུ་ཊི་ཨེཕ་ཡིག་རྒྱུན་ནུས་ཅན་ཅིག་མེན་པས།"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:427
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "བོ་ལིན་ངོ་རྟགས་%s,ཀྱི་དོན་ལུ་ རོ་བ་ཡོད་པའི་ 'བཏུབ་' ཡང་ན་ 'མི་བཏུབ་' ཐོབ་ཡོདཔ་'%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:501
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "ནུས་མེད་གནས་གོང་ '%s' གི་དོན་ལུ་ %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:516
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "ནུས་མེད་གནས་གོང་'%ld'ངོ་རྟགས་%s་གི་དོན་ལུ"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:585
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "ངོ་རྟགས་མིང་དཔཱད་འབད་བའི་སྐབས་སུ་'%s': %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467
+#: ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+msgid "fatal parse error"
+msgstr "མིང་དཔྱད་ཀྱི་འཛོལ་བ་འཚུབ་ཆེན།"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "${%s}དེ་རྒྱ་བསྐྱེད་འབད་མི་ཚུ་གས།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:135
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "'%s': %sདེ་གི་དོན་ལུ་ གནས་སྐབས་ཀྱི་ ཡིག་སྣོད་གསར་བསྐྲུན་འབད་མ་ཚུགས།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:148
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "%s་འབྲི་ནིའི་དོན་ལུ་ '%s'དེ་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:667
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"'%s': %s་དེ་གི་དོན་ལུ་ གནས་སྐབས་ཀྱི་ཡིག་སྣོད་ལུ་འབྲི་ལུ་འཛོལ་བ་འདུག\n"
+"ཡིག་སྣོད་ངོ་མ་དེ་ དཀྲོག་རང་མ་དཀྲོགས།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:675
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"'%s': %s་དེ་གི་དོན་ལུ་ གནས་སྐབས་ཡིག་སྣོད་འབྲི་ནི་ལུ་འཛོལ་བ་འདུག\n"
+"ཡིག་སྣོད་ཅིག་ཡང་ གསར་བསྐྲུན་མ་འབད་བས།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:686
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "'%s': %s་དེ་ལུ་འབྲི་ནི་ལུ་ འཛོལ་བ།"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:704
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr " '%s': %sདེ་གསར་བསྐྲུན་འབད་མ་ཚུགས།"
+
+#: ../libpicmanconfig/picmanscanner.c:255
+msgid "invalid UTF-8 string"
+msgstr "ནུས་མེད་ཀྱི་ ཡུ་ཊི་ཨེཕ་ ཡིག་རྒྱུན།"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "གྲལ་ཐིག་'%s'དེ་%d: %s་ལུ་མིང་དཐཔྱད་འབད་བའི་སྐབས་ལུ་འཛོལ་བ་འདུག"
+
+#: ../libpicmanmodule/picmanmodule.c:153
+#: ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280
+#: ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "ཚད་གཞི་'%s'འཛོལ་བ་མངོན་གསལ་འབད:%s"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "ཚད་གཞི་གི་འཛོལ་བ།"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr "མངོན་གསལ་འབད་ཡོདཔ།"
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr "མངོན་གསལ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr "མངོན་གསལ་མ་འབད་བས།"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:125
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"ནུས་ཅན་ཁྱིམ་གྱི་སྣོད་ཐོ་དེ་ གཏན་འབེབས་བཟོ་མ་ཚུགས།\n"
+"དེ་གི་ཚབས་ལུ་ གནས་སྐབས་ཡིག་སྣོད་(%s)ཀྱི་དོན་ལུ་ སྣོད་འཛིན་ནང་ལུ་ མཐེ་གཟེར་ཚུ་གསོག་འཇོག་སྦེ་བཞག་འོང་།"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:249
+#: ../libpicmanthumb/picmanthumb-utils.c:317
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "མཐེ་གཟེར་སྣོད་འཛིན་%s'གསར་བསྐྲུན་འབད་ནི་ལུལ འཐུས་ཤོར་བྱུང་ནུག"
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "མཐེ་གཟེར་དེ་ལུ་མཐེ་བོང་མེད::ཡུ་ཨར་ཨའི་ངོ་རྟགས་"
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "%s: %sདེ་གི་དོན་ལུ་ མཐེ་གཟེར་གསར་བསྐྲུན་འབད་མ་ཚུགས།"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "འཚོལ་ཞིབ:(_S)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "གདོང་གཞི་ཚོས་གཞི།(_F)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "རྒྱབ་གཞི་ཚོས་གཞི།(_B)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr "གནགཔོ།"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "དཀརཔོ།(_W)"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr "ཚད་ཤིང་ཚུ།"
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "ད་ལྟོའི:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "རྙིངམ།"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid "Hexadecimal color notation as used in HTML and CSS.  This entry also accepts CSS color names."
+msgstr "ཨེཕ་ཊི་ཨེམ་ཨེལ་ དང་ སི་ཨེསི་ཨེསི་ ནང་ལུ་ལག་ལེན་འཐབ་དོ་བཟུམ་སྦེ་ ཧེག་ཟ་ཌེ་སི་མཱལ་ཚོས་གཞི་དབྱངས་རྟགས།  ཐོ་བཀོད་དེ་གིས་  སི་ཨེསི་ཨེསི་ཚོས་གཞི་མིང་ཚུ་ཡང་དང་ལེན་འབདཝ་ཨིན།"
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr "ཨེཕ་ཊི་ཨེམ་ཨེལ་ དབྱངས་རྟགས།(_n)"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr "ཁྱོད་རའི་སྣོད་འཛིན་བརྡ་འཚོལ་འབད་ནི་ལུ་ ཡིག་སྣོད་སེལ་འཐུ་གཅིག་ཁ་ཕྱེ་"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr "ཁྱོད་རའི་ཡིག་སྣོད་ཚུ་བརྡ་འཚོལ་འབད་ནི་ལུ་  ཡིག་སྣོད་སེལ་འཐུ་གཅིག་ཁ་ཕྱེ་"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "སྣོད་འཛིན་སེལ་འཐུ་འབད།"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "ཡིག་སྣོད་སེལ་འཐུ་འབད།"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:202
+msgid "Kilobytes"
+msgstr "ཀི་ལོ་བཱའིཊིསི།"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:203
+msgid "Megabytes"
+msgstr "མེ་ག་བཱའིཊིསི།"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Gigabytes"
+msgstr "གི་ག་བཱའིཊིསི།"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "Nothing selected"
+msgstr "ག་ནི་ཡང་སེལ་འཐུ་མ་འབད་བས།"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "ཆ་མཉམ་སེལ་འཐུ་འབད།(_A)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr "ཁྱབ་ཚད་སེལ་འཐུ་འབད།(_r)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr "བཟུམ་སྦེ་ ཤོག་ལེབ་ཚུ་སྲུང་བཞག་འབད།(_p)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "ཤོག་ལེབ་ ༠༠༠།"
+
+#: ../libpicmanwidgets/picmanpageselector.c:512
+#: ../libpicmanwidgets/picmanpageselector.c:749
+#, c-format
+msgid "Page %d"
+msgstr "ཤོག་ལེབ་%d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1176
+msgid "One page selected"
+msgstr "ཤོག་ལེབ་གཅིག་ སེལ་འཐུ་འབད་ནུག"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+#: ../libpicmanwidgets/picmanpageselector.c:1187
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%dཤོག་ལེབ་སེལ་འཐུ་འབད་ཡོདཔ་"
+msgstr[1] "%dཤོག་ལེབ་ཚུ་ སེལ་འཐུ་འབད་ཡོདཔ་"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "འབྲི་བཏུབ་མི།"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "སྣོད་འཛིན།"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid "Click the eyedropper, then click a color anywhere on your screen to select that color."
+msgstr "འ་ཕི་ཚོས་གཞི་སེལ་འཐུ་འབད་ནིའི་དོན་ལུ་ ཚོས་གཞི་འདེམས་བྱེད་དེ་ཨེབ་གཏང་འབད་ཞིནམ་ལས་ དེ་ལས་ གསལ་གཞི་ནང་གི་ཚོས་གཞི་གང་རུང་ཅིག་ལུ་ ཨེབ་གཏང་འབད།"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr "ཚད་ཞིབ་དཔྱད་འབད།"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr "བཟོ་རྣམ་ཞིབ་དཔྱད་འབད།"
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "སྔོན་བལྟ།(_P)"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1901
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "ཚིག་ཡིག་ཨིན་པུཊི་ས་སྒོ་འདི་  %d་ཡིག་འབྲུ་ལུ་ ཚད་བཀལ་བཞག་ནུག"
+msgstr[1] "ཚིག་ཡིག་ཨིན་པུཊི་ས་སྒོ་འདི་  %d་ཡིག་འབྲུ་ཚུ་ལུ་ ཚད་བཀལ་བཞག་ནུག"
+
+#: ../libpicmanwidgets/picmanresolutionentry.c:382
+#, c-format
+msgid "pixels/%s"
+msgstr "པིག་སེལ་/%s"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "ཨེན་ཀོར།"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr "དབུས།(_e)"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr "འཛུན་མ།(_D)"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr "ཞུན་དག(_E)"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr "འབྲེལ་མཐུད་འབད་ཡོདཔ།"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr "གསརཔ་སྦེ་སྲུང་བཞག་འབད།"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr "ནང་ལུ་ སྦྱར།"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr "སླར་སྒྲིག(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "མཐོང་ཚུགས་པའི།"
+
+#: ../libpicmanwidgets/picmanstock.c:157
+#: ../libpicmanwidgets/picmanstock.c:161
+msgid "_Stroke"
+msgstr "སིཊོཀ།(_S)"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_etter Spacing"
+msgstr "ཡི་གུ་བར་སྟོང་བཏོན་ནི།(_e)"
+
+#: ../libpicmanwidgets/picmanstock.c:174
+msgid "L_ine Spacing"
+msgstr "གྲལ་ཐིག་བར་སྟོང་བཏོན་ནི།(_i)"
+
+#: ../libpicmanwidgets/picmanstock.c:190
+msgid "_Resize"
+msgstr "ཚད་བསྐྱར་བཟོ་འབད་ནི།(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:191
+#: ../libpicmanwidgets/picmanstock.c:319
+msgid "_Scale"
+msgstr "ཚད་ཤིང་།(_S)"
+
+#: ../libpicmanwidgets/picmanstock.c:295
+msgid "Cr_op"
+msgstr "བཏོག་བཅོས། (_o)"
+
+#: ../libpicmanwidgets/picmanstock.c:314
+msgid "_Transform"
+msgstr "བཟོ་བསྒྱུར།(_T)"
+
+#: ../libpicmanwidgets/picmanstock.c:318
+msgid "_Rotate"
+msgstr "བསྒྱིར།(_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:320
+msgid "_Shear"
+msgstr "གཏུབ།(_S)"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "ཧེང་བཀལ།"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:577
+msgid "Unit Selection"
+msgstr "ཆ་ཕྲན་སེལ་འཐུ།"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:626
+msgid "Unit"
+msgstr "ཆ་ཕྲན།"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:630
+msgid "Factor"
+msgstr "ཆ་རྐྱེན།"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid "Use this value for random number generator seed - this allows you to repeat a given \"random\" operation"
+msgstr "གང་འབྱུང་ཨང་གྲངས་བཟོ་བཏོན་འབད་མི་སོན་གྱི་དོན་ལུ་ གནས་གོང་འདི་ལག་ལེན་འཐབ། འདི་གིས་ བཀོད་དེ་ཡོད་པའི་\"random\"བཟོ་བཏོན་འབད་ནི་དེ་ ཡང་བསྐྱར་འབད་བཅུགཔ་ཨིན།"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1009
+msgid "_New Seed"
+msgstr "སོན་གསརཔ།(_N)"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "Seed random number generator with a generated random number"
+msgstr "བཟོ་བཏོན་འབད་ཡོད་པའི་ གང་འབྱུང་ཨང་གྲངས་དང་གཅིག་ཁར་ གང་འབྱུང་སོན་གྱི་ཨང་གྲངས་བཟོ་བཏོན་འབད་མི།"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1026
+msgid "_Randomize"
+msgstr "གང་འབྱུང་སྦེ་བཟོ།(_R)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "ཡར་འཕྲང་"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "ཀེ་ཀེ་"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "ཨེཅ།(_H)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "ཚོན་མདངས།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr "ཨེསི།(_S)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "མཐའ་ཚད།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr "ཝི།(_V)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "གནས་གོང་།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "ཨཱར།(_R)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "ཇི།(_G)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "བི།(_B)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "ཨེ།(_A)"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "བང་རིམ་ཚུ།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "གཟུགས་བརྙན།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "ཕྱིར་རྒྱས།"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "ནང་བཟུམ།"
+
+#: ../modules/cdisplay_colorblind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "པོརོ་ཊ་ནོ་པི་ཡ(དམརཔོ་ལུ་ དྲན་ཚོར་མེད་)"
+
+#: ../modules/cdisplay_colorblind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "ཌིའུ་ཊི་ར་ནོ་པི་ཡ་(ལྗང་ཁུ་ལུ་དྲན་ཚོར་མེད།)"
+
+#: ../modules/cdisplay_colorblind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "ཊི་ཊ་ནོ་པི་ཡ་(ཧོནམ་ལུ་དྲན་ཚོར་མེད།)"
+
+#: ../modules/cdisplay_colorblind.c:200
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "ཚོས་གཞི་ཆད་འབབ་ཤུགས་སྐྱེད་ ཚགས་མ།(བྲི་ཊིལ-ཝའི་ནོཊི-མོ་ལོན་ ཨཱལ་གོ་རི་དམ།)"
+
+#: ../modules/cdisplay_colorblind.c:292
+msgid "Color Deficient Vision"
+msgstr "ཚོས་གཞི་ཆད་འབབ་མཆར་སྣང་།"
+
+#: ../modules/cdisplay_colorblind.c:507
+msgid "Color _deficiency type:"
+msgstr "ཚོས་གཞི་ཆད་འབབ་ཀྱི་དབྱེ་བ།(_d)"
+
+#: ../modules/cdisplay_gamma.c:91
+msgid "Gamma color display filter"
+msgstr "གམ་མ་ཚོས་གཞིའི་བཀྲམ་སྟོན་གྱི་ཚགས་མ།"
+
+#: ../modules/cdisplay_gamma.c:160
+msgid "Gamma"
+msgstr "གམ་མ།"
+
+#: ../modules/cdisplay_gamma.c:253
+msgid "_Gamma:"
+msgstr "གམ་མ:(_G)"
+
+#: ../modules/cdisplay_highcontrast.c:91
+msgid "High Contrast color display filter"
+msgstr "ཚོས་གཞི་གི་ཚོན་མདངས་མཐོ་སུ་སྦེ་ བཀྲམ་སྟོན་འབད་ནི་གི་ ཚགས་མ།"
+
+#: ../modules/cdisplay_highcontrast.c:160
+msgid "Contrast"
+msgstr "ཚོན་མདངས།"
+
+#: ../modules/cdisplay_highcontrast.c:253
+msgid "Contrast c_ycles:"
+msgstr "ཚོན་མདངས་ བསྐྱར་འཁོར་འབདཝ་ཨིན:(_y)"
+
+#: ../modules/cdisplay_lcms.c:116
+msgid "Color management display filter using ICC color profiles"
+msgstr "ཨའི་སི་སི་ ཚོས་གཞི་གསལ་སྡུད་ཚུ་ལག་ལེན་འཐབ་པའི་ཐོག་ལས་ ཚོས་གཞི་འཛིན་སྐྱོང་བཀྲམ་སྟོན་གྱི་ཚགས་མ།"
+
+#: ../modules/cdisplay_lcms.c:184
+msgid "Color Management"
+msgstr "ཚོས་གཞི་འཛིན་སྐྱོང་།"
+
+#: ../modules/cdisplay_lcms.c:288
+msgid "This filter takes its configuration from the Color Management section in the Preferences dialog."
+msgstr "ཚགས་མ་འདི་གིས་ དགའ་གདམ་ནང་ལུ་ཡོད་མི་ཚོས་གཞི་འཛིན་སྐྱོང་དབྱེ་ཚན་ནང་ལས་ ཁོ་རའི་རིམ་སྒྲིག་ འབག་འགྱོཝ་ཨིན།"
+
+#: ../modules/cdisplay_lcms.c:302
+msgid "Mode of operation:"
+msgstr "བཀོལ་སྤྱོད་ཀྱི་ཐབས་ལམ:"
+
+#: ../modules/cdisplay_lcms.c:309
+msgid "RGB working space profile:"
+msgstr "ཨཱར་ཇི་བི་བར་སྟོང་གསལ་སྡུད:"
+
+#: ../modules/cdisplay_lcms.c:316
+msgid "Monitor profile:"
+msgstr "ལྟ་རྟོག་པ་སྣོད་འཛིན:"
+
+#: ../modules/cdisplay_lcms.c:323
+msgid "Print simulation profile:"
+msgstr "ཤུགས་སྐྱེད་གསལ་སྡུད་དཔར་བསྐྲུན་འབད:"
+
+#: ../modules/cdisplay_proof.c:102
+msgid "Color proof filter using ICC color profile"
+msgstr "ཨའི་སི་སི་ཚོས་གཞི་སྣོད་འཛིན་དེ་ ལག་ལེན་འཐབ་པའི་ཐོག་ལས་ ཞུན་ལྷག་གི་ཚགས་མ་ ཚོན་བཏང་།"
+
+#: ../modules/cdisplay_proof.c:179
+msgid "Color Proof"
+msgstr "ཞུན་ལྷག་ཚོན་བཏང་།"
+
+#: ../modules/cdisplay_proof.c:306
+msgid "_Intent:"
+msgstr "རེ་བ།(_I)"
+
+#: ../modules/cdisplay_proof.c:310
+msgid "Choose an ICC Color Profile"
+msgstr "ཨཱི་སི་སི་ ཚོས་གཞི་གསལ་སྡུད་དེ་ གདམ་ཁ་རྐྱབས།"
+
+#: ../modules/cdisplay_proof.c:313
+msgid "_Profile:"
+msgstr "གསལ་སྡུད།(_P)"
+
+#: ../modules/cdisplay_proof.c:318
+msgid "_Black Point Compensation"
+msgstr "ཡིག་ཚད་གནགཔོ་འབད་མི་ རྒུད་འཐུས།(_B)"
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr "སི་ཨེམ་ཝའི་ཀེ་ ཚོས་གཞི་སེལ་འཐུ་འབད་མི།"
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "སི་ཨེམ་ཝའི་ཀེ"
+
+#. Cyan
+#: ../modules/colorsel_cmyk.c:148
+msgid "_C"
+msgstr "སི།(_C)"
+
+#. Magenta
+#: ../modules/colorsel_cmyk.c:150
+msgid "_M"
+msgstr "ཨེམ།(_M)"
+
+#. Yellow
+#: ../modules/colorsel_cmyk.c:152
+msgid "_Y"
+msgstr "ཝའི།(_Y)"
+
+#. Key (Black)
+#: ../modules/colorsel_cmyk.c:154
+msgid "_K"
+msgstr "ཀེ(_K)"
+
+#: ../modules/colorsel_cmyk.c:158
+msgid "Cyan"
+msgstr "སྔོ་ལྗང།"
+
+#: ../modules/colorsel_cmyk.c:159
+msgid "Magenta"
+msgstr "དམར་སྨུག།"
+
+#: ../modules/colorsel_cmyk.c:160
+msgid "Yellow"
+msgstr "སེརཔོ།"
+
+#: ../modules/colorsel_cmyk.c:161
+msgid "Black"
+msgstr "གནགཔོ།"
+
+#: ../modules/colorsel_cmyk.c:195
+msgid "Black _pullout:"
+msgstr "གནགཔོ་ ཕྱི་ཁར་འཐེན:(_p)"
+
+#: ../modules/colorsel_cmyk.c:212
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "སྣག་རྩི་ཚོན་ཅན་ནང་ལས་ཕྱི་ཁར་འཐེན་ནིའི་དོན་ལུ་ གནགཔོ་གི་བརྒྱ་ཆ།"
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr "ཚོན་བཏང་མི-ཟུར་གསུམ་མ་ཚོན་བཏང་མི་སེལ་འཐུ་འབད་མི་དེ་ བཟོ་རྣམ་བཀོད།"
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr "ཟུར་གསུམ་མ།"
+
+#: ../modules/colorsel_water.c:84
+msgid "Watercolor style color selector"
+msgstr "ཆུ་ཚོན་གྱི་བཟོ་རྣམ་བཟུམ་སྦེ་ཡོད་མི་ ཚོས་གཞི་སེལ་འཐུ་འབད་མི།"
+
+#: ../modules/colorsel_water.c:150
+msgid "Watercolor"
+msgstr "ཆུ་ཚོན།"
+
+#: ../modules/colorsel_water.c:213
+msgid "Pressure"
+msgstr "ཨེབ་ཤུགས།"
+
+#: ../modules/controller_linux_input.c:58
+msgid "Button 0"
+msgstr "ཨེབ་རྟ་༠།"
+
+#: ../modules/controller_linux_input.c:59
+msgid "Button 1"
+msgstr "ཨེབ་རྟ་༡།"
+
+#: ../modules/controller_linux_input.c:60
+msgid "Button 2"
+msgstr "ཨེབ་རྟ་༢ །"
+
+#: ../modules/controller_linux_input.c:61
+msgid "Button 3"
+msgstr "ཨེབ་རྟ་༣།"
+
+#: ../modules/controller_linux_input.c:62
+msgid "Button 4"
+msgstr "ཨེབ་རྟ་༤།"
+
+#: ../modules/controller_linux_input.c:63
+msgid "Button 5"
+msgstr "ཨེབ་རྟ་༥།"
+
+#: ../modules/controller_linux_input.c:64
+msgid "Button 6"
+msgstr "ཨེབ་རྟ་༦།"
+
+#: ../modules/controller_linux_input.c:65
+msgid "Button 7"
+msgstr "ཨེབ་རྟ་༧།"
+
+#: ../modules/controller_linux_input.c:66
+msgid "Button 8"
+msgstr "ཨེབ་རྟ་༨།"
+
+#: ../modules/controller_linux_input.c:67
+msgid "Button 9"
+msgstr "ཨེབ་རྟ་༩།"
+
+#: ../modules/controller_linux_input.c:68
+msgid "Button Mouse"
+msgstr "ཨེབ་རྟ་མཱའུསི།"
+
+#: ../modules/controller_linux_input.c:69
+msgid "Button Left"
+msgstr "ཨེབ་རྟ་གཡོན།"
+
+#: ../modules/controller_linux_input.c:70
+msgid "Button Right"
+msgstr "ཨེབ་རྟ་གཡས།"
+
+#: ../modules/controller_linux_input.c:71
+msgid "Button Middle"
+msgstr "ཨེབ་རྟ་བར་མ།"
+
+#: ../modules/controller_linux_input.c:72
+msgid "Button Side"
+msgstr "ཨེབ་རྟ་ཟུར།"
+
+#: ../modules/controller_linux_input.c:73
+msgid "Button Extra"
+msgstr "ཨེབ་རྟ་ཐེབས།"
+
+#: ../modules/controller_linux_input.c:74
+msgid "Button Forward"
+msgstr "ཨེབ་རྟ་དགོང་བསྐྱོད།"
+
+#: ../modules/controller_linux_input.c:75
+msgid "Button Back"
+msgstr "རྒྱབ་ཨེབ་"
+
+#: ../modules/controller_linux_input.c:76
+msgid "Button Task"
+msgstr "ཨེབ་རྟའི་ལས་ཀ་"
+
+#: ../modules/controller_linux_input.c:78
+msgid "Button Wheel"
+msgstr "ཨེབ་རྟ་འཁོར་ལོ།"
+
+#: ../modules/controller_linux_input.c:81
+msgid "Button Gear Down"
+msgstr "ཨེབ་རྟ་གེཡིར་མར།"
+
+#: ../modules/controller_linux_input.c:84
+msgid "Button Gear Up"
+msgstr "ཨེབ་རྟ་གེཡིར་ཡར།"
+
+#: ../modules/controller_linux_input.c:90
+#: ../modules/controller_dx_dinput.c:469
+msgid "X Move Left"
+msgstr "X གཡོན་ཁ་ཐུག་སྤོ་བཤུད་འབད་"
+
+#: ../modules/controller_linux_input.c:91
+#: ../modules/controller_dx_dinput.c:472
+msgid "X Move Right"
+msgstr "X གཡས་ཁ་ཐུག་སྤོ་བཤུད་འབད་"
+
+#: ../modules/controller_linux_input.c:92
+#: ../modules/controller_dx_dinput.c:478
+msgid "Y Move Away"
+msgstr "Y ཕྱི་ཁར་སྤོ་"
+
+#: ../modules/controller_linux_input.c:93
+#: ../modules/controller_dx_dinput.c:481
+msgid "Y Move Near"
+msgstr "Y ཉེ་འདབས་ལུ་སྤོ་བཤུད་འབད་"
+
+#: ../modules/controller_linux_input.c:94
+#: ../modules/controller_dx_dinput.c:487
+msgid "Z Move Up"
+msgstr "Z ཡར་སྤོ་བཤུད་འབད་"
+
+#: ../modules/controller_linux_input.c:95
+#: ../modules/controller_dx_dinput.c:490
+msgid "Z Move Down"
+msgstr "Zམར་སྤོ་བཤུད་འབད་"
+
+#: ../modules/controller_linux_input.c:97
+#: ../modules/controller_dx_dinput.c:496
+msgid "X Axis Tilt Away"
+msgstr "X ཚད་ཐིག་ཕྱི་ཁར་གཡོ་"
+
+#: ../modules/controller_linux_input.c:98
+#: ../modules/controller_dx_dinput.c:499
+msgid "X Axis Tilt Near"
+msgstr "X ཚད་ཐིག་ཉེ་འདབས་ལུ་གཡོ་"
+
+#: ../modules/controller_linux_input.c:99
+#: ../modules/controller_dx_dinput.c:505
+msgid "Y Axis Tilt Right"
+msgstr "Y ཚད་ཐིག་གཡས་ཁ་ཐུག་གཡོ་"
+
+#: ../modules/controller_linux_input.c:100
+#: ../modules/controller_dx_dinput.c:508
+msgid "Y Axis Tilt Left"
+msgstr "Y ཚད་ཐིག་གཡོན་ཁ་ཐུག་གཡོ་"
+
+#: ../modules/controller_linux_input.c:101
+#: ../modules/controller_dx_dinput.c:514
+msgid "Z Axis Turn Left"
+msgstr "Z ཚད་ཐིག་གཡོན་སྐོར་འབད་"
+
+#: ../modules/controller_linux_input.c:102
+#: ../modules/controller_dx_dinput.c:517
+msgid "Z Axis Turn Right"
+msgstr "Z ཚད་ཐིག་གཡས་སྐོར་འབད་"
+
+#: ../modules/controller_linux_input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr "ཐད་སྙོམས། འཁོར་ལོ་རྒྱབ་ལོག་"
+
+#: ../modules/controller_linux_input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr "ཐད་སྙོམས། འཁོར་ལོ་གདོང་བསྐྱོད་འབད་"
+
+#: ../modules/controller_linux_input.c:106
+msgid "Dial Turn Left"
+msgstr "ཌ་ཡེལ་གཡོན་ལུ་བསྒྱིར།"
+
+#: ../modules/controller_linux_input.c:107
+msgid "Dial Turn Right"
+msgstr "ཌ་ཡེལ་གཡས་ལུ་བསྒྱིར།"
+
+#: ../modules/controller_linux_input.c:108
+msgid "Wheel Turn Left"
+msgstr "འཁོར་ལོ་ གཡོན་ལུ་བསྒྱིར་།"
+
+#: ../modules/controller_linux_input.c:109
+msgid "Wheel Turn Right"
+msgstr "འཁོར་ལོ་གཡས་ལུ་བསྒྱིར།"
+
+#: ../modules/controller_linux_input.c:179
+msgid "Linux input event controller"
+msgstr "ལའི་ནགསི་ཨིན་པུཊི་བྱུང་ལས་ཚད་འཛིན་པ།"
+
+#: ../modules/controller_linux_input.c:249
+#: ../modules/controller_dx_dinput.c:227
+#: ../modules/controller_midi.c:245
+msgid "Device:"
+msgstr "ཐབས་འཕྲུལ:"
+
+#: ../modules/controller_linux_input.c:250
+msgid "The name of the device to read Linux Input events from."
+msgstr "ནང་ལས་ ལའི་ནོགསི་ཨིན་པུཊི་གི་བྱུང་ལས་ལྷག་ནིའི་དོན་ལུ་ ཐབས་འཕྲུལ་གྱི་མིང་།"
+
+#: ../modules/controller_linux_input.c:261
+msgid "Linux Input"
+msgstr "ལའི་ནགསི་ཨིན་པུཊི།"
+
+#: ../modules/controller_linux_input.c:539
+msgid "Linux Input Events"
+msgstr "ལའི་ནགསི་ཨིན་པུཊི་ བྱུང་ལས།"
+
+#: ../modules/controller_linux_input.c:551
+#: ../modules/controller_dx_dinput.c:1122
+#: ../modules/controller_midi.c:533
+msgid "No device configured"
+msgstr "ཐབས་ཕྲུལ་རིམ་སྒྲིག་འབད་དེ་མིན་འདུག"
+
+#: ../modules/controller_linux_input.c:577
+#: ../modules/controller_midi.c:482
+#: ../modules/controller_midi.c:508
+#, c-format
+msgid "Reading from %s"
+msgstr "%sནང་ལས་ལྷག་དོ།"
+
+#: ../modules/controller_linux_input.c:595
+#: ../modules/controller_linux_input.c:649
+#: ../modules/controller_midi.c:464
+#: ../modules/controller_midi.c:525
+#: ../modules/controller_midi.c:596
+#, c-format
+msgid "Device not available: %s"
+msgstr "ཐབས་འཕྲུལ་ཐོབ་མི་ཚུགས:%s"
+
+#: ../modules/controller_linux_input.c:614
+#: ../modules/controller_dx_dinput.c:1147
+msgid "Device not available"
+msgstr "ཐབས་འཕྲུལ་ཐོབ་མི་ཚུགས་མེད་"
+
+#: ../modules/controller_linux_input.c:658
+#: ../modules/controller_midi.c:605
+msgid "End of file"
+msgstr "ཡིག་སྣོད་ཀྱི་མཇུག"
+
+#: ../modules/controller_dx_dinput.c:157
+msgid "DirectX DirectInput event controller"
+msgstr "ཐད་ཀར་X ཐད་ཀར་ཨིན་པུཊི་བྱུང་ལས་ཚད་འཛིན་པ་"
+
+#: ../modules/controller_dx_dinput.c:228
+msgid "The device to read DirectInput events from."
+msgstr "ཐད་ཀར་ཨིན་པུཊི་བྱུང་ལས་ལས་ལྷག་ནི་ལུ་ཐབས་འཕྲུལ།"
+
+#: ../modules/controller_dx_dinput.c:237
+msgid "DirectX DirectInput"
+msgstr "ཐད་ཀར་ X ཐད་ཀར་ཨིན་པུཊི་"
+
+#: ../modules/controller_dx_dinput.c:446
+#, c-format
+msgid "Button %d"
+msgstr "ཨེབ་རྟ་ %d"
+
+#: ../modules/controller_dx_dinput.c:449
+#, c-format
+msgid "Button %d Press"
+msgstr "ཨེབ་རྟ་ %d ཨེབ་གཏང་"
+
+#: ../modules/controller_dx_dinput.c:452
+#, c-format
+msgid "Button %d Release"
+msgstr "ཨེབ་རྟ་ %d འཛིན་གྲོལ་འབད་"
+
+#: ../modules/controller_dx_dinput.c:528
+#, c-format
+msgid "Slider %d Increase"
+msgstr "བཤུད་ %d ཡར་འཕར་ནི་"
+
+#: ../modules/controller_dx_dinput.c:531
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "བཤུད་ %d མར་ཕབ་"
+
+#: ../modules/controller_dx_dinput.c:541
+#, c-format
+msgid "POV %d X View"
+msgstr "པི་ཨོ་ཝི་ %d X མཐོང་སྣང་"
+
+#: ../modules/controller_dx_dinput.c:544
+#, c-format
+msgid "POV %d Y View"
+msgstr "པི་ཨོ་ཝི་ %d Y མཐོག་སྣང་"
+
+#: ../modules/controller_dx_dinput.c:547
+#, c-format
+msgid "POV %d Return"
+msgstr "པི་ཨོ་ཝི་ %d སླར་ལོག་"
+
+#: ../modules/controller_dx_dinput.c:1111
+msgid "DirectInput Events"
+msgstr "ཐད་ཀར་ཨིན་པུཊི་བྱུང་ལས་ཚུ་"
+
+#: ../modules/controller_midi.c:167
+msgid "MIDI event controller"
+msgstr "ཨེམ་ཨའི་ཌི་ཨའི་ བྱུང་ལས་ཚད་འཛིན་པ།"
+
+#: ../modules/controller_midi.c:236
+msgid "The name of the device to read MIDI events from."
+msgstr "ནང་ལས་ ཨེམ་ཨའི་ཌི་ཨའི་བྱུང་ལས་ཚུ་ལྷག་ནིའ་དོན་ལུ་ ཐབས་འཕྲུལ་གྱི་མིང་།"
+
+#: ../modules/controller_midi.c:239
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "ཨེ་ཨེལ་ཨེསི་ཨེ་ འབྱུང་རིམ་པ་ ལག་ལེན་འཐབ་ནིའི་དོན་ལུ་ 'ཨཱལ་ས་' བཙུགས།"
+
+#: ../modules/controller_midi.c:254
+msgid "Channel:"
+msgstr "རྒྱུ་་ལམ:"
+
+#: ../modules/controller_midi.c:255
+msgid "The MIDI channel to read events from. Set to -1 for reading from all MIDI channels."
+msgstr "ནང་ལས་ བྱུང་ལས་ཚུ་ལྷག་ནིའི་དོན་ལུ་ ཨེམ་ཨའི་ཌི་ཨའི། ལུ་ གཞི་སྒྲིག་འབད-༡་དེ་ ཨེམ་ཨའི་ཌི་ཨའི་རྒྱུ་་ལམ་ཆ་མཉམ་ནང་ལས་ལྷག་ནིའི་དོན་ལུ་ཨིན།"
+
+#: ../modules/controller_midi.c:259
+msgid "MIDI"
+msgstr "ཨེམ་ཨའི་ཌི་ཨའི།"
+
+#: ../modules/controller_midi.c:383
+#, c-format
+msgid "Note %02x on"
+msgstr "དྲན་འཛིན་ %02x ཨཱོན་"
+
+#: ../modules/controller_midi.c:386
+#, c-format
+msgid "Note %02x off"
+msgstr "དྲན་འཛིན་ %02x ཨཱོཕ་"
+
+#: ../modules/controller_midi.c:389
+#, c-format
+msgid "Controller %03d"
+msgstr "ཚད་འཛིན་པ་ %03d"
+
+#: ../modules/controller_midi.c:436
+msgid "MIDI Events"
+msgstr "ཨེམ་ཨའི་ཌི་ཨའི་བྱུང་ལས་ཚུ།"
+
+#: ../modules/controller_midi.c:454
+msgid "PICMAN"
+msgstr "ཇིམ་"
+
+#: ../modules/controller_midi.c:456
+msgid "PICMAN MIDI Input Controller"
+msgstr "ཇིམ་མི་ཌི་ཨིན་པུཊི་ཚད་འཛིན་པ་"
+
+#~ msgid "Linear"
+#~ msgstr "རིང་ཚད་ཀྱི།"
+#~ msgid "None (Fastest)"
+#~ msgstr "ཅི་་མེད།(མགྱོགས་ཤོས།)"
+#~ msgid "Lanczos (Best)"
+#~ msgstr "ལེནཀི་ཛོསི།(དྲག་ཤོས།)"
+#~ msgid "Backward"
+#~ msgstr "རྒྱབ་བསྐྱོད།"
+#~ msgid "Ask"
+#~ msgstr "འདྲི་ནི།"
+#~ msgid "Use embedded profile"
+#~ msgstr "གནས་འདྲེན་གསལ་སྡུད་ ལག་ལེན་འཐབ།"
+#~ msgid "Convert to RGB workspace"
+#~ msgstr "ཨཱར་བི་ཇི་ ལཱ་གཡོག་བར་སྟོང་ལུ་གཞི་བསྒྱུར་འབད།"
+#~ msgid "All %d pages selected"
+#~ msgstr "%d འབད་མི་ཤོག་ལེབ་ཆ་མཉམ་སེལ་འཐུ་འབད་ནུག"
+

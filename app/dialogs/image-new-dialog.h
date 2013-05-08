@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 #define __IMAGE_NEW_DIALOG_H__
 
 
-GtkWidget * image_new_dialog_new (GimpContext  *context);
+GtkWidget * image_new_dialog_new (PicmanContext  *context);
 
 void        image_new_dialog_set (GtkWidget    *widget,
-                                  GimpImage    *image,
-                                  GimpTemplate *template);
+                                  PicmanImage    *image,
+                                  PicmanTemplate *template);
 
 
 #endif /* __IMAGE_NEW_DIALOG_H__ */

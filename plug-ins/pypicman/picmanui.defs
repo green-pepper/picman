@@ -1,0 +1,3391 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object Browser
+  (in-module "Picman")
+  (parent "GtkHPaned")
+  (c-name "PicmanBrowser")
+  (gtype-id "PICMAN_TYPE_BROWSER")
+)
+
+(define-object Button
+  (in-module "Picman")
+  (parent "GtkButton")
+  (c-name "PicmanButton")
+  (gtype-id "PICMAN_TYPE_BUTTON")
+)
+
+(define-object CellRendererColor
+  (in-module "Picman")
+  (parent "GtkCellRenderer")
+  (c-name "PicmanCellRendererColor")
+  (gtype-id "PICMAN_TYPE_CELL_RENDERER_COLOR")
+)
+
+(define-object CellRendererToggle
+  (in-module "Picman")
+  (parent "GtkCellRendererToggle")
+  (c-name "PicmanCellRendererToggle")
+  (gtype-id "PICMAN_TYPE_CELL_RENDERER_TOGGLE")
+)
+
+(define-object ChainButton
+  (in-module "Picman")
+  (parent "GtkTable")
+  (c-name "PicmanChainButton")
+  (gtype-id "PICMAN_TYPE_CHAIN_BUTTON")
+)
+
+(define-object ColorArea
+  (in-module "Picman")
+  (parent "GtkDrawingArea")
+  (c-name "PicmanColorArea")
+  (gtype-id "PICMAN_TYPE_COLOR_AREA")
+)
+
+(define-object ColorButton
+  (in-module "Picman")
+  (parent "PicmanButton")
+  (c-name "PicmanColorButton")
+  (gtype-id "PICMAN_TYPE_COLOR_BUTTON")
+)
+
+(define-object ColorDisplay
+  (in-module "Picman")
+  (parent "GObject")
+  (c-name "PicmanColorDisplay")
+  (gtype-id "PICMAN_TYPE_COLOR_DISPLAY")
+)
+
+(define-object ColorDisplayStack
+  (in-module "Picman")
+  (parent "GObject")
+  (c-name "PicmanColorDisplayStack")
+  (gtype-id "PICMAN_TYPE_COLOR_DISPLAY_STACK")
+)
+
+(define-object ColorHexEntry
+  (in-module "Picman")
+  (parent "GtkEntry")
+  (c-name "PicmanColorHexEntry")
+  (gtype-id "PICMAN_TYPE_COLOR_HEX_ENTRY")
+)
+
+(define-object ColorProfileComboBox
+  (in-module "Picman")
+  (parent "GtkComboBox")
+  (c-name "PicmanColorProfileComboBox")
+  (gtype-id "PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX")
+)
+
+(define-object ColorProfileStore
+  (in-module "Picman")
+  (parent "GtkListStore")
+  (c-name "PicmanColorProfileStore")
+  (gtype-id "PICMAN_TYPE_COLOR_PROFILE_STORE")
+)
+
+(define-object ColorScale
+  (in-module "Picman")
+  (parent "GtkScale")
+  (c-name "PicmanColorScale")
+  (gtype-id "PICMAN_TYPE_COLOR_SCALE")
+)
+
+(define-object ColorScales
+  (in-module "Picman")
+  (parent "PicmanColorSelector")
+  (c-name "PicmanColorScales")
+  (gtype-id "PICMAN_TYPE_COLOR_SCALES")
+)
+
+(define-object ColorSelection
+  (in-module "Picman")
+  (parent "GtkVBox")
+  (c-name "PicmanColorSelection")
+  (gtype-id "PICMAN_TYPE_COLOR_SELECTION")
+)
+
+(define-object ColorSelector
+  (in-module "Picman")
+  (parent "GtkVBox")
+  (c-name "PicmanColorSelector")
+  (gtype-id "PICMAN_TYPE_COLOR_SELECTOR")
+)
+
+(define-object ColorNotebook
+  (in-module "Picman")
+  (parent "PicmanColorSelector")
+  (c-name "PicmanColorNotebook")
+  (gtype-id "PICMAN_TYPE_COLOR_NOTEBOOK")
+)
+
+(define-object Dialog
+  (in-module "Picman")
+  (parent "GtkDialog")
+  (c-name "PicmanDialog")
+  (gtype-id "PICMAN_TYPE_DIALOG")
+)
+
+(define-object EnumLabel
+  (in-module "Picman")
+  (parent "GtkLabel")
+  (c-name "PicmanEnumLabel")
+  (gtype-id "PICMAN_TYPE_ENUM_LABEL")
+)
+
+(define-object Frame
+  (in-module "Picman")
+  (parent "GtkFrame")
+  (c-name "PicmanFrame")
+  (gtype-id "PICMAN_TYPE_FRAME")
+)
+
+(define-object HintBox
+  (in-module "Picman")
+  (parent "GtkHBox")
+  (c-name "PicmanHintBox")
+  (gtype-id "PICMAN_TYPE_HINT_BOX")
+)
+
+(define-object IntComboBox
+  (in-module "Picman")
+  (parent "GtkComboBox")
+  (c-name "PicmanIntComboBox")
+  (gtype-id "PICMAN_TYPE_INT_COMBO_BOX")
+)
+
+(define-object ImageComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanImageComboBox")
+  (gtype-id "PICMAN_TYPE_IMAGE_COMBO_BOX")
+)
+
+(define-object EnumComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanEnumComboBox")
+  (gtype-id "PICMAN_TYPE_ENUM_COMBO_BOX")
+)
+
+(define-object DrawableComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanDrawableComboBox")
+  (gtype-id "PICMAN_TYPE_DRAWABLE_COMBO_BOX")
+)
+
+(define-object ChannelComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanChannelComboBox")
+  (gtype-id "PICMAN_TYPE_CHANNEL_COMBO_BOX")
+)
+
+(define-object IntStore
+  (in-module "Picman")
+  (parent "GtkListStore")
+  (c-name "PicmanIntStore")
+  (gtype-id "PICMAN_TYPE_INT_STORE")
+)
+
+(define-object EnumStore
+  (in-module "Picman")
+  (parent "PicmanIntStore")
+  (c-name "PicmanEnumStore")
+  (gtype-id "PICMAN_TYPE_ENUM_STORE")
+)
+
+(define-object LayerComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanLayerComboBox")
+  (gtype-id "PICMAN_TYPE_LAYER_COMBO_BOX")
+)
+
+(define-object MemsizeEntry
+  (in-module "Picman")
+  (parent "GtkHBox")
+  (c-name "PicmanMemsizeEntry")
+  (gtype-id "PICMAN_TYPE_MEMSIZE_ENTRY")
+)
+
+(define-object NumberPairEntry
+  (in-module "Picman")
+  (parent "GtkEntry")
+  (c-name "PicmanNumberPairEntry")
+  (gtype-id "PICMAN_TYPE_NUMBER_PAIR_ENTRY")
+)
+
+(define-object OffsetArea
+  (in-module "Picman")
+  (parent "GtkDrawingArea")
+  (c-name "PicmanOffsetArea")
+  (gtype-id "PICMAN_TYPE_OFFSET_AREA")
+)
+
+(define-object PageSelector
+  (in-module "Picman")
+  (parent "GtkVBox")
+  (c-name "PicmanPageSelector")
+  (gtype-id "PICMAN_TYPE_PAGE_SELECTOR")
+)
+
+(define-object PathEditor
+  (in-module "Picman")
+  (parent "GtkVBox")
+  (c-name "PicmanPathEditor")
+  (gtype-id "PICMAN_TYPE_PATH_EDITOR")
+)
+
+(define-object PickButton
+  (in-module "Picman")
+  (parent "GtkButton")
+  (c-name "PicmanPickButton")
+  (gtype-id "PICMAN_TYPE_PICK_BUTTON")
+)
+
+(define-object Preview
+  (in-module "Picman")
+  (parent "GtkVBox")
+  (c-name "PicmanPreview")
+  (gtype-id "PICMAN_TYPE_PREVIEW")
+)
+
+(define-object AspectPreview
+  (in-module "Picman")
+  (parent "PicmanPreview")
+  (c-name "PicmanAspectPreview")
+  (gtype-id "PICMAN_TYPE_ASPECT_PREVIEW")
+)
+
+(define-object PreviewArea
+  (in-module "Picman")
+  (parent "GtkDrawingArea")
+  (c-name "PicmanPreviewArea")
+  (gtype-id "PICMAN_TYPE_PREVIEW_AREA")
+)
+
+(define-object ProcBrowserDialog
+  (in-module "Picman")
+  (parent "PicmanDialog")
+  (c-name "PicmanProcBrowserDialog")
+  (gtype-id "PICMAN_TYPE_PROC_BROWSER_DIALOG")
+)
+
+(define-object ProgressBar
+  (in-module "Picman")
+  (parent "GtkProgressBar")
+  (c-name "PicmanProgressBar")
+  (gtype-id "PICMAN_TYPE_PROGRESS_BAR")
+)
+
+(define-object ScrolledPreview
+  (in-module "Picman")
+  (parent "PicmanPreview")
+  (c-name "PicmanScrolledPreview")
+  (gtype-id "PICMAN_TYPE_SCROLLED_PREVIEW")
+)
+
+(define-object DrawablePreview
+  (in-module "Picman")
+  (parent "PicmanScrolledPreview")
+  (c-name "PicmanDrawablePreview")
+  (gtype-id "PICMAN_TYPE_DRAWABLE_PREVIEW")
+)
+
+(define-object SelectButton
+  (in-module "Picman")
+  (parent "GtkHBox")
+  (c-name "PicmanSelectButton")
+  (gtype-id "PICMAN_TYPE_SELECT_BUTTON")
+)
+
+(define-object PatternSelectButton
+  (in-module "Picman")
+  (parent "PicmanSelectButton")
+  (c-name "PicmanPatternSelectButton")
+  (gtype-id "PICMAN_TYPE_PATTERN_SELECT_BUTTON")
+)
+
+(define-object PaletteSelectButton
+  (in-module "Picman")
+  (parent "PicmanSelectButton")
+  (c-name "PicmanPaletteSelectButton")
+  (gtype-id "PICMAN_TYPE_PALETTE_SELECT_BUTTON")
+)
+
+(define-object GradientSelectButton
+  (in-module "Picman")
+  (parent "PicmanSelectButton")
+  (c-name "PicmanGradientSelectButton")
+  (gtype-id "PICMAN_TYPE_GRADIENT_SELECT_BUTTON")
+)
+
+(define-object FontSelectButton
+  (in-module "Picman")
+  (parent "PicmanSelectButton")
+  (c-name "PicmanFontSelectButton")
+  (gtype-id "PICMAN_TYPE_FONT_SELECT_BUTTON")
+)
+
+(define-object BrushSelectButton
+  (in-module "Picman")
+  (parent "PicmanSelectButton")
+  (c-name "PicmanBrushSelectButton")
+  (gtype-id "PICMAN_TYPE_BRUSH_SELECT_BUTTON")
+)
+
+(define-object Ruler
+  (in-module "Picman")
+  (parent "GtkWidget")
+  (c-name "PicmanRuler")
+  (gtype-id "PICMAN_TYPE_RULER")
+)
+
+(define-object SizeEntry
+  (in-module "Picman")
+  (parent "GtkTable")
+  (c-name "PicmanSizeEntry")
+  (gtype-id "PICMAN_TYPE_SIZE_ENTRY")
+)
+
+(define-object StringComboBox
+  (in-module "Picman")
+  (parent "GtkComboBox")
+  (c-name "PicmanStringComboBox")
+  (gtype-id "PICMAN_TYPE_STRING_COMBO_BOX")
+)
+
+(define-object UnitComboBox
+  (in-module "Picman")
+  (parent "GtkComboBox")
+  (c-name "PicmanUnitComboBox")
+  (gtype-id "PICMAN_TYPE_UNIT_COMBO_BOX")
+)
+
+(define-object UnitMenu
+  (in-module "Picman")
+  (parent "GtkOptionMenu")
+  (c-name "PicmanUnitMenu")
+  (gtype-id "PICMAN_TYPE_UNIT_MENU")
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-object VectorsComboBox
+  (in-module "Picman")
+  (parent "PicmanIntComboBox")
+  (c-name "PicmanVectorsComboBox")
+  (gtype-id "PICMAN_TYPE_VECTORS_COMBO_BOX")
+)
+
+(define-object ZoomModel
+  (in-module "Picman")
+  (parent "GObject")
+  (c-name "PicmanZoomModel")
+  (gtype-id "PICMAN_TYPE_ZOOM_MODEL")
+)
+
+(define-object ZoomPreview
+  (in-module "Picman")
+  (parent "PicmanScrolledPreview")
+  (c-name "PicmanZoomPreview")
+  (gtype-id "PICMAN_TYPE_ZOOM_PREVIEW")
+)
+
+;; Enumerations and flags ...
+
+(define-enum IntStoreColumns
+  (in-module "Picman")
+  (c-name "PicmanIntStoreColumns")
+  (gtype-id "PICMAN_TYPE_INT_STORE_COLUMNS")
+  (values
+    '("value" "PICMAN_INT_STORE_VALUE")
+    '("label" "PICMAN_INT_STORE_LABEL")
+    '("stock-id" "PICMAN_INT_STORE_STOCK_ID")
+    '("pixbuf" "PICMAN_INT_STORE_PIXBUF")
+    '("user-data" "PICMAN_INT_STORE_USER_DATA")
+    '("num-columns" "PICMAN_INT_STORE_NUM_COLUMNS")
+  )
+)
+
+(define-enum AspectType
+  (in-module "Picman")
+  (c-name "PicmanAspectType")
+  (gtype-id "PICMAN_TYPE_ASPECT_TYPE")
+  (values
+    '("square" "PICMAN_ASPECT_SQUARE")
+    '("portrait" "PICMAN_ASPECT_PORTRAIT")
+    '("landscape" "PICMAN_ASPECT_LANDSCAPE")
+  )
+)
+
+(define-enum ChainPosition
+  (in-module "Picman")
+  (c-name "PicmanChainPosition")
+  (gtype-id "PICMAN_TYPE_CHAIN_POSITION")
+  (values
+    '("top" "PICMAN_CHAIN_TOP")
+    '("left" "PICMAN_CHAIN_LEFT")
+    '("bottom" "PICMAN_CHAIN_BOTTOM")
+    '("right" "PICMAN_CHAIN_RIGHT")
+  )
+)
+
+(define-enum ColorAreaType
+  (in-module "Picman")
+  (c-name "PicmanColorAreaType")
+  (gtype-id "PICMAN_TYPE_COLOR_AREA_TYPE")
+  (values
+    '("flat" "PICMAN_COLOR_AREA_FLAT")
+    '("small-checks" "PICMAN_COLOR_AREA_SMALL_CHECKS")
+    '("large-checks" "PICMAN_COLOR_AREA_LARGE_CHECKS")
+  )
+)
+
+(define-enum ColorSelectorChannel
+  (in-module "Picman")
+  (c-name "PicmanColorSelectorChannel")
+  (gtype-id "PICMAN_TYPE_COLOR_SELECTOR_CHANNEL")
+  (values
+    '("hue" "PICMAN_COLOR_SELECTOR_HUE")
+    '("saturation" "PICMAN_COLOR_SELECTOR_SATURATION")
+    '("value" "PICMAN_COLOR_SELECTOR_VALUE")
+    '("red" "PICMAN_COLOR_SELECTOR_RED")
+    '("green" "PICMAN_COLOR_SELECTOR_GREEN")
+    '("blue" "PICMAN_COLOR_SELECTOR_BLUE")
+    '("alpha" "PICMAN_COLOR_SELECTOR_ALPHA")
+  )
+)
+
+(define-enum PageSelectorTarget
+  (in-module "Picman")
+  (c-name "PicmanPageSelectorTarget")
+  (gtype-id "PICMAN_TYPE_PAGE_SELECTOR_TARGET")
+  (values
+    '("layers" "PICMAN_PAGE_SELECTOR_TARGET_LAYERS")
+    '("images" "PICMAN_PAGE_SELECTOR_TARGET_IMAGES")
+  )
+)
+
+(define-enum SizeEntryUpdatePolicy
+  (in-module "Picman")
+  (c-name "PicmanSizeEntryUpdatePolicy")
+  (gtype-id "PICMAN_TYPE_SIZE_ENTRY_UPDATE_POLICY")
+  (values
+    '("none" "PICMAN_SIZE_ENTRY_UPDATE_NONE")
+    '("size" "PICMAN_SIZE_ENTRY_UPDATE_SIZE")
+    '("resolution" "PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION")
+  )
+)
+
+(define-enum Unit
+  (in-module "Picman")
+  (c-name "PicmanUnit")
+;; FIXME: make PicmanUnit enum more binding-friendly -- picman_unit_get_type()
+;;  (gtype-id "PICMAN_TYPE_UNIT")
+  (values
+    '("pixel" "PICMAN_UNIT_PIXEL")
+    '("inch" "PICMAN_UNIT_INCH")
+    '("mm" "PICMAN_UNIT_MM")
+    '("point" "PICMAN_UNIT_POINT")
+    '("pica" "PICMAN_UNIT_PICA")
+  )
+)
+
+(define-enum ZoomType
+  (in-module "Picman")
+  (c-name "PicmanZoomType")
+  (gtype-id "PICMAN_TYPE_ZOOM_TYPE")
+  (values
+    '("in" "PICMAN_ZOOM_IN")
+    '("out" "PICMAN_ZOOM_OUT")
+    '("in-more" "PICMAN_ZOOM_IN_MORE")
+    '("out-more" "PICMAN_ZOOM_OUT_MORE")
+    '("in-max" "PICMAN_ZOOM_IN_MAX")
+    '("out-max" "PICMAN_ZOOM_OUT_MAX")
+    '("to" "PICMAN_ZOOM_TO")
+  )
+)
+
+
+;; From picmanbrowser.h
+
+(define-function picman_browser_get_type
+  (c-name "picman_browser_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_browser_new
+  (c-name "picman_browser_new")
+  (is-constructor-of "PicmanBrowser")
+  (return-type "GtkWidget*")
+)
+
+(define-method add_search_types
+  (of-object "PicmanBrowser")
+  (c-name "picman_browser_add_search_types")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "first_type_label")
+    '("gint" "first_type_id")
+  )
+  (varargs #t)
+)
+
+(define-method set_widget
+  (of-object "PicmanBrowser")
+  (c-name "picman_browser_set_widget")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+)
+
+(define-method show_message
+  (of-object "PicmanBrowser")
+  (c-name "picman_browser_show_message")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "message")
+  )
+)
+
+
+
+;; From picmanbutton.h
+
+(define-function picman_button_get_type
+  (c-name "picman_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_button_new
+  (c-name "picman_button_new")
+  (is-constructor-of "PicmanButton")
+  (return-type "GtkWidget*")
+)
+
+(define-method extended_clicked
+  (of-object "PicmanButton")
+  (c-name "picman_button_extended_clicked")
+  (return-type "none")
+  (parameters
+    '("GdkModifierType" "state")
+  )
+)
+
+
+
+;; From picmancellrenderercolor.h
+
+(define-function picman_cell_renderer_color_get_type
+  (c-name "picman_cell_renderer_color_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_cell_renderer_color_new
+  (c-name "picman_cell_renderer_color_new")
+  (is-constructor-of "PicmanCellRendererColor")
+  (return-type "GtkCellRenderer*")
+)
+
+
+
+;; From picmancellrenderertoggle.h
+
+(define-function picman_cell_renderer_toggle_get_type
+  (c-name "picman_cell_renderer_toggle_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_cell_renderer_toggle_new
+  (c-name "picman_cell_renderer_toggle_new")
+  (is-constructor-of "PicmanCellRendererToggle")
+  (return-type "GtkCellRenderer*")
+  (properties
+    '("stock-id" (argname "stock_id") (optional))
+  )
+)
+
+(define-method clicked
+  (of-object "PicmanCellRendererToggle")
+  (c-name "picman_cell_renderer_toggle_clicked")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+    '("GdkModifierType" "state")
+  )
+)
+
+
+
+;; From picmanchainbutton.h
+
+(define-function picman_chain_button_get_type
+  (c-name "picman_chain_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_chain_button_new
+  (c-name "picman_chain_button_new")
+  (is-constructor-of "PicmanChainButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("position")
+  )
+)
+
+(define-method set_active
+  (of-object "PicmanChainButton")
+  (c-name "picman_chain_button_set_active")
+  (return-type "none")
+  (parameters
+    '("gboolean" "active")
+  )
+)
+
+(define-method get_active
+  (of-object "PicmanChainButton")
+  (c-name "picman_chain_button_get_active")
+  (return-type "gboolean")
+)
+
+
+
+;; From picmancolorarea.h
+
+(define-function picman_color_area_get_type
+  (c-name "picman_color_area_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_area_new
+  (c-name "picman_color_area_new")
+  (is-constructor-of "PicmanColorArea")
+  (return-type "GtkWidget*")
+  (properties
+    '("color" (optional))
+    '("type" (optional))
+    '("drag-mask" (argname "drag_mask") (optional))
+  )
+)
+
+(define-method set_color
+  (of-object "PicmanColorArea")
+  (c-name "picman_color_area_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "color")
+  )
+)
+
+(define-method get_color
+  (of-object "PicmanColorArea")
+  (c-name "picman_color_area_get_color")
+  (return-type "none")
+  (parameters
+    '("PicmanRGB*" "color")
+  )
+)
+
+(define-method has_alpha
+  (of-object "PicmanColorArea")
+  (c-name "picman_color_area_has_alpha")
+  (return-type "gboolean")
+)
+
+(define-method set_type
+  (of-object "PicmanColorArea")
+  (c-name "picman_color_area_set_type")
+  (return-type "none")
+  (parameters
+    '("PicmanColorAreaType" "type")
+  )
+)
+
+(define-method set_draw_border
+  (of-object "PicmanColorArea")
+  (c-name "picman_color_area_set_draw_border")
+  (return-type "none")
+  (parameters
+    '("gboolean" "draw_border")
+  )
+)
+
+
+
+;; From picmancolorbutton.h
+
+(define-function picman_color_button_get_type
+  (c-name "picman_color_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_button_new
+  (c-name "picman_color_button_new")
+  (is-constructor-of "PicmanColorButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("width" (optional))
+    '("height" (optional))
+    '("color" (optional))
+    '("type" (optional))
+  )
+)
+
+(define-method set_color
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "color")
+  )
+)
+
+(define-method get_color
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_get_color")
+  (return-type "none")
+  (parameters
+    '("PicmanRGB*" "color")
+  )
+)
+
+(define-method has_alpha
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_has_alpha")
+  (return-type "gboolean")
+)
+
+(define-method set_type
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_set_type")
+  (return-type "none")
+  (parameters
+    '("PicmanColorAreaType" "type")
+  )
+)
+
+(define-method get_update
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_get_update")
+  (return-type "gboolean")
+)
+
+(define-method set_update
+  (of-object "PicmanColorButton")
+  (c-name "picman_color_button_set_update")
+  (return-type "none")
+  (parameters
+    '("gboolean" "continuous")
+  )
+)
+
+
+
+;; From picmancolordisplay.h
+
+(define-function picman_color_display_get_type
+  (c-name "picman_color_display_get_type")
+  (return-type "GType")
+)
+
+(define-method clone
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_clone")
+  (return-type "PicmanColorDisplay*")
+)
+
+(define-method convert_surface
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_convert_surface")
+  (return-type "none")
+  (parameters
+    '("cairo_surface_t*" "surface")
+  )
+)
+
+(define-method convert
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_convert")
+  (return-type "none")
+  (parameters
+    '("guchar*" "buf")
+    '("gint" "width")
+    '("gint" "height")
+    '("gint" "bpp")
+    '("gint" "bpl")
+  )
+  (deprecated "use convert_surface(cairo_surface_t*) instead")
+)
+
+(define-method load_state
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_load_state")
+  (return-type "none")
+  (parameters
+    '("PicmanParasite*" "state")
+  )
+)
+
+(define-method save_state
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_save_state")
+  (return-type "PicmanParasite*")
+)
+
+(define-method configure
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_configure")
+  (return-type "GtkWidget*")
+)
+
+(define-method configure_reset
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_configure_reset")
+  (return-type "none")
+)
+
+(define-method changed
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_changed")
+  (return-type "none")
+)
+
+(define-method set_enabled
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_set_enabled")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enabled")
+  )
+)
+
+(define-method get_enabled
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_get_enabled")
+  (return-type "gboolean")
+)
+
+(define-method get_config
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_get_config")
+  (return-type "PicmanColorConfig*")
+)
+
+(define-method get_managed
+  (of-object "PicmanColorDisplay")
+  (c-name "picman_color_display_get_managed")
+  (return-type "PicmanColorManaged*")
+)
+
+
+
+;; From picmancolordisplaystack.h
+
+(define-function picman_color_display_stack_get_type
+  (c-name "picman_color_display_stack_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_display_stack_new
+  (c-name "picman_color_display_stack_new")
+  (is-constructor-of "PicmanColorDisplayStack")
+  (return-type "PicmanColorDisplayStack*")
+)
+
+(define-method clone
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_clone")
+  (return-type "PicmanColorDisplayStack*")
+)
+
+(define-method changed
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_changed")
+  (return-type "none")
+)
+
+(define-method add
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_add")
+  (return-type "none")
+  (parameters
+    '("PicmanColorDisplay*" "display")
+  )
+)
+
+(define-method remove
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_remove")
+  (return-type "none")
+  (parameters
+    '("PicmanColorDisplay*" "display")
+  )
+)
+
+(define-method reorder_up
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_reorder_up")
+  (return-type "none")
+  (parameters
+    '("PicmanColorDisplay*" "display")
+  )
+)
+
+(define-method reorder_down
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_reorder_down")
+  (return-type "none")
+  (parameters
+    '("PicmanColorDisplay*" "display")
+  )
+)
+
+(define-method convert_surface
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_convert_surface")
+  (return-type "none")
+  (parameters
+    '("cairo_surface_t*" "surface")
+  )
+)
+
+(define-method convert
+  (of-object "PicmanColorDisplayStack")
+  (c-name "picman_color_display_stack_convert")
+  (return-type "none")
+  (parameters
+    '("guchar*" "buf")
+    '("gint" "width")
+    '("gint" "height")
+    '("gint" "bpp")
+    '("gint" "bpl")
+  )
+  (deprecated "use convert_surface(cairo_surface_t*) instead")
+)
+
+
+
+;; From picmancolorhexentry.h
+
+(define-function picman_color_hex_entry_get_type
+  (c-name "picman_color_hex_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_hex_entry_new
+  (c-name "picman_color_hex_entry_new")
+  (is-constructor-of "PicmanColorHexEntry")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_color
+  (of-object "PicmanColorHexEntry")
+  (c-name "picman_color_hex_entry_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "color")
+  )
+)
+
+(define-method get_color
+  (of-object "PicmanColorHexEntry")
+  (c-name "picman_color_hex_entry_get_color")
+  (return-type "none")
+  (parameters
+    '("PicmanRGB*" "color")
+  )
+)
+
+
+
+;; From picmancolornotebook.h
+
+(define-function picman_color_notebook_get_type
+  (c-name "picman_color_notebook_get_type")
+  (return-type "GType")
+)
+
+(define-method set_has_page
+  (of-object "PicmanColorNotebook")
+  (c-name "picman_color_notebook_set_has_page")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GType" "page_type")
+    '("gboolean" "has_page")
+  )
+)
+
+
+
+;; From picmancolorprofilecombobox.h
+
+(define-function picman_color_profile_combo_box_get_type
+  (c-name "picman_color_profile_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_profile_combo_box_new_with_model
+  (c-name "picman_color_profile_combo_box_new_with_model")
+  (is-constructor-of "PicmanColorProfileComboBox")
+  (return-type "GtkWidget*")
+  (properties
+    '("dialog")
+    '("model")
+  )
+)
+
+(define-method add
+  (of-object "PicmanColorProfileComboBox")
+  (c-name "picman_color_profile_combo_box_add")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "filename")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method set_active
+  (of-object "PicmanColorProfileComboBox")
+  (c-name "picman_color_profile_combo_box_set_active")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "filename")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method get_active
+  (of-object "PicmanColorProfileComboBox")
+  (c-name "picman_color_profile_combo_box_get_active")
+  (return-type "gchar*")
+)
+
+
+
+;; From picmancolorprofilestore.h
+
+(define-function picman_color_profile_store_get_type
+  (c-name "picman_color_profile_store_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_profile_store_new
+  (c-name "picman_color_profile_store_new")
+  (is-constructor-of "PicmanColorProfileStore")
+  (return-type "GtkListStore*")
+  (properties
+    '("history")
+  )
+)
+
+(define-method add
+  (of-object "PicmanColorProfileStore")
+  (c-name "picman_color_profile_store_add")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "filename")
+    '("const-gchar*" "label")
+  )
+)
+
+
+
+;; From picmancolorscale.h
+
+(define-function picman_color_scale_get_type
+  (c-name "picman_color_scale_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_scale_new
+  (c-name "picman_color_scale_new")
+  (is-constructor-of "PicmanColorScale")
+  (return-type "GtkWidget*")
+  (properties
+    '("orientation")
+    '("channel")
+  )
+)
+
+(define-method set_channel
+  (of-object "PicmanColorScale")
+  (c-name "picman_color_scale_set_channel")
+  (return-type "none")
+  (parameters
+    '("PicmanColorSelectorChannel" "channel")
+  )
+)
+
+(define-method set_color
+  (of-object "PicmanColorScale")
+  (c-name "picman_color_scale_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "rgb")
+    '("const-PicmanHSV*" "hsv")
+  )
+)
+
+
+
+;; From picmancolorscales.h
+
+(define-function picman_color_scales_get_type
+  (c-name "picman_color_scales_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From picmancolorselect.h
+
+(define-function picman_color_select_get_type
+  (c-name "picman_color_select_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From picmancolorselection.h
+
+(define-function picman_color_selection_get_type
+  (c-name "picman_color_selection_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_selection_new
+  (c-name "picman_color_selection_new")
+  (is-constructor-of "PicmanColorSelection")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_show_alpha
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_set_show_alpha")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show_alpha")
+  )
+)
+
+(define-method get_show_alpha
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_get_show_alpha")
+  (return-type "gboolean")
+)
+
+(define-method set_color
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "color")
+  )
+)
+
+(define-method get_color
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_get_color")
+  (return-type "none")
+  (parameters
+    '("PicmanRGB*" "color")
+  )
+)
+
+(define-method set_old_color
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_set_old_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "color")
+  )
+)
+
+(define-method get_old_color
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_get_old_color")
+  (return-type "none")
+  (parameters
+    '("PicmanRGB*" "color")
+  )
+)
+
+(define-method reset
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_reset")
+  (return-type "none")
+)
+
+(define-method color_changed
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_color_changed")
+  (return-type "none")
+)
+
+(define-method set_config
+  (of-object "PicmanColorSelection")
+  (c-name "picman_color_selection_set_config")
+  (return-type "none")
+  (parameters
+    '("PicmanColorConfig*" "config")
+  )
+)
+
+
+
+;; From picmancolorselector.h
+
+(define-function picman_color_selector_get_type
+  (c-name "picman_color_selector_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_selector_new
+  (c-name "picman_color_selector_new")
+  (is-constructor-of "PicmanColorSelector")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GType" "selector_type")
+    '("const-PicmanRGB*" "rgb")
+    '("const-PicmanHSV*" "hsv")
+    '("PicmanColorSelectorChannel" "channel")
+  )
+)
+
+(define-method set_toggles_visible
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_toggles_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method set_toggles_sensitive
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_toggles_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method set_show_alpha
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_show_alpha")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show_alpha")
+  )
+)
+
+(define-method set_color
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_color")
+  (return-type "none")
+  (parameters
+    '("const-PicmanRGB*" "rgb")
+    '("const-PicmanHSV*" "hsv")
+  )
+)
+
+(define-method set_channel
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_channel")
+  (return-type "none")
+  (parameters
+    '("PicmanColorSelectorChannel" "channel")
+  )
+)
+
+(define-method color_changed
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_color_changed")
+  (return-type "none")
+)
+
+(define-method channel_changed
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_channel_changed")
+  (return-type "none")
+)
+
+(define-method set_config
+  (of-object "PicmanColorSelector")
+  (c-name "picman_color_selector_set_config")
+  (return-type "none")
+  (parameters
+    '("PicmanColorConfig*" "config")
+  )
+)
+
+
+
+;; From picmandialog.h
+
+(define-function picman_dialog_get_type
+  (c-name "picman_dialog_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_dialog_new
+  (c-name "picman_dialog_new")
+  (is-constructor-of "PicmanDialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("const-gchar*" "role")
+    '("GtkWidget*" "parent")
+    '("GtkDialogFlags" "flags")
+    '("PicmanHelpFunc" "help_func")
+    '("const-gchar*" "help_id")
+  )
+  (varargs #t)
+)
+
+(define-function picman_dialog_new_valist
+  (c-name "picman_dialog_new_valist")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("const-gchar*" "role")
+    '("GtkWidget*" "parent")
+    '("GtkDialogFlags" "flags")
+    '("PicmanHelpFunc" "help_func")
+    '("const-gchar*" "help_id")
+    '("va_list" "args")
+  )
+)
+
+(define-method add_button
+  (of-object "PicmanDialog")
+  (c-name "picman_dialog_add_button")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "button_text")
+    '("gint" "response_id")
+  )
+)
+
+(define-method add_buttons
+  (of-object "PicmanDialog")
+  (c-name "picman_dialog_add_buttons")
+  (return-type "none")
+  (parameters
+  )
+  (varargs #t)
+)
+
+(define-method add_buttons_valist
+  (of-object "PicmanDialog")
+  (c-name "picman_dialog_add_buttons_valist")
+  (return-type "none")
+  (parameters
+    '("va_list" "args")
+  )
+)
+
+(define-method run
+  (of-object "PicmanDialog")
+  (c-name "picman_dialog_run")
+  (return-type "gint")
+)
+
+(function picman_dialogs_show_help_button
+  (c-name "picman_dialogs_show_help_button")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+;; from picmanui.h
+
+(define-method set_transient
+  (of-object "PicmanDialog")
+  (c-name "picman_window_set_transient")
+  (return-type "none")
+)
+
+
+;; From picmanenumcombobox.h
+
+(define-function picman_enum_combo_box_get_type
+  (c-name "picman_enum_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_enum_combo_box_new
+  (c-name "picman_enum_combo_box_new")
+  (is-constructor-of "PicmanEnumComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GType" "enum_type")
+  )
+)
+
+(define-function picman_enum_combo_box_new_with_model
+  (c-name "picman_enum_combo_box_new_with_model")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanEnumStore*" "enum_store")
+  )
+)
+
+(define-method set_stock_prefix
+  (of-object "PicmanEnumComboBox")
+  (c-name "picman_enum_combo_box_set_stock_prefix")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "stock_prefix")
+  )
+)
+
+
+
+;; From picmanenumlabel.h
+
+(define-function picman_enum_label_get_type
+  (c-name "picman_enum_label_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_enum_label_new
+  (c-name "picman_enum_label_new")
+  (is-constructor-of "PicmanEnumLabel")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GType" "enum_type")
+    '("gint" "value")
+  )
+)
+
+(define-method set_value
+  (of-object "PicmanEnumLabel")
+  (c-name "picman_enum_label_set_value")
+  (return-type "none")
+  (parameters
+    '("gint" "value")
+  )
+)
+
+
+
+;; From picmanenumstore.h
+
+(define-function picman_enum_store_get_type
+  (c-name "picman_enum_store_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_enum_store_new
+  (c-name "picman_enum_store_new")
+  (is-constructor-of "PicmanEnumStore")
+  (return-type "GtkListStore*")
+  (parameters
+    '("GType" "enum_type")
+  )
+)
+
+(define-function picman_enum_store_new_with_range
+  (c-name "picman_enum_store_new_with_range")
+  (return-type "GtkListStore*")
+  (parameters
+    '("GType" "enum_type")
+    '("gint" "minimum")
+    '("gint" "maximum")
+  )
+)
+
+(define-function picman_enum_store_new_with_values
+  (c-name "picman_enum_store_new_with_values")
+  (return-type "GtkListStore*")
+  (parameters
+    '("GType" "enum_type")
+    '("gint" "n_values")
+  )
+  (varargs #t)
+)
+
+(define-function picman_enum_store_new_with_values_valist
+  (c-name "picman_enum_store_new_with_values_valist")
+  (return-type "GtkListStore*")
+  (parameters
+    '("GType" "enum_type")
+    '("gint" "n_values")
+    '("va_list" "args")
+  )
+)
+
+(define-method set_stock_prefix
+  (of-object "PicmanEnumStore")
+  (c-name "picman_enum_store_set_stock_prefix")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "stock_prefix")
+  )
+)
+
+
+
+;; From picmanframe.h
+
+(define-function picman_frame_get_type
+  (c-name "picman_frame_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_frame_new
+  (c-name "picman_frame_new")
+  (is-constructor-of "PicmanFrame")
+  (return-type "GtkWidget*")
+  (properties
+    '("label")
+  )
+)
+
+
+
+;; From picmanhintbox.h
+
+(define-function picman_hint_box_get_type
+  (c-name "picman_hint_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_hint_box_new
+  (c-name "picman_hint_box_new")
+  (is-constructor-of "PicmanHintBox")
+  (return-type "GtkWidget*")
+  (properties
+    '("hint")
+    '("stock-id" (optional))
+  )
+)
+
+
+
+;; From picmanintcombobox.h
+
+(define-function picman_int_combo_box_get_type
+  (c-name "picman_int_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_int_combo_box_new
+  (c-name "picman_int_combo_box_new")
+  (is-constructor-of "PicmanIntComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "first_label")
+    '("gint" "first_value")
+  )
+  (varargs #t)
+)
+
+(define-function picman_int_combo_box_new_valist
+  (c-name "picman_int_combo_box_new_valist")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "first_label")
+    '("gint" "first_value")
+    '("va_list" "values")
+  )
+)
+
+(define-function picman_int_combo_box_new_array
+  (c-name "picman_int_combo_box_new_array")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "n_values")
+    '("const-gchar*[]" "labels")
+  )
+)
+
+(define-method prepend
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_prepend")
+  (return-type "none")
+  (parameters
+  )
+  (varargs #t)
+)
+
+(define-method append
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_append")
+  (return-type "none")
+  (parameters
+  )
+  (varargs #t)
+)
+
+(define-method set_active
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_set_active")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "value")
+  )
+)
+
+(define-method get_active
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_get_active")
+  (return-type "gboolean")
+  (parameters
+    '("gint*" "value")
+  )
+)
+
+(define-method connect
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_connect")
+  (return-type "gulong")
+  (parameters
+    '("gint" "value")
+    '("GCallback" "callback")
+    '("gpointer" "data")
+  )
+)
+
+(define-method set_sensitivity
+  (of-object "PicmanIntComboBox")
+  (c-name "picman_int_combo_box_set_sensitivity")
+  (return-type "none")
+  (parameters
+    '("PicmanIntSensitivityFunc" "func")
+    '("gpointer" "data")
+    '("GDestroyNotify" "destroy")
+  )
+)
+
+
+
+;; From picmanintstore.h
+
+(define-function picman_int_store_get_type
+  (c-name "picman_int_store_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_int_store_new
+  (c-name "picman_int_store_new")
+  (is-constructor-of "PicmanIntStore")
+  (return-type "GtkListStore*")
+)
+
+(define-method lookup_by_value
+  (of-object "PicmanIntStore")
+  (c-name "picman_int_store_lookup_by_value")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "value")
+    '("GtkTreeIter*" "iter")
+  )
+)
+
+
+
+;; From picmanmemsizeentry.h
+
+(define-function picman_memsize_entry_get_type
+  (c-name "picman_memsize_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_memsize_entry_new
+  (c-name "picman_memsize_entry_new")
+  (is-constructor-of "PicmanMemsizeEntry")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint64" "value")
+    '("guint64" "lower")
+    '("guint64" "upper")
+  )
+)
+
+(define-method set_value
+  (of-object "PicmanMemsizeEntry")
+  (c-name "picman_memsize_entry_set_value")
+  (return-type "none")
+  (parameters
+    '("guint64" "value")
+  )
+)
+
+(define-method get_value
+  (of-object "PicmanMemsizeEntry")
+  (c-name "picman_memsize_entry_get_value")
+  (return-type "guint64")
+)
+
+
+
+;; From picmannumberpairentry.h
+
+(define-function picman_number_pair_entry_get_type
+  (c-name "picman_number_pair_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_number_pair_entry_new
+  (c-name "picman_number_pair_entry_new")
+  (is-constructor-of "PicmanNumberPairEntry")
+  (return-type "GtkWidget*")
+  (properties
+    '("separators")
+    '("allow-simplification" (argname "allow_simplification"))
+    '("min-valid-value" (argname "min_valid_value"))
+    '("max-valid-value" (argname "max_valid_value"))
+  )
+)
+
+(define-method set_default_values
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_default_values")
+  (return-type "none")
+  (parameters
+    '("gdouble" "left")
+    '("gdouble" "right")
+  )
+)
+
+(define-method get_default_values
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_default_values")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "left")
+    '("gdouble*" "right")
+  )
+)
+
+(define-method set_values
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_values")
+  (return-type "none")
+  (parameters
+    '("gdouble" "left")
+    '("gdouble" "right")
+  )
+)
+
+(define-method get_values
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_values")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "left")
+    '("gdouble*" "right")
+  )
+)
+
+(define-method set_default_text
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_default_text")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "string")
+  )
+)
+
+(define-method get_default_text
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_default_text")
+  (return-type "const-gchar*")
+)
+
+(define-method set_ratio
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_ratio")
+  (return-type "none")
+  (parameters
+    '("gdouble" "ratio")
+  )
+)
+
+(define-method get_ratio
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_ratio")
+  (return-type "gdouble")
+)
+
+(define-method set_aspect
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_aspect")
+  (return-type "none")
+  (parameters
+    '("PicmanAspectType" "aspect")
+  )
+)
+
+(define-method get_aspect
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_aspect")
+  (return-type "PicmanAspectType")
+)
+
+(define-method set_user_override
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_set_user_override")
+  (return-type "none")
+  (parameters
+    '("gboolean" "user_override")
+  )
+)
+
+(define-method get_user_override
+  (of-object "PicmanNumberPairEntry")
+  (c-name "picman_number_pair_entry_get_user_override")
+  (return-type "gboolean")
+)
+
+
+
+;; From picmanoffsetarea.h
+
+(define-function picman_offset_area_get_type
+  (c-name "picman_offset_area_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_offset_area_new
+  (c-name "picman_offset_area_new")
+  (is-constructor-of "PicmanOffsetArea")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "orig_width")
+    '("gint" "orig_height")
+  )
+)
+
+(define-method set_pixbuf
+  (of-object "PicmanOffsetArea")
+  (c-name "picman_offset_area_set_pixbuf")
+  (return-type "none")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+  )
+)
+
+(define-method set_size
+  (of-object "PicmanOffsetArea")
+  (c-name "picman_offset_area_set_size")
+  (return-type "none")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+  )
+)
+
+(define-method set_offsets
+  (of-object "PicmanOffsetArea")
+  (c-name "picman_offset_area_set_offsets")
+  (return-type "none")
+  (parameters
+    '("gint" "offset_x")
+    '("gint" "offset_y")
+  )
+)
+
+
+
+;; From picmanpageselector.h
+
+(define-function picman_page_selector_get_type
+  (c-name "picman_page_selector_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_page_selector_new
+  (c-name "picman_page_selector_new")
+  (is-constructor-of "PicmanPageSelector")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_n_pages
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_set_n_pages")
+  (return-type "none")
+  (parameters
+    '("gint" "n_pages")
+  )
+)
+
+(define-method get_n_pages
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_n_pages")
+  (return-type "gint")
+)
+
+(define-method set_target
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_set_target")
+  (return-type "none")
+  (parameters
+    '("PicmanPageSelectorTarget" "target")
+  )
+)
+
+(define-method get_target
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_target")
+  (return-type "PicmanPageSelectorTarget")
+)
+
+(define-method set_page_thumbnail
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_set_page_thumbnail")
+  (return-type "none")
+  (parameters
+    '("gint" "page_no")
+    '("GdkPixbuf*" "thumbnail")
+  )
+)
+
+(define-method get_page_thumbnail
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_page_thumbnail")
+  (return-type "GdkPixbuf*")
+  (parameters
+    '("gint" "page_no")
+  )
+)
+
+(define-method set_page_label
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_set_page_label")
+  (return-type "none")
+  (parameters
+    '("gint" "page_no")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method get_page_label
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_page_label")
+  (return-type "gchar*")
+  (parameters
+    '("gint" "page_no")
+  )
+)
+
+(define-method select_all
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_select_all")
+  (return-type "none")
+)
+
+(define-method unselect_all
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_unselect_all")
+  (return-type "none")
+)
+
+(define-method select_page
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_select_page")
+  (return-type "none")
+  (parameters
+    '("gint" "page_no")
+  )
+)
+
+(define-method unselect_page
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_unselect_page")
+  (return-type "none")
+  (parameters
+    '("gint" "page_no")
+  )
+)
+
+(define-method page_is_selected
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_page_is_selected")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "page_no")
+  )
+)
+
+(define-method get_selected_pages
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_selected_pages")
+  (return-type "gint*")
+  (parameters
+    '("gint*" "n_selected_pages")
+  )
+)
+
+(define-method select_range
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_select_range")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "range")
+  )
+)
+
+(define-method get_selected_range
+  (of-object "PicmanPageSelector")
+  (c-name "picman_page_selector_get_selected_range")
+  (return-type "gchar*")
+)
+
+
+
+;; From picmanpatheditor.h
+
+(define-function picman_path_editor_get_type
+  (c-name "picman_path_editor_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_path_editor_new
+  (c-name "picman_path_editor_new")
+  (is-constructor-of "PicmanPathEditor")
+  (properties
+    '("title")
+    '("path" (optional))
+  )
+  (return-type "GtkWidget*")
+)
+
+(define-method get_path
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_get_path")
+  (return-type "gchar*")
+)
+
+(define-method set_path
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_set_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method get_writable_path
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_get_writable_path")
+  (return-type "gchar*")
+)
+
+(define-method set_writable_path
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_set_writable_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method get_dir_writable
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_get_dir_writable")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "directory")
+  )
+)
+
+(define-method set_dir_writable
+  (of-object "PicmanPathEditor")
+  (c-name "picman_path_editor_set_dir_writable")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "directory")
+    '("gboolean" "writable")
+  )
+)
+
+
+
+;; From picmanpickbutton.h
+
+(define-function picman_pick_button_get_type
+  (c-name "picman_pick_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_pick_button_new
+  (c-name "picman_pick_button_new")
+  (is-constructor-of "PicmanPickButton")
+  (return-type "GtkWidget*")
+)
+
+
+
+;; From picmanpreview.h
+
+(define-function picman_preview_get_type
+  (c-name "picman_preview_get_type")
+  (return-type "GType")
+)
+
+(define-method set_update
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_set_update")
+  (return-type "none")
+  (parameters
+    '("gboolean" "update")
+  )
+)
+
+(define-method get_update
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_get_update")
+  (return-type "gboolean")
+)
+
+(define-method set_bounds
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_set_bounds")
+  (return-type "none")
+  (parameters
+    '("gint" "xmin")
+    '("gint" "ymin")
+    '("gint" "xmax")
+    '("gint" "ymax")
+  )
+)
+
+(define-method get_position
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_get_position")
+  (return-type "none")
+  (parameters
+    '("gint*" "x")
+    '("gint*" "y")
+  )
+)
+
+(define-method get_size
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_get_size")
+  (return-type "none")
+  (parameters
+    '("gint*" "width")
+    '("gint*" "height")
+  )
+)
+
+(define-method transform
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_transform")
+  (return-type "none")
+  (parameters
+    '("gint" "src_x")
+    '("gint" "src_y")
+    '("gint*" "dest_x")
+    '("gint*" "dest_y")
+  )
+)
+
+(define-method untransform
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_untransform")
+  (return-type "none")
+  (parameters
+    '("gint" "src_x")
+    '("gint" "src_y")
+    '("gint*" "dest_x")
+    '("gint*" "dest_y")
+  )
+)
+
+(define-method get_area
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_get_area")
+  (return-type "GtkWidget*")
+)
+
+(define-method draw
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_draw")
+  (return-type "none")
+)
+
+(define-method draw_buffer
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_draw_buffer")
+  (return-type "none")
+  (parameters
+    '("const-guchar*" "buffer")
+    '("gint" "rowstride")
+  )
+)
+
+(define-method invalidate
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_invalidate")
+  (return-type "none")
+)
+
+(define-method set_default_cursor
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_set_default_cursor")
+  (return-type "none")
+  (parameters
+    '("GdkCursor*" "cursor")
+  )
+)
+
+(define-method get_controls
+  (of-object "PicmanPreview")
+  (c-name "picman_preview_get_controls")
+  (return-type "GtkWidget*")
+)
+
+
+
+;; From picmanpreviewarea.h
+
+(define-function picman_preview_area_get_type
+  (c-name "picman_preview_area_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_preview_area_new
+  (c-name "picman_preview_area_new")
+  (is-constructor-of "PicmanPreviewArea")
+  (return-type "GtkWidget*")
+)
+
+(define-method draw
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_draw")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "width")
+    '("gint" "height")
+    '("PicmanImageType" "type")
+    '("const-guchar*" "buf")
+    '("gint" "rowstride")
+  )
+)
+
+(define-method blend
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_blend")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "width")
+    '("gint" "height")
+    '("PicmanImageType" "type")
+    '("const-guchar*" "buf1")
+    '("gint" "rowstride1")
+    '("const-guchar*" "buf2")
+    '("gint" "rowstride2")
+    '("guchar" "opacity")
+  )
+)
+
+(define-method mask
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_mask")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "width")
+    '("gint" "height")
+    '("PicmanImageType" "type")
+    '("const-guchar*" "buf1")
+    '("gint" "rowstride1")
+    '("const-guchar*" "buf2")
+    '("gint" "rowstride2")
+    '("const-guchar*" "mask")
+    '("gint" "rowstride_mask")
+  )
+)
+
+(define-method fill
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_fill")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "width")
+    '("gint" "height")
+    '("guchar" "red")
+    '("guchar" "green")
+    '("guchar" "blue")
+  )
+)
+
+(define-method set_offsets
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_set_offsets")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method set_colormap
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_set_colormap")
+  (return-type "none")
+  (parameters
+    '("const-guchar*" "colormap")
+    '("gint" "num_colors")
+  )
+)
+
+(define-method set_max_size
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_set_max_size")
+  (return-type "none")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+  )
+)
+
+(define-method menu_popup
+  (of-object "PicmanPreviewArea")
+  (c-name "picman_preview_area_menu_popup")
+  (return-type "none")
+  (parameters
+    '("GdkEventButton*" "event")
+  )
+)
+
+
+
+;; From picmanscrolledpreview.h
+
+(define-function picman_scrolled_preview_get_type
+  (c-name "picman_scrolled_preview_get_type")
+  (return-type "GType")
+)
+
+(define-method set_position
+  (of-object "PicmanScrolledPreview")
+  (c-name "picman_scrolled_preview_set_position")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method set_policy
+  (of-object "PicmanScrolledPreview")
+  (c-name "picman_scrolled_preview_set_policy")
+  (return-type "none")
+  (parameters
+    '("GtkPolicyType" "hscrollbar_policy")
+    '("GtkPolicyType" "vscrollbar_policy")
+  )
+)
+
+(define-method freeze
+  (of-object "PicmanScrolledPreview")
+  (c-name "picman_scrolled_preview_freeze")
+  (return-type "none")
+)
+
+(define-method thaw
+  (of-object "PicmanScrolledPreview")
+  (c-name "picman_scrolled_preview_thaw")
+  (return-type "none")
+)
+
+
+
+;; From picmansizeentry.h
+
+(define-function picman_size_entry_get_type
+  (c-name "picman_size_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_size_entry_new
+  (c-name "picman_size_entry_new")
+  (is-constructor-of "PicmanSizeEntry")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "number_of_fields")
+    '("PicmanUnit" "unit")
+    '("const-gchar*" "unit_format")
+    '("gboolean" "menu_show_pixels")
+    '("gboolean" "menu_show_percent")
+    '("gboolean" "show_refval")
+    '("gint" "spinbutton_width")
+    '("PicmanSizeEntryUpdatePolicy" "update_policy")
+  )
+)
+
+(define-method add_field
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_add_field")
+  (return-type "none")
+  (parameters
+    '("GtkSpinButton*" "value_spinbutton")
+    '("GtkSpinButton*" "refval_spinbutton")
+  )
+)
+
+(define-method attach_label
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_attach_label")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "text")
+    '("gint" "row")
+    '("gint" "column")
+    '("gfloat" "alignment")
+  )
+)
+
+(define-method set_resolution
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_resolution")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "resolution")
+    '("gboolean" "keep_size")
+  )
+)
+
+(define-method set_size
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_size")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "lower")
+    '("gdouble" "upper")
+  )
+)
+
+(define-method set_value_boundaries
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_value_boundaries")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "lower")
+    '("gdouble" "upper")
+  )
+)
+
+(define-method get_value
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_get_value")
+  (return-type "gdouble")
+  (parameters
+    '("gint" "field")
+  )
+)
+
+(define-method set_value
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_value")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "value")
+  )
+)
+
+(define-method set_refval_boundaries
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_refval_boundaries")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "lower")
+    '("gdouble" "upper")
+  )
+)
+
+(define-method set_refval_digits
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_refval_digits")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gint" "digits")
+  )
+)
+
+(define-method get_refval
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_get_refval")
+  (return-type "gdouble")
+  (parameters
+    '("gint" "field")
+  )
+)
+
+(define-method set_refval
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_refval")
+  (return-type "none")
+  (parameters
+    '("gint" "field")
+    '("gdouble" "refval")
+  )
+)
+
+(define-method get_unit
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_get_unit")
+  (return-type "PicmanUnit")
+)
+
+(define-method set_unit
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_unit")
+  (return-type "none")
+  (parameters
+    '("PicmanUnit" "unit")
+  )
+)
+
+(define-method show_unit_menu
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_show_unit_menu")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method set_pixel_digits
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_pixel_digits")
+  (return-type "none")
+  (parameters
+    '("gint" "digits")
+  )
+)
+
+(define-method grab_focus
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_grab_focus")
+  (return-type "none")
+)
+
+(define-method set_activates_default
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_set_activates_default")
+  (return-type "none")
+  (parameters
+    '("gboolean" "setting")
+  )
+)
+
+(define-method get_help_widget
+  (of-object "PicmanSizeEntry")
+  (c-name "picman_size_entry_get_help_widget")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "field")
+  )
+)
+
+
+
+;; From picmanstringcombobox.h
+
+(define-function picman_string_combo_box_get_type
+  (c-name "picman_string_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_string_combo_box_new
+  (c-name "picman_string_combo_box_new")
+  (is-constructor-of "PicmanStringComboBox")
+  (return-type "GtkWidget*")
+  (properties
+    '("model")
+    '("id-column" (argname "id_column"))
+    '("label-column" (argname "label_column"))
+  )
+)
+
+(define-method set_active
+  (of-object "PicmanStringComboBox")
+  (c-name "picman_string_combo_box_set_active")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "id")
+  )
+)
+
+(define-method get_active
+  (of-object "PicmanStringComboBox")
+  (c-name "picman_string_combo_box_get_active")
+  (return-type "gchar*")
+)
+
+
+
+;; From picmanunitcombobox.h
+
+(define-function picman_unit_combo_box_get_type
+  (c-name "picman_unit_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_unit_combo_box_new
+  (c-name "picman_unit_combo_box_new")
+  (is-constructor-of "PicmanUnitComboBox")
+  (return-type "GtkWidget*")
+)
+
+(define-function picman_unit_combo_box_new_with_model
+  (c-name "picman_unit_combo_box_new_with_model")
+  (is-constructor-of "PicmanUnitComboBox")
+  (return-type "GtkWidget*")
+  (properties
+    '("model" (optional))
+  )
+)
+
+(define-method get_active
+  (of-object "PicmanUnitComboBox")
+  (c-name "picman_unit_combo_box_get_active")
+  (return-type "PicmanUnit")
+)
+
+(define-method set_active
+  (of-object "PicmanUnitComboBox")
+  (c-name "picman_unit_combo_box_set_active")
+  (return-type "none")
+  (parameters
+    '("PicmanUnit" "unit")
+  )
+)
+
+
+
+;; From picmanunitmenu.h
+
+(define-function picman_unit_menu_get_type
+  (c-name "picman_unit_menu_get_type")
+  (return-type "GType")
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-function picman_unit_menu_new
+  (c-name "picman_unit_menu_new")
+  (is-constructor-of "PicmanUnitMenu")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "format")
+    '("PicmanUnit" "unit")
+    '("gboolean" "show_pixels")
+    '("gboolean" "show_percent")
+    '("gboolean" "show_custom")
+  )
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-method set_unit
+  (of-object "PicmanUnitMenu")
+  (c-name "picman_unit_menu_set_unit")
+  (return-type "none")
+  (parameters
+    '("PicmanUnit" "unit")
+  )
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-method get_unit
+  (of-object "PicmanUnitMenu")
+  (c-name "picman_unit_menu_get_unit")
+  (return-type "PicmanUnit")
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-method set_pixel_digits
+  (of-object "PicmanUnitMenu")
+  (c-name "picman_unit_menu_set_pixel_digits")
+  (return-type "none")
+  (parameters
+    '("gint" "digits")
+  )
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+(define-method get_pixel_digits
+  (of-object "PicmanUnitMenu")
+  (c-name "picman_unit_menu_get_pixel_digits")
+  (return-type "gint")
+  (deprecated "use picmanui.UnitComboBox instead")
+)
+
+
+
+;; From picmanzoommodel.h
+
+(define-function picman_zoom_model_get_type
+  (c-name "picman_zoom_model_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_zoom_model_new
+  (c-name "picman_zoom_model_new")
+  (is-constructor-of "PicmanZoomModel")
+  (return-type "PicmanZoomModel*")
+)
+
+(define-method set_range
+  (of-object "PicmanZoomModel")
+  (c-name "picman_zoom_model_set_range")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+  )
+)
+
+(define-method zoom
+  (of-object "PicmanZoomModel")
+  (c-name "picman_zoom_model_zoom")
+  (return-type "none")
+  (parameters
+    '("PicmanZoomType" "zoom_type")
+    '("gdouble" "scale")
+  )
+)
+
+(define-method get_factor
+  (of-object "PicmanZoomModel")
+  (c-name "picman_zoom_model_get_factor")
+  (return-type "gdouble")
+)
+
+(define-method get_fraction
+  (of-object "PicmanZoomModel")
+  (c-name "picman_zoom_model_get_fraction")
+  (return-type "none")
+  (parameters
+    '("gint*" "numerator")
+    '("gint*" "denominator")
+  )
+)
+
+(define-function picman_zoom_button_new
+  (c-name "picman_zoom_button_new")
+  (is-constructor-of "PicmanZoomButton")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanZoomModel*" "model")
+    '("PicmanZoomType" "zoom_type")
+    '("GtkIconSize" "icon_size")
+  )
+)
+
+(define-function picman_zoom_model_zoom_step
+  (c-name "picman_zoom_model_zoom_step")
+  (return-type "gdouble")
+  (parameters
+    '("PicmanZoomType" "zoom_type")
+    '("gdouble" "scale")
+  )
+)
+
+
+
+;; From picmanaspectpreview.h
+
+(define-function picman_aspect_preview_get_type
+  (c-name "picman_aspect_preview_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_aspect_preview_new
+  (c-name "picman_aspect_preview_new")
+  (is-constructor-of "PicmanAspectPreview")
+  (return-type "GtkWidget*")
+  (properties
+    '("drawable")
+    '("update" (optional))
+  )
+)
+
+
+
+;; From picmandrawablepreview.h
+
+(define-function picman_drawable_preview_get_type
+  (c-name "picman_drawable_preview_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_drawable_preview_new
+  (c-name "picman_drawable_preview_new")
+  (is-constructor-of "PicmanDrawablePreview")
+  (return-type "GtkWidget*")
+  (properties
+    '("drawable")
+  )
+)
+
+(define-method get_drawable
+  (of-object "PicmanDrawablePreview")
+  (c-name "picman_drawable_preview_get_drawable")
+  (return-type "PicmanDrawable*")
+)
+
+(define-method draw_region
+  (of-object "PicmanDrawablePreview")
+  (c-name "picman_drawable_preview_draw_region")
+  (return-type "none")
+  (parameters
+    '("const-PicmanPixelRgn*" "region")
+  )
+)
+
+
+
+;; From picmanimagecombobox.h
+
+(define-function picman_image_combo_box_get_type
+  (c-name "picman_image_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_image_combo_box_new
+  (c-name "picman_image_combo_box_new")
+  (is-constructor-of "PicmanImageComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanImageConstraintFunc" "constraint")
+    '("gpointer" "data")
+  )
+)
+
+
+
+;; From picmanitemcombobox.h
+
+(define-function picman_drawable_combo_box_get_type
+  (c-name "picman_drawable_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_channel_combo_box_get_type
+  (c-name "picman_channel_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_layer_combo_box_get_type
+  (c-name "picman_layer_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_vectors_combo_box_get_type
+  (c-name "picman_vectors_combo_box_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_drawable_combo_box_new
+  (c-name "picman_drawable_combo_box_new")
+  (is-constructor-of "PicmanDrawableComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanDrawableConstraintFunc" "constraint")
+    '("gpointer" "data")
+  )
+)
+
+(define-function picman_channel_combo_box_new
+  (c-name "picman_channel_combo_box_new")
+  (is-constructor-of "PicmanChannelComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanDrawableConstraintFunc" "constraint")
+    '("gpointer" "data")
+  )
+)
+
+(define-function picman_layer_combo_box_new
+  (c-name "picman_layer_combo_box_new")
+  (is-constructor-of "PicmanLayerComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanDrawableConstraintFunc" "constraint")
+    '("gpointer" "data")
+  )
+)
+
+(define-function picman_vectors_combo_box_new
+  (c-name "picman_vectors_combo_box_new")
+  (is-constructor-of "PicmanVectorsComboBox")
+  (return-type "GtkWidget*")
+  (parameters
+    '("PicmanVectorsConstraintFunc" "constraint")
+    '("gpointer" "data")
+  )
+)
+
+
+
+;; From picmanpatternselect.h
+
+(define-function picman_pattern_select_new
+  (c-name "picman_pattern_select_new")
+  (is-constructor-of "PicmanPatternSelect")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "title")
+    '("const-gchar*" "pattern_name")
+    '("PicmanRunPatternCallback" "callback")
+    '("gpointer" "data")
+  )
+)
+
+(define-function picman_pattern_select_destroy
+  (c-name "picman_pattern_select_destroy")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "pattern_callback")
+  )
+)
+
+
+
+;; From picmanprocbrowserdialog.h
+
+(define-function picman_proc_browser_dialog_get_type
+  (c-name "picman_proc_browser_dialog_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_proc_browser_dialog_new
+  (c-name "picman_proc_browser_dialog_new")
+  (is-constructor-of "PicmanProcBrowserDialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+    '("const-gchar*" "role")
+    '("PicmanHelpFunc" "help_func")
+    '("const-gchar*" "help_id")
+  )
+  (varargs #t)
+)
+
+(define-method get_selected
+  (of-object "PicmanProcBrowserDialog")
+  (c-name "picman_proc_browser_dialog_get_selected")
+  (return-type "gchar*")
+)
+
+
+
+;; From picmanprocview.h
+
+(define-function picman_proc_view_new
+  (c-name "picman_proc_view_new")
+  (is-constructor-of "PicmanProcView")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "name")
+    '("const-gchar*" "menu_path")
+    '("const-gchar*" "blurb")
+    '("const-gchar*" "help")
+    '("const-gchar*" "author")
+    '("const-gchar*" "copyright")
+    '("const-gchar*" "date")
+    '("PicmanPDBProcType" "type")
+    '("gint" "n_params")
+    '("gint" "n_return_vals")
+    '("PicmanParamDef*" "params")
+    '("PicmanParamDef*" "return_vals")
+  )
+)
+
+
+
+;; From picmanzoompreview.h
+
+(define-function picman_zoom_preview_get_type
+  (c-name "picman_zoom_preview_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_zoom_preview_new_with_model
+  (c-name "picman_zoom_preview_new_with_model")
+  (is-constructor-of "PicmanZoomPreview")
+  (return-type "GtkWidget*")
+  (properties
+    '("drawable")
+    '("model" (optional))
+  )
+)
+
+(define-method get_source
+  (of-object "PicmanZoomPreview")
+  (c-name "picman_zoom_preview_get_source")
+  (return-type "guchar*")
+  (parameters
+    '("gint*" "width")
+    '("gint*" "height")
+    '("gint*" "bpp")
+  )
+)
+
+(define-method get_drawable
+  (of-object "PicmanZoomPreview")
+  (c-name "picman_zoom_preview_get_drawable")
+  (return-type "PicmanDrawable*")
+)
+
+(define-method get_model
+  (of-object "PicmanZoomPreview")
+  (c-name "picman_zoom_preview_get_model")
+  (return-type "PicmanZoomModel*")
+)
+
+(define-method get_factor
+  (of-object "PicmanZoomPreview")
+  (c-name "picman_zoom_preview_get_factor")
+  (return-type "gdouble")
+)
+
+
+
+;; From picmanprogressbar.h
+
+(define-function picman_progress_bar_get_type
+  (c-name "picman_progress_bar_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_progress_bar_new
+  (c-name "picman_progress_bar_new")
+  (is-constructor-of "PicmanProgressBar")
+  (return-type "GtkWidget*")
+)
+
+
+
+;; From picmanbrushselectbutton.h
+
+(define-function picman_brush_select_button_get_type
+  (c-name "picman_brush_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_brush_select_button_new
+  (c-name "picman_brush_select_button_new")
+  (is-constructor-of "PicmanBrushSelectButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("brush-name" (argname "brush_name") (optional))
+    '("brush-opacity" (argname "opacity") (optional))
+    '("brush-spacing" (argname "spacing") (optional))
+    '("brush-paint-mode" (argname "paint_mode") (optional))
+  )
+)
+
+(define-method get_brush
+  (of-object "PicmanBrushSelectButton")
+  (c-name "picman_brush_select_button_get_brush")
+  (return-type "const-gchar*")
+  (parameters
+    '("gdouble*" "opacity")
+    '("gint*" "spacing")
+    '("PicmanLayerModeEffects*" "paint_mode")
+  )
+)
+
+(define-method set_brush
+  (of-object "PicmanBrushSelectButton")
+  (c-name "picman_brush_select_button_set_brush")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "brush_name")
+    '("gdouble" "opacity")
+    '("gint" "spacing")
+    '("PicmanLayerModeEffects" "paint_mode")
+  )
+)
+
+
+
+;; From picmanfontselectbutton.h
+
+(define-function picman_font_select_button_get_type
+  (c-name "picman_font_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_font_select_button_new
+  (c-name "picman_font_select_button_new")
+  (is-constructor-of "PicmanFontSelectButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("font-name" (argname "font_name") (optional))
+  )
+)
+
+(define-method get_font
+  (of-object "PicmanFontSelectButton")
+  (c-name "picman_font_select_button_get_font")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font
+  (of-object "PicmanFontSelectButton")
+  (c-name "picman_font_select_button_set_font")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font_name")
+  )
+)
+
+
+
+;; From picmangradientselectbutton.h
+
+(define-function picman_gradient_select_button_get_type
+  (c-name "picman_gradient_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_gradient_select_button_new
+  (c-name "picman_gradient_select_button_new")
+  (is-constructor-of "PicmanGradientSelectButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("gradient-name" (argname "gradient_name") (optional))
+  )
+)
+
+(define-method get_gradient
+  (of-object "PicmanGradientSelectButton")
+  (c-name "picman_gradient_select_button_get_gradient")
+  (return-type "const-gchar*")
+)
+
+(define-method set_gradient
+  (of-object "PicmanGradientSelectButton")
+  (c-name "picman_gradient_select_button_set_gradient")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "gradient_name")
+  )
+)
+
+
+
+;; From picmanpaletteselectbutton.h
+
+(define-function picman_palette_select_button_get_type
+  (c-name "picman_palette_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_palette_select_button_new
+  (c-name "picman_palette_select_button_new")
+  (is-constructor-of "PicmanPaletteSelectButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("palette-name" (argname "palette_name") (optional))
+  )
+)
+
+(define-method get_palette
+  (of-object "PicmanPaletteSelectButton")
+  (c-name "picman_palette_select_button_get_palette")
+  (return-type "const-gchar*")
+)
+
+(define-method set_palette
+  (of-object "PicmanPaletteSelectButton")
+  (c-name "picman_palette_select_button_set_palette")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "palette_name")
+  )
+)
+
+
+
+;; From picmanpatternselectbutton.h
+
+(define-function picman_pattern_select_button_get_type
+  (c-name "picman_pattern_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_pattern_select_button_new
+  (c-name "picman_pattern_select_button_new")
+  (is-constructor-of "PicmanPatternSelectButton")
+  (return-type "GtkWidget*")
+  (properties
+    '("title" (optional))
+    '("pattern-name" (argname "pattern_name") (optional))
+  )
+)
+
+(define-method get_pattern
+  (of-object "PicmanPatternSelectButton")
+  (c-name "picman_pattern_select_button_get_pattern")
+  (return-type "const-gchar*")
+)
+
+(define-method set_pattern
+  (of-object "PicmanPatternSelectButton")
+  (c-name "picman_pattern_select_button_set_pattern")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "pattern_name")
+  )
+)
+
+
+
+;; From picmanselectbutton.h
+
+(define-function picman_select_button_get_type
+  (c-name "picman_select_button_get_type")
+  (return-type "GType")
+)
+
+(define-method close_popup
+  (of-object "PicmanSelectButton")
+  (c-name "picman_select_button_close_popup")
+  (return-type "none")
+)
+
+
+
+;; From picmanwidgetsenums.h
+
+(define-function picman_aspect_type_get_type
+  (c-name "picman_aspect_type_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_chain_position_get_type
+  (c-name "picman_chain_position_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_area_type_get_type
+  (c-name "picman_color_area_type_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_color_selector_channel_get_type
+  (c-name "picman_color_selector_channel_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_page_selector_target_get_type
+  (c-name "picman_page_selector_target_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_size_entry_update_policy_get_type
+  (c-name "picman_size_entry_update_policy_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_zoom_type_get_type
+  (c-name "picman_zoom_type_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From picmanruler.h
+
+(define-function picman_ruler_get_type
+  (c-name "picman_ruler_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_ruler_new
+  (c-name "picman_ruler_new")
+  (is-constructor-of "PicmanRuler")
+  (return-type "GtkWidget*")
+  (properties
+    '("orientation")
+    '("lower" (optional))
+    '("upper" (optional))
+    '("max-size" (argname "max_size") (optional))
+  )
+)
+
+(define-method set_unit
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_set_unit")
+  (return-type "none")
+  (parameters
+    '("PicmanUnit" "unit")
+  )
+)
+
+(define-method get_unit
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_get_unit")
+  (return-type "PicmanUnit")
+)
+
+(define-method set_position
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_set_position")
+  (return-type "none")
+  (parameters
+    '("gdouble" "position")
+  )
+)
+
+(define-method get_position
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_get_position")
+  (return-type "gdouble")
+)
+
+(define-method set_range
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_set_range")
+  (return-type "none")
+  (parameters
+    '("gdouble" "lower")
+    '("gdouble" "upper")
+    '("gdouble" "max_size")
+  )
+)
+
+(define-method get_range
+  (of-object "PicmanRuler")
+  (c-name "picman_ruler_get_range")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "lower")
+    '("gdouble*" "upper")
+    '("gdouble*" "max_size")
+  )
+)
+
+

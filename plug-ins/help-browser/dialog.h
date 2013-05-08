@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help Browser
- * Copyright (C) 1999-2003 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
+ * The PICMAN Help Browser
+ * Copyright (C) 1999-2003 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
  *
  * dialog.h
  *
@@ -28,8 +28,8 @@
 void   browser_dialog_open       (const gchar    *plug_in_binary);
 void   browser_dialog_load       (const gchar    *uri);
 
-void   browser_dialog_make_index (GimpHelpDomain *domain,
-                                  GimpHelpLocale *locale);
+void   browser_dialog_make_index (PicmanHelpDomain *domain,
+                                  PicmanHelpLocale *locale);
 
 
 #endif /* ! __DIALOG_H__ */

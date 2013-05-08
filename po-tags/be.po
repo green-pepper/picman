@@ -5,8 +5,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gimp&component=general\n"
+"Project-Id-Version: picman master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&component=general\n"
 "POT-Creation-Date: 2010-01-01 17:49+0000\n"
 "PO-Revision-Date: 2010-01-02 23:29+0300\n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "X-Poedit-Country: BELARUS\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "размыты"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "round"
 msgstr "круглы"
 

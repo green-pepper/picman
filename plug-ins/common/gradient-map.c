@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Gradient Map plug-in
@@ -21,9 +21,9 @@
 #include "config.h"
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
@@ -31,9 +31,9 @@
 #define GRADMAP_PROC    "plug-in-gradmap"
 #define PALETTEMAP_PROC "plug-in-palettemap"
 #define PLUG_IN_BINARY  "gradient-map"
-#define PLUG_IN_ROLE    "gimp-gradient-map"
+#define PLUG_IN_ROLE    "picman-gradient-map"
 #define NSAMPLES        256
-#define LUMINOSITY(X)   (GIMP_RGB_LUMINANCE (X[0], X[1], X[2]) + 0.5)
+#define LUMINOSITY(X)   (PICMAN_RGB_LUMINANCE (X[0], X[1], X[2]) + 0.5)
 
 typedef enum
   {
@@ -46,21 +46,21 @@ typedef enum
 static void     query       (void);
 static void     run         (const gchar      *name,
                              gint              nparams,
-                             const GimpParam  *param,
+                             const PicmanParam  *param,
                              gint             *nreturn_vals,
-                             GimpParam       **return_vals);
+                             PicmanParam       **return_vals);
 
-static void     map                  (GimpDrawable     *drawable,
+static void     map                  (PicmanDrawable     *drawable,
                                       MapMode           mode);
-static guchar * get_samples_gradient (GimpDrawable     *drawable);
-static guchar * get_samples_palette  (GimpDrawable     *drawable);
+static guchar * get_samples_gradient (PicmanDrawable     *drawable);
+static guchar * get_samples_palette  (PicmanDrawable     *drawable);
 static void     map_func             (const guchar     *src,
                                       guchar           *dest,
                                       gint              bpp,
                                       gpointer          data);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -73,14 +73,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"       }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"       }
   };
 
-  gimp_install_procedure (GRADMAP_PROC,
+  picman_install_procedure (GRADMAP_PROC,
                           N_("Recolor the image using colors from the active gradient"),
                           "This plug-in maps the contents of the specified "
                           "drawable with active gradient. It calculates "
@@ -96,13 +96,13 @@ query (void)
                           "1997",
                           N_("_Gradient Map"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (GRADMAP_PROC, "<Image>/Colors/Map");
+  picman_plugin_menu_register (GRADMAP_PROC, "<Image>/Colors/Map");
 
-  gimp_install_procedure (PALETTEMAP_PROC,
+  picman_install_procedure (PALETTEMAP_PROC,
                           N_("Recolor the image using colors from the active palette"),
                           "This plug-in maps the contents of the specified "
                           "drawable with the active palette. It calculates "
@@ -118,24 +118,24 @@ query (void)
                           "2004",
                           N_("_Palette Map"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PALETTEMAP_PROC, "<Image>/Colors/Map");
+  picman_plugin_menu_register (PALETTEMAP_PROC, "<Image>/Colors/Map");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
 
   run_mode = param[0].data.d_int32;
 
@@ -144,50 +144,50 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
       MapMode mode = 0;
 
       if ( !strcmp (name, GRADMAP_PROC))
         {
           mode = GRADIENT_MODE;
-          gimp_progress_init (_("Gradient Map"));
+          picman_progress_init (_("Gradient Map"));
         }
       else if ( !strcmp (name, PALETTEMAP_PROC))
         {
           mode = PALETTE_MODE;
-          gimp_progress_init (_("Palette Map"));
+          picman_progress_init (_("Palette Map"));
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (mode)
             map (drawable, mode);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 typedef struct
@@ -226,13 +226,13 @@ map_func (const guchar *src,
 }
 
 static void
-map (GimpDrawable *drawable,
+map (PicmanDrawable *drawable,
      MapMode       mode)
 {
   MapParam param;
 
-  param.is_rgb = gimp_drawable_is_rgb (drawable->drawable_id);
-  param.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  param.is_rgb = picman_drawable_is_rgb (drawable->drawable_id);
+  param.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   switch (mode)
     {
@@ -246,15 +246,15 @@ map (GimpDrawable *drawable,
       g_error ("plug_in_gradmap: invalid mode");
     }
 
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, map_func, &param);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, map_func, &param);
 }
 
 /*
   Returns 256 samples of active gradient.
-  Each sample has (gimp_drawable_bpp (drawable->drawable_id)) bytes.
+  Each sample has (picman_drawable_bpp (drawable->drawable_id)) bytes.
  */
 static guchar *
-get_samples_gradient (GimpDrawable *drawable)
+get_samples_gradient (PicmanDrawable *drawable)
 {
   gchar   *gradient_name;
   gint     n_f_samples;
@@ -263,17 +263,17 @@ get_samples_gradient (GimpDrawable *drawable)
   gint     bpp, color, has_alpha, alpha;
   gint     i, j;
 
-  gradient_name = gimp_context_get_gradient ();
+  gradient_name = picman_context_get_gradient ();
 
   /* FIXME: "reverse" hardcoded to FALSE. */
-  gimp_gradient_get_uniform_samples (gradient_name, NSAMPLES, FALSE,
+  picman_gradient_get_uniform_samples (gradient_name, NSAMPLES, FALSE,
                                      &n_f_samples, &f_samples);
 
   g_free (gradient_name);
 
-  bpp       = gimp_drawable_bpp (drawable->drawable_id);
-  color     = gimp_drawable_is_rgb (drawable->drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  bpp       = picman_drawable_bpp (drawable->drawable_id);
+  color     = picman_drawable_is_rgb (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   alpha     = (has_alpha ? bpp - 1 : bpp);
 
   byte_samples = g_new (guchar, NSAMPLES * bpp);
@@ -299,13 +299,13 @@ get_samples_gradient (GimpDrawable *drawable)
 
 /*
   Returns 256 samples of the palette.
-  Each sample has (gimp_drawable_bpp (drawable->drawable_id)) bytes.
+  Each sample has (picman_drawable_bpp (drawable->drawable_id)) bytes.
  */
 static guchar *
-get_samples_palette (GimpDrawable *drawable)
+get_samples_palette (PicmanDrawable *drawable)
 {
   gchar   *palette_name;
-  GimpRGB  color_sample;
+  PicmanRGB  color_sample;
   guchar  *byte_samples;
   guchar  *b_samp;
   gint     bpp, color, has_alpha, alpha;
@@ -314,12 +314,12 @@ get_samples_palette (GimpDrawable *drawable)
   gfloat   factor;
   gint     pal_entry;
 
-  palette_name = gimp_context_get_palette ();
-  gimp_palette_get_info (palette_name, &num_colors);
+  palette_name = picman_context_get_palette ();
+  picman_palette_get_info (palette_name, &num_colors);
 
-  bpp       = gimp_drawable_bpp (drawable->drawable_id);
-  color     = gimp_drawable_is_rgb (drawable->drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  bpp       = picman_drawable_bpp (drawable->drawable_id);
+  color     = picman_drawable_is_rgb (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   alpha     = (has_alpha ? bpp - 1 : bpp);
 
   byte_samples = g_new (guchar, NSAMPLES * bpp);
@@ -330,13 +330,13 @@ get_samples_palette (GimpDrawable *drawable)
       b_samp = &byte_samples[i * bpp];
 
       pal_entry = CLAMP( (int)(i * factor), 0, num_colors);
-      gimp_palette_entry_get_color (palette_name, pal_entry, &color_sample);
+      picman_palette_entry_get_color (palette_name, pal_entry, &color_sample);
 
       if (color)
-        gimp_rgb_get_uchar (&color_sample,
+        picman_rgb_get_uchar (&color_sample,
                             b_samp, b_samp + 1, b_samp + 2);
       else
-        *b_samp = gimp_rgb_luminance_uchar (&color_sample);
+        *b_samp = picman_rgb_luminance_uchar (&color_sample);
 
       if (has_alpha)
         b_samp[alpha] = 255;

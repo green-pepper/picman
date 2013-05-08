@@ -1,6 +1,6 @@
-# Files from the Gimp distribution which have already been
+# Files from the Picman distribution which have already been
 # marked to allow runtime translation of messages
 
 [encoding: UTF-8]
 
-data/tags/gimp-tags-default.xml.in
+data/tags/picman-tags-default.xml.in

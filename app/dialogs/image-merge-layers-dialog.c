@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,30 +20,30 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpitemstack.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanitemstack.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "image-merge-layers-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void  image_merge_layers_dialog_free (ImageMergeLayersDialog *dialog);
 
 
 ImageMergeLayersDialog *
-image_merge_layers_dialog_new (GimpImage     *image,
-                               GimpContext   *context,
+image_merge_layers_dialog_new (PicmanImage     *image,
+                               PicmanContext   *context,
                                GtkWidget     *parent,
-                               GimpMergeType  merge_type,
+                               PicmanMergeType  merge_type,
                                gboolean       merge_active_group,
                                gboolean       discard_invisible)
 {
@@ -52,25 +52,25 @@ image_merge_layers_dialog_new (GimpImage     *image,
   GtkWidget              *frame;
   GtkWidget              *button;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   dialog = g_slice_new0 (ImageMergeLayersDialog);
 
   dialog->image              = image;
   dialog->context            = context;
-  dialog->merge_type         = GIMP_EXPAND_AS_NECESSARY;
+  dialog->merge_type         = PICMAN_EXPAND_AS_NECESSARY;
   dialog->merge_active_group = merge_active_group;
   dialog->discard_invisible  = discard_invisible;
 
   dialog->dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (image), context,
-                              _("Merge Layers"), "gimp-image-merge-layers",
-                              GIMP_STOCK_MERGE_DOWN,
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (image), context,
+                              _("Merge Layers"), "picman-image-merge-layers",
+                              PICMAN_STOCK_MERGE_DOWN,
                               _("Layers Merge Options"),
                               parent,
-                              gimp_standard_help_func,
-                              GIMP_HELP_IMAGE_MERGE_LAYERS,
+                              picman_standard_help_func,
+                              PICMAN_HELP_IMAGE_MERGE_LAYERS,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               _("_Merge"),      GTK_RESPONSE_OK,
@@ -93,18 +93,18 @@ image_merge_layers_dialog_new (GimpImage     *image,
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Final, Merged Layer should be:"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Final, Merged Layer should be:"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &dialog->merge_type, dialog->merge_type,
 
                                     _("Expanded as necessary"),
-                                    GIMP_EXPAND_AS_NECESSARY, NULL,
+                                    PICMAN_EXPAND_AS_NECESSARY, NULL,
 
                                     _("Clipped to image"),
-                                    GIMP_CLIP_TO_IMAGE, NULL,
+                                    PICMAN_CLIP_TO_IMAGE, NULL,
 
                                     _("Clipped to bottom layer"),
-                                    GIMP_CLIP_TO_BOTTOM_LAYER, NULL,
+                                    PICMAN_CLIP_TO_BOTTOM_LAYER, NULL,
 
                                     NULL);
 
@@ -118,10 +118,10 @@ image_merge_layers_dialog_new (GimpImage     *image,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dialog->merge_active_group);
 
-  if (gimp_item_stack_is_flat (GIMP_ITEM_STACK (gimp_image_get_layers (image))))
+  if (picman_item_stack_is_flat (PICMAN_ITEM_STACK (picman_image_get_layers (image))))
     gtk_widget_set_sensitive (button, FALSE);
 
   button = gtk_check_button_new_with_mnemonic (_("_Discard invisible layers"));
@@ -131,7 +131,7 @@ image_merge_layers_dialog_new (GimpImage     *image,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dialog->discard_invisible);
 
 

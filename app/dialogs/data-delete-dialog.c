@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,31 +20,31 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdata.h"
-#include "core/gimpdatafactory.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmandata.h"
+#include "core/picmandatafactory.h"
 
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
 #include "data-delete-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct _DataDeleteDialog DataDeleteDialog;
 
 struct _DataDeleteDialog
 {
-  GimpDataFactory *factory;
-  GimpData        *data;
-  GimpContext     *context;
+  PicmanDataFactory *factory;
+  PicmanData        *data;
+  PicmanContext     *context;
   GtkWidget       *parent;
 };
 
@@ -59,17 +59,17 @@ static void  data_delete_dialog_response (GtkWidget        *dialog,
 /*  public functions  */
 
 GtkWidget *
-data_delete_dialog_new (GimpDataFactory *factory,
-                        GimpData        *data,
-                        GimpContext     *context,
+data_delete_dialog_new (PicmanDataFactory *factory,
+                        PicmanData        *data,
+                        PicmanContext     *context,
                         GtkWidget       *parent)
 {
   DataDeleteDialog *delete_data;
   GtkWidget        *dialog;
 
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_DATA (data), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA (data), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
 
   delete_data = g_slice_new0 (DataDeleteDialog);
@@ -79,9 +79,9 @@ data_delete_dialog_new (GimpDataFactory *factory,
   delete_data->context = context;
   delete_data->parent  = parent;
 
-  dialog = gimp_message_dialog_new (_("Delete Object"), GTK_STOCK_DELETE,
+  dialog = picman_message_dialog_new (_("Delete Object"), GTK_STOCK_DELETE,
                                     gtk_widget_get_toplevel (parent), 0,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_DELETE, GTK_RESPONSE_OK,
@@ -101,13 +101,13 @@ data_delete_dialog_new (GimpDataFactory *factory,
                     G_CALLBACK (data_delete_dialog_response),
                     delete_data);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("Delete '%s'?"),
-                                     gimp_object_get_name (data));
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+                                     picman_object_get_name (data));
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("Are you sure you want to remove '%s' "
                                "from the list and delete it on disk?"),
-                             gimp_object_get_name (data));
+                             picman_object_get_name (data));
 
   return dialog;
 }
@@ -124,34 +124,34 @@ data_delete_dialog_response (GtkWidget        *dialog,
 
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpDataFactory *factory    = delete_data->factory;
-      GimpData        *data       = delete_data->data;
-      GimpContainer   *container;
-      GimpObject      *new_active = NULL;
+      PicmanDataFactory *factory    = delete_data->factory;
+      PicmanData        *data       = delete_data->data;
+      PicmanContainer   *container;
+      PicmanObject      *new_active = NULL;
       GError          *error      = NULL;
 
-      container = gimp_data_factory_get_container (factory);
+      container = picman_data_factory_get_container (factory);
 
       if (delete_data->context &&
-          GIMP_OBJECT (data) ==
-          gimp_context_get_by_type (delete_data->context,
-                                    gimp_container_get_children_type (container)))
+          PICMAN_OBJECT (data) ==
+          picman_context_get_by_type (delete_data->context,
+                                    picman_container_get_children_type (container)))
         {
-          new_active = gimp_container_get_neighbor_of (container,
-                                                       GIMP_OBJECT (data));
+          new_active = picman_container_get_neighbor_of (container,
+                                                       PICMAN_OBJECT (data));
         }
 
-      if (! gimp_data_factory_data_delete (factory, data, TRUE, &error))
+      if (! picman_data_factory_data_delete (factory, data, TRUE, &error))
         {
-          gimp_message (gimp_data_factory_get_gimp (factory),
-                        G_OBJECT (delete_data->parent), GIMP_MESSAGE_ERROR,
+          picman_message (picman_data_factory_get_picman (factory),
+                        G_OBJECT (delete_data->parent), PICMAN_MESSAGE_ERROR,
                         "%s", error->message);
           g_clear_error (&error);
         }
 
       if (new_active)
-        gimp_context_set_by_type (delete_data->context,
-                                  gimp_container_get_children_type (container),
+        picman_context_set_by_type (delete_data->context,
+                                  picman_container_get_children_type (container),
                                   new_active);
     }
 

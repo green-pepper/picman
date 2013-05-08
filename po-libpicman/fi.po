@@ -1,0 +1,2213 @@
+# Finnish translation of libpicman
+# Copyright (C) 1999-2008 Free Software Foundation, Inc.
+#
+# Ville Hautamäki <villeh@cs.joensuu.fi>, 2000
+# Tor Lillqvist <tml@iki.fi>, 2000
+# Mikko Paananen <mikko at ipi.fi>, 2004
+# Ilkka Tuohela <hile©iki.fi>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: libpicman\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=picman&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-05-04 13:53+0000\n"
+"PO-Revision-Date: 2013-01-27 18:33+0200\n"
+"Last-Translator: Ville Skyttä <ville.skytta@iki.fi>\n"
+"Language-Team: Finnish <fi@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "onnistui"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "suoritusvirhe"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "kutsuvirhe"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "peruttu"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Siveltimen valinta"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Selaa..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s-liitännäinen ei voi käsitellä tasoja"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Yhdistä näkyvät tasot"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"%s-liitännäinen ei voi käsitellä tason siirtymiä, kokoa tai läpinäkyvyyttä"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s-liitännäinen voi käsitellä tasoja ainoastaan animaation ruutuina"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Tallenna animaationa"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Yhdistä kuva"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s-liitännäinen ei voi käsitellä läpinäkyvyyttä"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s-liitännäinen ei voi käsitellä tasomaskeja"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Sovella tason maskeja"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s-liitännäinen voi käsitellä ainoastaan RGB-kuvia"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Muunna täysvärikuvaksi"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s-liitännäinen voi käsitellä ainoastaan harmaasävykuvia"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Muunna harmaasävyiksi"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s-liitännäinen voi käsitellä ainoastaan indeksoituja kuvia"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Muunna indeksoiduksi käyttäen oletusasetuksia\n"
+"(Tee käsin jos haluat käyttää muita kuin oletuksia)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+"%s-liitännäinen voi käsitellä ainoastaan kaksivärisiä indeksoituja kuvia"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Muunna indeksoiduksi käyttäen oletusasetuksia\n"
+"(Tee käsin jos haluat säätää tulosta)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "%s-liitännäinen voi käsitellä ainoastaan RGB- tai harmaasävykuvia"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "%s-liitännäinen voi käsitellä ainoastaan RGB- tai indeksoituja kuvia"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+"%s-liitännäinen voi käsitellä ainoastaan harmaasävy- tai indeksoituja kuvia"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "%s-liitännäinen vaatii kuvan alfakanavan"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Lisää alfakanava"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Vahvista tallennus"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Vahvista"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Tiedoston vienti"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "_Ohita"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "_Vie"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "Kuvaasi pitää muokata muotoon %s tallennusta varten:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Muokkaus ei vaikuta alkuperäiseen kuvaan."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Olet tallentamassa tason maskia nimellä %s.\n"
+"Tämä ei tallenna näkyviä tasoja."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Olet tallentamassa kanavaa (tallennettu valintana) nimellä %s\n"
+"Tämä ei tallenna näkyviä tasoja."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "Vie kuva nimellä"
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Kirjasimen valinta"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Liukuvärin valinta"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(tyhjä)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Paletin valinta"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Kuvion valinta"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "nimen mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "kuvauksen mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "ohjeen mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "tekijän mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "tekijänoikeuksien mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "päivämäärän mukaan"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "tyypin mukaan"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Ei osumia"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "Hakuehto ei kelpaa tai on vajaa"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Etsitään"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Haku nimen perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Haku kuvauksen perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Haku ohjeen perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Haku tekijän perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Haku tekijänoikeuksien perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Haku päiväyksen perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Haku tyypin perusteella"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d proseduuri"
+msgstr[1] "%d proseduuria"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Haku ei tuottanut tuloksia"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d proseduuri vastaa hakua"
+msgstr[1] "%d proseduuria vastaa hakua"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametrit"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Paluuarvot"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Lisätiedot"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Tekijä:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Päivämäärä:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Tekijänoikeudet:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "prosenttia"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#| msgid "_White (full opacity)"
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Valkoinen (täysin peittävä)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#| msgid "_Black (full transparency)"
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Musta (täysin läpinäkyvä)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#| msgid "Layer's _alpha channel"
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "Tason _alfakanava"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#| msgid "_Transfer layer's alpha channel"
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Siirrä tason alfakanava"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+#| msgid "_Selection"
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Valinta"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+#| msgid "_Grayscale copy of layer"
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "_Harmaasävykopio tasosta"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+#| msgid "C_hannel"
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "_Kanava"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+#| msgid "FG to BG (RGB)"
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "Edustaväristä taustaväriin (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+#| msgid "FG to BG (HSV)"
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "Edustaväristä taustaväriin (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+#| msgid "FG to transparent"
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Edustaväristä läpinäkyvään"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+#| msgid "Custom gradient"
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Oma väriliuku"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+#| msgid "FG color fill"
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Täyttö edustavärillä"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+#| msgid "BG color fill"
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Täyttö taustavärillä"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+#| msgid "Pattern fill"
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Täyttö kuviolla"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+#| msgid "Add to the current selection"
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Lisää valintaan"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+#| msgid "Subtract from the current selection"
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Vähennä valinnasta"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+#| msgid "Replace the current selection"
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Korvaa valittu alue"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+#| msgid "Intersect with the current selection"
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Leikkaa valinnan kanssa"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#| msgid "Red"
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Punainen"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+#| msgid "Green"
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Vihreä"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+#| msgid "Blue"
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Sininen"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+#| msgid "Gray"
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Harmaa"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+#| msgid "Indexed"
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indeksoitu"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+#| msgid "Alpha"
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+#| msgid "Small"
+msgctxt "check-size"
+msgid "Small"
+msgstr "Pieni"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+#| msgid "Medium"
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Keskikokoinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+#| msgid "Large"
+msgctxt "check-size"
+msgid "Large"
+msgstr "Suuri"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+#| msgid "Light checks"
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Vaaleat ruudut"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+#| msgid "Mid-tone checks"
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Keskisävyiset ruudut"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+#| msgid "Dark checks"
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Tummat ruudut"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+#| msgid "White only"
+msgctxt "check-type"
+msgid "White only"
+msgstr "Vain valkoinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+#| msgid "Gray only"
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Vain harmaa"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+#| msgid "Black only"
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Vain musta"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+#| msgid "Image"
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Kuva"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+#| msgid "Pattern"
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Kuvio"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+#| msgid "Lightness"
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Vaaleus"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+#| msgid "Luminosity"
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Kirkkaus"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+#| msgid "Average"
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Keskiarvo"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+#| msgid "Dodge"
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Värivalotus"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+#| msgid "Burn"
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Värivarjostus"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Lineaarinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Bilineaarinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+#| msgid "Radial"
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Säteittäinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+#| msgid "Square"
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Neliömäinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+#| msgid "Conical (sym)"
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Kartiomainen (symmetrinen)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+#| msgid "Conical (asym)"
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Kartiomainen (epäsymmetrinen)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+#| msgid "Shaped (angular)"
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Muotopurske (kulma)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+#| msgid "Shaped (spherical)"
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Muotopurske (pallo)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+#| msgid "Shaped (dimpled)"
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Muotopurske (näppyläinen)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+#| msgid "Spiral (cw)"
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Spiraali (myötäpäivään)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+#| msgid "Spiral (ccw)"
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Spiraali (vastapäivään)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+#| msgid "Intersections (dots)"
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Leikkaukset (pisteet)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+#| msgid "Intersections (crosshairs)"
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Leikkaukset (ristikot)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+#| msgid "Dashed"
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Katkoviiva"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+#| msgid "Double dashed"
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Kaksoiskatkoviiva"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+#| msgid "Solid"
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Yhtenäinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+#, fuzzy
+#| msgid "Stock ID"
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Yleistunniste"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+#, fuzzy
+#| msgid "Inline pixbuf"
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Sisäkkäinen pixbuf"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+#| msgid "Image file"
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Kuvatiedosto"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+#| msgid "RGB color"
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "RGB-väri"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+#| msgid "Grayscale"
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Harmaasävy"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+#| msgid "Indexed color"
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Indeksoitu paletti"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+#| msgid "RGB"
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+#| msgid "RGB-alpha"
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RGB+alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+#| msgid "Grayscale"
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Harmaasävy"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+#| msgid "Grayscale-alpha"
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Harmaasävy+alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+#| msgid "Indexed"
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indeksoitu"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+#| msgid "Indexed-alpha"
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indeksoitu+alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+#| msgid "None"
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Ei mitään"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+#| msgid "Bi-linear"
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Lineaarinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+#| msgid "Cubic"
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Parabolaarinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+#| msgid "Sinc (Lanczos3)"
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+#| msgid "Constant"
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Vakio"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+#| msgid "Incremental"
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Inkrementaalinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+#| msgid "None"
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Ei mitään"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+#| msgid "Sawtooth wave"
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Sahalaita-aalto"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+#| msgid "Triangular wave"
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Kolmioaalto"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+#| msgid "Run interactively"
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Suorita interaktiivisesti"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+#| msgid "Run non-interactively"
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Suorita taustalla"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+#| msgid "Run with last used values"
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Suorita viimeksi käytetyillä arvoilla"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+#| msgid "Pixels"
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Pikseleitä"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+#| msgid "Points"
+msgctxt "size-type"
+msgid "Points"
+msgstr "Pisteitä"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+#| msgid "Shadows"
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Varjot"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+#| msgid "Midtones"
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Keskisävyt"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+#| msgid "Highlights"
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Kirkkaat kohdat"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+#| msgid "Normal (Forward)"
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Tavallinen (eteenpäin)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+#| msgid "Corrective (Backward)"
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "Korjaava (taaksepäin)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+#| msgid "Adjust"
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Säädä"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+#| msgid "Clip"
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Rajaa"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+#| msgid "Crop to result"
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Rajaa tulokseen"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+#| msgid "Crop with aspect"
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Rajaa kuvasuhteessa"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+#| msgid "Internal PICMAN procedure"
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Sisäinen PICMAN-proseduuri"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+#| msgid "PICMAN Plug-In"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "PICMAN-liitännäinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+#| msgid "PICMAN Extension"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "PICMAN-laajennos"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+#| msgid "Temporary Procedure"
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Väliaikainen proseduuri"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+#| msgid "From left to right"
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "Vasemmalta oikealle"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+#| msgid "From right to left"
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "Oikealta vasemmalle"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+#| msgid "None"
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Ei mitään"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+#| msgid "Highlights"
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Vähäinen"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+#| msgid "Medium"
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Keskitaso"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+#| msgid "Filled"
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Täysi"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+#| msgid "Left justified"
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Tasattu vasemmalle"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+#| msgid "Right justified"
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Tasattu oikealle"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+#| msgid "Centered"
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Keskitetty"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+#| msgid "Filled"
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Tasaa molemmat"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(kelpaamaton UTF-8 -merkkijono)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Värinhallinnan käyttämä tila."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Ensisijaisen näytön väriprofiili."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Jos käytössä, PICMAN yrittää käyttää näytön ikkunointijärjestelmän "
+"väriprofiilia. Määriteltyä näyttöprofiilia käytetään tällöin vain "
+"varavaihtoehtona."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "Oletuksena käytettävä RGB-työtilan väriprofiili."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "RGB- ja CMYK-värin väliseen konversioon käytetty CMYK-väriprofiili."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "Tulostetun version simulointiin käytetty väriprofiili (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Määrittää, kuinka värit valitaan näytölläsi."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Määrittää, kuinka värit muunnetaan työtilasta tulostuksen "
+"simulointilaitteelle."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Kun käytössä, tulostussimulointi merkkaa värit, joita ei voi esittää "
+"kohdeväriavaruudessa."
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr "Väri, jota käytetään kirjon ulkopuolisten värien merkitsemiseen."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+#| msgid "No color management"
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Ei värihallintaa"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+#| msgid "Color managed display"
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Värihallittu näyttö"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+#| msgid "Print simulation"
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Tulostuksen simulointi"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+#, fuzzy
+#| msgid "Perceptual"
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Havaittu"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+#| msgid "Relative colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Suhteellinen värimetriikka"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+#| msgid "Saturation"
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Kylläisyys"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+#| msgid "Absolute colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Absoluuttinen värimetriikka"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "symbolin %s arvo ei ole kelvollinen UTF-8 -merkkijono"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "sallitut arvot: \"yes\" tai \"no\" asetukselle %s, tuli '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "väärä arvo \"%s\" symbolille %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "kelvoton arvo \"%ld\" symbolille %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "jäsennettäessä symbolia \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "jäsennysvirhe"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Ei voi laajentaa ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Virhe kirjoitettaessa tiedostoon \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Tilapäistiedostoa \"%s\" ei voitu luoda: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Tiedoston \"%s\" avaaminen kirjoitettavaksi epäonnistui: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Virhe kirjoitettaessa tilapäistiedostoon \"%s\": %s\n"
+"Alkuperäistä tiedostoa ei ole muutettu."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Virhe kirjoitettaessa tilapäistiedostoon \"%s\": %s\n"
+"Tiedostoa ei ole luotu."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Tiedostoa \"%s\" ei voitu luoda: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "epäkelpo UTF-8 -merkkijono"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+#| msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr "sallitut arvot: \"yes\" tai \"no\" asetukselle, tuli '%s'"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Virhe jäsennettäessä tiedostoa '%s' rivillä %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Modulin '%s' latausvirhe: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Modulivirhe"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Ladattu"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Lataus epäonnistui"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Ei ladattu"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Kelvollista kotihakemiston ei voi määrittää.\n"
+"Pienoiskuvat tallennetaan väliaikaistiedostojen kansioon (%s) sen sijasta."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Pienoiskuvakansiota '%s' ei voitu luoda."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Pienoiskuva ei sisällä Thumb::URI-merkintää"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Pienoiskuvaa %s ei voitu luoda: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "_Etsi:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "_Edustaväri"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "_Taustaväri"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "_Musta"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "_Valkoinen"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "Valitse väriprofiili levyltä..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Ei mitään"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Asteikot"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Nykyinen:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Vanha:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"HTML- ja CSS-tiedostoissa käytetty heksadesimaalimerkintä värimäärittely. "
+"Kohta hyväksyy myös CSS-värinimet."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "HTML-_merkintä:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Selaa kansioita avaamalla tiedoston valintaikkuna"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Selaa tiedostoja avaamalla tiedoston valintaikkuna"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Valitse kansio"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Valitse tiedosto"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "Paina F1 sadaksesi lisäohjeita"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "kilotavua"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "megatavua"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "gigatavua"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Mitään ei ole valittu"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "Valitse k_aikki"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "Valitse a_lue:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Avaa _sivut muodossa"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Sivu 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Sivu %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Yksi sivu valittu"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d sivu valittu"
+msgstr[1] "%d sivua valittu"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Kirjoitettavissa"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Kansio"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Napsauta värivalitsinta, sen jälkeen napsauta missä tahansa näytöllä "
+"valitaksesi värin."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Esikatselu"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Tarkista koko"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Tarkista tyyli"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Tämä tekstin syöttökenttä on rajattu %d merkkiin."
+msgstr[1] "Tämä tekstin syöttökenttä on rajattu %d merkkiin."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Ankkuri"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "Keskitä"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "Kahdenna"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "Muokkaa"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Linkitetty"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Liitä uutena"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Liitä johonkin"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Nollaa"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Näkyvä"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Piirrä"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Kirjainvälistys"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Riviväli"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "Muuta _kokoa"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_Skaalaa"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "_Rajaa"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "_Muunna"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_Kierrä"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Väännä"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Lisää..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Mittayksikön valinta"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Mittayksikkö"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Kerroin"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Käytetään tätä arvoa satunnaislukujen siemenenä. Tämä mahdollistaa "
+"näennäisesti satunnaisen toiminnon toiston samanlaisena."
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "_Siemenluku"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "Alusta satunnaisluvut luodulla satunnaisluvulla."
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "S_atunnaista"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+#| msgid "Visible"
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Pois käytöstä"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+#| msgid "Green"
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Näyttö"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Ikkuna"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+#| msgid "Square"
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Neliö"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+#| msgid "Portrait"
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Pystysuuntainen"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+#| msgid "Landscape"
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Vaakasuuntainen"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+#| msgid "_H"
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Sävy"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+#| msgid "_S"
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Kylläisyys"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+#| msgid "_V"
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Arvo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+#| msgid "_R"
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Punainen"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+#| msgid "_G"
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Vihreä"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+#| msgid "_B"
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Sininen"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+#| msgid "_A"
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+#| msgid "Layers"
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Tasot"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+#| msgid "Images"
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Kuvat"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+#| msgid "Zoom in"
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Lähennä"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+#| msgid "Zoom out"
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Loitonna"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK-värivalitsin (käyttäen väriprofiilia)"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Syaani"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Magenta"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Keltainen"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Musta"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profiili: (ei mitään)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profiili: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "CMYK värivalitsin"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Mustan _poisto:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Mustan poisto prosentteina värillisistä musteista."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Vesiväri -värivalitsin"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Vesiväri"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Paine"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "HSV-väripyörä"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Pyörä"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX DirectInput syöteohjain"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Laite:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "Laite, josta DirectInput-tapahtumat luetaan."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "Nappi %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "Napin %d painallus"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "Napin %d vapautus"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "X-siirto vasemmalle"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "X-siirto oikealle"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "Y-siirto poispäin"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "Y-siirto lähemmäs"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "Z-siirto ylös"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "Z-siirto alas"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "X-akselin kierto poispäin"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "X-akselin kierto lähemmäs"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "Y-akselin kallistus oikealle"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "Y-akselin kallistus vasemmalle"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "Z-akselin kääntö vasemmalle"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "Z-akselin kääntö oikealle"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Liu'un %d kasvatus"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Liu'un %d vähennys"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d X-näkymä"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d Y-näkymä"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d paluu"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "DirectInput-tapahtumat"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Laitetta ei ole määritelty"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Laite ei ole käytettävissä"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Nappi 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Nappi 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Nappi 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Nappi 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Nappi 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Nappi 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Nappi 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Nappi 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Nappi 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Nappi 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Hiiren nappi"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Vasen nappi"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Oikea nappi"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Keskinappi"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Sivunappi"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Lisänappi"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Eteenpäin-nappi"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Takaisin-nappi"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Tehtävänappi"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Rullapainike"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Vaihde alas -nappi"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Vaihde ylös -nappi"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "Y-siirto eteenpäin"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "Y-siirto takaisinpäin"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "X-akselin kallistus eteenpäin"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "X-akselin kallistus taaksepäin"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "Vaakarullan kääntö taaksepäin"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Vaakarullan kääntö eteenpäin"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Valitsin vasemmalle"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Valitsin oikealle"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Ohjauspyörä vasemmalle"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Ohjauspyörä oikealle"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Linuxin syötetapahtumien ohjain"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Laite, josta Linuxin syötetapahtumia luetaan."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Linuxin syöte"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Linuxin syötetapahtumat"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Luetaan laitteelta %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Laite ei ole käytettävissä: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Tiedosto päättyi"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "MIDI-tapahtumaohjain"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Laite, josta MIDI-tapahtumia luetaan."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Syötä 'alsa', jos haluat käyttää ALSAn sekvensseriä."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanava:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"MIDI-kanava, jolta tapahtumia luetaan. Aseta arvoon -1, jos haluat lukea "
+"kaikilta MIDI-kanavilta."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Kosketin %02x päälle"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Kosketin %02x pois päältä"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Ohjain %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "MIDI-tapahtumat"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "MIDI-tapahtumaohjain"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopia (punasokeus)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopia (vihersokeus)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopia (sinisokeus)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Värisokeus simulaatio -suodatin (Brettel-Vienot-Mollon algoritmi)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Värisokeus"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Värisokeuden _tyyppi:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Gammasuodatin"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Suurikontrastinen suodatin"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrasti"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "Kontrasti_kierrokset:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Värikorjaussuodatin käyttäen ICC-profiileja"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Värinhallinta"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Ei mitään"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Tämä suodatin ottaa asetuksensa Värienhallinta-osiosta asetusikkunassa."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Toimintatila:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Kuvaprofiili:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Näytön profiili:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Tulostus-simulaation profiili:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Värikorjaussuodatin ICC profiileille"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Värikorjaus"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Valitse ICC-väriprofiili"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Kaikki tiedostot (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC-väriprofiilit (*.icc,*.icm)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profiili:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "_Aiottu:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "_Mustan pisteen kompensaatio"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "Suora"
+
+#~ msgid "interpolation|None"
+#~ msgstr "Ei mitään"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "Suora"
+
+#~ msgid "intent|Saturation"
+#~ msgstr "Kylläisyys"

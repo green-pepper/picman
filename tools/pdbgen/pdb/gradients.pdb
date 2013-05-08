@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub gradients_refresh {
     $blurb = 'Refresh current gradients. This function always succeeds.';
@@ -29,7 +29,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_data_factory_data_refresh (gimp->gradient_factory, context);
+  picman_data_factory_data_refresh (picman->gradient_factory, context);
 }
 CODE
     );
@@ -40,7 +40,7 @@ sub gradients_get_list {
 
     $help = <<'HELP';
 This procedure returns a list of the gradients that are currently loaded.
-You can later use the gimp_context_set_gradient() function to
+You can later use the picman_context_set_gradient() function to
 set the active gradient.
 HELP
 
@@ -59,10 +59,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer-filter.h") ],
+        headers => [ qw("core/picmancontainer-filter.h") ],
 	code => <<'CODE'
 {
-  gradient_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->gradient_factory),
+  gradient_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->gradient_factory),
                                                           filter, &num_gradients);
 }
 CODE
@@ -70,7 +70,7 @@ CODE
 }
 
 sub gradients_sample_uniform {
-    &std_pdb_deprecated ('gimp-gradient-get-uniform-samples');
+    &std_pdb_deprecated ('picman-gradient-get-uniform-samples');
 
     @inargs = (
 	{ name => 'num_samples', type => '2 <= int32',
@@ -90,10 +90,10 @@ sub gradients_sample_uniform {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg = NULL;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg = NULL;
   gdouble              pos, delta;
-  GimpRGB              color;
+  PicmanRGB              color;
   gdouble             *pv;
 
   pos   = 0.0;
@@ -103,11 +103,11 @@ sub gradients_sample_uniform {
 
   pv = color_samples = g_new (gdouble, array_length);
 
-  gradient = gimp_context_get_gradient (context);
+  gradient = picman_context_get_gradient (context);
 
   while (num_samples--)
     {
-      seg = gimp_gradient_get_color_at (gradient, context, seg,
+      seg = picman_gradient_get_color_at (gradient, context, seg,
                                         pos, reverse, &color);
 
       *pv++ = color.r;
@@ -123,7 +123,7 @@ CODE
 }
 
 sub gradients_sample_custom {
-    &std_pdb_deprecated ('gimp-gradient-get-custom-samples');
+    &std_pdb_deprecated ('picman-gradient-get-custom-samples');
 
     @inargs = (
 	{ name  => 'positions', type  => 'floatarray',
@@ -145,20 +145,20 @@ sub gradients_sample_custom {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg = NULL;
-  GimpRGB              color;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg = NULL;
+  PicmanRGB              color;
   gdouble             *pv;
 
   array_length = num_samples * 4;
 
   pv = color_samples = g_new (gdouble, array_length);
 
-  gradient = gimp_context_get_gradient (context);
+  gradient = picman_context_get_gradient (context);
 
   while (num_samples--)
     {
-      seg = gimp_gradient_get_color_at (gradient, context, seg,
+      seg = picman_gradient_get_color_at (gradient, context, seg,
                                         *positions, reverse, &color);
 
       *pv++ = color.r;
@@ -174,7 +174,7 @@ CODE
 }
 
 sub gradients_get_gradient_data {
-    &std_pdb_deprecated ('gimp-gradient-get-uniform-samples');
+    &std_pdb_deprecated ('picman-gradient-get-uniform-samples');
 
     @inargs = (
 	{ name => 'name', type => 'string', null_ok => 1,
@@ -198,27 +198,27 @@ sub gradients_get_gradient_data {
     %invoke = (
 	code => <<"CODE"
 {
-  GimpGradient *gradient;
+  PicmanGradient *gradient;
 
   if (sample_size < 1 || sample_size > 10000)
-    sample_size = GIMP_GRADIENT_DEFAULT_SAMPLE_SIZE;
+    sample_size = PICMAN_GRADIENT_DEFAULT_SAMPLE_SIZE;
 
   if (name && strlen (name))
-    gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+    gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
   else
-    gradient = gimp_context_get_gradient (context);
+    gradient = picman_context_get_gradient (context);
 
   if (gradient)
     {
-      GimpGradientSegment *seg = NULL;
+      PicmanGradientSegment *seg = NULL;
       gdouble             *pv;
       gdouble              pos, delta;
-      GimpRGB              color;
+      PicmanRGB              color;
 
       pos   = 0.0;
       delta = 1.0 / (sample_size - 1);
 
-      actual_name = g_strdup (gimp_object_get_name (gradient));
+      actual_name = g_strdup (picman_object_get_name (gradient));
       grad_data   = g_new (gdouble, sample_size * 4);
       width       = sample_size * 4;
 
@@ -226,7 +226,7 @@ sub gradients_get_gradient_data {
 
       while (sample_size--)
 	{
-	  seg = gimp_gradient_get_color_at (gradient, context, seg,
+	  seg = picman_gradient_get_color_at (gradient, context, seg,
                                             pos, reverse, &color);
 
 	  *pv++ = color.r;
@@ -246,11 +246,11 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpcontext.h"
-              "core/gimpdatafactory.h"
-              "core/gimpgradient.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmancontext.h"
+              "core/picmandatafactory.h"
+              "core/picmangradient.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(gradients_refresh
             gradients_get_list
@@ -261,7 +261,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Gradients';
-$doc_title = 'gimpgradients';
+$doc_title = 'picmangradients';
 $doc_short_desc = 'Operations related to gradients.';
 $doc_long_desc = 'Operations related to gradients.';
 

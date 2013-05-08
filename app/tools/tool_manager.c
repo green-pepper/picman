@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,36 +20,36 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimplist.h"
-#include "core/gimpimage.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptoolpreset.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanlist.h"
+#include "core/picmanimage.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantoolpreset.h"
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimptool.h"
-#include "gimptoolcontrol.h"
+#include "picmantool.h"
+#include "picmantoolcontrol.h"
 #include "tool_manager.h"
 
 
-typedef struct _GimpToolManager GimpToolManager;
+typedef struct _PicmanToolManager PicmanToolManager;
 
-struct _GimpToolManager
+struct _PicmanToolManager
 {
-  GimpTool         *active_tool;
-  GimpPaintOptions *shared_paint_options;
+  PicmanTool         *active_tool;
+  PicmanPaintOptions *shared_paint_options;
   GSList           *tool_stack;
 
   GQuark            image_clean_handler_id;
@@ -59,60 +59,60 @@ struct _GimpToolManager
 
 /*  local function prototypes  */
 
-static GimpToolManager * tool_manager_get     (Gimp            *gimp);
-static void              tool_manager_set     (Gimp            *gimp,
-                                               GimpToolManager *tool_manager);
-static void   tool_manager_tool_changed       (GimpContext     *user_context,
-                                               GimpToolInfo    *tool_info,
-                                               GimpToolManager *tool_manager);
-static void   tool_manager_preset_changed     (GimpContext     *user_context,
-                                               GimpToolPreset  *preset,
-                                               GimpToolManager *tool_manager);
-static void   tool_manager_image_clean_dirty  (GimpImage       *image,
-                                               GimpDirtyMask    dirty_mask,
-                                               GimpToolManager *tool_manager);
+static PicmanToolManager * tool_manager_get     (Picman            *picman);
+static void              tool_manager_set     (Picman            *picman,
+                                               PicmanToolManager *tool_manager);
+static void   tool_manager_tool_changed       (PicmanContext     *user_context,
+                                               PicmanToolInfo    *tool_info,
+                                               PicmanToolManager *tool_manager);
+static void   tool_manager_preset_changed     (PicmanContext     *user_context,
+                                               PicmanToolPreset  *preset,
+                                               PicmanToolManager *tool_manager);
+static void   tool_manager_image_clean_dirty  (PicmanImage       *image,
+                                               PicmanDirtyMask    dirty_mask,
+                                               PicmanToolManager *tool_manager);
 
-static void   tool_manager_connect_options    (GimpToolManager *tool_manager,
-                                               GimpContext     *user_context,
-                                               GimpToolInfo    *tool_info);
-static void   tool_manager_disconnect_options (GimpToolManager *tool_manager,
-                                               GimpContext     *user_context,
-                                               GimpToolInfo    *tool_info);
+static void   tool_manager_connect_options    (PicmanToolManager *tool_manager,
+                                               PicmanContext     *user_context,
+                                               PicmanToolInfo    *tool_info);
+static void   tool_manager_disconnect_options (PicmanToolManager *tool_manager,
+                                               PicmanContext     *user_context,
+                                               PicmanToolInfo    *tool_info);
 
 
 /*  public functions  */
 
 void
-tool_manager_init (Gimp *gimp)
+tool_manager_init (Picman *picman)
 {
-  GimpToolManager *tool_manager;
-  GimpContext     *user_context;
+  PicmanToolManager *tool_manager;
+  PicmanContext     *user_context;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = g_slice_new0 (GimpToolManager);
+  tool_manager = g_slice_new0 (PicmanToolManager);
 
   tool_manager->active_tool            = NULL;
   tool_manager->tool_stack             = NULL;
   tool_manager->image_clean_handler_id = 0;
   tool_manager->image_dirty_handler_id = 0;
 
-  tool_manager_set (gimp, tool_manager);
+  tool_manager_set (picman, tool_manager);
 
   tool_manager->image_clean_handler_id =
-    gimp_container_add_handler (gimp->images, "clean",
+    picman_container_add_handler (picman->images, "clean",
                                 G_CALLBACK (tool_manager_image_clean_dirty),
                                 tool_manager);
 
   tool_manager->image_dirty_handler_id =
-    gimp_container_add_handler (gimp->images, "dirty",
+    picman_container_add_handler (picman->images, "dirty",
                                 G_CALLBACK (tool_manager_image_clean_dirty),
                                 tool_manager);
 
-  user_context = gimp_get_user_context (gimp);
+  user_context = picman_get_user_context (picman);
 
-  tool_manager->shared_paint_options = g_object_new (GIMP_TYPE_PAINT_OPTIONS,
-                                                     "gimp", gimp,
+  tool_manager->shared_paint_options = g_object_new (PICMAN_TYPE_PAINT_OPTIONS,
+                                                     "picman", picman,
                                                      "name", "tmp",
                                                      NULL);
 
@@ -125,17 +125,17 @@ tool_manager_init (Gimp *gimp)
 }
 
 void
-tool_manager_exit (Gimp *gimp)
+tool_manager_exit (Picman *picman)
 {
-  GimpToolManager *tool_manager;
-  GimpContext     *user_context;
+  PicmanToolManager *tool_manager;
+  PicmanContext     *user_context;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
-  tool_manager_set (gimp, NULL);
+  tool_manager = tool_manager_get (picman);
+  tool_manager_set (picman, NULL);
 
-  user_context = gimp_get_user_context (gimp);
+  user_context = picman_get_user_context (picman);
 
   g_signal_handlers_disconnect_by_func (user_context,
                                         tool_manager_tool_changed,
@@ -144,9 +144,9 @@ tool_manager_exit (Gimp *gimp)
                                         tool_manager_preset_changed,
                                         tool_manager);
 
-  gimp_container_remove_handler (gimp->images,
+  picman_container_remove_handler (picman->images,
                                  tool_manager->image_clean_handler_id);
-  gimp_container_remove_handler (gimp->images,
+  picman_container_remove_handler (picman->images,
                                  tool_manager->image_dirty_handler_id);
 
   if (tool_manager->active_tool)
@@ -155,31 +155,31 @@ tool_manager_exit (Gimp *gimp)
   if (tool_manager->shared_paint_options)
     g_object_unref (tool_manager->shared_paint_options);
 
-  g_slice_free (GimpToolManager, tool_manager);
+  g_slice_free (PicmanToolManager, tool_manager);
 }
 
-GimpTool *
-tool_manager_get_active (Gimp *gimp)
+PicmanTool *
+tool_manager_get_active (Picman *picman)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   return tool_manager->active_tool;
 }
 
 void
-tool_manager_select_tool (Gimp     *gimp,
-                          GimpTool *tool)
+tool_manager_select_tool (Picman     *picman,
+                          PicmanTool *tool)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_TOOL (tool));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_TOOL (tool));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   /*  reset the previously selected tool, but only if it is not only
    *  temporarily pushed to the tool stack
@@ -188,14 +188,14 @@ tool_manager_select_tool (Gimp     *gimp,
       ! (tool_manager->tool_stack &&
          tool_manager->active_tool == tool_manager->tool_stack->data))
     {
-      GimpTool    *active_tool = tool_manager->active_tool;
-      GimpDisplay *display;
+      PicmanTool    *active_tool = tool_manager->active_tool;
+      PicmanDisplay *display;
 
       /*  NULL image returns any display (if there is any)  */
-      display = gimp_tool_has_image (active_tool, NULL);
+      display = picman_tool_has_image (active_tool, NULL);
 
-      tool_manager_control_active (gimp, GIMP_TOOL_ACTION_HALT, display);
-      tool_manager_focus_display_active (gimp, NULL);
+      tool_manager_control_active (picman, PICMAN_TOOL_ACTION_HALT, display);
+      tool_manager_focus_display_active (picman, NULL);
 
       g_object_unref (tool_manager->active_tool);
     }
@@ -204,16 +204,16 @@ tool_manager_select_tool (Gimp     *gimp,
 }
 
 void
-tool_manager_push_tool (Gimp     *gimp,
-                        GimpTool *tool)
+tool_manager_push_tool (Picman     *picman,
+                        PicmanTool *tool)
 {
-  GimpToolManager *tool_manager;
-  GimpDisplay     *focus_display = NULL;
+  PicmanToolManager *tool_manager;
+  PicmanDisplay     *focus_display = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_TOOL (tool));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_TOOL (tool));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
@@ -225,54 +225,54 @@ tool_manager_push_tool (Gimp     *gimp,
       g_object_ref (tool_manager->tool_stack->data);
     }
 
-  tool_manager_select_tool (gimp, tool);
+  tool_manager_select_tool (picman, tool);
 
   if (focus_display)
-    tool_manager_focus_display_active (gimp, focus_display);
+    tool_manager_focus_display_active (picman, focus_display);
 }
 
 void
-tool_manager_pop_tool (Gimp *gimp)
+tool_manager_pop_tool (Picman *picman)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->tool_stack)
     {
-      GimpTool *tool = tool_manager->tool_stack->data;
+      PicmanTool *tool = tool_manager->tool_stack->data;
 
       tool_manager->tool_stack = g_slist_remove (tool_manager->tool_stack,
                                                  tool);
 
-      tool_manager_select_tool (gimp, tool);
+      tool_manager_select_tool (picman, tool);
 
       g_object_unref (tool);
     }
 }
 
 gboolean
-tool_manager_initialize_active (Gimp        *gimp,
-                                GimpDisplay *display)
+tool_manager_initialize_active (Picman        *picman,
+                                PicmanDisplay *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), FALSE);
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      GimpTool *tool = tool_manager->active_tool;
+      PicmanTool *tool = tool_manager->active_tool;
 
-      if (gimp_tool_initialize (tool, display))
+      if (picman_tool_initialize (tool, display))
         {
-          GimpImage *image = gimp_display_get_image (display);
+          PicmanImage *image = picman_display_get_image (display);
 
-          tool->drawable = gimp_image_get_active_drawable (image);
+          tool->drawable = picman_image_get_active_drawable (image);
 
           return TRUE;
         }
@@ -282,110 +282,110 @@ tool_manager_initialize_active (Gimp        *gimp,
 }
 
 void
-tool_manager_control_active (Gimp           *gimp,
-                             GimpToolAction  action,
-                             GimpDisplay    *display)
+tool_manager_control_active (Picman           *picman,
+                             PicmanToolAction  action,
+                             PicmanDisplay    *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      GimpTool *tool = tool_manager->active_tool;
+      PicmanTool *tool = tool_manager->active_tool;
 
-      if (display && gimp_tool_has_display (tool, display))
+      if (display && picman_tool_has_display (tool, display))
         {
-          gimp_tool_control (tool, action, display);
+          picman_tool_control (tool, action, display);
         }
-      else if (action == GIMP_TOOL_ACTION_HALT)
+      else if (action == PICMAN_TOOL_ACTION_HALT)
         {
-          if (gimp_tool_control_is_active (tool->control))
-            gimp_tool_control_halt (tool->control);
+          if (picman_tool_control_is_active (tool->control))
+            picman_tool_control_halt (tool->control);
         }
     }
 }
 
 void
-tool_manager_button_press_active (Gimp                *gimp,
-                                  const GimpCoords    *coords,
+tool_manager_button_press_active (Picman                *picman,
+                                  const PicmanCoords    *coords,
                                   guint32              time,
                                   GdkModifierType      state,
-                                  GimpButtonPressType  press_type,
-                                  GimpDisplay         *display)
+                                  PicmanButtonPressType  press_type,
+                                  PicmanDisplay         *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_button_press (tool_manager->active_tool,
+      picman_tool_button_press (tool_manager->active_tool,
                               coords, time, state, press_type,
                               display);
     }
 }
 
 void
-tool_manager_button_release_active (Gimp             *gimp,
-                                    const GimpCoords *coords,
+tool_manager_button_release_active (Picman             *picman,
+                                    const PicmanCoords *coords,
                                     guint32           time,
                                     GdkModifierType   state,
-                                    GimpDisplay      *display)
+                                    PicmanDisplay      *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_button_release (tool_manager->active_tool,
+      picman_tool_button_release (tool_manager->active_tool,
                                 coords, time, state,
                                 display);
     }
 }
 
 void
-tool_manager_motion_active (Gimp             *gimp,
-                            const GimpCoords *coords,
+tool_manager_motion_active (Picman             *picman,
+                            const PicmanCoords *coords,
                             guint32           time,
                             GdkModifierType   state,
-                            GimpDisplay      *display)
+                            PicmanDisplay      *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_motion (tool_manager->active_tool,
+      picman_tool_motion (tool_manager->active_tool,
                         coords, time, state,
                         display);
     }
 }
 
 gboolean
-tool_manager_key_press_active (Gimp        *gimp,
+tool_manager_key_press_active (Picman        *picman,
                                GdkEventKey *kevent,
-                               GimpDisplay *display)
+                               PicmanDisplay *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      return gimp_tool_key_press (tool_manager->active_tool,
+      return picman_tool_key_press (tool_manager->active_tool,
                                   kevent,
                                   display);
     }
@@ -394,19 +394,19 @@ tool_manager_key_press_active (Gimp        *gimp,
 }
 
 gboolean
-tool_manager_key_release_active (Gimp        *gimp,
+tool_manager_key_release_active (Picman        *picman,
                                  GdkEventKey *kevent,
-                                 GimpDisplay *display)
+                                 PicmanDisplay *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      return gimp_tool_key_release (tool_manager->active_tool,
+      return picman_tool_key_release (tool_manager->active_tool,
                                     kevent,
                                     display);
     }
@@ -415,117 +415,117 @@ tool_manager_key_release_active (Gimp        *gimp,
 }
 
 void
-tool_manager_focus_display_active (Gimp        *gimp,
-                                   GimpDisplay *display)
+tool_manager_focus_display_active (Picman        *picman,
+                                   PicmanDisplay *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_set_focus_display (tool_manager->active_tool,
+      picman_tool_set_focus_display (tool_manager->active_tool,
                                    display);
     }
 }
 
 void
-tool_manager_modifier_state_active (Gimp            *gimp,
+tool_manager_modifier_state_active (Picman            *picman,
                                     GdkModifierType  state,
-                                    GimpDisplay     *display)
+                                    PicmanDisplay     *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_set_modifier_state (tool_manager->active_tool,
+      picman_tool_set_modifier_state (tool_manager->active_tool,
                                     state,
                                     display);
     }
 }
 
 void
-tool_manager_active_modifier_state_active (Gimp            *gimp,
+tool_manager_active_modifier_state_active (Picman            *picman,
                                            GdkModifierType  state,
-                                           GimpDisplay     *display)
+                                           PicmanDisplay     *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_set_active_modifier_state (tool_manager->active_tool,
+      picman_tool_set_active_modifier_state (tool_manager->active_tool,
                                            state,
                                            display);
     }
 }
 
 void
-tool_manager_oper_update_active (Gimp             *gimp,
-                                 const GimpCoords *coords,
+tool_manager_oper_update_active (Picman             *picman,
+                                 const PicmanCoords *coords,
                                  GdkModifierType   state,
                                  gboolean          proximity,
-                                 GimpDisplay      *display)
+                                 PicmanDisplay      *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_oper_update (tool_manager->active_tool,
+      picman_tool_oper_update (tool_manager->active_tool,
                              coords, state, proximity,
                              display);
     }
 }
 
 void
-tool_manager_cursor_update_active (Gimp             *gimp,
-                                   const GimpCoords *coords,
+tool_manager_cursor_update_active (Picman             *picman,
+                                   const PicmanCoords *coords,
                                    GdkModifierType   state,
-                                   GimpDisplay      *display)
+                                   PicmanDisplay      *display)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      gimp_tool_cursor_update (tool_manager->active_tool,
+      picman_tool_cursor_update (tool_manager->active_tool,
                                coords, state,
                                display);
     }
 }
 
-GimpUIManager *
-tool_manager_get_popup_active (Gimp             *gimp,
-                               const GimpCoords *coords,
+PicmanUIManager *
+tool_manager_get_popup_active (Picman             *picman,
+                               const PicmanCoords *coords,
                                GdkModifierType   state,
-                               GimpDisplay      *display,
+                               PicmanDisplay      *display,
                                const gchar     **ui_path)
 {
-  GimpToolManager *tool_manager;
+  PicmanToolManager *tool_manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  tool_manager = tool_manager_get (gimp);
+  tool_manager = tool_manager_get (picman);
 
   if (tool_manager->active_tool)
     {
-      return gimp_tool_get_popup (tool_manager->active_tool,
+      return picman_tool_get_popup (tool_manager->active_tool,
                                   coords, state,
                                   display,
                                   ui_path);
@@ -539,37 +539,37 @@ tool_manager_get_popup_active (Gimp             *gimp,
 
 static GQuark tool_manager_quark = 0;
 
-static GimpToolManager *
-tool_manager_get (Gimp *gimp)
+static PicmanToolManager *
+tool_manager_get (Picman *picman)
 {
   if (! tool_manager_quark)
-    tool_manager_quark = g_quark_from_static_string ("gimp-tool-manager");
+    tool_manager_quark = g_quark_from_static_string ("picman-tool-manager");
 
-  return g_object_get_qdata (G_OBJECT (gimp), tool_manager_quark);
+  return g_object_get_qdata (G_OBJECT (picman), tool_manager_quark);
 }
 
 static void
-tool_manager_set (Gimp            *gimp,
-                  GimpToolManager *tool_manager)
+tool_manager_set (Picman            *picman,
+                  PicmanToolManager *tool_manager)
 {
   if (! tool_manager_quark)
-    tool_manager_quark = g_quark_from_static_string ("gimp-tool-manager");
+    tool_manager_quark = g_quark_from_static_string ("picman-tool-manager");
 
-  g_object_set_qdata (G_OBJECT (gimp), tool_manager_quark, tool_manager);
+  g_object_set_qdata (G_OBJECT (picman), tool_manager_quark, tool_manager);
 }
 
 static void
-tool_manager_tool_changed (GimpContext     *user_context,
-                           GimpToolInfo    *tool_info,
-                           GimpToolManager *tool_manager)
+tool_manager_tool_changed (PicmanContext     *user_context,
+                           PicmanToolInfo    *tool_info,
+                           PicmanToolManager *tool_manager)
 {
-  GimpTool *new_tool = NULL;
+  PicmanTool *new_tool = NULL;
 
   if (! tool_info)
     return;
 
-  /* FIXME: gimp_busy HACK */
-  if (user_context->gimp->busy)
+  /* FIXME: picman_busy HACK */
+  if (user_context->picman->busy)
     {
       /*  there may be contexts waiting for the user_context's "tool-changed"
        *  signal, so stop emitting it.
@@ -584,7 +584,7 @@ tool_manager_tool_changed (GimpContext     *user_context,
                                            tool_manager);
 
           /*  explicitly set the current tool  */
-          gimp_context_set_tool (user_context,
+          picman_context_set_tool (user_context,
                                  tool_manager->active_tool->tool_info);
 
           g_signal_handlers_unblock_by_func (user_context,
@@ -595,7 +595,7 @@ tool_manager_tool_changed (GimpContext     *user_context,
       return;
     }
 
-  if (g_type_is_a (tool_info->tool_type, GIMP_TYPE_TOOL))
+  if (g_type_is_a (tool_info->tool_type, PICMAN_TYPE_TOOL))
     {
       new_tool = g_object_new (tool_info->tool_type,
                                "tool-info", tool_info,
@@ -603,7 +603,7 @@ tool_manager_tool_changed (GimpContext     *user_context,
     }
   else
     {
-      g_warning ("%s: tool_info->tool_type is no GimpTool subclass",
+      g_warning ("%s: tool_info->tool_type is no PicmanTool subclass",
                  G_STRFUNC);
       return;
     }
@@ -619,164 +619,164 @@ tool_manager_tool_changed (GimpContext     *user_context,
   /*  connect the new tool's context  */
   tool_manager_connect_options (tool_manager, user_context, tool_info);
 
-  tool_manager_select_tool (user_context->gimp, new_tool);
+  tool_manager_select_tool (user_context->picman, new_tool);
 
   g_object_unref (new_tool);
 }
 
 static void
-tool_manager_preset_changed (GimpContext     *user_context,
-                             GimpToolPreset  *preset,
-                             GimpToolManager *tool_manager)
+tool_manager_preset_changed (PicmanContext     *user_context,
+                             PicmanToolPreset  *preset,
+                             PicmanToolManager *tool_manager)
 {
-  GimpToolInfo *preset_tool;
+  PicmanToolInfo *preset_tool;
   gchar        *options_name;
   gboolean      tool_change = FALSE;
 
-  if (! preset || user_context->gimp->busy)
+  if (! preset || user_context->picman->busy)
     return;
 
-  preset_tool = gimp_context_get_tool (GIMP_CONTEXT (preset->tool_options));
+  preset_tool = picman_context_get_tool (PICMAN_CONTEXT (preset->tool_options));
 
-  if (preset_tool != gimp_context_get_tool (user_context))
+  if (preset_tool != picman_context_get_tool (user_context))
     tool_change = TRUE;
 
   if (! tool_change)
     tool_manager_disconnect_options (tool_manager, user_context, preset_tool);
 
   /*  save the name, we don't want to overwrite it  */
-  options_name = g_strdup (gimp_object_get_name (preset_tool->tool_options));
+  options_name = g_strdup (picman_object_get_name (preset_tool->tool_options));
 
-  gimp_config_copy (GIMP_CONFIG (preset->tool_options),
-                    GIMP_CONFIG (preset_tool->tool_options), 0);
+  picman_config_copy (PICMAN_CONFIG (preset->tool_options),
+                    PICMAN_CONFIG (preset_tool->tool_options), 0);
 
   /*  restore the saved name  */
-  gimp_object_take_name (GIMP_OBJECT (preset_tool->tool_options), options_name);
+  picman_object_take_name (PICMAN_OBJECT (preset_tool->tool_options), options_name);
 
   if (tool_change)
-    gimp_context_set_tool (user_context, preset_tool);
+    picman_context_set_tool (user_context, preset_tool);
   else
     tool_manager_connect_options (tool_manager, user_context, preset_tool);
 
-  gimp_context_copy_properties (GIMP_CONTEXT (preset->tool_options),
+  picman_context_copy_properties (PICMAN_CONTEXT (preset->tool_options),
                                 user_context,
-                                gimp_tool_preset_get_prop_mask (preset));
+                                picman_tool_preset_get_prop_mask (preset));
 
-  if (GIMP_IS_PAINT_OPTIONS (preset->tool_options))
+  if (PICMAN_IS_PAINT_OPTIONS (preset->tool_options))
     {
-      GimpCoreConfig  *config = user_context->gimp->config;
-      GimpToolOptions *src    = preset->tool_options;
-      GimpToolOptions *dest   = tool_manager->active_tool->tool_info->tool_options;
+      PicmanCoreConfig  *config = user_context->picman->config;
+      PicmanToolOptions *src    = preset->tool_options;
+      PicmanToolOptions *dest   = tool_manager->active_tool->tool_info->tool_options;
 
       /* if connect_options() did overwrite the brush options and the
        * preset contains a brush, use the brush options from the
        * preset
        */
       if (config->global_brush && preset->use_brush)
-        gimp_paint_options_copy_brush_props (GIMP_PAINT_OPTIONS (src),
-                                             GIMP_PAINT_OPTIONS (dest));
+        picman_paint_options_copy_brush_props (PICMAN_PAINT_OPTIONS (src),
+                                             PICMAN_PAINT_OPTIONS (dest));
 
       if (config->global_dynamics && preset->use_dynamics)
-        gimp_paint_options_copy_dynamics_props (GIMP_PAINT_OPTIONS (src),
-                                                GIMP_PAINT_OPTIONS (dest));
+        picman_paint_options_copy_dynamics_props (PICMAN_PAINT_OPTIONS (src),
+                                                PICMAN_PAINT_OPTIONS (dest));
 
       if (config->global_gradient && preset->use_gradient)
-        gimp_paint_options_copy_gradient_props (GIMP_PAINT_OPTIONS (src),
-                                                GIMP_PAINT_OPTIONS (dest));
+        picman_paint_options_copy_gradient_props (PICMAN_PAINT_OPTIONS (src),
+                                                PICMAN_PAINT_OPTIONS (dest));
     }
 }
 
 static void
-tool_manager_image_clean_dirty (GimpImage       *image,
-                                GimpDirtyMask    dirty_mask,
-                                GimpToolManager *tool_manager)
+tool_manager_image_clean_dirty (PicmanImage       *image,
+                                PicmanDirtyMask    dirty_mask,
+                                PicmanToolManager *tool_manager)
 {
-  GimpTool *tool = tool_manager->active_tool;
+  PicmanTool *tool = tool_manager->active_tool;
 
   if (tool &&
-      ! gimp_tool_control_get_preserve (tool->control) &&
-      (gimp_tool_control_get_dirty_mask (tool->control) & dirty_mask))
+      ! picman_tool_control_get_preserve (tool->control) &&
+      (picman_tool_control_get_dirty_mask (tool->control) & dirty_mask))
     {
-      GimpDisplay *display = gimp_tool_has_image (tool, image);
+      PicmanDisplay *display = picman_tool_has_image (tool, image);
 
       if (display)
-        tool_manager_control_active (image->gimp, GIMP_TOOL_ACTION_HALT,
+        tool_manager_control_active (image->picman, PICMAN_TOOL_ACTION_HALT,
                                      display);
     }
 }
 
 static void
-tool_manager_connect_options (GimpToolManager *tool_manager,
-                              GimpContext     *user_context,
-                              GimpToolInfo    *tool_info)
+tool_manager_connect_options (PicmanToolManager *tool_manager,
+                              PicmanContext     *user_context,
+                              PicmanToolInfo    *tool_info)
 {
   if (tool_info->context_props)
     {
-      GimpCoreConfig      *config       = user_context->gimp->config;
-      GimpContextPropMask  global_props = 0;
+      PicmanCoreConfig      *config       = user_context->picman->config;
+      PicmanContextPropMask  global_props = 0;
 
       /*  FG and BG are always shared between all tools  */
-      global_props |= GIMP_CONTEXT_FOREGROUND_MASK;
-      global_props |= GIMP_CONTEXT_BACKGROUND_MASK;
+      global_props |= PICMAN_CONTEXT_FOREGROUND_MASK;
+      global_props |= PICMAN_CONTEXT_BACKGROUND_MASK;
 
       if (config->global_brush)
-        global_props |= GIMP_CONTEXT_BRUSH_MASK;
+        global_props |= PICMAN_CONTEXT_BRUSH_MASK;
       if (config->global_dynamics)
-        global_props |= GIMP_CONTEXT_DYNAMICS_MASK;
+        global_props |= PICMAN_CONTEXT_DYNAMICS_MASK;
       if (config->global_pattern)
-        global_props |= GIMP_CONTEXT_PATTERN_MASK;
+        global_props |= PICMAN_CONTEXT_PATTERN_MASK;
       if (config->global_palette)
-        global_props |= GIMP_CONTEXT_PALETTE_MASK;
+        global_props |= PICMAN_CONTEXT_PALETTE_MASK;
       if (config->global_gradient)
-        global_props |= GIMP_CONTEXT_GRADIENT_MASK;
+        global_props |= PICMAN_CONTEXT_GRADIENT_MASK;
       if (config->global_font)
-        global_props |= GIMP_CONTEXT_FONT_MASK;
+        global_props |= PICMAN_CONTEXT_FONT_MASK;
 
-      gimp_context_copy_properties (GIMP_CONTEXT (tool_info->tool_options),
+      picman_context_copy_properties (PICMAN_CONTEXT (tool_info->tool_options),
                                     user_context,
                                     tool_info->context_props & ~global_props);
-      gimp_context_set_parent (GIMP_CONTEXT (tool_info->tool_options),
+      picman_context_set_parent (PICMAN_CONTEXT (tool_info->tool_options),
                                user_context);
 
-      if (GIMP_IS_PAINT_OPTIONS (tool_info->tool_options))
+      if (PICMAN_IS_PAINT_OPTIONS (tool_info->tool_options))
         {
           if (config->global_brush)
-            gimp_paint_options_copy_brush_props (tool_manager->shared_paint_options,
-                                                 GIMP_PAINT_OPTIONS (tool_info->tool_options));
+            picman_paint_options_copy_brush_props (tool_manager->shared_paint_options,
+                                                 PICMAN_PAINT_OPTIONS (tool_info->tool_options));
 
           if (config->global_dynamics)
-            gimp_paint_options_copy_dynamics_props (tool_manager->shared_paint_options,
-                                                    GIMP_PAINT_OPTIONS (tool_info->tool_options));
+            picman_paint_options_copy_dynamics_props (tool_manager->shared_paint_options,
+                                                    PICMAN_PAINT_OPTIONS (tool_info->tool_options));
 
           if (config->global_gradient)
-            gimp_paint_options_copy_gradient_props (tool_manager->shared_paint_options,
-                                                    GIMP_PAINT_OPTIONS (tool_info->tool_options));
+            picman_paint_options_copy_gradient_props (tool_manager->shared_paint_options,
+                                                    PICMAN_PAINT_OPTIONS (tool_info->tool_options));
         }
     }
 }
 
 static void
-tool_manager_disconnect_options (GimpToolManager *tool_manager,
-                                 GimpContext     *user_context,
-                                 GimpToolInfo    *tool_info)
+tool_manager_disconnect_options (PicmanToolManager *tool_manager,
+                                 PicmanContext     *user_context,
+                                 PicmanToolInfo    *tool_info)
 {
   if (tool_info->context_props)
     {
-      if (GIMP_IS_PAINT_OPTIONS (tool_info->tool_options))
+      if (PICMAN_IS_PAINT_OPTIONS (tool_info->tool_options))
         {
           /* Storing is unconditional, because the user may turn on
            * brush sharing mid use
            */
-          gimp_paint_options_copy_brush_props (GIMP_PAINT_OPTIONS (tool_info->tool_options),
+          picman_paint_options_copy_brush_props (PICMAN_PAINT_OPTIONS (tool_info->tool_options),
                                                tool_manager->shared_paint_options);
 
-          gimp_paint_options_copy_dynamics_props (GIMP_PAINT_OPTIONS (tool_info->tool_options),
+          picman_paint_options_copy_dynamics_props (PICMAN_PAINT_OPTIONS (tool_info->tool_options),
                                                   tool_manager->shared_paint_options);
 
-          gimp_paint_options_copy_gradient_props (GIMP_PAINT_OPTIONS (tool_info->tool_options),
+          picman_paint_options_copy_gradient_props (PICMAN_PAINT_OPTIONS (tool_info->tool_options),
                                                   tool_manager->shared_paint_options);
         }
 
-      gimp_context_set_parent (GIMP_CONTEXT (tool_info->tool_options), NULL);
+      picman_context_set_parent (PICMAN_CONTEXT (tool_info->tool_options), NULL);
     }
 }

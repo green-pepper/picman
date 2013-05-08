@@ -1,7 +1,7 @@
 ; "Contact Sheet" v1.2 September 5, 2007
 ; by Kevin Cozens <kcozens@interlog.com>
 ;
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -111,29 +111,29 @@
           (text-width 0)
           (text-height 0)
           )
-      (gimp-selection-all img)
-      (gimp-drawable-fill (car (gimp-image-get-active-layer img))
+      (picman-selection-all img)
+      (picman-drawable-fill (car (picman-image-get-active-layer img))
                           BACKGROUND-FILL)
-      (gimp-selection-none img)
-      (set! text-layer (car (gimp-text-fontname img -1 0 0
+      (picman-selection-none img)
+      (set! text-layer (car (picman-text-fontname img -1 0 0
                               (string-append _"Contact Sheet "
                                              (number->string num)
                                              _" for directory " dir)
                                              0 TRUE 14 PIXELS title-font)))
-      (set! text-width (car (gimp-drawable-width text-layer)))
-      (set! text-height (car (gimp-drawable-height text-layer)))
-      (gimp-layer-set-offsets text-layer
+      (set! text-width (car (picman-drawable-width text-layer)))
+      (set! text-height (car (picman-drawable-height text-layer)))
+      (picman-layer-set-offsets text-layer
         (/ (- img-width text-width) 2)
         (/ (- (+ border-y off-y) text-height) 2)
       )
-      (gimp-image-merge-visible-layers img CLIP-TO-IMAGE)
+      (picman-image-merge-visible-layers img CLIP-TO-IMAGE)
     )
   )
 
   (define (make-thumbnail-size img thumb-w thumb-h)
     (let* (
-          (file-height (car (gimp-image-height img)))
-          (file-width  (car (gimp-image-width img)))
+          (file-height (car (picman-image-height img)))
+          (file-width  (car (picman-image-width img)))
           (aspect-ratio (/ file-width file-height))
           )
 
@@ -143,7 +143,7 @@
         (set! thumb-w (* thumb-h aspect-ratio))
       )
 
-      (gimp-image-scale img thumb-w thumb-h)
+      (picman-image-scale img thumb-w thumb-h)
     )
   )
 
@@ -175,10 +175,10 @@
         (tmp-layer 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
-    (gimp-context-set-foreground text-color)
-    (gimp-context-set-background bg-color)
+    (picman-context-push)
+    (picman-context-set-defaults)
+    (picman-context-set-foreground text-color)
+    (picman-context-set-background bg-color)
 
     (set! sheet-data (init-sheet-data sheet-size))
     (set! sheet-width (car sheet-data))
@@ -195,19 +195,19 @@
     (set! max-x (caddr sheet-data))
     (set! max-y max-x)
 
-    (set! sheet-img (car (gimp-image-new sheet-width sheet-height RGB)))
+    (set! sheet-img (car (picman-image-new sheet-width sheet-height RGB)))
 
-    (gimp-image-undo-disable sheet-img)
+    (picman-image-undo-disable sheet-img)
 
-    (set! sheet-layer (car (gimp-layer-new sheet-img sheet-width sheet-height
+    (set! sheet-layer (car (picman-layer-new sheet-img sheet-width sheet-height
                             RGB-IMAGE "Background"
                             100 NORMAL-MODE)))
-    (gimp-image-insert-layer sheet-img sheet-layer 0 0)
+    (picman-image-insert-layer sheet-img sheet-layer 0 0)
 
     (init-sheet-img sheet-img sheet-num sheet-width border-y off-y)
 
     (if (not dir-stream)
-      (gimp-message (string-append _"Unable to open directory " dir))
+      (picman-message (string-append _"Unable to open directory " dir))
       (begin
         (do
           ( (file (dir-read-entry dir-stream) (dir-read-entry dir-stream)) )
@@ -219,36 +219,36 @@
               )
             (catch ()
               (set! new-img
-                    (car (gimp-file-load RUN-NONINTERACTIVE file-path file)))
+                    (car (picman-file-load RUN-NONINTERACTIVE file-path file)))
 
               (make-thumbnail-size new-img thumb-w thumb-h)
 
-              (if (> (car (gimp-image-get-layers new-img)) 1)
-                (gimp-image-flatten new-img)
+              (if (> (car (picman-image-get-layers new-img)) 1)
+                (picman-image-flatten new-img)
               )
-              (set! tmp-layer (car (gimp-layer-new-from-drawable
-                            (car (gimp-image-get-active-drawable new-img))
+              (set! tmp-layer (car (picman-layer-new-from-drawable
+                            (car (picman-image-get-active-drawable new-img))
                                   sheet-img)))
 
-              (gimp-image-insert-layer sheet-img tmp-layer 0 0)
+              (picman-image-insert-layer sheet-img tmp-layer 0 0)
 
               ;Move thumbnail in to position and center it in area available.
-              (gimp-layer-set-offsets tmp-layer
+              (picman-layer-set-offsets tmp-layer
                 (+ border-x off-x (* pos-x (+ thumb-w border-x))
-                   (/ (- thumb-w (car (gimp-image-width new-img))) 2)
+                   (/ (- thumb-w (car (picman-image-width new-img))) 2)
                 )
                 (+ border-y off-y (* pos-y (+ thumb-h border-y))
-                   (/ (- thumb-h (car (gimp-image-height new-img))) 2)
+                   (/ (- thumb-h (car (picman-image-height new-img))) 2)
                 )
               )
 
-              (gimp-image-delete new-img)
+              (picman-image-delete new-img)
 
-              (set! tmp-layer (car (gimp-text-fontname sheet-img -1 0 0 file
+              (set! tmp-layer (car (picman-text-fontname sheet-img -1 0 0 file
                                      0 TRUE 12 PIXELS legend-font)))
-              (gimp-layer-set-offsets tmp-layer
+              (picman-layer-set-offsets tmp-layer
                 (+ border-x off-x (* pos-x (+ thumb-w border-x))
-                   (/ (- thumb-w (car (gimp-drawable-width tmp-layer))) 2))
+                   (/ (- thumb-w (car (picman-drawable-width tmp-layer))) 2))
                 (+ border-y off-y (* pos-y (+ thumb-h border-y)) thumb-h 6)
               )
 
@@ -262,8 +262,8 @@
                   (if (> pos-y max-y)
                     (begin
                       (set! pos-y 0)
-                      (set! sheet-layer (car (gimp-image-flatten sheet-img)))
-                      (gimp-file-save
+                      (set! sheet-layer (car (picman-image-flatten sheet-img)))
+                      (picman-file-save
                         RUN-NONINTERACTIVE
                         sheet-img
                         sheet-layer
@@ -289,8 +289,8 @@
 
         (if (> img-count 0)
           (begin
-            (set! sheet-layer (car (gimp-image-flatten sheet-img)))
-            (gimp-file-save
+            (set! sheet-layer (car (picman-image-flatten sheet-img)))
+            (picman-file-save
               RUN-NONINTERACTIVE
               sheet-img
               sheet-layer
@@ -302,8 +302,8 @@
         )
       )
 
-      (gimp-image-undo-enable sheet-img)
-      (gimp-image-delete sheet-img)
+      (picman-image-undo-enable sheet-img)
+      (picman-image-delete sheet-img)
 
       (display (string-append _"Created " (number->string sheet-num)
                               _" contact sheets from a total of "
@@ -311,7 +311,7 @@
       (newline)
     )
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 

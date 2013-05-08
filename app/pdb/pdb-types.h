@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,25 +22,25 @@
 #include "core/core-types.h"
 
 
-typedef struct _GimpPDB                GimpPDB;
-typedef struct _GimpProcedure          GimpProcedure;
-typedef struct _GimpPlugInProcedure    GimpPlugInProcedure;
-typedef struct _GimpTemporaryProcedure GimpTemporaryProcedure;
+typedef struct _PicmanPDB                PicmanPDB;
+typedef struct _PicmanProcedure          PicmanProcedure;
+typedef struct _PicmanPlugInProcedure    PicmanPlugInProcedure;
+typedef struct _PicmanTemporaryProcedure PicmanTemporaryProcedure;
 
 
 typedef enum
 {
-  GIMP_PDB_COMPAT_OFF,
-  GIMP_PDB_COMPAT_ON,
-  GIMP_PDB_COMPAT_WARN
-} GimpPDBCompatMode;
+  PICMAN_PDB_COMPAT_OFF,
+  PICMAN_PDB_COMPAT_ON,
+  PICMAN_PDB_COMPAT_WARN
+} PicmanPDBCompatMode;
 
 
 typedef enum
 {
-  GIMP_PDB_ITEM_CONTENT  = 1 << 0,
-  GIMP_PDB_ITEM_POSITION = 1 << 1
-} GimpPDBItemModify;
+  PICMAN_PDB_ITEM_CONTENT  = 1 << 0,
+  PICMAN_PDB_ITEM_POSITION = 1 << 1
+} PicmanPDBItemModify;
 
 
 #endif /* __PDB_TYPES_H__ */

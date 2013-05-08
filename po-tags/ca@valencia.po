@@ -1,11 +1,11 @@
-# Catalan translation for gimp.
-# Copyright (C) 2011 gimp's COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp package.
+# Catalan translation for picman.
+# Copyright (C) 2011 picman's COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman package.
 # Eulalia <eulaliapages@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp master\n"
+"Project-Id-Version: picman master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-09 00:48+0100\n"
 "PO-Revision-Date: 2011-09-02 00:03+0100\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "esfumat"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "round"
 msgstr "rodó"

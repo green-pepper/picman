@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-eraser")
+(stock-id "picman-tool-eraser")
 (name "Eraser Hard")
-(tool-options "GimpEraserOptions"
-    (tool "gimp-eraser-tool")
+(tool-options "PicmanEraserOptions"
+    (tool "picman-eraser-tool")
     (brush "2. Block 01")
     (dynamics "Pressure Opacity")
     (brush-size 80.000000)
@@ -16,4 +16,4 @@
 (use-palette yes)
 (use-font yes)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

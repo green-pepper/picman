@@ -5,9 +5,9 @@
 <book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <bookinfo>
-    <title>GIMP Application Reference Manual</title>
+    <title>PICMAN Application Reference Manual</title>
     <releaseinfo>
-      for GIMP <xi:include href="version" parse="text" />
+      for PICMAN <xi:include href="version" parse="text" />
     </releaseinfo>
   </bookinfo>
  
@@ -39,7 +39,7 @@
     <xi:include href="xml/units.xml" />
     <xi:include href="xml/version.xml" />
     <xi:include href="xml/about.xml" />
-    <xi:include href="xml/gimp-log.xml" />
+    <xi:include href="xml/picman-log.xml" />
   </part>
 
   <part id="app-paint-funcs-part">
@@ -54,8 +54,8 @@
 
   <part id="app-composite-part">
     <title>Compositing</title>
-    <xi:include href="xml/gimp-composite.xml" />
-    <xi:include href="xml/gimp-composite-generic.xml" />
+    <xi:include href="xml/picman-composite.xml" />
+    <xi:include href="xml/picman-composite-generic.xml" />
   </part>  
 
   <part id="app-base-part">
@@ -73,8 +73,8 @@
       <xi:include href="xml/base-utils.xml" />
       <xi:include href="xml/boundary.xml" />
       <xi:include href="xml/cpercep.xml" />
-      <xi:include href="xml/gimphistogram.xml" />
-      <xi:include href="xml/gimplut.xml" />
+      <xi:include href="xml/picmanhistogram.xml" />
+      <xi:include href="xml/picmanlut.xml" />
       <xi:include href="xml/siox.xml" />
       <xi:include href="xml/temp-buf.xml" />
     </chapter>
@@ -115,97 +115,97 @@
   <part id="app-config-part">
     <title>Config</title>
     <chapter id="app-config-interface">
-      <title>GimpConfig extensions</title>
-      <xi:include href="xml/gimpconfig-dump.xml" />
-      <xi:include href="xml/gimpconfig-file.xml" />
-      <xi:include href="xml/gimpconfig-utils.xml" />
-      <xi:include href="xml/gimpxmlparser.xml" />
+      <title>PicmanConfig extensions</title>
+      <xi:include href="xml/picmanconfig-dump.xml" />
+      <xi:include href="xml/picmanconfig-file.xml" />
+      <xi:include href="xml/picmanconfig-utils.xml" />
+      <xi:include href="xml/picmanxmlparser.xml" />
     </chapter>
 
     <chapter id="app-config-objects">
-      <title>The GimpRc Objects</title>
-      <xi:include href="xml/gimpbaseconfig.xml" />
-      <xi:include href="xml/gimpcoreconfig.xml" />
-      <xi:include href="xml/gimpdisplayconfig.xml" />
-      <xi:include href="xml/gimpguiconfig.xml" />
-      <xi:include href="xml/gimppluginconfig.xml" />
-      <xi:include href="xml/gimprc.xml" />
-      <xi:include href="xml/gimprc-serialize.xml" />
-      <xi:include href="xml/gimprc-deserialize.xml" />
-      <xi:include href="xml/gimprc-unknown.xml" />
+      <title>The PicmanRc Objects</title>
+      <xi:include href="xml/picmanbaseconfig.xml" />
+      <xi:include href="xml/picmancoreconfig.xml" />
+      <xi:include href="xml/picmandisplayconfig.xml" />
+      <xi:include href="xml/picmanguiconfig.xml" />
+      <xi:include href="xml/picmanpluginconfig.xml" />
+      <xi:include href="xml/picmanrc.xml" />
+      <xi:include href="xml/picmanrc-serialize.xml" />
+      <xi:include href="xml/picmanrc-deserialize.xml" />
+      <xi:include href="xml/picmanrc-unknown.xml" />
     </chapter>
   </part>
 
   <part id="app-gegl-part">
     <title>GEGL</title>
-    <xi:include href="xml/gimp-gegl.xml" />
-    <xi:include href="xml/gimp-gegl-enums.xml" />
-    <xi:include href="xml/gimp-gegl-utils.xml" />
+    <xi:include href="xml/picman-gegl.xml" />
+    <xi:include href="xml/picman-gegl-enums.xml" />
+    <xi:include href="xml/picman-gegl-utils.xml" />
 
     <chapter id="app-gegl-tile-backends">
       <title>Tile Backends</title>
-      <xi:include href="xml/gimptilebackendtilemanager.xml" />
+      <xi:include href="xml/picmantilebackendtilemanager.xml" />
     </chapter>
 
     <chapter id="app-gegl-operations">
       <title>Operations</title>
-      <xi:include href="xml/gimpoperationcagecoefcalc.xml" />
-      <xi:include href="xml/gimpoperationcagetransform.xml" />
-      <xi:include href="xml/gimpoperationcolorbalance.xml" />
-      <xi:include href="xml/gimpoperationcolorize.xml" />
-      <xi:include href="xml/gimpoperationcurves.xml" />
-      <xi:include href="xml/gimpoperationdesaturate.xml" />
-      <xi:include href="xml/gimpoperationhuesaturation.xml" />
-      <xi:include href="xml/gimpoperationlevels.xml" />
-      <xi:include href="xml/gimpoperationpointfilter.xml" />
-      <xi:include href="xml/gimpoperationposterize.xml" />
-      <xi:include href="xml/gimpoperationthreshold.xml" />
-      <xi:include href="xml/gimpoperationtilesink.xml" />
-      <xi:include href="xml/gimpoperationtilesource.xml" />
+      <xi:include href="xml/picmanoperationcagecoefcalc.xml" />
+      <xi:include href="xml/picmanoperationcagetransform.xml" />
+      <xi:include href="xml/picmanoperationcolorbalance.xml" />
+      <xi:include href="xml/picmanoperationcolorize.xml" />
+      <xi:include href="xml/picmanoperationcurves.xml" />
+      <xi:include href="xml/picmanoperationdesaturate.xml" />
+      <xi:include href="xml/picmanoperationhuesaturation.xml" />
+      <xi:include href="xml/picmanoperationlevels.xml" />
+      <xi:include href="xml/picmanoperationpointfilter.xml" />
+      <xi:include href="xml/picmanoperationposterize.xml" />
+      <xi:include href="xml/picmanoperationthreshold.xml" />
+      <xi:include href="xml/picmanoperationtilesink.xml" />
+      <xi:include href="xml/picmanoperationtilesource.xml" />
    </chapter>
 
     <chapter id="app-gegl-layer-mode-operations">
       <title>Layer Mode Operations</title>
-      <xi:include href="xml/gimpoperationpointlayermode.xml" />
-      <xi:include href="xml/gimpoperationadditionmode.xml" />
-      <xi:include href="xml/gimpoperationantierasemode.xml" />
-      <xi:include href="xml/gimpoperationbehindmode.xml" />
-      <xi:include href="xml/gimpoperationburnmode.xml" />
-      <xi:include href="xml/gimpoperationcolorerasemode.xml" />
-      <xi:include href="xml/gimpoperationcolormode.xml" />
-      <xi:include href="xml/gimpoperationdarkenonlymode.xml" />
-      <xi:include href="xml/gimpoperationdifferencemode.xml" />
-      <xi:include href="xml/gimpoperationdissolvemode.xml" />
-      <xi:include href="xml/gimpoperationdividemode.xml" />
-      <xi:include href="xml/gimpoperationdodgemode.xml" />
-      <xi:include href="xml/gimpoperationerasemode.xml" />
-      <xi:include href="xml/gimpoperationgrainextractmode.xml" />
-      <xi:include href="xml/gimpoperationgrainmergemode.xml" />
-      <xi:include href="xml/gimpoperationhardlightmode.xml" />
-      <xi:include href="xml/gimpoperationhuemode.xml" />
-      <xi:include href="xml/gimpoperationlightenonlymode.xml" />
-      <xi:include href="xml/gimpoperationmultiplymode.xml" />
-      <xi:include href="xml/gimpoperationoverlaymode.xml" />
-      <xi:include href="xml/gimpoperationreplacemode.xml" />
-      <xi:include href="xml/gimpoperationsaturationmode.xml" />
-      <xi:include href="xml/gimpoperationscreenmode.xml" />
-      <xi:include href="xml/gimpoperationsoftlightmode.xml" />
-      <xi:include href="xml/gimpoperationsubtractmode.xml" />
-      <xi:include href="xml/gimpoperationvaluemode.xml" />
+      <xi:include href="xml/picmanoperationpointlayermode.xml" />
+      <xi:include href="xml/picmanoperationadditionmode.xml" />
+      <xi:include href="xml/picmanoperationantierasemode.xml" />
+      <xi:include href="xml/picmanoperationbehindmode.xml" />
+      <xi:include href="xml/picmanoperationburnmode.xml" />
+      <xi:include href="xml/picmanoperationcolorerasemode.xml" />
+      <xi:include href="xml/picmanoperationcolormode.xml" />
+      <xi:include href="xml/picmanoperationdarkenonlymode.xml" />
+      <xi:include href="xml/picmanoperationdifferencemode.xml" />
+      <xi:include href="xml/picmanoperationdissolvemode.xml" />
+      <xi:include href="xml/picmanoperationdividemode.xml" />
+      <xi:include href="xml/picmanoperationdodgemode.xml" />
+      <xi:include href="xml/picmanoperationerasemode.xml" />
+      <xi:include href="xml/picmanoperationgrainextractmode.xml" />
+      <xi:include href="xml/picmanoperationgrainmergemode.xml" />
+      <xi:include href="xml/picmanoperationhardlightmode.xml" />
+      <xi:include href="xml/picmanoperationhuemode.xml" />
+      <xi:include href="xml/picmanoperationlightenonlymode.xml" />
+      <xi:include href="xml/picmanoperationmultiplymode.xml" />
+      <xi:include href="xml/picmanoperationoverlaymode.xml" />
+      <xi:include href="xml/picmanoperationreplacemode.xml" />
+      <xi:include href="xml/picmanoperationsaturationmode.xml" />
+      <xi:include href="xml/picmanoperationscreenmode.xml" />
+      <xi:include href="xml/picmanoperationsoftlightmode.xml" />
+      <xi:include href="xml/picmanoperationsubtractmode.xml" />
+      <xi:include href="xml/picmanoperationvaluemode.xml" />
    </chapter>
 
     <chapter id="app-gegl-config">
       <title>Config Objects</title>
-      <xi:include href="xml/gimpbrightnesscontrastconfig.xml" />
-      <xi:include href="xml/gimpcageconfig.xml" />
-      <xi:include href="xml/gimpcolorbalanceconfig.xml" />
-      <xi:include href="xml/gimpcolorizeconfig.xml" />
-      <xi:include href="xml/gimpcurvesconfig.xml" />
-      <xi:include href="xml/gimpdesaturateconfig.xml" />
-      <xi:include href="xml/gimphuesaturationconfig.xml" />
-      <xi:include href="xml/gimplevelsconfig.xml" />
-      <xi:include href="xml/gimpposterizeconfig.xml" />
-      <xi:include href="xml/gimpthresholdconfig.xml" />
+      <xi:include href="xml/picmanbrightnesscontrastconfig.xml" />
+      <xi:include href="xml/picmancageconfig.xml" />
+      <xi:include href="xml/picmancolorbalanceconfig.xml" />
+      <xi:include href="xml/picmancolorizeconfig.xml" />
+      <xi:include href="xml/picmancurvesconfig.xml" />
+      <xi:include href="xml/picmandesaturateconfig.xml" />
+      <xi:include href="xml/picmanhuesaturationconfig.xml" />
+      <xi:include href="xml/picmanlevelsconfig.xml" />
+      <xi:include href="xml/picmanposterizeconfig.xml" />
+      <xi:include href="xml/picmanthresholdconfig.xml" />
     </chapter>
   </part>
 
@@ -216,245 +216,245 @@
 
     <chapter id="app-core-base">
       <title>Base Classes</title>
-      <xi:include href="xml/gimpobject.xml" />
-      <xi:include href="xml/gimpviewable.xml" />
-      <xi:include href="xml/gimpidtable.xml" />
-      <xi:include href="xml/gimpitem.xml" />
-      <xi:include href="xml/gimpitem-exclusive.xml" />
-      <xi:include href="xml/gimpitem-linked.xml" />
-      <xi:include href="xml/gimpitem-preview.xml" />
+      <xi:include href="xml/picmanobject.xml" />
+      <xi:include href="xml/picmanviewable.xml" />
+      <xi:include href="xml/picmanidtable.xml" />
+      <xi:include href="xml/picmanitem.xml" />
+      <xi:include href="xml/picmanitem-exclusive.xml" />
+      <xi:include href="xml/picmanitem-linked.xml" />
+      <xi:include href="xml/picmanitem-preview.xml" />
     </chapter>
 
     <chapter id="app-core-containers">
       <title>Object Containers</title>
-      <xi:include href="xml/gimpcontainer.xml" />
-      <xi:include href="xml/gimpcontainer-filter.xml" />
-      <xi:include href="xml/gimplist.xml" />
-      <xi:include href="xml/gimpitemstack.xml" />
-      <xi:include href="xml/gimpdrawablestack.xml" />
-      <xi:include href="xml/gimpdocumentlist.xml" />
-      <xi:include href="xml/gimptoolpresets.xml" />
-      <xi:include href="xml/gimpitemtree.xml" />
-      <xi:include href="xml/gimptreehandler.xml" />
+      <xi:include href="xml/picmancontainer.xml" />
+      <xi:include href="xml/picmancontainer-filter.xml" />
+      <xi:include href="xml/picmanlist.xml" />
+      <xi:include href="xml/picmanitemstack.xml" />
+      <xi:include href="xml/picmandrawablestack.xml" />
+      <xi:include href="xml/picmandocumentlist.xml" />
+      <xi:include href="xml/picmantoolpresets.xml" />
+      <xi:include href="xml/picmanitemtree.xml" />
+      <xi:include href="xml/picmantreehandler.xml" />
     </chapter>
 
-    <chapter id="app-core-gimp">
-      <title>The GIMP Application Instance Object</title>
-      <xi:include href="xml/gimp.xml" />
-      <xi:include href="xml/gimp-contexts.xml" />
-      <xi:include href="xml/gimp-debug.xml" />
-      <xi:include href="xml/gimp-edit.xml" />
-      <xi:include href="xml/gimp-gradients.xml" />
-      <xi:include href="xml/gimp-gui.xml" />
-      <xi:include href="xml/gimp-modules.xml" />
-      <xi:include href="xml/gimp-parasites.xml" />
-      <xi:include href="xml/gimp-tags.xml" />
-      <xi:include href="xml/gimp-templates.xml" />
-      <xi:include href="xml/gimp-units.xml" />
-      <xi:include href="xml/gimp-user-install.xml" />
+    <chapter id="app-core-picman">
+      <title>The PICMAN Application Instance Object</title>
+      <xi:include href="xml/picman.xml" />
+      <xi:include href="xml/picman-contexts.xml" />
+      <xi:include href="xml/picman-debug.xml" />
+      <xi:include href="xml/picman-edit.xml" />
+      <xi:include href="xml/picman-gradients.xml" />
+      <xi:include href="xml/picman-gui.xml" />
+      <xi:include href="xml/picman-modules.xml" />
+      <xi:include href="xml/picman-parasites.xml" />
+      <xi:include href="xml/picman-tags.xml" />
+      <xi:include href="xml/picman-templates.xml" />
+      <xi:include href="xml/picman-units.xml" />
+      <xi:include href="xml/picman-user-install.xml" />
     </chapter>
 
     <chapter id="app-core-context">
-      <title>GimpContext Objects</title>
-      <xi:include href="xml/gimpcontext.xml" />
-      <xi:include href="xml/gimpfilloptions.xml" />
-      <xi:include href="xml/gimpstrokeoptions.xml" />
-      <xi:include href="xml/gimptooloptions.xml" />
+      <title>PicmanContext Objects</title>
+      <xi:include href="xml/picmancontext.xml" />
+      <xi:include href="xml/picmanfilloptions.xml" />
+      <xi:include href="xml/picmanstrokeoptions.xml" />
+      <xi:include href="xml/picmantooloptions.xml" />
     </chapter>
 
     <chapter id="app-core-info">
       <title>Info Objects</title>
-      <xi:include href="xml/gimppaintinfo.xml" />
-      <xi:include href="xml/gimptoolinfo.xml" />
+      <xi:include href="xml/picmanpaintinfo.xml" />
+      <xi:include href="xml/picmantoolinfo.xml" />
     </chapter>
 
     <chapter id="app-core-data">
-      <title>GimpData Objects</title>
+      <title>PicmanData Objects</title>
 
       <para>
         Object hierarchy of auxiliary data objects which share a common
         API. Data objects have an on-disk representation and live in a
-        <link linkend="GimpDataFactory">GimpDataFactory</link> which
+        <link linkend="PicmanDataFactory">PicmanDataFactory</link> which
         manages them.
       </para>
 
-      <xi:include href="xml/gimpdatafactory.xml" />
-      <xi:include href="xml/gimpdata.xml" />
-      <xi:include href="xml/gimpbrush.xml" />
-      <xi:include href="xml/gimpbrush-header.xml" />
-      <xi:include href="xml/gimpbrush-load.xml" />
-      <xi:include href="xml/gimpbrush-boundary.xml" />
-      <xi:include href="xml/gimpbrush-transform.xml" />
-      <xi:include href="xml/gimpbrushcache.xml" />
-      <xi:include href="xml/gimpbrushclipboard.xml" />
-      <xi:include href="xml/gimpbrushgenerated.xml" />
-      <xi:include href="xml/gimpbrushgenerated-load.xml" />
-      <xi:include href="xml/gimpbrushgenerated-save.xml" />
-      <xi:include href="xml/gimpbrushpipe.xml" />
-      <xi:include href="xml/gimpcurve.xml" />
-      <xi:include href="xml/gimpcurve-map.xml" />
-      <xi:include href="xml/gimpcurve-load.xml" />
-      <xi:include href="xml/gimpcurve-save.xml" />
-      <xi:include href="xml/gimpdynamics.xml" />
-      <xi:include href="xml/gimpdynamics-load.xml" />
-      <xi:include href="xml/gimpdynamics-save.xml" />
-      <xi:include href="xml/gimpdynamicsoutput.xml" />
-      <xi:include href="xml/gimpgradient.xml" />
-      <xi:include href="xml/gimpgradient-load.xml" />
-      <xi:include href="xml/gimpgradient-save.xml" />
-      <xi:include href="xml/gimppalette.xml" />
-      <xi:include href="xml/gimppalette-import.xml" />
-      <xi:include href="xml/gimppalette-load.xml" />
-      <xi:include href="xml/gimppattern.xml" />
-      <xi:include href="xml/gimppattern-header.xml" />
-      <xi:include href="xml/gimppattern-load.xml" />
-      <xi:include href="xml/gimppatternclipboard.xml" />
-      <xi:include href="xml/gimptoolpreset.xml" />
-      <xi:include href="xml/gimptoolpreset-load.xml" />
-      <xi:include href="xml/gimptoolpreset-save.xml" />
+      <xi:include href="xml/picmandatafactory.xml" />
+      <xi:include href="xml/picmandata.xml" />
+      <xi:include href="xml/picmanbrush.xml" />
+      <xi:include href="xml/picmanbrush-header.xml" />
+      <xi:include href="xml/picmanbrush-load.xml" />
+      <xi:include href="xml/picmanbrush-boundary.xml" />
+      <xi:include href="xml/picmanbrush-transform.xml" />
+      <xi:include href="xml/picmanbrushcache.xml" />
+      <xi:include href="xml/picmanbrushclipboard.xml" />
+      <xi:include href="xml/picmanbrushgenerated.xml" />
+      <xi:include href="xml/picmanbrushgenerated-load.xml" />
+      <xi:include href="xml/picmanbrushgenerated-save.xml" />
+      <xi:include href="xml/picmanbrushpipe.xml" />
+      <xi:include href="xml/picmancurve.xml" />
+      <xi:include href="xml/picmancurve-map.xml" />
+      <xi:include href="xml/picmancurve-load.xml" />
+      <xi:include href="xml/picmancurve-save.xml" />
+      <xi:include href="xml/picmandynamics.xml" />
+      <xi:include href="xml/picmandynamics-load.xml" />
+      <xi:include href="xml/picmandynamics-save.xml" />
+      <xi:include href="xml/picmandynamicsoutput.xml" />
+      <xi:include href="xml/picmangradient.xml" />
+      <xi:include href="xml/picmangradient-load.xml" />
+      <xi:include href="xml/picmangradient-save.xml" />
+      <xi:include href="xml/picmanpalette.xml" />
+      <xi:include href="xml/picmanpalette-import.xml" />
+      <xi:include href="xml/picmanpalette-load.xml" />
+      <xi:include href="xml/picmanpattern.xml" />
+      <xi:include href="xml/picmanpattern-header.xml" />
+      <xi:include href="xml/picmanpattern-load.xml" />
+      <xi:include href="xml/picmanpatternclipboard.xml" />
+      <xi:include href="xml/picmantoolpreset.xml" />
+      <xi:include href="xml/picmantoolpreset-load.xml" />
+      <xi:include href="xml/picmantoolpreset-save.xml" />
     </chapter>
 
     <chapter id="app-core-drawable">
       <title>Drawable Objects</title>
-      <xi:include href="xml/gimpdrawable.xml" />
-      <xi:include href="xml/gimpdrawable-blend.xml" />
-      <xi:include href="xml/gimpdrawable-brightness-contrast.xml" />
-      <xi:include href="xml/gimpdrawable-bucket-fill.xml" />
-      <xi:include href="xml/gimpdrawable-color-balance.xml" />
-      <xi:include href="xml/gimpdrawable-colorize.xml" />
-      <xi:include href="xml/gimpdrawable-combine.xml" />
-      <xi:include href="xml/gimpdrawable-convert.xml" />
-      <xi:include href="xml/gimpdrawable-curves.xml" />
-      <xi:include href="xml/gimpdrawable-desaturate.xml" />
-      <xi:include href="xml/gimpdrawable-equalize.xml" />
-      <xi:include href="xml/gimpdrawable-foreground-extract.xml" />
-      <xi:include href="xml/gimpdrawable-histogram.xml" />
-      <xi:include href="xml/gimpdrawable-hue-saturation.xml" />
-      <xi:include href="xml/gimpdrawable-invert.xml" />
-      <xi:include href="xml/gimpdrawable-levels.xml" />
-      <xi:include href="xml/gimpdrawable-offset.xml" />
-      <xi:include href="xml/gimpdrawable-operation.xml" />
-      <xi:include href="xml/gimpdrawable-process.xml" />
-      <xi:include href="xml/gimpdrawable-preview.xml" />
-      <xi:include href="xml/gimpdrawable-shadow.xml" />
-      <xi:include href="xml/gimpdrawable-stroke.xml" />
-      <xi:include href="xml/gimpdrawable-threshold.xml" />
-      <xi:include href="xml/gimpdrawable-transform.xml" />
-      <xi:include href="xml/gimpchannel.xml" />
-      <xi:include href="xml/gimpchannel-combine.xml" />
-      <xi:include href="xml/gimpchannel-project.xml" />
-      <xi:include href="xml/gimpchannel-select.xml" />
-      <xi:include href="xml/gimplayermask.xml" />
-      <xi:include href="xml/gimpselection.xml" />
-      <xi:include href="xml/gimplayer.xml" />
-      <xi:include href="xml/gimplayer-floating-sel.xml" />
-      <xi:include href="xml/gimplayer-project.xml" />
-      <xi:include href="xml/gimpgrouplayer.xml" />
+      <xi:include href="xml/picmandrawable.xml" />
+      <xi:include href="xml/picmandrawable-blend.xml" />
+      <xi:include href="xml/picmandrawable-brightness-contrast.xml" />
+      <xi:include href="xml/picmandrawable-bucket-fill.xml" />
+      <xi:include href="xml/picmandrawable-color-balance.xml" />
+      <xi:include href="xml/picmandrawable-colorize.xml" />
+      <xi:include href="xml/picmandrawable-combine.xml" />
+      <xi:include href="xml/picmandrawable-convert.xml" />
+      <xi:include href="xml/picmandrawable-curves.xml" />
+      <xi:include href="xml/picmandrawable-desaturate.xml" />
+      <xi:include href="xml/picmandrawable-equalize.xml" />
+      <xi:include href="xml/picmandrawable-foreground-extract.xml" />
+      <xi:include href="xml/picmandrawable-histogram.xml" />
+      <xi:include href="xml/picmandrawable-hue-saturation.xml" />
+      <xi:include href="xml/picmandrawable-invert.xml" />
+      <xi:include href="xml/picmandrawable-levels.xml" />
+      <xi:include href="xml/picmandrawable-offset.xml" />
+      <xi:include href="xml/picmandrawable-operation.xml" />
+      <xi:include href="xml/picmandrawable-process.xml" />
+      <xi:include href="xml/picmandrawable-preview.xml" />
+      <xi:include href="xml/picmandrawable-shadow.xml" />
+      <xi:include href="xml/picmandrawable-stroke.xml" />
+      <xi:include href="xml/picmandrawable-threshold.xml" />
+      <xi:include href="xml/picmandrawable-transform.xml" />
+      <xi:include href="xml/picmanchannel.xml" />
+      <xi:include href="xml/picmanchannel-combine.xml" />
+      <xi:include href="xml/picmanchannel-project.xml" />
+      <xi:include href="xml/picmanchannel-select.xml" />
+      <xi:include href="xml/picmanlayermask.xml" />
+      <xi:include href="xml/picmanselection.xml" />
+      <xi:include href="xml/picmanlayer.xml" />
+      <xi:include href="xml/picmanlayer-floating-sel.xml" />
+      <xi:include href="xml/picmanlayer-project.xml" />
+      <xi:include href="xml/picmangrouplayer.xml" />
     </chapter>
 
     <chapter id="app-core-image">
-      <title>The GimpImage Object</title>
-      <xi:include href="xml/gimpimage.xml" />
-      <xi:include href="xml/gimpimage-arrange.xml" />
-      <xi:include href="xml/gimpimage-colorhash.xml" />
-      <xi:include href="xml/gimpimage-colormap.xml" />
-      <xi:include href="xml/gimpimage-contiguous-region.xml" />
-      <xi:include href="xml/gimpimage-convert.xml" />
-      <xi:include href="xml/gimpimage-crop.xml" />
-      <xi:include href="xml/gimpimage-duplicate.xml" />
-      <xi:include href="xml/gimpimage-flip.xml" />
-      <xi:include href="xml/gimpimage-grid.xml" />
-      <xi:include href="xml/gimpimage-guides.xml" />
-      <xi:include href="xml/gimpimage-item-list.xml" />
-      <xi:include href="xml/gimpimage-merge.xml" />
-      <xi:include href="xml/gimpimage-new.xml" />
-      <xi:include href="xml/gimpimage-pick-color.xml" />
-      <xi:include href="xml/gimpimage-pick-layer.xml" />
-      <xi:include href="xml/gimpimage-preview.xml" />
-      <xi:include href="xml/gimpimage-quick-mask.xml" />
-      <xi:include href="xml/gimpimage-resize.xml" />
-      <xi:include href="xml/gimpimage-rotate.xml" />
-      <xi:include href="xml/gimpimage-sample-points.xml" />
-      <xi:include href="xml/gimpimage-scale.xml" />
-      <xi:include href="xml/gimpimage-snap.xml" />
-      <xi:include href="xml/gimpimage-undo.xml" />
-      <xi:include href="xml/gimpimage-undo-push.xml" />
+      <title>The PicmanImage Object</title>
+      <xi:include href="xml/picmanimage.xml" />
+      <xi:include href="xml/picmanimage-arrange.xml" />
+      <xi:include href="xml/picmanimage-colorhash.xml" />
+      <xi:include href="xml/picmanimage-colormap.xml" />
+      <xi:include href="xml/picmanimage-contiguous-region.xml" />
+      <xi:include href="xml/picmanimage-convert.xml" />
+      <xi:include href="xml/picmanimage-crop.xml" />
+      <xi:include href="xml/picmanimage-duplicate.xml" />
+      <xi:include href="xml/picmanimage-flip.xml" />
+      <xi:include href="xml/picmanimage-grid.xml" />
+      <xi:include href="xml/picmanimage-guides.xml" />
+      <xi:include href="xml/picmanimage-item-list.xml" />
+      <xi:include href="xml/picmanimage-merge.xml" />
+      <xi:include href="xml/picmanimage-new.xml" />
+      <xi:include href="xml/picmanimage-pick-color.xml" />
+      <xi:include href="xml/picmanimage-pick-layer.xml" />
+      <xi:include href="xml/picmanimage-preview.xml" />
+      <xi:include href="xml/picmanimage-quick-mask.xml" />
+      <xi:include href="xml/picmanimage-resize.xml" />
+      <xi:include href="xml/picmanimage-rotate.xml" />
+      <xi:include href="xml/picmanimage-sample-points.xml" />
+      <xi:include href="xml/picmanimage-scale.xml" />
+      <xi:include href="xml/picmanimage-snap.xml" />
+      <xi:include href="xml/picmanimage-undo.xml" />
+      <xi:include href="xml/picmanimage-undo-push.xml" />
     </chapter>
 
     <chapter id="app-core-undo">
       <title>The Image Undo System</title>
-      <xi:include href="xml/gimpundo.xml" />
-      <xi:include href="xml/gimpundostack.xml" />
-      <xi:include href="xml/gimpimageundo.xml" />
-      <xi:include href="xml/gimpitemundo.xml" />
-      <xi:include href="xml/gimpitempropundo.xml" />
-      <xi:include href="xml/gimpdrawableundo.xml" />
-      <xi:include href="xml/gimpdrawablemodundo.xml" />
-      <xi:include href="xml/gimpchannelundo.xml" />
-      <xi:include href="xml/gimpchannelpropundo.xml" />
-      <xi:include href="xml/gimplayerundo.xml" />
-      <xi:include href="xml/gimplayerpropundo.xml" />
-      <xi:include href="xml/gimplayermaskundo.xml" />
-      <xi:include href="xml/gimplayermaskpropundo.xml" />
-      <xi:include href="xml/gimpfloatingselundo.xml" />
-      <xi:include href="xml/gimpgrouplayerundo.xml" />
-      <xi:include href="xml/gimpmaskundo.xml" />
-      <xi:include href="xml/gimpguideundo.xml" />
-      <xi:include href="xml/gimpsamplepointundo.xml" />
+      <xi:include href="xml/picmanundo.xml" />
+      <xi:include href="xml/picmanundostack.xml" />
+      <xi:include href="xml/picmanimageundo.xml" />
+      <xi:include href="xml/picmanitemundo.xml" />
+      <xi:include href="xml/picmanitempropundo.xml" />
+      <xi:include href="xml/picmandrawableundo.xml" />
+      <xi:include href="xml/picmandrawablemodundo.xml" />
+      <xi:include href="xml/picmanchannelundo.xml" />
+      <xi:include href="xml/picmanchannelpropundo.xml" />
+      <xi:include href="xml/picmanlayerundo.xml" />
+      <xi:include href="xml/picmanlayerpropundo.xml" />
+      <xi:include href="xml/picmanlayermaskundo.xml" />
+      <xi:include href="xml/picmanlayermaskpropundo.xml" />
+      <xi:include href="xml/picmanfloatingselundo.xml" />
+      <xi:include href="xml/picmangrouplayerundo.xml" />
+      <xi:include href="xml/picmanmaskundo.xml" />
+      <xi:include href="xml/picmanguideundo.xml" />
+      <xi:include href="xml/picmansamplepointundo.xml" />
     </chapter>
 
     <chapter id="app-core-tagging">
         <title>The Resource Tagging System</title>
-        <xi:include href="xml/gimptag.xml" />
-        <xi:include href="xml/gimptagcache.xml" />
-        <xi:include href="xml/gimpfilteredcontainer.xml" />
-        <xi:include href="xml/gimptaggedcontainer.xml" />
+        <xi:include href="xml/picmantag.xml" />
+        <xi:include href="xml/picmantagcache.xml" />
+        <xi:include href="xml/picmanfilteredcontainer.xml" />
+        <xi:include href="xml/picmantaggedcontainer.xml" />
     </chapter>
 
     <chapter id="app-core-misc-objects">
       <title>Misc. Objects</title>
-      <xi:include href="xml/gimpbuffer.xml" />
-      <xi:include href="xml/gimpenvirontable.xml" />
-      <xi:include href="xml/gimpgrid.xml" />
-      <xi:include href="xml/gimpguide.xml" />
-      <xi:include href="xml/gimpimagefile.xml" />
-      <xi:include href="xml/gimpimagemap.xml" />
-      <xi:include href="xml/gimpimagemapconfig.xml" />
-      <xi:include href="xml/gimpparasitelist.xml" />
-      <xi:include href="xml/gimppdbprogress.xml" />
-      <xi:include href="xml/gimpprojection.xml" />
-      <xi:include href="xml/gimpprojection-construct.xml" />
-      <xi:include href="xml/gimpsubprogress.xml" />
-      <xi:include href="xml/gimptemplate.xml" />
+      <xi:include href="xml/picmanbuffer.xml" />
+      <xi:include href="xml/picmanenvirontable.xml" />
+      <xi:include href="xml/picmangrid.xml" />
+      <xi:include href="xml/picmanguide.xml" />
+      <xi:include href="xml/picmanimagefile.xml" />
+      <xi:include href="xml/picmanimagemap.xml" />
+      <xi:include href="xml/picmanimagemapconfig.xml" />
+      <xi:include href="xml/picmanparasitelist.xml" />
+      <xi:include href="xml/picmanpdbprogress.xml" />
+      <xi:include href="xml/picmanprojection.xml" />
+      <xi:include href="xml/picmanprojection-construct.xml" />
+      <xi:include href="xml/picmansubprogress.xml" />
+      <xi:include href="xml/picmantemplate.xml" />
     </chapter>
 
     <chapter id="app-core-interfaces">
       <title>Interfaces</title>
-      <xi:include href="xml/gimppickable.xml" />
-      <xi:include href="xml/gimpprogress.xml" />
-      <xi:include href="xml/gimpprojectable.xml" />
-      <xi:include href="xml/gimptagged.xml" />
+      <xi:include href="xml/picmanpickable.xml" />
+      <xi:include href="xml/picmanprogress.xml" />
+      <xi:include href="xml/picmanprojectable.xml" />
+      <xi:include href="xml/picmantagged.xml" />
     </chapter>
 
     <chapter id="app-core-misc-utils">
       <title>Misc. Utilities</title>
-      <xi:include href="xml/gimp-utils.xml" />
-      <xi:include href="xml/gimp-transform-region.xml" />
-      <xi:include href="xml/gimp-transform-resize.xml" />
-      <xi:include href="xml/gimp-transform-utils.xml" />
-      <xi:include href="xml/gimparea.xml" />
-      <xi:include href="xml/gimpcoords.xml" />
-      <xi:include href="xml/gimpcoords-interpolate.xml" />
-      <xi:include href="xml/gimpdashpattern.xml" />
-      <xi:include href="xml/gimperror.xml" />
-      <xi:include href="xml/gimpinterpreterdb.xml" />
-      <xi:include href="xml/gimpmarshal.xml" />
-      <xi:include href="xml/gimpparamspecs.xml" />
-      <xi:include href="xml/gimpparamspecs-desc.xml" />
-      <xi:include href="xml/gimpparamspecs-duplicate.xml" />
-      <xi:include href="xml/gimppreviewcache.xml" />
-      <xi:include href="xml/gimpsamplepoint.xml" />
-      <xi:include href="xml/gimpscanconvert.xml" />
+      <xi:include href="xml/picman-utils.xml" />
+      <xi:include href="xml/picman-transform-region.xml" />
+      <xi:include href="xml/picman-transform-resize.xml" />
+      <xi:include href="xml/picman-transform-utils.xml" />
+      <xi:include href="xml/picmanarea.xml" />
+      <xi:include href="xml/picmancoords.xml" />
+      <xi:include href="xml/picmancoords-interpolate.xml" />
+      <xi:include href="xml/picmandashpattern.xml" />
+      <xi:include href="xml/picmanerror.xml" />
+      <xi:include href="xml/picmaninterpreterdb.xml" />
+      <xi:include href="xml/picmanmarshal.xml" />
+      <xi:include href="xml/picmanparamspecs.xml" />
+      <xi:include href="xml/picmanparamspecs-desc.xml" />
+      <xi:include href="xml/picmanparamspecs-duplicate.xml" />
+      <xi:include href="xml/picmanpreviewcache.xml" />
+      <xi:include href="xml/picmansamplepoint.xml" />
+      <xi:include href="xml/picmanscanconvert.xml" />
     </chapter>
   </part>
 
@@ -472,33 +472,33 @@
     <xi:include href="xml/file-save.xml" />
     <xi:include href="xml/file-procedure.xml" />
     <xi:include href="xml/file-utils.xml" />
-    <xi:include href="xml/gimp-file.xml" />
+    <xi:include href="xml/picman-file.xml" />
   </part>
 
   <part id="app-vectors-part">
     <title>Vectors</title>
 
     <chapter id="app-vectors-vectors">
-      <title>The GimpVectors Objects</title>
+      <title>The PicmanVectors Objects</title>
       <xi:include href="xml/vectors-types.xml" />
-      <xi:include href="xml/gimpanchor.xml" />
-      <xi:include href="xml/gimpbezierdesc.xml" />
-      <xi:include href="xml/gimpbezierstroke.xml" />
-      <xi:include href="xml/gimpstroke.xml" />
-      <xi:include href="xml/gimpstroke-new.xml" />
-      <xi:include href="xml/gimpvectors.xml" />
-      <xi:include href="xml/gimpvectors-compat.xml" />
-      <xi:include href="xml/gimpvectors-preview.xml" />
-      <xi:include href="xml/gimpvectors-import.xml" />
-      <xi:include href="xml/gimpvectors-export.xml" />
-      <xi:include href="xml/gimpvectors-warp.xml" />
+      <xi:include href="xml/picmananchor.xml" />
+      <xi:include href="xml/picmanbezierdesc.xml" />
+      <xi:include href="xml/picmanbezierstroke.xml" />
+      <xi:include href="xml/picmanstroke.xml" />
+      <xi:include href="xml/picmanstroke-new.xml" />
+      <xi:include href="xml/picmanvectors.xml" />
+      <xi:include href="xml/picmanvectors-compat.xml" />
+      <xi:include href="xml/picmanvectors-preview.xml" />
+      <xi:include href="xml/picmanvectors-import.xml" />
+      <xi:include href="xml/picmanvectors-export.xml" />
+      <xi:include href="xml/picmanvectors-warp.xml" />
     </chapter>
 
     <chapter id="app-vectors-undo">
       <title>Vectors Undo Objects</title>
-      <xi:include href="xml/gimpvectorsundo.xml" />
-      <xi:include href="xml/gimpvectorsmodundo.xml" />
-      <xi:include href="xml/gimpvectorspropundo.xml" />
+      <xi:include href="xml/picmanvectorsundo.xml" />
+      <xi:include href="xml/picmanvectorsmodundo.xml" />
+      <xi:include href="xml/picmanvectorspropundo.xml" />
     </chapter>
   </part>
 
@@ -507,7 +507,7 @@
 
     <partintro id="app-xcf-part-intro">
       <para>
-        Functions to open and save images in GIMP's native "XCF" format.
+        Functions to open and save images in PICMAN's native "XCF" format.
       </para>
     </partintro>
 
@@ -530,15 +530,15 @@
   <part id="app-pdb-part">
     <title>Procedural Database</title>
     <xi:include href="xml/pdb-types.xml" />
-    <xi:include href="xml/gimppdb.xml" />
-    <xi:include href="xml/gimppdb-query.xml" />
-    <xi:include href="xml/gimppdb-utils.xml" />
-    <xi:include href="xml/gimppdbcontext.xml" />
-    <xi:include href="xml/gimppdberror.xml" />
-    <xi:include href="xml/gimp-pdb-compat.xml" />
-    <xi:include href="xml/gimpprocedure.xml" />
-    <xi:include href="xml/gimppluginprocedure.xml" />
-    <xi:include href="xml/gimptemporaryprocedure.xml" />
+    <xi:include href="xml/picmanpdb.xml" />
+    <xi:include href="xml/picmanpdb-query.xml" />
+    <xi:include href="xml/picmanpdb-utils.xml" />
+    <xi:include href="xml/picmanpdbcontext.xml" />
+    <xi:include href="xml/picmanpdberror.xml" />
+    <xi:include href="xml/picman-pdb-compat.xml" />
+    <xi:include href="xml/picmanprocedure.xml" />
+    <xi:include href="xml/picmanpluginprocedure.xml" />
+    <xi:include href="xml/picmantemporaryprocedure.xml" />
     <xi:include href="xml/internal_procs.xml" />
   </part>
 
@@ -550,30 +550,30 @@
 
     <chapter id="app-plug-in-management">
       <title>Initialization &amp; Plug-In Management</title>
-      <xi:include href="xml/gimpplugindef.xml" />
-      <xi:include href="xml/gimppluginmanager.xml" />
-      <xi:include href="xml/gimppluginmanager-call.xml" />
-      <xi:include href="xml/gimppluginmanager-history.xml" />
-      <xi:include href="xml/gimppluginmanager-data.xml" />
-      <xi:include href="xml/gimppluginmanager-file.xml" />
-      <xi:include href="xml/gimppluginmanager-help-domain.xml" />
-      <xi:include href="xml/gimppluginmanager-locale-domain.xml" />
-      <xi:include href="xml/gimppluginmanager-menu-branch.xml" />
-      <xi:include href="xml/gimppluginmanager-query.xml" />
+      <xi:include href="xml/picmanplugindef.xml" />
+      <xi:include href="xml/picmanpluginmanager.xml" />
+      <xi:include href="xml/picmanpluginmanager-call.xml" />
+      <xi:include href="xml/picmanpluginmanager-history.xml" />
+      <xi:include href="xml/picmanpluginmanager-data.xml" />
+      <xi:include href="xml/picmanpluginmanager-file.xml" />
+      <xi:include href="xml/picmanpluginmanager-help-domain.xml" />
+      <xi:include href="xml/picmanpluginmanager-locale-domain.xml" />
+      <xi:include href="xml/picmanpluginmanager-menu-branch.xml" />
+      <xi:include href="xml/picmanpluginmanager-query.xml" />
       <xi:include href="xml/plug-in-rc.xml" />
     </chapter>
 
     <chapter id="app-plug-in-execution">
       <title>Plug-In Execution</title>
-      <xi:include href="xml/gimpplugin.xml" />
-      <xi:include href="xml/gimpplugin-context.xml" />
-      <xi:include href="xml/gimpplugin-cleanup.xml" />
-      <xi:include href="xml/gimpplugin-message.xml" />
-      <xi:include href="xml/gimpplugin-progress.xml" />
-      <xi:include href="xml/gimpplugindebug.xml" />
-      <xi:include href="xml/gimppluginerror.xml" />
-      <xi:include href="xml/gimppluginprocframe.xml" />
-      <xi:include href="xml/gimppluginshm.xml" />
+      <xi:include href="xml/picmanplugin.xml" />
+      <xi:include href="xml/picmanplugin-context.xml" />
+      <xi:include href="xml/picmanplugin-cleanup.xml" />
+      <xi:include href="xml/picmanplugin-message.xml" />
+      <xi:include href="xml/picmanplugin-progress.xml" />
+      <xi:include href="xml/picmanplugindebug.xml" />
+      <xi:include href="xml/picmanpluginerror.xml" />
+      <xi:include href="xml/picmanpluginprocframe.xml" />
+      <xi:include href="xml/picmanpluginshm.xml" />
       <xi:include href="xml/plug-in-icc-profile.xml" />
     </chapter>
   </part>
@@ -582,48 +582,48 @@
     <title>Paint</title>
     <xi:include href="xml/paint-types.xml" />
     <xi:include href="xml/paint-enums.xml" />
-    <xi:include href="xml/gimp-paint.xml" />
+    <xi:include href="xml/picman-paint.xml" />
 
     <chapter id="app-paint-paint-core">
       <title>The Paint Core &amp; Options</title>
-      <xi:include href="xml/gimppaintcore.xml" />
-      <xi:include href="xml/gimppaintcore-stroke.xml" />
-      <xi:include href="xml/gimppaintoptions.xml" />
-      <xi:include href="xml/gimpbrushcore.xml" />
-      <xi:include href="xml/gimpbrushcore-kernels.xml" />
-      <xi:include href="xml/gimpsourcecore.xml" />
-      <xi:include href="xml/gimpsourceoptions.xml" />
+      <xi:include href="xml/picmanpaintcore.xml" />
+      <xi:include href="xml/picmanpaintcore-stroke.xml" />
+      <xi:include href="xml/picmanpaintoptions.xml" />
+      <xi:include href="xml/picmanbrushcore.xml" />
+      <xi:include href="xml/picmanbrushcore-kernels.xml" />
+      <xi:include href="xml/picmansourcecore.xml" />
+      <xi:include href="xml/picmansourceoptions.xml" />
     </chapter>
 
     <chapter id="app-paint-implementations">
       <title>Paint Implementations &amp; Options</title>
-      <xi:include href="xml/gimpairbrush.xml" />
-      <xi:include href="xml/gimpairbrushoptions.xml" />
-      <xi:include href="xml/gimpclone.xml" />
-      <xi:include href="xml/gimpcloneoptions.xml" />
-      <xi:include href="xml/gimpconvolve.xml" />
-      <xi:include href="xml/gimpconvolveoptions.xml" />
-      <xi:include href="xml/gimpdodgeburn.xml" />
-      <xi:include href="xml/gimpdodgeburnoptions.xml" />
-      <xi:include href="xml/gimperaser.xml" />
-      <xi:include href="xml/gimperaseroptions.xml" />
-      <xi:include href="xml/gimpheal.xml" />
-      <xi:include href="xml/gimpink.xml" />
-      <xi:include href="xml/gimpink-blob.xml" />
-      <xi:include href="xml/gimpinkoptions.xml" />
-      <xi:include href="xml/gimppaintbrush.xml" />
-      <xi:include href="xml/gimppencil.xml" />
-      <xi:include href="xml/gimppenciloptions.xml" />
-      <xi:include href="xml/gimpperspectiveclone.xml" />
-      <xi:include href="xml/gimpperspectivecloneoptions.xml" />
-      <xi:include href="xml/gimpsmudge.xml" />
-      <xi:include href="xml/gimpsmudgeoptions.xml" />
+      <xi:include href="xml/picmanairbrush.xml" />
+      <xi:include href="xml/picmanairbrushoptions.xml" />
+      <xi:include href="xml/picmanclone.xml" />
+      <xi:include href="xml/picmancloneoptions.xml" />
+      <xi:include href="xml/picmanconvolve.xml" />
+      <xi:include href="xml/picmanconvolveoptions.xml" />
+      <xi:include href="xml/picmandodgeburn.xml" />
+      <xi:include href="xml/picmandodgeburnoptions.xml" />
+      <xi:include href="xml/picmaneraser.xml" />
+      <xi:include href="xml/picmaneraseroptions.xml" />
+      <xi:include href="xml/picmanheal.xml" />
+      <xi:include href="xml/picmanink.xml" />
+      <xi:include href="xml/picmanink-blob.xml" />
+      <xi:include href="xml/picmaninkoptions.xml" />
+      <xi:include href="xml/picmanpaintbrush.xml" />
+      <xi:include href="xml/picmanpencil.xml" />
+      <xi:include href="xml/picmanpenciloptions.xml" />
+      <xi:include href="xml/picmanperspectiveclone.xml" />
+      <xi:include href="xml/picmanperspectivecloneoptions.xml" />
+      <xi:include href="xml/picmansmudge.xml" />
+      <xi:include href="xml/picmansmudgeoptions.xml" />
     </chapter>
 
     <chapter id="app-paint-undo">
       <title>Paint Undo Objects</title>
-      <xi:include href="xml/gimppaintcoreundo.xml" />
-      <xi:include href="xml/gimpinkundo.xml" />
+      <xi:include href="xml/picmanpaintcoreundo.xml" />
+      <xi:include href="xml/picmaninkundo.xml" />
     </chapter>
   </part>
 
@@ -633,32 +633,32 @@
 
     <chapter id="app-text-fonts">
       <title>Initialization &amp; Font Management</title>
-      <xi:include href="xml/gimp-fonts.xml" />
-      <xi:include href="xml/gimpfont.xml" />
-      <xi:include href="xml/gimpfontlist.xml" />
+      <xi:include href="xml/picman-fonts.xml" />
+      <xi:include href="xml/picmanfont.xml" />
+      <xi:include href="xml/picmanfontlist.xml" />
     </chapter>
 
     <chapter id="app-text-text">
-      <title>The GimpText Object</title>
-      <xi:include href="xml/gimptext.xml" />
-      <xi:include href="xml/gimptext-compat.xml" />
-      <xi:include href="xml/gimptext-parasite.xml" />
-      <xi:include href="xml/gimptext-vectors.xml" />
-      <xi:include href="xml/gimptext-xlfd.xml" />
-      <xi:include href="xml/gimptextundo.xml" />
+      <title>The PicmanText Object</title>
+      <xi:include href="xml/picmantext.xml" />
+      <xi:include href="xml/picmantext-compat.xml" />
+      <xi:include href="xml/picmantext-parasite.xml" />
+      <xi:include href="xml/picmantext-vectors.xml" />
+      <xi:include href="xml/picmantext-xlfd.xml" />
+      <xi:include href="xml/picmantextundo.xml" />
     </chapter>
 
     <chapter id="app-text-layout">
-      <title>The GimpTextLayout Object</title>
-      <xi:include href="xml/gimptextlayout.xml" />
-      <xi:include href="xml/gimptextlayout-render.xml" />
+      <title>The PicmanTextLayout Object</title>
+      <xi:include href="xml/picmantextlayout.xml" />
+      <xi:include href="xml/picmantextlayout-render.xml" />
     </chapter>
 
     <chapter id="app-text-layer">
-      <title>The GimpTextLayer Object</title>
-      <xi:include href="xml/gimptextlayer.xml" />
-      <xi:include href="xml/gimptextlayer-transform.xml" />
-      <xi:include href="xml/gimptextlayer-xcf.xml" />
+      <title>The PicmanTextLayer Object</title>
+      <xi:include href="xml/picmantextlayer.xml" />
+      <xi:include href="xml/picmantextlayer-transform.xml" />
+      <xi:include href="xml/picmantextlayer-xcf.xml" />
     </chapter>
   </part>
 
@@ -667,85 +667,85 @@
     <xi:include href="xml/display-enums.xml" />
 
     <chapter id="app-image-window">
-      <title>The GimpImageWindow Widget</title>
-      <xi:include href="xml/gimpimagewindow.xml" />
+      <title>The PicmanImageWindow Widget</title>
+      <xi:include href="xml/picmanimagewindow.xml" />
     </chapter>
 
     <chapter id="app-display-display">
-      <title>The GimpDisplay Object</title>
-      <xi:include href="xml/gimpdisplay.xml" />
-      <xi:include href="xml/gimpdisplay-foreach.xml" />
-      <xi:include href="xml/gimpdisplay-handlers.xml" />
-      <xi:include href="xml/gimpdisplayoptions.xml" />
+      <title>The PicmanDisplay Object</title>
+      <xi:include href="xml/picmandisplay.xml" />
+      <xi:include href="xml/picmandisplay-foreach.xml" />
+      <xi:include href="xml/picmandisplay-handlers.xml" />
+      <xi:include href="xml/picmandisplayoptions.xml" />
     </chapter>
 
     <chapter id="app-display-shell">
-      <title>The GimpDisplayShell Widget</title>
-      <xi:include href="xml/gimpcanvas.xml" />
-      <xi:include href="xml/gimpdisplayshell.xml" />
-      <xi:include href="xml/gimpdisplayshell-appearance.xml" />
-      <xi:include href="xml/gimpdisplayshell-callbacks.xml" />
-      <xi:include href="xml/gimpdisplayshell-tool-events.xml" />
-      <xi:include href="xml/gimpdisplayshell-close.xml" />
-      <xi:include href="xml/gimpdisplayshell-cursor.xml" />
-      <xi:include href="xml/gimpdisplayshell-dnd.xml" />
-      <xi:include href="xml/gimpdisplayshell-draw.xml" />
-      <xi:include href="xml/gimpdisplayshell-expose.xml" />
-      <xi:include href="xml/gimpdisplayshell-filter-dialog.xml" />
-      <xi:include href="xml/gimpdisplayshell-filter.xml" />
-      <xi:include href="xml/gimpdisplayshell-grab.xml" />
-      <xi:include href="xml/gimpdisplayshell-handlers.xml" />
-      <xi:include href="xml/gimpdisplayshell-icon.xml" />
-      <xi:include href="xml/gimpdisplayshell-items.xml" />
-      <xi:include href="xml/gimpdisplayshell-layer-select.xml" />
-      <xi:include href="xml/gimpdisplayshell-render.xml" />
-      <xi:include href="xml/gimpdisplayshell-scale.xml" />
-      <xi:include href="xml/gimpdisplayshell-scale-dialog.xml" />
-      <xi:include href="xml/gimpdisplayshell-scroll.xml" />
-      <xi:include href="xml/gimpdisplayshell-autoscroll.xml" />
-      <xi:include href="xml/gimpdisplayshell-selection.xml" />
-      <xi:include href="xml/gimpdisplayshell-style.xml" />
-      <xi:include href="xml/gimpdisplayshell-title.xml" />
-      <xi:include href="xml/gimpdisplayshell-progress.xml" />
-      <xi:include href="xml/gimpdisplayshell-transform.xml" />
+      <title>The PicmanDisplayShell Widget</title>
+      <xi:include href="xml/picmancanvas.xml" />
+      <xi:include href="xml/picmandisplayshell.xml" />
+      <xi:include href="xml/picmandisplayshell-appearance.xml" />
+      <xi:include href="xml/picmandisplayshell-callbacks.xml" />
+      <xi:include href="xml/picmandisplayshell-tool-events.xml" />
+      <xi:include href="xml/picmandisplayshell-close.xml" />
+      <xi:include href="xml/picmandisplayshell-cursor.xml" />
+      <xi:include href="xml/picmandisplayshell-dnd.xml" />
+      <xi:include href="xml/picmandisplayshell-draw.xml" />
+      <xi:include href="xml/picmandisplayshell-expose.xml" />
+      <xi:include href="xml/picmandisplayshell-filter-dialog.xml" />
+      <xi:include href="xml/picmandisplayshell-filter.xml" />
+      <xi:include href="xml/picmandisplayshell-grab.xml" />
+      <xi:include href="xml/picmandisplayshell-handlers.xml" />
+      <xi:include href="xml/picmandisplayshell-icon.xml" />
+      <xi:include href="xml/picmandisplayshell-items.xml" />
+      <xi:include href="xml/picmandisplayshell-layer-select.xml" />
+      <xi:include href="xml/picmandisplayshell-render.xml" />
+      <xi:include href="xml/picmandisplayshell-scale.xml" />
+      <xi:include href="xml/picmandisplayshell-scale-dialog.xml" />
+      <xi:include href="xml/picmandisplayshell-scroll.xml" />
+      <xi:include href="xml/picmandisplayshell-autoscroll.xml" />
+      <xi:include href="xml/picmandisplayshell-selection.xml" />
+      <xi:include href="xml/picmandisplayshell-style.xml" />
+      <xi:include href="xml/picmandisplayshell-title.xml" />
+      <xi:include href="xml/picmandisplayshell-progress.xml" />
+      <xi:include href="xml/picmandisplayshell-transform.xml" />
     </chapter>
 
     <chapter id="app-canvas-items">
-      <title>GimpCanvasItem Objects</title>
-      <xi:include href="xml/gimpcanvasitem.xml" />
-      <xi:include href="xml/gimpcanvasitem-utils.xml" />
-      <xi:include href="xml/gimpcanvasarc.xml" />
-      <xi:include href="xml/gimpcanvasboundary.xml" />
-      <xi:include href="xml/gimpcanvascorner.xml" />
-      <xi:include href="xml/gimpcanvascursor.xml" />
-      <xi:include href="xml/gimpcanvasgrid.xml" />
-      <xi:include href="xml/gimpcanvasgroup.xml" />
-      <xi:include href="xml/gimpcanvasguide.xml" />
-      <xi:include href="xml/gimpcanvashandle.xml" />
-      <xi:include href="xml/gimpcanvaslayerboundary.xml" />
-      <xi:include href="xml/gimpcanvasline.xml" />
-      <xi:include href="xml/gimpcanvaspassepartout.xml" />
-      <xi:include href="xml/gimpcanvaspath.xml" />
-      <xi:include href="xml/gimpcanvaspen.xml" />
-      <xi:include href="xml/gimpcanvaspolygon.xml" />
-      <xi:include href="xml/gimpcanvasprogress.xml" />
-      <xi:include href="xml/gimpcanvasproxygroup.xml" />
-      <xi:include href="xml/gimpcanvasrectangle.xml" />
-      <xi:include href="xml/gimpcanvasrectangleguides.xml" />
-      <xi:include href="xml/gimpcanvassamplepoint.xml" />
-      <xi:include href="xml/gimpcanvastextcursor.xml" />
-      <xi:include href="xml/gimpcanvastransformguides.xml" />
-      <xi:include href="xml/gimpcanvastransformpreview.xml" />
+      <title>PicmanCanvasItem Objects</title>
+      <xi:include href="xml/picmancanvasitem.xml" />
+      <xi:include href="xml/picmancanvasitem-utils.xml" />
+      <xi:include href="xml/picmancanvasarc.xml" />
+      <xi:include href="xml/picmancanvasboundary.xml" />
+      <xi:include href="xml/picmancanvascorner.xml" />
+      <xi:include href="xml/picmancanvascursor.xml" />
+      <xi:include href="xml/picmancanvasgrid.xml" />
+      <xi:include href="xml/picmancanvasgroup.xml" />
+      <xi:include href="xml/picmancanvasguide.xml" />
+      <xi:include href="xml/picmancanvashandle.xml" />
+      <xi:include href="xml/picmancanvaslayerboundary.xml" />
+      <xi:include href="xml/picmancanvasline.xml" />
+      <xi:include href="xml/picmancanvaspassepartout.xml" />
+      <xi:include href="xml/picmancanvaspath.xml" />
+      <xi:include href="xml/picmancanvaspen.xml" />
+      <xi:include href="xml/picmancanvaspolygon.xml" />
+      <xi:include href="xml/picmancanvasprogress.xml" />
+      <xi:include href="xml/picmancanvasproxygroup.xml" />
+      <xi:include href="xml/picmancanvasrectangle.xml" />
+      <xi:include href="xml/picmancanvasrectangleguides.xml" />
+      <xi:include href="xml/picmancanvassamplepoint.xml" />
+      <xi:include href="xml/picmancanvastextcursor.xml" />
+      <xi:include href="xml/picmancanvastransformguides.xml" />
+      <xi:include href="xml/picmancanvastransformpreview.xml" />
     </chapter>
 
     <chapter id="app-display-utils">
       <title>Misc. Widgets &amp; Utilities</title>
-      <xi:include href="xml/gimpmotionbuffer.xml" />
-      <xi:include href="xml/gimpnavigationeditor.xml" />
-      <xi:include href="xml/gimpstatusbar.xml" />
-      <xi:include href="xml/gimptooldialog.xml" />
-      <xi:include href="xml/gimpmultiwindowstrategy.xml" />
-      <xi:include href="xml/gimpsinglewindowstrategy.xml" />
+      <xi:include href="xml/picmanmotionbuffer.xml" />
+      <xi:include href="xml/picmannavigationeditor.xml" />
+      <xi:include href="xml/picmanstatusbar.xml" />
+      <xi:include href="xml/picmantooldialog.xml" />
+      <xi:include href="xml/picmanmultiwindowstrategy.xml" />
+      <xi:include href="xml/picmansinglewindowstrategy.xml" />
     </chapter>
   </part>
 
@@ -756,135 +756,135 @@
 
     <chapter id="app-tools-glue">
       <title>Initialization &amp; Glue Code</title>
-      <xi:include href="xml/gimp-tools.xml" />
+      <xi:include href="xml/picman-tools.xml" />
       <xi:include href="xml/tool_manager.xml" />
     </chapter>
 
     <chapter id="app-tools-tool">
-      <title>The GimpTool Object</title>
-      <xi:include href="xml/gimptool.xml" />
-      <xi:include href="xml/gimptool-progress.xml" />
-      <xi:include href="xml/gimptoolcontrol.xml" />
+      <title>The PicmanTool Object</title>
+      <xi:include href="xml/picmantool.xml" />
+      <xi:include href="xml/picmantool-progress.xml" />
+      <xi:include href="xml/picmantoolcontrol.xml" />
     </chapter>
 
     <chapter id="app-tools-base">
       <title>Base Classes</title>
-      <xi:include href="xml/gimpdrawtool.xml" />
-      <xi:include href="xml/gimpcolortool.xml" />
-      <xi:include href="xml/gimpcoloroptions.xml" />
-      <xi:include href="xml/gimphistogramoptions.xml" />
+      <xi:include href="xml/picmandrawtool.xml" />
+      <xi:include href="xml/picmancolortool.xml" />
+      <xi:include href="xml/picmancoloroptions.xml" />
+      <xi:include href="xml/picmanhistogramoptions.xml" />
     </chapter>
 
     <chapter id="app-tools-options-gui">
       <title>GUI Constructors for Core Tool Options</title>
-      <xi:include href="xml/gimptooloptions-gui.xml" />
-      <xi:include href="xml/gimppaintoptions-gui.xml" />
-      <xi:include href="xml/gimpinkoptions-gui.xml" />
+      <xi:include href="xml/picmantooloptions-gui.xml" />
+      <xi:include href="xml/picmanpaintoptions-gui.xml" />
+      <xi:include href="xml/picmaninkoptions-gui.xml" />
     </chapter>
 
     <chapter id="app-tools-selection">
       <title>Selection Tools</title>
-      <xi:include href="xml/gimpselectionoptions.xml" />
-      <xi:include href="xml/gimpselectiontool.xml" />
-      <xi:include href="xml/gimpregionselectoptions.xml" />
-      <xi:include href="xml/gimpregionselecttool.xml" />
-      <xi:include href="xml/gimprectangleselectoptions.xml" />
-      <xi:include href="xml/gimprectangleselecttool.xml" />
-      <xi:include href="xml/gimpellipseselecttool.xml" />
-      <xi:include href="xml/gimpfreeselecttool.xml" />
-      <xi:include href="xml/gimpfuzzyselecttool.xml" />
-      <xi:include href="xml/gimpbycolorselecttool.xml" />
-      <xi:include href="xml/gimpiscissorsoptions.xml" />
-      <xi:include href="xml/gimpiscissorstool.xml" />
-      <xi:include href="xml/gimpforegroundselectoptions.xml" />
-      <xi:include href="xml/gimpforegroundselecttool.xml" />
-      <xi:include href="xml/gimpforegroundselecttoolundo.xml" />
+      <xi:include href="xml/picmanselectionoptions.xml" />
+      <xi:include href="xml/picmanselectiontool.xml" />
+      <xi:include href="xml/picmanregionselectoptions.xml" />
+      <xi:include href="xml/picmanregionselecttool.xml" />
+      <xi:include href="xml/picmanrectangleselectoptions.xml" />
+      <xi:include href="xml/picmanrectangleselecttool.xml" />
+      <xi:include href="xml/picmanellipseselecttool.xml" />
+      <xi:include href="xml/picmanfreeselecttool.xml" />
+      <xi:include href="xml/picmanfuzzyselecttool.xml" />
+      <xi:include href="xml/picmanbycolorselecttool.xml" />
+      <xi:include href="xml/picmaniscissorsoptions.xml" />
+      <xi:include href="xml/picmaniscissorstool.xml" />
+      <xi:include href="xml/picmanforegroundselectoptions.xml" />
+      <xi:include href="xml/picmanforegroundselecttool.xml" />
+      <xi:include href="xml/picmanforegroundselecttoolundo.xml" />
     </chapter>
 
     <chapter id="app-tools-paint">
       <title>Paint Tools</title>
-      <xi:include href="xml/gimppainttool.xml" />
-      <xi:include href="xml/gimpbrushtool.xml" />
-      <xi:include href="xml/gimpsourcetool.xml" />
-      <xi:include href="xml/gimpairbrushtool.xml" />
-      <xi:include href="xml/gimpclonetool.xml" />
-      <xi:include href="xml/gimpconvolvetool.xml" />
-      <xi:include href="xml/gimpdodgeburntool.xml" />
-      <xi:include href="xml/gimperasertool.xml" />
-      <xi:include href="xml/gimphealtool.xml" />
-      <xi:include href="xml/gimpinktool.xml" />
-      <xi:include href="xml/gimppaintbrushtool.xml" />
-      <xi:include href="xml/gimppenciltool.xml" />
-      <xi:include href="xml/gimpperspectiveclonetool.xml" />
-      <xi:include href="xml/gimpsmudgetool.xml" />
+      <xi:include href="xml/picmanpainttool.xml" />
+      <xi:include href="xml/picmanbrushtool.xml" />
+      <xi:include href="xml/picmansourcetool.xml" />
+      <xi:include href="xml/picmanairbrushtool.xml" />
+      <xi:include href="xml/picmanclonetool.xml" />
+      <xi:include href="xml/picmanconvolvetool.xml" />
+      <xi:include href="xml/picmandodgeburntool.xml" />
+      <xi:include href="xml/picmanerasertool.xml" />
+      <xi:include href="xml/picmanhealtool.xml" />
+      <xi:include href="xml/picmaninktool.xml" />
+      <xi:include href="xml/picmanpaintbrushtool.xml" />
+      <xi:include href="xml/picmanpenciltool.xml" />
+      <xi:include href="xml/picmanperspectiveclonetool.xml" />
+      <xi:include href="xml/picmansmudgetool.xml" />
     </chapter>
 
     <chapter id="app-tool-color-applying">
       <title>Misc. Color Applying Tools</title>
-      <xi:include href="xml/gimpblendtool.xml" />
-      <xi:include href="xml/gimpblendoptions.xml" />
-      <xi:include href="xml/gimpbucketfilltool.xml" />
-      <xi:include href="xml/gimpbucketfilloptions.xml" />
+      <xi:include href="xml/picmanblendtool.xml" />
+      <xi:include href="xml/picmanblendoptions.xml" />
+      <xi:include href="xml/picmanbucketfilltool.xml" />
+      <xi:include href="xml/picmanbucketfilloptions.xml" />
     </chapter>
 
     <chapter id="app-tools-color-correction">
       <title>Color Correction Tools</title>
-      <xi:include href="xml/gimpimagemaptool.xml" />
-      <xi:include href="xml/gimpimagemaptool-settings.xml" />
-      <xi:include href="xml/gimpimagemapoptions.xml" />
-      <xi:include href="xml/gimpbrightnesscontrasttool.xml" />
-      <xi:include href="xml/gimpcolorbalancetool.xml" />
-      <xi:include href="xml/gimpcolorizetool.xml" />
-      <xi:include href="xml/gimpcurvestool.xml" />
-      <xi:include href="xml/gimpdesaturatetool.xml" />
-      <xi:include href="xml/gimphuesaturationtool.xml" />
-      <xi:include href="xml/gimplevelstool.xml" />
-      <xi:include href="xml/gimpposterizetool.xml" />
-      <xi:include href="xml/gimpthresholdtool.xml" />
+      <xi:include href="xml/picmanimagemaptool.xml" />
+      <xi:include href="xml/picmanimagemaptool-settings.xml" />
+      <xi:include href="xml/picmanimagemapoptions.xml" />
+      <xi:include href="xml/picmanbrightnesscontrasttool.xml" />
+      <xi:include href="xml/picmancolorbalancetool.xml" />
+      <xi:include href="xml/picmancolorizetool.xml" />
+      <xi:include href="xml/picmancurvestool.xml" />
+      <xi:include href="xml/picmandesaturatetool.xml" />
+      <xi:include href="xml/picmanhuesaturationtool.xml" />
+      <xi:include href="xml/picmanlevelstool.xml" />
+      <xi:include href="xml/picmanposterizetool.xml" />
+      <xi:include href="xml/picmanthresholdtool.xml" />
     </chapter>
 
     <chapter id="app-tools-transform">
       <title>Transform Tools</title>
-      <xi:include href="xml/gimpmovetool.xml" />
-      <xi:include href="xml/gimpmoveoptions.xml" />
-      <xi:include href="xml/gimpeditselectiontool.xml" />
-      <xi:include href="xml/gimpcroptool.xml" />
-      <xi:include href="xml/gimpcropoptions.xml" />
-      <xi:include href="xml/gimptransformoptions.xml" />
-      <xi:include href="xml/gimptransformtool.xml" />
-      <xi:include href="xml/gimptransformtoolundo.xml" />
-      <xi:include href="xml/gimpfliptool.xml" />
-      <xi:include href="xml/gimpflipoptions.xml" />
-      <xi:include href="xml/gimpperspectivetool.xml" />
-      <xi:include href="xml/gimprotatetool.xml" />
-      <xi:include href="xml/gimpscaletool.xml" />
-      <xi:include href="xml/gimpsheartool.xml" />
-      <xi:include href="xml/gimpcagetool.xml" />
-      <xi:include href="xml/gimpcageoptions.xml" />
+      <xi:include href="xml/picmanmovetool.xml" />
+      <xi:include href="xml/picmanmoveoptions.xml" />
+      <xi:include href="xml/picmaneditselectiontool.xml" />
+      <xi:include href="xml/picmancroptool.xml" />
+      <xi:include href="xml/picmancropoptions.xml" />
+      <xi:include href="xml/picmantransformoptions.xml" />
+      <xi:include href="xml/picmantransformtool.xml" />
+      <xi:include href="xml/picmantransformtoolundo.xml" />
+      <xi:include href="xml/picmanfliptool.xml" />
+      <xi:include href="xml/picmanflipoptions.xml" />
+      <xi:include href="xml/picmanperspectivetool.xml" />
+      <xi:include href="xml/picmanrotatetool.xml" />
+      <xi:include href="xml/picmanscaletool.xml" />
+      <xi:include href="xml/picmansheartool.xml" />
+      <xi:include href="xml/picmancagetool.xml" />
+      <xi:include href="xml/picmancageoptions.xml" />
     </chapter>
 
     <chapter id="app-tools-misc">
       <title>Text and Vector Tools</title>
-      <xi:include href="xml/gimpaligntool.xml" />
-      <xi:include href="xml/gimpalignoptions.xml" />
-      <xi:include href="xml/gimpgegltool.xml" />
-      <xi:include href="xml/gimprectangletool.xml" />
-      <xi:include href="xml/gimprectangleoptions.xml" />
-      <xi:include href="xml/gimptexttool.xml" />
-      <xi:include href="xml/gimptexttool-editor.xml" />
-      <xi:include href="xml/gimptextoptions.xml" />
-      <xi:include href="xml/gimpvectortool.xml" />
-      <xi:include href="xml/gimpvectoroptions.xml" />
+      <xi:include href="xml/picmanaligntool.xml" />
+      <xi:include href="xml/picmanalignoptions.xml" />
+      <xi:include href="xml/picmangegltool.xml" />
+      <xi:include href="xml/picmanrectangletool.xml" />
+      <xi:include href="xml/picmanrectangleoptions.xml" />
+      <xi:include href="xml/picmantexttool.xml" />
+      <xi:include href="xml/picmantexttool-editor.xml" />
+      <xi:include href="xml/picmantextoptions.xml" />
+      <xi:include href="xml/picmanvectortool.xml" />
+      <xi:include href="xml/picmanvectoroptions.xml" />
     </chapter>
 
     <chapter id="app-tools-non-modifying">
       <title>Tools which don't Modify the Image</title>
-      <xi:include href="xml/gimpcolorpickertool.xml" />
-      <xi:include href="xml/gimpcolorpickeroptions.xml" />
-      <xi:include href="xml/gimpmagnifytool.xml" />
-      <xi:include href="xml/gimpmagnifyoptions.xml" />
-      <xi:include href="xml/gimpmeasuretool.xml" />
-      <xi:include href="xml/gimpmeasureoptions.xml" />
+      <xi:include href="xml/picmancolorpickertool.xml" />
+      <xi:include href="xml/picmancolorpickeroptions.xml" />
+      <xi:include href="xml/picmanmagnifytool.xml" />
+      <xi:include href="xml/picmanmagnifyoptions.xml" />
+      <xi:include href="xml/picmanmeasuretool.xml" />
+      <xi:include href="xml/picmanmeasureoptions.xml" />
     </chapter>
   </part>
 
@@ -895,291 +895,291 @@
 
     <chapter id="app-widgets-devices">
       <title>Input Device Management</title>
-      <xi:include href="xml/gimpdevices.xml" />
-      <xi:include href="xml/gimpdevicemanager.xml" />
-      <xi:include href="xml/gimpdeviceinfo.xml" />
-      <xi:include href="xml/gimpdeviceinfo-coords.xml" />
-      <xi:include href="xml/gimpdeviceinfoeditor.xml" />
-      <xi:include href="xml/gimpdeviceeditor.xml" />
+      <xi:include href="xml/picmandevices.xml" />
+      <xi:include href="xml/picmandevicemanager.xml" />
+      <xi:include href="xml/picmandeviceinfo.xml" />
+      <xi:include href="xml/picmandeviceinfo-coords.xml" />
+      <xi:include href="xml/picmandeviceinfoeditor.xml" />
+      <xi:include href="xml/picmandeviceeditor.xml" />
     </chapter>
 
     <chapter id="app-widgets-controllers">
       <title>Additional Input Controller Management</title>
-      <xi:include href="xml/gimpcontrollers.xml" />
-      <xi:include href="xml/gimpcontrollereditor.xml" />
-      <xi:include href="xml/gimpcontrollerlist.xml" />
-      <xi:include href="xml/gimpcontrollerinfo.xml" />
-      <xi:include href="xml/gimpcontrollerkeyboard.xml" />
-      <xi:include href="xml/gimpcontrollermouse.xml" />
-      <xi:include href="xml/gimpcontrollerwheel.xml" />
+      <xi:include href="xml/picmancontrollers.xml" />
+      <xi:include href="xml/picmancontrollereditor.xml" />
+      <xi:include href="xml/picmancontrollerlist.xml" />
+      <xi:include href="xml/picmancontrollerinfo.xml" />
+      <xi:include href="xml/picmancontrollerkeyboard.xml" />
+      <xi:include href="xml/picmancontrollermouse.xml" />
+      <xi:include href="xml/picmancontrollerwheel.xml" />
     </chapter>
 
     <chapter id="app-widgets-color-selectors">
       <title>Built-in Color Selector Modules</title>
-      <xi:include href="xml/gimpcolorselectorpalette.xml" />
+      <xi:include href="xml/picmancolorselectorpalette.xml" />
     </chapter>
 
     <chapter id="app-widgets-docks">
       <title>Dock Windows &amp; Widgets</title>
-      <xi:include href="xml/gimpwindow.xml" />
-      <xi:include href="xml/gimpdockwindow.xml" />
-      <xi:include href="xml/gimppanedbox.xml" />
-      <xi:include href="xml/gimpdockcolumns.xml" />
-      <xi:include href="xml/gimpdockcontainer.xml" />
-      <xi:include href="xml/gimpdock.xml" />
-      <xi:include href="xml/gimpmenudock.xml" />
-      <xi:include href="xml/gimptoolbox.xml" />
-      <xi:include href="xml/gimptoolbox-dnd.xml" />
-      <xi:include href="xml/gimptoolbox-color-area.xml" />
-      <xi:include href="xml/gimptoolbox-image-area.xml" />
-      <xi:include href="xml/gimptoolbox-indicator-area.xml" />
-      <xi:include href="xml/gimpdockbook.xml" />
-      <xi:include href="xml/gimpdockable.xml" />
-      <xi:include href="xml/gimpdocked.xml" />
+      <xi:include href="xml/picmanwindow.xml" />
+      <xi:include href="xml/picmandockwindow.xml" />
+      <xi:include href="xml/picmanpanedbox.xml" />
+      <xi:include href="xml/picmandockcolumns.xml" />
+      <xi:include href="xml/picmandockcontainer.xml" />
+      <xi:include href="xml/picmandock.xml" />
+      <xi:include href="xml/picmanmenudock.xml" />
+      <xi:include href="xml/picmantoolbox.xml" />
+      <xi:include href="xml/picmantoolbox-dnd.xml" />
+      <xi:include href="xml/picmantoolbox-color-area.xml" />
+      <xi:include href="xml/picmantoolbox-image-area.xml" />
+      <xi:include href="xml/picmantoolbox-indicator-area.xml" />
+      <xi:include href="xml/picmandockbook.xml" />
+      <xi:include href="xml/picmandockable.xml" />
+      <xi:include href="xml/picmandocked.xml" />
     </chapter>
 
     <chapter id="app-widgets-editors">
-      <title>GimpEditor Widgets</title>
-      <xi:include href="xml/gimpeditor.xml" />
-      <xi:include href="xml/gimpcoloreditor.xml" />
-      <xi:include href="xml/gimpdevicestatus.xml" />
-      <xi:include href="xml/gimperrorconsole.xml" />
-      <xi:include href="xml/gimpsamplepointeditor.xml" />
-      <xi:include href="xml/gimptooloptionseditor.xml" />
-      <xi:include href="xml/gimptoolpreseteditor.xml" />
+      <title>PicmanEditor Widgets</title>
+      <xi:include href="xml/picmaneditor.xml" />
+      <xi:include href="xml/picmancoloreditor.xml" />
+      <xi:include href="xml/picmandevicestatus.xml" />
+      <xi:include href="xml/picmanerrorconsole.xml" />
+      <xi:include href="xml/picmansamplepointeditor.xml" />
+      <xi:include href="xml/picmantooloptionseditor.xml" />
+      <xi:include href="xml/picmantoolpreseteditor.xml" />
     </chapter>
 
     <chapter id="app-widgets-data-editors">
-      <title>GimpDataEditor Widgets</title>
-      <xi:include href="xml/gimpdataeditor.xml" />
-      <xi:include href="xml/gimpbrusheditor.xml" />
-      <xi:include href="xml/gimpdynamicseditor.xml" />
-      <xi:include href="xml/gimpdynamicsoutputeditor.xml" />
-      <xi:include href="xml/gimpgradienteditor.xml" />
-      <xi:include href="xml/gimppaletteeditor.xml" />
+      <title>PicmanDataEditor Widgets</title>
+      <xi:include href="xml/picmandataeditor.xml" />
+      <xi:include href="xml/picmanbrusheditor.xml" />
+      <xi:include href="xml/picmandynamicseditor.xml" />
+      <xi:include href="xml/picmandynamicsoutputeditor.xml" />
+      <xi:include href="xml/picmangradienteditor.xml" />
+      <xi:include href="xml/picmanpaletteeditor.xml" />
     </chapter>
 
     <chapter id="app-widgets-image-editor">
-      <title>GimpImageEditor Widgets</title>
-      <xi:include href="xml/gimpimageeditor.xml" />
-      <xi:include href="xml/gimpcomponenteditor.xml" />
-      <xi:include href="xml/gimpcolormapeditor.xml" />
-      <xi:include href="xml/gimphistogrameditor.xml" />
-      <xi:include href="xml/gimpselectioneditor.xml" />
-      <xi:include href="xml/gimpundoeditor.xml" />
+      <title>PicmanImageEditor Widgets</title>
+      <xi:include href="xml/picmanimageeditor.xml" />
+      <xi:include href="xml/picmancomponenteditor.xml" />
+      <xi:include href="xml/picmancolormapeditor.xml" />
+      <xi:include href="xml/picmanhistogrameditor.xml" />
+      <xi:include href="xml/picmanselectioneditor.xml" />
+      <xi:include href="xml/picmanundoeditor.xml" />
     </chapter>
 
     <chapter id="app-widgets-container-views">
-      <title>GimpContainerView Widgets</title>
-      <xi:include href="xml/gimpcontainerview.xml" />
-      <xi:include href="xml/gimpcontainerview-utils.xml" />
-      <xi:include href="xml/gimpcontainerbox.xml" />
-      <xi:include href="xml/gimpcontainercombobox.xml" />
-      <xi:include href="xml/gimpcontainerentry.xml" />
-      <xi:include href="xml/gimpcontainertreestore.xml" />
-      <xi:include href="xml/gimpcontainergridview.xml" />
-      <xi:include href="xml/gimpcontainericonview.xml" />
-      <xi:include href="xml/gimpcontainertreeview.xml" />
-      <xi:include href="xml/gimpcontainertreeview-dnd.xml" />
-      <xi:include href="xml/gimpitemtreeview.xml" />
-      <xi:include href="xml/gimpdrawabletreeview.xml" />
-      <xi:include href="xml/gimplayertreeview.xml" />
-      <xi:include href="xml/gimpchanneltreeview.xml" />
-      <xi:include href="xml/gimpvectorstreeview.xml" />
+      <title>PicmanContainerView Widgets</title>
+      <xi:include href="xml/picmancontainerview.xml" />
+      <xi:include href="xml/picmancontainerview-utils.xml" />
+      <xi:include href="xml/picmancontainerbox.xml" />
+      <xi:include href="xml/picmancontainercombobox.xml" />
+      <xi:include href="xml/picmancontainerentry.xml" />
+      <xi:include href="xml/picmancontainertreestore.xml" />
+      <xi:include href="xml/picmancontainergridview.xml" />
+      <xi:include href="xml/picmancontainericonview.xml" />
+      <xi:include href="xml/picmancontainertreeview.xml" />
+      <xi:include href="xml/picmancontainertreeview-dnd.xml" />
+      <xi:include href="xml/picmanitemtreeview.xml" />
+      <xi:include href="xml/picmandrawabletreeview.xml" />
+      <xi:include href="xml/picmanlayertreeview.xml" />
+      <xi:include href="xml/picmanchanneltreeview.xml" />
+      <xi:include href="xml/picmanvectorstreeview.xml" />
     </chapter>
 
     <chapter id="app-widgets-misc-container-views">
       <title>Misc. Container View Widgets</title>
-      <xi:include href="xml/gimpcontainerpopup.xml" />
-      <xi:include href="xml/gimpviewablebutton.xml" />
-      <xi:include href="xml/gimpviewablebox.xml" />
+      <xi:include href="xml/picmancontainerpopup.xml" />
+      <xi:include href="xml/picmanviewablebutton.xml" />
+      <xi:include href="xml/picmanviewablebox.xml" />
     </chapter>
 
     <chapter id="app-widgets-resource-tagging">
       <title>Resource Tagging Widgets</title>
-      <xi:include href="xml/gimptagentry.xml" />
-      <xi:include href="xml/gimpcombotagentry.xml" />
-      <xi:include href="xml/gimptagpopup.xml" />
+      <xi:include href="xml/picmantagentry.xml" />
+      <xi:include href="xml/picmancombotagentry.xml" />
+      <xi:include href="xml/picmantagpopup.xml" />
     </chapter>
 
     <chapter id="app-widgets-container-editors">
-      <title>GimpContainerEditor Widgets</title>
-      <xi:include href="xml/gimpcontainereditor.xml" />
-      <xi:include href="xml/gimpbufferview.xml" />
-      <xi:include href="xml/gimpdocumentview.xml" />
-      <xi:include href="xml/gimpfontview.xml" />
-      <xi:include href="xml/gimpimageview.xml" />
-      <xi:include href="xml/gimptemplateview.xml" />
-      <xi:include href="xml/gimptooleditor.xml" />
+      <title>PicmanContainerEditor Widgets</title>
+      <xi:include href="xml/picmancontainereditor.xml" />
+      <xi:include href="xml/picmanbufferview.xml" />
+      <xi:include href="xml/picmandocumentview.xml" />
+      <xi:include href="xml/picmanfontview.xml" />
+      <xi:include href="xml/picmanimageview.xml" />
+      <xi:include href="xml/picmantemplateview.xml" />
+      <xi:include href="xml/picmantooleditor.xml" />
     </chapter>
 
     <chapter id="app-widgets-data-factory-views">
-      <title>GimpDataFactoryView Widgets</title>
-      <xi:include href="xml/gimpdatafactoryview.xml" />
-      <xi:include href="xml/gimpbrushfactoryview.xml" />
-      <xi:include href="xml/gimpdynamicsfactoryview.xml" />
-      <xi:include href="xml/gimppatternfactoryview.xml" />
-      <xi:include href="xml/gimptoolpresetfactoryview.xml" />
+      <title>PicmanDataFactoryView Widgets</title>
+      <xi:include href="xml/picmandatafactoryview.xml" />
+      <xi:include href="xml/picmanbrushfactoryview.xml" />
+      <xi:include href="xml/picmandynamicsfactoryview.xml" />
+      <xi:include href="xml/picmanpatternfactoryview.xml" />
+      <xi:include href="xml/picmantoolpresetfactoryview.xml" />
     </chapter>
 
     <chapter id="app-widgets-menus">
       <title>Menus</title>
-      <xi:include href="xml/gimpactionfactory.xml" />
-      <xi:include href="xml/gimpactiongroup.xml" />
-      <xi:include href="xml/gimpaction.xml" />
-      <xi:include href="xml/gimpenumaction.xml" />
-      <xi:include href="xml/gimppluginaction.xml" />
-      <xi:include href="xml/gimpradioaction.xml" />
-      <xi:include href="xml/gimpstringaction.xml" />
-      <xi:include href="xml/gimptoggleaction.xml" />
-      <xi:include href="xml/gimpmenufactory.xml" />
-      <xi:include href="xml/gimpuimanager.xml" />
+      <xi:include href="xml/picmanactionfactory.xml" />
+      <xi:include href="xml/picmanactiongroup.xml" />
+      <xi:include href="xml/picmanaction.xml" />
+      <xi:include href="xml/picmanenumaction.xml" />
+      <xi:include href="xml/picmanpluginaction.xml" />
+      <xi:include href="xml/picmanradioaction.xml" />
+      <xi:include href="xml/picmanstringaction.xml" />
+      <xi:include href="xml/picmantoggleaction.xml" />
+      <xi:include href="xml/picmanmenufactory.xml" />
+      <xi:include href="xml/picmanuimanager.xml" />
     </chapter>
 
     <chapter id="app-widgets-misc-dialogs">
       <title>Misc. Dialogs</title>
-      <xi:include href="xml/gimperrordialog.xml" />
-      <xi:include href="xml/gimpfiledialog.xml" />
-      <xi:include href="xml/gimpmessagedialog.xml" />
-      <xi:include href="xml/gimpprofilechooserdialog.xml" />
-      <xi:include href="xml/gimpprogressdialog.xml" />
-      <xi:include href="xml/gimpviewabledialog.xml" />
+      <xi:include href="xml/picmanerrordialog.xml" />
+      <xi:include href="xml/picmanfiledialog.xml" />
+      <xi:include href="xml/picmanmessagedialog.xml" />
+      <xi:include href="xml/picmanprofilechooserdialog.xml" />
+      <xi:include href="xml/picmanprogressdialog.xml" />
+      <xi:include href="xml/picmanviewabledialog.xml" />
     </chapter>
 
     <chapter id="app-widgets-pdb-dialogs">
       <title>PDB-Controllable Selection Dialogs</title>
-      <xi:include href="xml/gimppdbdialog.xml" />
-      <xi:include href="xml/gimpbrushselect.xml" />
-      <xi:include href="xml/gimpfontselect.xml" />
-      <xi:include href="xml/gimpgradientselect.xml" />
-      <xi:include href="xml/gimppaletteselect.xml" />
-      <xi:include href="xml/gimppatternselect.xml" />
+      <xi:include href="xml/picmanpdbdialog.xml" />
+      <xi:include href="xml/picmanbrushselect.xml" />
+      <xi:include href="xml/picmanfontselect.xml" />
+      <xi:include href="xml/picmangradientselect.xml" />
+      <xi:include href="xml/picmanpaletteselect.xml" />
+      <xi:include href="xml/picmanpatternselect.xml" />
     </chapter>
 
     <chapter id="app-widgets-text-editing">
       <title>Misc. Dialogs</title>
-      <xi:include href="xml/gimptextbuffer.xml" />
-      <xi:include href="xml/gimptextbuffer-serialize.xml" />
-      <xi:include href="xml/gimptexteditor.xml" />
-      <xi:include href="xml/gimptextproxy.xml" />
-      <xi:include href="xml/gimptextstyleeditor.xml" />
-      <xi:include href="xml/gimptexttag.xml" />
+      <xi:include href="xml/picmantextbuffer.xml" />
+      <xi:include href="xml/picmantextbuffer-serialize.xml" />
+      <xi:include href="xml/picmantexteditor.xml" />
+      <xi:include href="xml/picmantextproxy.xml" />
+      <xi:include href="xml/picmantextstyleeditor.xml" />
+      <xi:include href="xml/picmantexttag.xml" />
     </chapter>
 
     <chapter id="app-widgets-offscreen-overlays">
       <title>Offscreen Overlay Widgets</title>
-      <xi:include href="xml/gimpoverlaybox.xml" />
-      <xi:include href="xml/gimpoverlaychild.xml" />
-      <xi:include href="xml/gimpoverlaydialog.xml" />
-      <xi:include href="xml/gimpoverlayframe.xml" />
+      <xi:include href="xml/picmanoverlaybox.xml" />
+      <xi:include href="xml/picmanoverlaychild.xml" />
+      <xi:include href="xml/picmanoverlaydialog.xml" />
+      <xi:include href="xml/picmanoverlayframe.xml" />
     </chapter>
 
     <chapter id="app-widgets-misc-widgets">
       <title>Misc. Widgets</title>
-      <xi:include href="xml/gimpactioneditor.xml" />
-      <xi:include href="xml/gimpactionview.xml" />
-      <xi:include href="xml/gimpblobeditor.xml" />
-      <xi:include href="xml/gimpcolorbar.xml" />
-      <xi:include href="xml/gimpcolordialog.xml" />
-      <xi:include href="xml/gimpcolordisplayeditor.xml" />
-      <xi:include href="xml/gimpcolorframe.xml" />
-      <xi:include href="xml/gimpcolorpanel.xml" />
-      <xi:include href="xml/gimpcursorview.xml" />
-      <xi:include href="xml/gimpcurveview.xml" />
-      <xi:include href="xml/gimpdasheditor.xml" />
-      <xi:include href="xml/gimpfgbgeditor.xml" />
-      <xi:include href="xml/gimpfgbgview.xml" />
-      <xi:include href="xml/gimpfileprocview.xml" />
-      <xi:include href="xml/gimpfilleditor.xml" />
-      <xi:include href="xml/gimpgrideditor.xml" />
-      <xi:include href="xml/gimphandlebar.xml" />
-      <xi:include href="xml/gimphistogrambox.xml" />
-      <xi:include href="xml/gimphistogramview.xml" />
-      <xi:include href="xml/gimpiconpicker.xml" />
-      <xi:include href="xml/gimplanguagecombobox.xml" />
-      <xi:include href="xml/gimplanguageentry.xml" />
-      <xi:include href="xml/gimplanguagestore.xml" />
-      <xi:include href="xml/gimplanguagestore-parser.xml" />
-      <xi:include href="xml/gimpimagecommenteditor.xml" />
-      <xi:include href="xml/gimpimageparasiteview.xml" />
-      <xi:include href="xml/gimpimageprofileview.xml" />
-      <xi:include href="xml/gimpimagepropview.xml" />
-      <xi:include href="xml/gimpmessagebox.xml" />
-      <xi:include href="xml/gimpprogressbox.xml" />
-      <xi:include href="xml/gimpsettingsbox.xml" />
-      <xi:include href="xml/gimpsettingseditor.xml" />
-      <xi:include href="xml/gimpscalebutton.xml" />
-      <xi:include href="xml/gimpsizebox.xml" />
-      <xi:include href="xml/gimpspinscale.xml" />
-      <xi:include href="xml/gimpstrokeeditor.xml" />
-      <xi:include href="xml/gimptemplateeditor.xml" />
-      <xi:include href="xml/gimpthumbbox.xml" />
-      <xi:include href="xml/gimptranslationstore.xml" />
-      <xi:include href="xml/gimptoolpalette.xml" />
+      <xi:include href="xml/picmanactioneditor.xml" />
+      <xi:include href="xml/picmanactionview.xml" />
+      <xi:include href="xml/picmanblobeditor.xml" />
+      <xi:include href="xml/picmancolorbar.xml" />
+      <xi:include href="xml/picmancolordialog.xml" />
+      <xi:include href="xml/picmancolordisplayeditor.xml" />
+      <xi:include href="xml/picmancolorframe.xml" />
+      <xi:include href="xml/picmancolorpanel.xml" />
+      <xi:include href="xml/picmancursorview.xml" />
+      <xi:include href="xml/picmancurveview.xml" />
+      <xi:include href="xml/picmandasheditor.xml" />
+      <xi:include href="xml/picmanfgbgeditor.xml" />
+      <xi:include href="xml/picmanfgbgview.xml" />
+      <xi:include href="xml/picmanfileprocview.xml" />
+      <xi:include href="xml/picmanfilleditor.xml" />
+      <xi:include href="xml/picmangrideditor.xml" />
+      <xi:include href="xml/picmanhandlebar.xml" />
+      <xi:include href="xml/picmanhistogrambox.xml" />
+      <xi:include href="xml/picmanhistogramview.xml" />
+      <xi:include href="xml/picmaniconpicker.xml" />
+      <xi:include href="xml/picmanlanguagecombobox.xml" />
+      <xi:include href="xml/picmanlanguageentry.xml" />
+      <xi:include href="xml/picmanlanguagestore.xml" />
+      <xi:include href="xml/picmanlanguagestore-parser.xml" />
+      <xi:include href="xml/picmanimagecommenteditor.xml" />
+      <xi:include href="xml/picmanimageparasiteview.xml" />
+      <xi:include href="xml/picmanimageprofileview.xml" />
+      <xi:include href="xml/picmanimagepropview.xml" />
+      <xi:include href="xml/picmanmessagebox.xml" />
+      <xi:include href="xml/picmanprogressbox.xml" />
+      <xi:include href="xml/picmansettingsbox.xml" />
+      <xi:include href="xml/picmansettingseditor.xml" />
+      <xi:include href="xml/picmanscalebutton.xml" />
+      <xi:include href="xml/picmansizebox.xml" />
+      <xi:include href="xml/picmanspinscale.xml" />
+      <xi:include href="xml/picmanstrokeeditor.xml" />
+      <xi:include href="xml/picmantemplateeditor.xml" />
+      <xi:include href="xml/picmanthumbbox.xml" />
+      <xi:include href="xml/picmantranslationstore.xml" />
+      <xi:include href="xml/picmantoolpalette.xml" />
     </chapter>
 
     <chapter id="app-widgets-views">
       <title>Previews</title>
-      <xi:include href="xml/gimpview.xml" />
-      <xi:include href="xml/gimpview-popup.xml" />
-      <xi:include href="xml/gimpnavigationview.xml" />
-      <xi:include href="xml/gimppaletteview.xml" />
+      <xi:include href="xml/picmanview.xml" />
+      <xi:include href="xml/picmanview-popup.xml" />
+      <xi:include href="xml/picmannavigationview.xml" />
+      <xi:include href="xml/picmanpaletteview.xml" />
     </chapter>
 
     <chapter id="app-widgets-view-renderers">
       <title>View Renderers</title>
-      <xi:include href="xml/gimpviewrenderer.xml" />
-      <xi:include href="xml/gimpviewrenderer-frame.xml" />
-      <xi:include href="xml/gimpviewrenderer-utils.xml" />
-      <xi:include href="xml/gimpviewrendererbrush.xml" />
-      <xi:include href="xml/gimpviewrendererbuffer.xml" />
-      <xi:include href="xml/gimpviewrendererdrawable.xml" />
-      <xi:include href="xml/gimpviewrenderergradient.xml" />
-      <xi:include href="xml/gimpviewrendererimage.xml" />
-      <xi:include href="xml/gimpviewrendererimagefile.xml" />
-      <xi:include href="xml/gimpviewrendererlayer.xml" />
-      <xi:include href="xml/gimpviewrendererpalette.xml" />
-      <xi:include href="xml/gimpviewrenderervectors.xml" />
+      <xi:include href="xml/picmanviewrenderer.xml" />
+      <xi:include href="xml/picmanviewrenderer-frame.xml" />
+      <xi:include href="xml/picmanviewrenderer-utils.xml" />
+      <xi:include href="xml/picmanviewrendererbrush.xml" />
+      <xi:include href="xml/picmanviewrendererbuffer.xml" />
+      <xi:include href="xml/picmanviewrendererdrawable.xml" />
+      <xi:include href="xml/picmanviewrenderergradient.xml" />
+      <xi:include href="xml/picmanviewrendererimage.xml" />
+      <xi:include href="xml/picmanviewrendererimagefile.xml" />
+      <xi:include href="xml/picmanviewrendererlayer.xml" />
+      <xi:include href="xml/picmanviewrendererpalette.xml" />
+      <xi:include href="xml/picmanviewrenderervectors.xml" />
     </chapter>
 
     <chapter id="app-widgets-cell-renderers">
       <title>Cell Renderers for GtkTreeView</title>
-      <xi:include href="xml/gimpcellrendererdashes.xml" />
-      <xi:include href="xml/gimpcellrendererviewable.xml" />
+      <xi:include href="xml/picmancellrendererdashes.xml" />
+      <xi:include href="xml/picmancellrendererviewable.xml" />
     </chapter>
 
     <chapter id="app-widgets-constructors">
       <title>Convenience Constructors</title>
-      <xi:include href="xml/gimpscalecombobox.xml" />
-      <xi:include href="xml/gimppropwidgets.xml" />
-      <xi:include href="xml/gimpwidgets-constructors.xml" />
+      <xi:include href="xml/picmanscalecombobox.xml" />
+      <xi:include href="xml/picmanpropwidgets.xml" />
+      <xi:include href="xml/picmanwidgets-constructors.xml" />
     </chapter>
 
     <chapter id="app-widgets-session-management">
       <title>Window- and Session Management</title>
-      <xi:include href="xml/gimpdialogfactory.xml" />
-      <xi:include href="xml/gimpwindowstrategy.xml" />
-      <xi:include href="xml/gimpsessionmanaged.xml" />
-      <xi:include href="xml/gimpsessioninfo.xml" />
-      <xi:include href="xml/gimpsessioninfo-aux.xml" />
-      <xi:include href="xml/gimpsessioninfo-book.xml" />
-      <xi:include href="xml/gimpsessioninfo-dock.xml" />
-      <xi:include href="xml/gimpsessioninfo-dockable.xml" />
+      <xi:include href="xml/picmandialogfactory.xml" />
+      <xi:include href="xml/picmanwindowstrategy.xml" />
+      <xi:include href="xml/picmansessionmanaged.xml" />
+      <xi:include href="xml/picmansessioninfo.xml" />
+      <xi:include href="xml/picmansessioninfo-aux.xml" />
+      <xi:include href="xml/picmansessioninfo-book.xml" />
+      <xi:include href="xml/picmansessioninfo-dock.xml" />
+      <xi:include href="xml/picmansessioninfo-dockable.xml" />
     </chapter>
 
     <chapter id="app-widgets-misc-utilities">
       <title>Misc. Utilities</title>
-      <xi:include href="xml/gimpcairo.xml" />
-      <xi:include href="xml/gimpcairo-wilber.xml" />
-      <xi:include href="xml/gimpclipboard.xml" />
-      <xi:include href="xml/gimpcursor.xml" />
-      <xi:include href="xml/gimpdbusservice.xml" />
-      <xi:include href="xml/gimpdnd.xml" />
-      <xi:include href="xml/gimpdnd-xds.xml" />
-      <xi:include href="xml/gimppixbuf.xml" />
-      <xi:include href="xml/gimpselectiondata.xml" />
-      <xi:include href="xml/gimphelp.xml" />
-      <xi:include href="xml/gimpwidgets-utils.xml" />
+      <xi:include href="xml/picmancairo.xml" />
+      <xi:include href="xml/picmancairo-wilber.xml" />
+      <xi:include href="xml/picmanclipboard.xml" />
+      <xi:include href="xml/picmancursor.xml" />
+      <xi:include href="xml/picmandbusservice.xml" />
+      <xi:include href="xml/picmandnd.xml" />
+      <xi:include href="xml/picmandnd-xds.xml" />
+      <xi:include href="xml/picmanpixbuf.xml" />
+      <xi:include href="xml/picmanselectiondata.xml" />
+      <xi:include href="xml/picmanhelp.xml" />
+      <xi:include href="xml/picmanwidgets-utils.xml" />
     </chapter>
 
     <chapter id="app-widgets-misplaced">
@@ -1381,7 +1381,7 @@
 
     <chapter id="app-gui-utils">
       <title>Misc. Utilities</title>
-      <xi:include href="xml/gimpuiconfigurer.xml" />
+      <xi:include href="xml/picmanuiconfigurer.xml" />
       <xi:include href="xml/color-history.xml" />
       <xi:include href="xml/ige-mac-menu.xml" />
       <xi:include href="xml/session.xml" />
@@ -1394,8 +1394,8 @@
     <title>Tests</title>
 
     <chapter id="app-test-utils">
-      <xi:include href="xml/gimp-app-test-utils.xml" />
-      <xi:include href="xml/gimp-test-session-utils.xml" />
+      <xi:include href="xml/picman-app-test-utils.xml" />
+      <xi:include href="xml/picman-test-session-utils.xml" />
     </chapter>
   </part>
 

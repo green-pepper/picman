@@ -1,15 +1,15 @@
-#'gimp/po-plug-ins
-# Slovenian translation of gimp-plugins.
-# Copyright (C) 2007 THE GIMP'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the GIMP package.
+#'picman/po-plug-ins
+# Slovenian translation of picman-plugins.
+# Copyright (C) 2007 THE PICMAN'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PICMAN package.
 #
 # Nedeljko Grabant <nedeljkograbant@gmail.com>, 2007.
 # Martin Srebotnjak <miles@filmsi.net>, 2007, 2012-2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP - standardni vtičniki 2.10\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gimp&keywords=I18N+L10N&component=general\n"
+"Project-Id-Version: PICMAN - standardni vtičniki 2.10\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2013-03-22 12:58+0000\n"
 "PO-Revision-Date: 2013-03-23 15:21+0100\n"
 "Last-Translator: filmsi\n"
@@ -436,8 +436,8 @@ msgid "Optimizing animation"
 msgstr "Optimiziranje animacije ..."
 
 #: ../plug-ins/common/animation-play.c:168
-msgid "Preview a GIMP layer-based animation"
-msgstr "Pokaži predogled animacije, ki temelji na plasteh GIMP"
+msgid "Preview a PICMAN layer-based animation"
+msgstr "Pokaži predogled animacije, ki temelji na plasteh PICMAN"
 
 #: ../plug-ins/common/animation-play.c:173
 msgid "_Playback..."
@@ -655,7 +655,7 @@ msgstr "_Navpične"
 #: ../plug-ins/file-psd/psd-load.c:1637
 #: ../plug-ins/file-sgi/sgi.c:409
 #: ../plug-ins/gfig/gfig-dialog.c:1321
-#: ../plug-ins/gimpressionist/general.c:139
+#: ../plug-ins/picmanressionist/general.c:139
 #: ../plug-ins/map-object/map-object-apply.c:252
 #: ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1162
@@ -1116,8 +1116,8 @@ msgstr "Naloži nastavitve mešalca kanalov"
 #: ../plug-ins/file-bmp/bmp-read.c:154
 #: ../plug-ins/file-faxg3/faxg3.c:234
 #: ../plug-ins/file-fits/fits.c:358
-#: ../plug-ins/file-fli/fli-gimp.c:460
-#: ../plug-ins/file-fli/fli-gimp.c:496
+#: ../plug-ins/file-fli/fli-picman.c:460
+#: ../plug-ins/file-fli/fli-picman.c:496
 #: ../plug-ins/file-ico/ico-load.c:649
 #: ../plug-ins/file-ico/ico-load.c:727
 #: ../plug-ins/file-jpeg/jpeg-load.c:117
@@ -1129,8 +1129,8 @@ msgstr "Naloži nastavitve mešalca kanalov"
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1865
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:923
 #: ../plug-ins/gfig/gfig.c:433
-#: ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1367
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1166,7 +1166,7 @@ msgstr "Shrani nastavitve mešalca kanalov"
 #: ../plug-ins/common/sphere-designer.c:2121
 #: ../plug-ins/file-bmp/bmp-write.c:320
 #: ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:746
+#: ../plug-ins/file-fli/fli-picman.c:746
 #: ../plug-ins/file-ico/ico-save.c:1066
 #: ../plug-ins/file-jpeg/jpeg-save.c:332
 #: ../plug-ins/file-psd/psd-save.c:1653
@@ -1204,7 +1204,7 @@ msgstr "Šahovnica"
 
 #: ../plug-ins/common/checkerboard.c:413
 #: ../plug-ins/common/file-xmc.c:1154
-#: ../plug-ins/gimpressionist/sizemap.c:510
+#: ../plug-ins/picmanressionist/sizemap.c:510
 msgid "_Size:"
 msgstr "_Velikost:"
 
@@ -1409,8 +1409,8 @@ msgstr "Naključno iz zrna (porazdeljeno)"
 #: ../plug-ins/common/cml-explorer.c:300
 #: ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "Obarvanost"
 
@@ -1423,8 +1423,8 @@ msgstr "Nasičenost"
 #: ../plug-ins/common/cml-explorer.c:302
 #: ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "Vrednost"
 
@@ -2297,8 +2297,8 @@ msgstr "Ukrivljanje slike"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1261
-#: ../plug-ins/gimpressionist/orientmap.c:590
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:590
+#: ../plug-ins/picmanressionist/sizemap.c:459
 #: ../plug-ins/print/print-page-layout.c:175
 msgid "Preview"
 msgstr "Predogled"
@@ -2968,7 +2968,7 @@ msgid "R_adius 2:"
 msgstr "R_adij 2:"
 
 #: ../plug-ins/common/edge-dog.c:371
-#: ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "Preobrn_i"
 
@@ -3153,7 +3153,7 @@ msgstr "EOF ali napaka pri branju zaglavja slike"
 #: ../plug-ins/common/file-xwd.c:531
 #: ../plug-ins/file-bmp/bmp-read.c:159
 #: ../plug-ins/file-faxg3/faxg3.c:218
-#: ../plug-ins/file-fli/fli-gimp.c:501
+#: ../plug-ins/file-fli/fli-picman.c:501
 #: ../plug-ins/file-ico/ico-load.c:642
 #: ../plug-ins/file-jpeg/jpeg-load.c:123
 #: ../plug-ins/file-psd/psd-load.c:135
@@ -3244,7 +3244,7 @@ msgstr "'%s': EOF ali napaka pri branju podatkov palete"
 #: ../plug-ins/common/file-xwd.c:637
 #: ../plug-ins/file-bmp/bmp-write.c:336
 #: ../plug-ins/file-fits/fits.c:481
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 #: ../plug-ins/file-ico/ico-save.c:1060
 #: ../plug-ins/file-jpeg/jpeg-save.c:289
 #: ../plug-ins/file-psd/psd-save.c:1658
@@ -3341,8 +3341,8 @@ msgstr "S slikami neznane vrste ni mogoče delovati."
 
 #: ../plug-ins/common/file-gbr.c:131
 #: ../plug-ins/common/file-gbr.c:153
-msgid "GIMP brush"
-msgstr "Čopič GIMP"
+msgid "PICMAN brush"
+msgstr "Čopič PICMAN"
 
 #: ../plug-ins/common/file-gbr.c:378
 #: ../plug-ins/common/file-pat.c:407
@@ -3357,8 +3357,8 @@ msgstr "Nepodprta vrsta čopiča"
 
 #: ../plug-ins/common/file-gbr.c:444
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "Napaka v datoteki čopiča GIMP '%s'"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "Napaka v datoteki čopiča PICMAN '%s'"
 
 #: ../plug-ins/common/file-gbr.c:452
 #, c-format
@@ -3385,7 +3385,7 @@ msgstr "Razmik:"
 #: ../plug-ins/common/file-gbr.c:799
 #: ../plug-ins/common/file-gih.c:860
 #: ../plug-ins/common/file-pat.c:606
-#: ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "Opis:"
 
@@ -3512,8 +3512,8 @@ msgstr "Privzeti komentar je omejen na %d znakov."
 
 #: ../plug-ins/common/file-gih.c:190
 #: ../plug-ins/common/file-gih.c:214
-msgid "GIMP brush (animated)"
-msgstr "Čopič GIMP (animiran)"
+msgid "PICMAN brush (animated)"
+msgstr "Čopič PICMAN (animiran)"
 
 #: ../plug-ins/common/file-gih.c:829
 msgid "Brush Pipe"
@@ -3853,8 +3853,8 @@ msgstr "Animacija MNG"
 
 #: ../plug-ins/common/file-pat.c:103
 #: ../plug-ins/common/file-pat.c:126
-msgid "GIMP pattern"
-msgstr "Vzorec GIMP"
+msgid "PICMAN pattern"
+msgstr "Vzorec PICMAN"
 
 #: ../plug-ins/common/file-pat.c:362
 #, c-format
@@ -4185,16 +4185,16 @@ msgid "Invalid X resolution."
 msgstr "Neveljavna ločljivost po osi X."
 
 #: ../plug-ins/common/file-pnm.c:557
-msgid "Image width is larger than GIMP can handle."
-msgstr "Širina slike presega zmožnosti GIMP-a."
+msgid "Image width is larger than PICMAN can handle."
+msgstr "Širina slike presega zmožnosti PICMAN-a."
 
 #: ../plug-ins/common/file-pnm.c:564
 msgid "Invalid Y resolution."
 msgstr "Neveljavna ločljivost po osi Y."
 
 #: ../plug-ins/common/file-pnm.c:566
-msgid "Image height is larger than GIMP can handle."
-msgstr "Višina slike presega zmožnosti GIMP-a."
+msgid "Image height is larger than PICMAN can handle."
+msgstr "Višina slike presega zmožnosti PICMAN-a."
 
 #: ../plug-ins/common/file-pnm.c:576
 msgid "Unsupported maximum value."
@@ -4307,8 +4307,8 @@ msgstr "črno belo"
 
 #: ../plug-ins/common/file-ps.c:3097
 #: ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "barvno"
@@ -4581,10 +4581,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Širina slike presega zmožnosti GIMP-a"
+"Širina slike presega zmožnosti PICMAN-a"
 
 #: ../plug-ins/common/file-sunras.c:473
 #: ../plug-ins/common/file-xbm.c:841
@@ -4603,10 +4603,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Višina slike presega zmožnosti GIMP-a"
+"Višina slike presega zmožnosti PICMAN-a"
 
 #: ../plug-ins/common/file-sunras.c:520
 msgid "This image depth is not supported"
@@ -4717,8 +4717,8 @@ msgid "Import _paths"
 msgstr "Uvozi _poti"
 
 #: ../plug-ins/common/file-svg.c:944
-msgid "Import path elements of the SVG so they can be used with the GIMP path tool"
-msgstr "Uvozi elemente poti iz SVG, da jih je mogoče uporabiti z orodjem poti v GIMP-u"
+msgid "Import path elements of the SVG so they can be used with the PICMAN path tool"
+msgstr "Uvozi elemente poti iz SVG, da jih je mogoče uporabiti z orodjem poti v PICMAN-u"
 
 #: ../plug-ins/common/file-svg.c:952
 msgid "Merge imported paths"
@@ -7420,7 +7420,7 @@ msgid "Use the background color"
 msgstr "Uporabi barvo ozadja"
 
 #: ../plug-ins/common/sphere-designer.c:293
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "Enakomerno"
 
@@ -7518,7 +7518,7 @@ msgstr "Pogovorno okno izbire barve"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2763
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:540
 msgid "Scale:"
 msgstr "Merilo:"
@@ -7786,16 +7786,16 @@ msgid "Saved"
 msgstr "Shranjeno"
 
 #: ../plug-ins/common/unit-editor.c:94
-msgid "A unit definition will only be saved before GIMP exits if this column is checked."
-msgstr "Definicija enote bo v primeru potrditve v tem stolpcu shranjena šele ob izhodu iz programa GIMP."
+msgid "A unit definition will only be saved before PICMAN exits if this column is checked."
+msgstr "Definicija enote bo v primeru potrditve v tem stolpcu shranjena šele ob izhodu iz programa PICMAN."
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid "ID"
 msgstr "ID"
 
 #: ../plug-ins/common/unit-editor.c:96
-msgid "This string will be used to identify a unit in GIMP's configuration files."
-msgstr "Ta niz identificira enoto v datotekah z nastavitvami GIMPa."
+msgid "This string will be used to identify a unit in PICMAN's configuration files."
+msgstr "Ta niz identificira enoto v datotekah z nastavitvami PICMANa."
 
 #: ../plug-ins/common/unit-editor.c:98
 msgid "Factor"
@@ -7854,8 +7854,8 @@ msgid "Create a new unit using the currently selected unit as template"
 msgstr "Ustvari novo enoto iz izbrane enote kot predloge"
 
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
-msgstr "Ustvari ali spremeni enote, uporabljene v programu GIMP"
+msgid "Create or alter units used in PICMAN"
+msgstr "Ustvari ali spremeni enote, uporabljene v programu PICMAN"
 
 #: ../plug-ins/common/unit-editor.c:150
 msgid "U_nits"
@@ -8539,7 +8539,7 @@ msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Višje vrednosti omejijo učinek na manj področij slike"
 
 #: ../plug-ins/common/wind.c:1025
-#: ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "_Moč:"
 
@@ -8619,8 +8619,8 @@ msgid "_Do not write color space information"
 msgstr "_Ne zapisuj podatkov o barvnem prostoru"
 
 #: ../plug-ins/file-bmp/bmp-write.c:904
-msgid "Some applications can not read BMP images that include color space information. GIMP writes color space information by default. Enabling this option will cause GIMP to not write color space information to the file."
-msgstr "Nekateri programi ne morejo brati slik BMP, ki vsebujejo podatke o barvnem prostoru. GIMP privzeto zapiše podatke o barvnem prostoru. S to možnostjo GIMP v datoteko ne bo zapisal podatkov o barvnem prostoru."
+msgid "Some applications can not read BMP images that include color space information. PICMAN writes color space information by default. Enabling this option will cause PICMAN to not write color space information to the file."
+msgstr "Nekateri programi ne morejo brati slik BMP, ki vsebujejo podatke o barvnem prostoru. PICMAN privzeto zapiše podatke o barvnem prostoru. S to možnostjo PICMAN v datoteko ne bo zapisal podatkov o barvnem prostoru."
 
 #. Advanced Options
 #: ../plug-ins/file-bmp/bmp-write.c:920
@@ -8717,37 +8717,37 @@ msgctxt "composing"
 msgid "None"
 msgstr "Brez"
 
-#: ../plug-ins/file-fli/fli-gimp.c:166
-#: ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166
+#: ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr "Animacija AutoDesk FLIC"
 
-#: ../plug-ins/file-fli/fli-gimp.c:561
+#: ../plug-ins/file-fli/fli-picman.c:561
 #, c-format
 msgid "Frame (%i)"
 msgstr "Sličica (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:710
+#: ../plug-ins/file-fli/fli-picman.c:710
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr "Žal je podprto le shranjevanje indeksiranih in sivinskih slik."
 
-#: ../plug-ins/file-fli/fli-gimp.c:862
+#: ../plug-ins/file-fli/fli-picman.c:862
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - Naloži skladovnico okvirov"
 
-#: ../plug-ins/file-fli/fli-gimp.c:891
-#: ../plug-ins/file-fli/fli-gimp.c:947
+#: ../plug-ins/file-fli/fli-picman.c:891
+#: ../plug-ins/file-fli/fli-picman.c:947
 msgctxt "frame-range"
 msgid "From:"
 msgstr "Od:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:900
-#: ../plug-ins/file-fli/fli-gimp.c:956
+#: ../plug-ins/file-fli/fli-picman.c:900
+#: ../plug-ins/file-fli/fli-picman.c:956
 msgctxt "frame-range"
 msgid "To:"
 msgstr "Do:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:930
+#: ../plug-ins/file-fli/fli-picman.c:930
 msgid "GFLI 1.3"
 msgstr "GFLI 1.3"
 
@@ -8818,7 +8818,7 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "Glede na podatke EXIF je ta slika zasukana."
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:426
-msgid "Would you like GIMP to rotate it into the standard orientation?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
 msgstr "Jo želite zasukati v običajen položaj?"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:247
@@ -8993,10 +8993,10 @@ msgstr "Nepodprti barvni način: %s"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 bit, so it will be converted for you. Information will be lost because of this conversion."
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 bit, so it will be converted for you. Information will be lost because of this conversion."
 msgstr ""
 "Opozorilo:\n"
-"Slika, ki jo nalagate, ima 16 bitov na kanal. GIMP lahko obdeluje le 8 bitov, zato bo slika pretvorjena. Zaradi te pretvorbe bodo določene informacije izgubljene."
+"Slika, ki jo nalagate, ima 16 bitov na kanal. PICMAN lahko obdeluje le 8 bitov, zato bo slika pretvorjena. Zaradi te pretvorbe bodo določene informacije izgubljene."
 
 #: ../plug-ins/file-psd/psd-load.c:349
 #, c-format
@@ -9073,8 +9073,8 @@ msgid "Unable to save layer with mode '%s'.  Either the PSD file format or the s
 msgstr "V načinu '%s' plasti ni mogoče shraniti. Vrsta datoteke PSD ali vstavek shranjevanja tega ne podpirata, raje uporabite navadni način."
 
 #: ../plug-ins/file-psd/psd-save.c:634
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
-msgstr "Napaka: Osnovne vrste slike GIMP ni mogoče pretvoriti v način PSD"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
+msgstr "Napaka: Osnovne vrste slike PICMAN ni mogoče pretvoriti v način PSD"
 
 #: ../plug-ins/file-psd/psd-save.c:1623
 #, c-format
@@ -9276,8 +9276,8 @@ msgid "Same"
 msgstr "Enako"
 
 #: ../plug-ins/flame/flame.c:746
-#: ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "Naključno"
 
@@ -9429,16 +9429,16 @@ msgstr "K_amera"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
 #: ../plug-ins/gfig/gfig-dialog.c:275
-#: ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"%s ni v gimprc:\n"
+"%s ni v picmanrc:\n"
 "Datoteki %s morate dodati vnos,\n"
 "kot je:\n"
 "(%s \"%s\")"
@@ -9975,7 +9975,7 @@ msgid "Max undo:"
 msgstr "Največje število razveljavitev:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1320
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "Prosojno"
 
@@ -10069,7 +10069,7 @@ msgid "Left"
 msgstr "leva"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1753
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "Usmerjenost:"
 
@@ -10127,607 +10127,607 @@ msgstr "Napaka pri shranjevanju figure kot stranske: ni možno dodati stranske f
 msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr "Napaka pri odpiranju začasne datoteke '%s' pri stranskem nalaganju: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:243
+#: ../plug-ins/picmanressionist/brush.c:243
 msgid "Can only save drawables!"
 msgstr "Shranjevati je mogoče le risane predmete!"
 
-#: ../plug-ins/gimpressionist/brush.c:248
+#: ../plug-ins/picmanressionist/brush.c:248
 msgid "Save Brush"
 msgstr "Shrani čopič"
 
-#: ../plug-ins/gimpressionist/brush.c:503
+#: ../plug-ins/picmanressionist/brush.c:503
 msgid "_Brush"
 msgstr "_Čopič"
 
-#: ../plug-ins/gimpressionist/brush.c:540
+#: ../plug-ins/picmanressionist/brush.c:540
 msgid "Gamma:"
 msgstr "Gama:"
 
-#: ../plug-ins/gimpressionist/brush.c:558
+#: ../plug-ins/picmanressionist/brush.c:558
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Spremeni gamo (svetlost) izbranega čopiča"
 
-#: ../plug-ins/gimpressionist/brush.c:566
+#: ../plug-ins/picmanressionist/brush.c:566
 msgid "Select:"
 msgstr "Izberite:"
 
-#: ../plug-ins/gimpressionist/brush.c:595
+#: ../plug-ins/picmanressionist/brush.c:595
 msgid "Aspect ratio:"
 msgstr "Razmerje stranic:"
 
-#: ../plug-ins/gimpressionist/brush.c:599
+#: ../plug-ins/picmanressionist/brush.c:599
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Določa razmerje stranic konice čopiča"
 
-#: ../plug-ins/gimpressionist/brush.c:608
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:608
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "Relief:"
 
-#: ../plug-ins/gimpressionist/brush.c:612
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:612
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "Določa količino izbočenosti, ki naj bo uporabljena na sliki (v odstotkih)"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "_Barva"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "Po_vprečje pod čopičem"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "Središče _čopiča"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "Barva je izračunana iz povprečja vseh slikovnih točk pod čopičem"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "Vzorči barvo slikovne točke, ki se nahaja pod središčem čopiča"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "Barvni _šum:"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "Barvi doda naključni šum"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3530
 msgid "_General"
 msgstr "_Splošno"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "Ohrani izvirnik"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "Ohrani izvirno sliko kot ozadje"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "Iz papirja"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "Kopiraj teksturo izbranega papirja v ozadje"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "Enakomerno obarvano ozadje"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "Uporabi prosojno ozadje; vidne bodo le narisane poteze"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "Nariši robove"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "Določa, ali naj bodo poteze postavljene vse do robov slike"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212
+#: ../plug-ins/picmanressionist/general.c:212
 #: ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "Primerno za tlakovanje"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "Določa, ali naj bo končna slika primerna za tlakovanje z neopaznimi šivi"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "Vrzi senco"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "Vsaki potezi čopiča doda učinek sence"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "Zatemnjenost robov:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "Do kakšne mere naj bodo robovi vsake poteze čopiča \"potemnjeni\""
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "Zatemnjenost sence:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "Do kakšne mere naj bo senca \"potemnjena\""
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "Globina sence:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr "Globina padle sence oz. koliko oddaljena od predmeta naj bo"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "Zabrisanost sence:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "Do katere mere naj bo padla senca zabrisana"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "Prag deviacije:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "Zajamčena vrednost za prilagodljive izbore"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "Izvede različne umetniške operacije"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "_GIMPresionist ..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "_PICMANresionist ..."
 
-#: ../plug-ins/gimpressionist/gimp.c:162
+#: ../plug-ins/picmanressionist/picman.c:162
 msgid "The selection does not intersect the active layer or mask."
 msgstr "Izbor ne seka aktivne plasti ali maske."
 
-#: ../plug-ins/gimpressionist/gimp.c:389
+#: ../plug-ins/picmanressionist/picman.c:389
 msgid "Painting"
 msgstr "Slikanje ..."
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPresionist "
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANresionist "
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "_Usmerjenost"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "Smeri:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "Število uporabljenih smeri (t.j. čopičev)"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "Začetni kot:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "Začetni kot prvega ustvarjenega čopiča"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "Kotni razpon:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "Kotni razpon prvega ustvarjenega čopiča"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid "Let the value (brightness) of the region determine the direction of the stroke"
 msgstr "Naj vrednost (svetlost) področja določi smer poteze"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "Radij"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid "The distance from the center of the image determines the direction of the stroke"
 msgstr "Razdalja od središča slike določa smer poteze"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "Izbere naključno smer za vsako potezo"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "Krožno"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "Smer iz središča naj določa smer poteze"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "Tekoče"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "Poteze sledijo \"tekočemu\" vzorcu"
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "Obarvanost področja določa smer poteze"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "Prilagodljivo"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "Izbrana je smer, ki se najbolj ujema z izvorno sliko"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "Ročno"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "Ročno navedite usmerjenost poteze"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "Odpre urejevalnik orientacijskega zemljevida"
 
-#: ../plug-ins/gimpressionist/orientmap.c:523
+#: ../plug-ins/picmanressionist/orientmap.c:523
 msgid "Orientation Map Editor"
 msgstr "Urejevalnik orientacijskega zemljevida"
 
-#: ../plug-ins/gimpressionist/orientmap.c:552
+#: ../plug-ins/picmanressionist/orientmap.c:552
 msgid "Vectors"
 msgstr "Vektorji"
 
-#: ../plug-ins/gimpressionist/orientmap.c:564
+#: ../plug-ins/picmanressionist/orientmap.c:564
 msgid "The vector-field. Left-click to move selected vector, Right-click to point it towards mouse, Middle-click to add a new vector."
 msgstr "Vektorsko polje. Levo-kliknite za premik izbranega vektorja, desno-kliknite, da ga usmerite proti miški, srednje-kliknite za dodajanje novega vektorja."
 
-#: ../plug-ins/gimpressionist/orientmap.c:588
-#: ../plug-ins/gimpressionist/sizemap.c:457
+#: ../plug-ins/picmanressionist/orientmap.c:588
+#: ../plug-ins/picmanressionist/sizemap.c:457
 msgid "Adjust the preview's brightness"
 msgstr "Prilagodi svetlost predogleda"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "Izberite prejšnji vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "Izberite naslednji vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:489
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:489
 msgid "A_dd"
 msgstr "_Dodaj"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "Dodaj nov vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:496
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:496
 msgid "_Kill"
 msgstr "_Ubij"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "Izbriši izbrani vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "Vrsta"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "_Navadno"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "Vrtine_c"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "Vrtinec_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "Vrtinec_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:541
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:541
 msgid "_Voronoi"
 msgstr "_Voronoi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid "Voronoi-mode makes only the vector closest to the given point have any influence"
 msgstr "Način Voronoi upošteva vpliv samo dani točki najbližjega vektorja"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "_Kot:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "Spremeni kot izbranega vektorja"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "_Kot zamika:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr "Zamakni vse vektorje za podani kot"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "Spremeni moč izbranega vektorja"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "Eksponent _moči:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:536
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:536
 msgid "Change the exponent of the strength"
 msgstr "Spremeni eksponent moči"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "P_apir"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "Preobrne teksturo papirja"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "_Prekrij"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "Uporabi papir, kakršen je (brez reliefa)"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "Določa razmerje teksture (v odstotkih izvorne datoteke)"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "Pos_tavitev"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "Postavitev"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "naključna"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "enakomerno porazdeljena"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "Porazdeli poteze naključno po sliki"
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "Poteze so enakomerno porazdeljene po sliki"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "Sredinsko"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "Osredotoči poteze čopiča okoli središča slike"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "_Gostota potez:"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "Relativna gostota potez čopiča"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:648
+#: ../plug-ins/picmanressionist/ppmtool.c:648
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "Datoteke '%s' ni mogoče shraniti kot PPM: %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "Shrani trenutno"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Privzete vrednosti Gimpresionista "
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Privzete vrednosti Picmanresionista "
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "_Prednastavitve"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "Shrani trenutne ..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "Shrani trenutne nastavitve v navedeno datoteko"
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "Naloži izbrano prednastavitev v pomnilnik"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "Izbriše izbrano prednastavitev"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "Ponovno preberi mapo prednastavitev"
 
-#: ../plug-ins/gimpressionist/preview.c:174
-#: ../plug-ins/gimpressionist/repaint.c:1182
+#: ../plug-ins/picmanressionist/preview.c:174
+#: ../plug-ins/picmanressionist/repaint.c:1182
 #: ../plug-ins/imagemap/imap_polygon.c:513
 #: ../plug-ins/lighting/lighting-ui.c:1082
 msgid "_Update"
 msgstr "_Posodobi"
 
-#: ../plug-ins/gimpressionist/preview.c:180
+#: ../plug-ins/picmanressionist/preview.c:180
 msgid "Refresh the Preview window"
 msgstr "Osveži okno predogleda"
 
-#: ../plug-ins/gimpressionist/preview.c:188
+#: ../plug-ins/picmanressionist/preview.c:188
 msgid "Revert to the original image"
 msgstr "Povrni na izvorno sliko"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "_Velikost"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 msgid "Size variants:"
 msgstr "Različice velikosti:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "Število velikosti čopičev za uporabo"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "Najmanjša velikost:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "Najmanjši ustvarjeni čopič"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "Največja velikost:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "Največji ustvarjeni čopič"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr "Velikost je odvisna od:"
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "Vrednost (svetlost) področja določa velikost poteze"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid "The distance from the center of the image determines the size of the stroke"
 msgstr "Razdalja od središča slike določa velikost poteze"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "Izbere naključno velikost za vsako potezo"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "Smer iz središča naj določa velikost poteze"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "Obarvanost področja določa velikost poteze"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "Izbrana je velikost čopiča, ki najbolj ustreza izvirni sliki"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "Ročno določite velikost poteze"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "Odpre urejevalnik zemljevida vrednosti"
 
-#: ../plug-ins/gimpressionist/sizemap.c:397
+#: ../plug-ins/picmanressionist/sizemap.c:397
 msgid "Size Map Editor"
 msgstr "Urejevalnik zemljevida z vrednostmi"
 
-#: ../plug-ins/gimpressionist/sizemap.c:426
+#: ../plug-ins/picmanressionist/sizemap.c:426
 msgid "Smvectors"
 msgstr "Smvector-ji"
 
-#: ../plug-ins/gimpressionist/sizemap.c:436
+#: ../plug-ins/picmanressionist/sizemap.c:436
 msgid "The smvector-field. Left-click to move selected smvector, Right-click to point it towards mouse, Middle-click to add a new smvector."
 msgstr "Polje smvector. Levo kliknite za premik izbranega vektorja smvector, desno kliknite za njegovo usmeritev proti miški, srednje kliknite za dodajanje novega smvector-ja."
 
-#: ../plug-ins/gimpressionist/sizemap.c:480
+#: ../plug-ins/picmanressionist/sizemap.c:480
 msgid "Select previous smvector"
 msgstr "Izberi prejšnji smvector"
 
-#: ../plug-ins/gimpressionist/sizemap.c:487
+#: ../plug-ins/picmanressionist/sizemap.c:487
 msgid "Select next smvector"
 msgstr "Izberi naslednji smvector"
 
-#: ../plug-ins/gimpressionist/sizemap.c:494
+#: ../plug-ins/picmanressionist/sizemap.c:494
 msgid "Add new smvector"
 msgstr "Dodaj nov smvector"
 
-#: ../plug-ins/gimpressionist/sizemap.c:501
+#: ../plug-ins/picmanressionist/sizemap.c:501
 msgid "Delete selected smvector"
 msgstr "Izbriši izbrani smvector"
 
-#: ../plug-ins/gimpressionist/sizemap.c:514
+#: ../plug-ins/picmanressionist/sizemap.c:514
 msgid "Change the angle of the selected smvector"
 msgstr "Spremeni kot izbranega smvector-ja"
 
-#: ../plug-ins/gimpressionist/sizemap.c:521
+#: ../plug-ins/picmanressionist/sizemap.c:521
 msgid "S_trength:"
 msgstr "_Moč:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:525
+#: ../plug-ins/picmanressionist/sizemap.c:525
 msgid "Change the strength of the selected smvector"
 msgstr "Spremeni vrednost izbranega smvector-ja"
 
-#: ../plug-ins/gimpressionist/sizemap.c:532
+#: ../plug-ins/picmanressionist/sizemap.c:532
 msgid "St_rength exp.:"
 msgstr "Eksp. _moči:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:548
+#: ../plug-ins/picmanressionist/sizemap.c:548
 msgid "Voronoi-mode makes only the smvector closest to the given point have any influence"
 msgstr "Način Voronoi dovoli vplivati le vektorju smvector, ki je dani točki najbližji"
 
@@ -11087,8 +11087,8 @@ msgstr "_Sekundarni odbleski"
 
 #: ../plug-ins/help-browser/dialog.c:184
 #: ../plug-ins/help-browser/dialog.c:1133
-msgid "GIMP Help Browser"
-msgstr "Brskalnik pomoči GIMP"
+msgid "PICMAN Help Browser"
+msgstr "Brskalnik pomoči PICMAN"
 
 #: ../plug-ins/help-browser/dialog.c:582
 msgid "Go back one page"
@@ -11143,8 +11143,8 @@ msgid "Toggle the visibility of the sidebar"
 msgstr "Vključi/izključi prikaz stranske vrstice"
 
 #: ../plug-ins/help-browser/dialog.c:674
-msgid "Visit the GIMP documentation website"
-msgstr "Obišči spletno stran dokumentacije GIMP"
+msgid "Visit the PICMAN documentation website"
+msgstr "Obišči spletno stran dokumentacije PICMAN"
 
 #: ../plug-ins/help-browser/dialog.c:1174
 msgid "Find:"
@@ -11160,34 +11160,34 @@ msgctxt "search"
 msgid "_Next"
 msgstr "_Naprej"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr "Strani pomoči za '%s' niso na voljo."
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
-msgstr "Uporabniški priročnik za GIMP ni na voljo."
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
+msgstr "Uporabniški priročnik za PICMAN ni na voljo."
 
-#: ../plug-ins/help/gimphelpdomain.c:187
-msgid "Please install the additional help package or use the online user manual at http://docs.gimp.org/."
-msgstr "Namestite dodatne pakete pomoči ali pa uporabite spletni uporabniški priročnik na naslovu http://docs.gimp.org/."
+#: ../plug-ins/help/picmanhelpdomain.c:187
+msgid "Please install the additional help package or use the online user manual at http://docs.picman.org/."
+msgstr "Namestite dodatne pakete pomoči ali pa uporabite spletni uporabniški priročnik na naslovu http://docs.picman.org/."
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr "Morda vam manjka ogrodje GIO in morate namestiti GVFS?"
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "ID pomoči '%s' ni znan"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "Nalaganje kazala z '%s'"
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11420,7 +11420,7 @@ msgid "Clear"
 msgstr "Počisti"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "Ustvari"
 
@@ -11445,41 +11445,41 @@ msgid "Edit Object"
 msgstr "Uredi predmet"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
-msgstr "Uporabi vodila Gimpa"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
+msgstr "Uporabi vodila Picmana"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "_Izmenjuj"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "Vs_e"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "Dodaj dodatna vodila"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "_Levi rob"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "_Desni rob"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "_Zgorni rob"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "_Spodnji rob"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "_Osnovni URL:"
 
@@ -11903,8 +11903,8 @@ msgid "Grid Settings..."
 msgstr "Nastavitve mreže ..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
-msgstr "Uporabi vodila GIMP-a ..."
+msgid "Use PICMAN Guides..."
+msgstr "Uporabi vodila PICMAN-a ..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
 msgid "Create Guides..."

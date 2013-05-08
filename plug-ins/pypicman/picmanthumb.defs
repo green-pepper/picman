@@ -1,0 +1,312 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object Thumbnail
+  (in-module "Picman")
+  (parent "GObject")
+  (c-name "PicmanThumbnail")
+  (gtype-id "PICMAN_TYPE_THUMBNAIL")
+)
+
+;; Enumerations and flags ...
+
+(define-enum ThumbFileType
+  (in-module "Picman")
+  (c-name "PicmanThumbFileType")
+  (gtype-id "PICMAN_TYPE_THUMB_FILE_TYPE")
+  (values
+    '("none" "PICMAN_THUMB_FILE_TYPE_NONE")
+    '("regular" "PICMAN_THUMB_FILE_TYPE_REGULAR")
+    '("folder" "PICMAN_THUMB_FILE_TYPE_FOLDER")
+    '("special" "PICMAN_THUMB_FILE_TYPE_SPECIAL")
+  )
+)
+
+(define-enum ThumbSize
+  (in-module "Picman")
+  (c-name "PicmanThumbSize")
+  (gtype-id "PICMAN_TYPE_THUMB_SIZE")
+  (values
+    '("fail" "PICMAN_THUMB_SIZE_FAIL")
+    '("normal" "PICMAN_THUMB_SIZE_NORMAL")
+    '("large" "PICMAN_THUMB_SIZE_LARGE")
+  )
+)
+
+(define-enum ThumbState
+  (in-module "Picman")
+  (c-name "PicmanThumbState")
+  (gtype-id "PICMAN_TYPE_THUMB_STATE")
+  (values
+    '("unknown" "PICMAN_THUMB_STATE_UNKNOWN")
+    '("remote" "PICMAN_THUMB_STATE_REMOTE")
+    '("folder" "PICMAN_THUMB_STATE_FOLDER")
+    '("special" "PICMAN_THUMB_STATE_SPECIAL")
+    '("not-found" "PICMAN_THUMB_STATE_NOT_FOUND")
+    '("exists" "PICMAN_THUMB_STATE_EXISTS")
+    '("old" "PICMAN_THUMB_STATE_OLD")
+    '("failed" "PICMAN_THUMB_STATE_FAILED")
+    '("ok" "PICMAN_THUMB_STATE_OK")
+  )
+)
+
+
+;; From ../../libpicmanthumb/picmanthumb-enums.h
+
+(define-function picman_thumb_file_type_get_type
+  (c-name "picman_thumb_file_type_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_thumb_size_get_type
+  (c-name "picman_thumb_size_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_thumb_state_get_type
+  (c-name "picman_thumb_state_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From ../../libpicmanthumb/picmanthumb-types.h
+
+
+
+;; From ../../libpicmanthumb/picmanthumb-utils.h
+
+(define-function init
+  (c-name "picman_thumb_init")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "creator")
+    '("const-gchar*" "thumb_basedir")
+  )
+)
+
+(define-function find_thumb
+  (c-name "picman_thumb_find_thumb")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "uri")
+    '("PicmanThumbSize*" "size")
+  )
+)
+
+(define-function file_test
+  (c-name "picman_thumb_file_test")
+  (return-type "PicmanThumbFileType")
+  (parameters
+    '("const-gchar*" "filename")
+    '("gint64*" "mtime")
+    '("gint64*" "size")
+    '("gint*" "err_no")
+  )
+)
+
+(define-function name_from_uri
+  (c-name "picman_thumb_name_from_uri")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "uri")
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-function get_thumb_dir
+  (c-name "picman_thumb_get_thumb_dir")
+  (return-type "const-gchar*")
+  (parameters
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-function ensure_thumb_dir
+  (c-name "picman_thumb_ensure_thumb_dir")
+  (return-type "gboolean")
+  (parameters
+    '("PicmanThumbSize" "size")
+    '("GError**" "error")
+  )
+)
+
+(define-function delete_for_uri
+  (c-name "picman_thumbs_delete_for_uri")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "uri")
+  )
+)
+
+(define-function name_from_uri_local
+  (c-name "picman_thumb_name_from_uri_local")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "uri")
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-function get_thumb_dir_local
+  (c-name "picman_thumb_get_thumb_dir_local")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "dirname")
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-function ensure_thumb_dir_local
+  (c-name "picman_thumb_ensure_thumb_dir_local")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "dirname")
+    '("PicmanThumbSize" "size")
+    '("GError**" "error")
+  )
+)
+
+(define-function delete_for_uri_local
+  (c-name "picman_thumbs_delete_for_uri_local")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "uri")
+  )
+)
+
+
+
+;; From ../../libpicmanthumb/picmanthumb.h
+
+
+
+;; From ../../libpicmanthumb/picmanthumbnail.h
+
+(define-function picman_thumbnail_get_type
+  (c-name "picman_thumbnail_get_type")
+  (return-type "GType")
+)
+
+(define-function picman_thumbnail_new
+  (c-name "picman_thumbnail_new")
+  (is-constructor-of "PicmanThumbnail")
+  (return-type "PicmanThumbnail*")
+)
+
+(define-method set_uri
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_set_uri")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "uri")
+  )
+)
+
+(define-method set_filename
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_set_filename")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "filename")
+    '("GError**" "error")
+  )
+)
+
+(define-method set_from_thumb
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_set_from_thumb")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "filename")
+    '("GError**" "error")
+  )
+)
+
+(define-method peek_image
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_peek_image")
+  (return-type "PicmanThumbState")
+)
+
+(define-method peek_thumb
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_peek_thumb")
+  (return-type "PicmanThumbState")
+  (parameters
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-method check_thumb
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_check_thumb")
+  (return-type "PicmanThumbState")
+  (parameters
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-method load_thumb
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_load_thumb")
+  (return-type "GdkPixbuf*")
+  (parameters
+    '("PicmanThumbSize" "size")
+    '("GError**" "error")
+  )
+)
+
+(define-method save_thumb
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_save_thumb")
+  (return-type "gboolean")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+    '("const-gchar*" "software")
+    '("GError**" "error")
+  )
+)
+
+(define-method save_thumb_local
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_save_thumb_local")
+  (return-type "gboolean")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+    '("const-gchar*" "software")
+    '("GError**" "error")
+  )
+)
+
+(define-method save_failure
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_save_failure")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "software")
+    '("GError**" "error")
+  )
+)
+
+(define-method delete_failure
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_delete_failure")
+  (return-type "none")
+)
+
+(define-method delete_others
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_delete_others")
+  (return-type "none")
+  (parameters
+    '("PicmanThumbSize" "size")
+  )
+)
+
+(define-method has_failed
+  (of-object "PicmanThumbnail")
+  (c-name "picman_thumbnail_has_failed")
+  (return-type "gboolean")
+)
+
+

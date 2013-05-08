@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #define __XCF_H__
 
 
-void   xcf_init (Gimp *gimp);
-void   xcf_exit (Gimp *gimp);
+void   xcf_init (Picman *picman);
+void   xcf_exit (Picman *picman);
 
 
 #endif /* __XCF_H__ */

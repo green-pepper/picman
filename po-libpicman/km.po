@@ -1,0 +1,1786 @@
+# translation of km.po to Khmer
+# Khoem Sokhem <khoemsokhem@khmeros.info>, 2006, 2007, 2008.
+# Auk Piseth <piseth_dv@khmeros.info>, 2006.
+# Eng Vannak <evannak@khmeros.info>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: km\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-08-14 17:45+0100\n"
+"PO-Revision-Date: 2008-08-25 10:22+0700\n"
+"Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
+"Language-Team: Khmer <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "ការជ្រើស​ជក់"
+
+#: ../libpicman/picmanbrushselectbutton.c:911
+#: ../libpicman/picmanpatternselectbutton.c:712
+msgid "_Browse..."
+msgstr "_រកមើល..."
+
+#: ../libpicman/picmanexport.c:217 ../libpicman/picmanexport.c:253
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "កម្មវិធី​ជំនួយ %s មិន​អាច​គ្រប់គ្រង​ស្រទាប់"
+
+#: ../libpicman/picmanexport.c:218 ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "បញ្ចូល​ស្រទាប់​មើល​ឃើញ​ចូល​គ្នា"
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "កម្មវិធី​ជំនួយ %s មិនអាច​គ្រប់គ្រង​អុហ្វសិត ទំហំ ឬ​ភាព​ស្រអាប់​របស់​ស្រទាប់"
+
+#: ../libpicman/picmanexport.c:235 ../libpicman/picmanexport.c:244
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "កម្មវិធីជំនួយ %s អាច​គ្រប់​គ្រង​​តែ​ស្រទាប់​ប៉ុណ្ណោះ ខណៈពេល​ដែល​ស៊ុម​មាន​ចលនា"
+
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "រក្សា​ទុក​ជា​ចលនា"
+
+#: ../libpicman/picmanexport.c:245 ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "ធ្វើ​ឲ្យ​រូបភាព​រាបស្មើ"
+
+#: ../libpicman/picmanexport.c:262
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "កម្មវិធី​ជំនួយ %s មិនអាច​គ្រប់គ្រង​ភាព​ថ្លា"
+
+#: ../libpicman/picmanexport.c:271
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "កម្មវិធី​ជំនួយ %s មិន​អាច​គ្រប់គ្រង​របាំង​ស្រទាប់"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "អនុវត្ត​របាំង​ស្រទាប់"
+
+#: ../libpicman/picmanexport.c:280
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព RGB ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:281 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "បម្លែង​ទៅជា RGB"
+
+#: ../libpicman/picmanexport.c:289
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព​មាត្រដ្ឋាន​ប្រផះ​​ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:290 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "បម្លែង​ទៅ​ជា​មាត្រដ្ឋាន​ប្រផេះ"
+
+#: ../libpicman/picmanexport.c:298
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព​ដែល​មាន​លិបិក្រម​ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:299 ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"បម្លែង​ទៅ​ជា​រូបភាព​ដែល​បាន​ដាក់​លិបិក្រម ដោយ​ប្រើ​ការ​កំណត់​លំនាំដើម\n"
+"(ធ្វើ​វា​ដោយ​ដៃ​ដើម្បី​កែតម្រូវ​លទ្ធផល)"
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព (ពីរពណ៌) ដែល​មានលិបិក្រម​​ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"បម្លែង​ទៅ​ជា​រូបភាព​ដែល​បាន​ដាក់​លិបិក្រម ដោយ​ប្រើ​ការ​កំណត់​រូបភាព​លំនាំដើម\n"
+"(ធ្វើ​វា​ដោយ​ដៃ​ដើម្បី​កែតម្រូវ​លទ្ធផល)"
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព​មាត្រដ្ឋាន​ប្រផះ ឬ​ RGB ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព RGB ឬ​ដែល​មានលិបិក្រម​ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "កម្មវិធី​ជំនួយ %s អាច​គ្រប់គ្រង​តែ​រូបភាព​មាត្រដ្ឋាន​ប្រផះ ឬ​មានលិបិក្រម​ប៉ុណ្ណោះ"
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "កម្មវិធី​ជំនួយ %s ត្រូវការ​ឆានែល​អាល់ហ្វា"
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "បន្ថែម​ឆានែល​អាល់ហ្វា"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "អះអាង​ការ​រក្សាទុក"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "អះអាង"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "នាំ​ឯកសារ​ចេញ"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "_មិន​អើពើ"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "_នាំចេញ"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "រូបភាព​របស់​អ្នក​គួរ​តែ​ត្រូវ​បាន​នាំ​ចេញ​មុនពេល​​វា​​ត្រូវ​បាន​រក្សា​ទុក​ជា %s សម្រាប់​ហេតុផល​ខាង​ក្រោម ៖"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr "នាំចេញ​ការ​បម្លែង​នឹង​មិន​កែប្រែ​រូបភាព​ដើម​របស់​អ្នក ។"
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"អ្នក​រៀប​នឹង​រក្សាទុក​របាំង​ស្រទាប់​មួយ​ជា %s ។\n"
+"វា​នឹង​មិន​រក្សាទុក​ស្រទាប់​ដែល​មើលឃើញ ។"
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"អ្នក​រៀប​នឹង​រក្សាទុក​ឆានែល​មួយ (ជម្រើស​ដែល​បាន​រក្សាទុក) ជា %s ។\n"
+"វា​នឹង​មិន​រក្សាទុក​ស្រទាប់​ដែល​មើលឃើញ ។"
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "ការ​ជ្រើស​ពុម្ពអក្សរ"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "គ្មាន"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "ជម្រើស​ជម្រាល"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(ទទេ)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "ជម្រើស​​​ក្ដារ​លាយពណ៌​"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "ជម្រើស​​​លំនាំ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "តាម​ឈ្មោះ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "តាម​សេចក្តី​អធិប្បាយ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "តាម​ជំនួយ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "តាម​អ្នក​និពន្ធ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "តាម​ច្បាប់​រក្សាសិទ្ធិ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "តាម​កាលបរិច្ឆេទ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "តាម​ប្រភេទ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "ស្វែងរក"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "ស្វែងរក​តាម​ឈ្មោះ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "ស្វែងរក​តាម​សេចក្ដី​អធិប្បាយ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "ស្វែងរក​តាម​ជំនួយ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "ស្វែងរក​តាម​អ្នក​និពន្ធ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "ស្វែងរក​តាម​ច្បាប់​រក្សាសិទ្ធិ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "ស្វែងរក​តាម​កាលបរិច្ឆេទ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "ស្វែងរក​តាម​ប្រភេទ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d បែបបទ"
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "គ្មាន​ការ​ផ្គូផ្គង​សម្រាប់​សំណួរ​របស់​អ្នក​"
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "បែបបទ %d ផ្គូផ្គង​សំណួរ​របស់​អ្នក"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516 ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "គ្មាន​ការ​ផ្គូផ្គង"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr "ប៉ារ៉ាម៉ែត្រ"
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "ត្រឡប់​តម្លៃ"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "ព័ត៌មាន​បន្ថែម"
+
+#: ../libpicman/picmanprocview.c:210
+msgid "Author:"
+msgstr "អ្នក​និពន្ធ ៖"
+
+#: ../libpicman/picmanprocview.c:222
+msgid "Date:"
+msgstr "កាល​បរិច្ឆេទ ៖"
+
+#: ../libpicman/picmanprocview.c:234
+msgid "Copyright:"
+msgstr "រក្សា​សិទ្ធិ ៖"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "ភាគរយ"
+
+#: ../libpicmanbase/picmanbaseenums.c:27
+msgid "_White (full opacity)"
+msgstr "_ពណ៌ស (ភាព​ស្រអាប់​ពេញលេញ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_Black (full transparency)"
+msgstr "_ពណ៌ខ្មៅ (ភាព​ថ្លា​ពេញលេញ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "Layer's _alpha channel"
+msgstr "ឆានែល​អាល់ហ្វារបស់​ស្រទាប់"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "_Transfer layer's alpha channel"
+msgstr "_ផ្ទេរ​ឆានែល​អាល់ហ្វា​របស់​ស្រទាប់"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Selection"
+msgstr "_ជម្រើស"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Grayscale copy of layer"
+msgstr "_ច្បាប់​ចម្លង​របស់​ស្រទាប់​មាត្រដ្ឋាន​ប្រផេះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "C_hannel"
+msgstr "ឆានែល"
+
+#: ../libpicmanbase/picmanbaseenums.c:63
+msgid "FG to BG (RGB)"
+msgstr "ផ្ទៃខាងមុខ​ទៅ​ផ្ទៃខាងក្រោយ (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (HSV)"
+msgstr "ផ្ទៃខាងមុខ​ទៅ​ផ្ទៃខាងក្រោយ (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to transparent"
+msgstr "ផ្ទៃខាងមុខ​ទៅ​ជា​​ថ្លា"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "Custom gradient"
+msgstr "ជម្រាល​ផ្ទាល់​ខ្លួន"
+
+#: ../libpicmanbase/picmanbaseenums.c:95
+msgid "FG color fill"
+msgstr "បំពេញ​ពណ៌​ផ្ទៃខាងមុខ"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "BG color fill"
+msgstr "បំពេញ​ពណ៌​ផ្ទៃខាងក្រោយ"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "Pattern fill"
+msgstr "បំពេញ​លំនាំ"
+
+#: ../libpicmanbase/picmanbaseenums.c:127
+msgid "Add to the current selection"
+msgstr "បន្ថែម​ទៅ​ជម្រើស​​បច្ចុប្បន្ន"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Subtract from the current selection"
+msgstr "ដក​ពីជម្រើស​បច្ចុប្បន្ន"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Replace the current selection"
+msgstr "ជំនួស​ជម្រើ​ស​​​បច្ចុប្បន្ន"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Intersect with the current selection"
+msgstr "ប្រសព្វ​ជា​មួយ​នឹង​ជម្រើស​បច្ចុប្បន្ន"
+
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "ពណ៌​​ក្រហម"
+
+#: ../libpicmanbase/picmanbaseenums.c:163 ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "ពណ៌​​បៃតង"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "ពណ៌​​ខៀវ"
+
+#: ../libpicmanbase/picmanbaseenums.c:165
+msgid "Gray"
+msgstr "ប្រផេះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:166 ../libpicmanbase/picmanbaseenums.c:531
+msgid "Indexed"
+msgstr "មានលិបិក្រម"
+
+#: ../libpicmanbase/picmanbaseenums.c:167 ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "អាល់ហ្វា"
+
+#: ../libpicmanbase/picmanbaseenums.c:196
+msgid "Small"
+msgstr "តូច"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Medium"
+msgstr "មធ្យម"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Large"
+msgstr "ធំ"
+
+#: ../libpicmanbase/picmanbaseenums.c:230
+msgid "Light checks"
+msgstr "ពិនិត្យ​ពន្លឺ"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Mid-tone checks"
+msgstr "ការពិនិត្យ​ពាក់​កណ្ដាល"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Dark checks"
+msgstr "ការ​ពិនិត្យភាព​ងងឹត"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "White only"
+msgstr "តែពណ៌​ស​ប៉ុណ្ណោះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "Gray only"
+msgstr "តែ​ពណ៌​ប្រផេះ​ប៉ុណ្ណោះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Black only"
+msgstr "តែ​ពណ៌​ខ្មៅ​ប៉ុណ្ណោះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:263
+msgid "Image"
+msgstr "រូបភាព"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Pattern"
+msgstr "​លំនាំ"
+
+#: ../libpicmanbase/picmanbaseenums.c:293
+msgid "Lightness"
+msgstr "ភាព​ភ្លឺ"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Luminosity"
+msgstr "ភាពមានពន្លឺ"
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Average"
+msgstr "មធ្យម"
+
+#: ../libpicmanbase/picmanbaseenums.c:323
+msgid "Dodge"
+msgstr "គេច​"
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Burn"
+msgstr "ដុត"
+
+#: ../libpicmanbase/picmanbaseenums.c:388
+msgid "gradient|Linear"
+msgstr "ពណ៌​ជម្រាល|លីនេអ៊ែរ"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "Bi-linear"
+msgstr "ទ្វេលីនីអ៊ែរ"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Radial"
+msgstr "មូល"
+
+#: ../libpicmanbase/picmanbaseenums.c:391 ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "ការេ"
+
+#: ../libpicmanbase/picmanbaseenums.c:392
+msgid "Conical (sym)"
+msgstr "សាជី (sym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (asym)"
+msgstr "សាជី (asym)"
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Shaped (angular)"
+msgstr "រាង (មុំ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (spherical)"
+msgstr "រាង (ស្វែរ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (dimpled)"
+msgstr "រាង (ខួច)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Spiral (cw)"
+msgstr "គួច (ស្រប​ទ្រនិច​នាឡិកា)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (ccw)"
+msgstr "គួច (ច្រាស​ទ្រនិច​នាឡិកា)"
+
+#: ../libpicmanbase/picmanbaseenums.c:429
+msgid "Intersections (dots)"
+msgstr "​ប្រសព្វ (ចំណុច)"
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (crosshairs)"
+msgstr "​ប្រសព្វ (ខ្វែង)"
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Dashed"
+msgstr "ដាច់ៗ"
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Double dashed"
+msgstr "​ដាច់ទ្វេ​ដង​"
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Solid"
+msgstr "តាន់​"
+
+#: ../libpicmanbase/picmanbaseenums.c:462
+msgid "Stock ID"
+msgstr "លេខ​សម្គាល់​សន្និធិ"
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Inline pixbuf"
+msgstr "pixbuf ក្នុង​តួ"
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Image file"
+msgstr "ឯកសារ​រូបភាព"
+
+#: ../libpicmanbase/picmanbaseenums.c:493
+msgid "RGB color"
+msgstr "ពណ៌ RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:494 ../libpicmanbase/picmanbaseenums.c:529
+msgid "Grayscale"
+msgstr "មាត្រដ្ឋាន​ប្រផេះ"
+
+#: ../libpicmanbase/picmanbaseenums.c:495
+msgid "Indexed color"
+msgstr "ពណ៌​ដែល​មានលិបិក្រម"
+
+#: ../libpicmanbase/picmanbaseenums.c:527
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB-alpha"
+msgstr "RGB-អាល់ហ្វា"
+
+#: ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale-alpha"
+msgstr "មាត្រដ្ឋាន​ប្រផេះ-អាល់ហ្វា"
+
+#: ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed-alpha"
+msgstr "មានលិបិក្រម-អាល់ហ្វា"
+
+#: ../libpicmanbase/picmanbaseenums.c:562
+msgid "interpolation|None"
+msgstr "ការកែខៃ|គ្មាន"
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|Linear"
+msgstr "ការ​កែខៃ|លីនេអ៊ែរ"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "Cubic"
+msgstr "គូប"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:593
+msgid "Constant"
+msgstr "ថេរ"
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Incremental"
+msgstr "បន្ថែម"
+
+#: ../libpicmanbase/picmanbaseenums.c:623 ../modules/cdisplay_lcms.c:214
+msgid "None"
+msgstr "គ្មាន"
+
+#: ../libpicmanbase/picmanbaseenums.c:624
+msgid "Sawtooth wave"
+msgstr "រលក​រាង​ធ្មេញ​រណារ"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Triangular wave"
+msgstr "រលក​រាង​ត្រីកោណ"
+
+#: ../libpicmanbase/picmanbaseenums.c:654
+msgid "Run interactively"
+msgstr "រត់​អន្តរកម្ម"
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run non-interactively"
+msgstr "រត់​មិន​អន្តរកម្ម"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run with last used values"
+msgstr "រត់​ជា​មួយ​តម្លៃ​ដែល​បាន​ប្រើ​ចុង​ក្រោយ"
+
+#: ../libpicmanbase/picmanbaseenums.c:684
+msgid "Pixels"
+msgstr "ភីកសែល"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Points"
+msgstr "ចំណុច"
+
+#: ../libpicmanbase/picmanbaseenums.c:714
+msgid "Shadows"
+msgstr "ស្រមោល"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Midtones"
+msgstr "ពណ៌​បន្ថែម​ពាក់​កណ្ដាល"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Highlights"
+msgstr "បន្លិច"
+
+#: ../libpicmanbase/picmanbaseenums.c:744
+msgid "Normal (Forward)"
+msgstr "ធម្មតា (ទៅ​មុខ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Corrective (Backward)"
+msgstr "កែតម្រូវ (ថយក្រោយ)"
+
+#: ../libpicmanbase/picmanbaseenums.c:775
+msgid "Adjust"
+msgstr "លៃតម្រូវ"
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Clip"
+msgstr "កាត់"
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Crop to result"
+msgstr "ច្រឹប​លទ្ធផល​"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop with aspect"
+msgstr "ច្រឹប​តាម​សមាមាត្រ"
+
+#: ../libpicmanbase/picmanbaseenums.c:881
+msgid "Internal PICMAN procedure"
+msgstr "បែបបទ PICMAN ខាង​ក្នុង"
+
+#: ../libpicmanbase/picmanbaseenums.c:882
+msgid "PICMAN Plug-In"
+msgstr "កម្មវិធី​ជំនួ​យ​របស់ PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:883
+msgid "PICMAN Extension"
+msgstr "កន្ទុយ​របស់ PICMAN"
+
+#: ../libpicmanbase/picmanbaseenums.c:884
+msgid "Temporary Procedure"
+msgstr "បែបបទ​បណ្ដោះ​អាសន្ន"
+
+#: ../libpicmanbase/picmanmemsize.c:180
+#, c-format
+msgid "%d Byte"
+msgid_plural "%d Bytes"
+msgstr[0] "%d បៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:186
+#, c-format
+msgid "%.2f KB"
+msgstr "%.2f គីឡូបៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:190
+#, c-format
+msgid "%.1f KB"
+msgstr "%.1f គីឡូបៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:194
+#, c-format
+msgid "%d KB"
+msgstr "%d គីឡូបៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:201
+#, c-format
+msgid "%.2f MB"
+msgstr "%.2f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:205
+#, c-format
+msgid "%.1f MB"
+msgstr "%.1f MB"
+
+#: ../libpicmanbase/picmanmemsize.c:209
+#, c-format
+msgid "%d MB"
+msgstr "%d មេកាបៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:216
+#, c-format
+msgid "%.2f GB"
+msgstr "%.2f ជីកាបៃ"
+
+#: ../libpicmanbase/picmanmemsize.c:220
+#, c-format
+msgid "%.1f GB"
+msgstr "%.1f GB"
+
+#: ../libpicmanbase/picmanmemsize.c:224
+#, c-format
+msgid "%d GB"
+msgstr "%d ជីកាបៃ"
+
+#: ../libpicmanbase/picmanutils.c:170 ../libpicmanbase/picmanutils.c:175
+#: ../modules/cdisplay_lcms.c:206
+msgid "(invalid UTF-8 string)"
+msgstr "(ខ្សែ​អក្សរ UTF-8 មិន​ត្រឹមត្រូវ)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:40
+msgid "Mode of operation for color management."
+msgstr "របៀប​នៃ​ការ​ប្រតិបត្តិការ​សម្រាប់​ការ​គ្រប់គ្រាន់​ពណ៌ ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "The color profile of your (primary) monitor."
+msgstr "ទម្រង់​ពណ៌​នៃ​ម៉ូនីទ័រ (ចម្បង) របស់​អ្នក ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr "នៅ​ពេល​បាន​បើក PICMAN នឹង​ព្យាយាម​ប្រើ​​ការ​បង្ហាញ​ទម្រង់​ពណ៌​ពី​ប្រព័ន្ធ​វីនដូ ។ ទម្រង់​ម៉ូនីទ័រ​ដែល​បានកំណត់​រចនាសម្ព័ន្ធ បន្ទាប់​មក​ត្រូវ​បាន​ប្រើ​ជា​ការ​ថយក្រោយ ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:48
+msgid "The default RGB working space color profile."
+msgstr "ទម្រង់​ពណ៌​ទំហំ​ការងារ RGB លំនាំដើម ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "ទម្រង់​ពណ៌ CMYK បាន​ប្រើ​ដើម្បី​បម្លែង​រវាង RGB និង CMYK ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "ទម្រង់ពណ៌បានប្រើសម្រាប់ប្លែងកំណែដែលបានបោះពុម្ព (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "Sets how colors are mapped for your display."
+msgstr "កំណត់​វិធី​ដែល​ពណ៌​ត្រូវ​បាន​ផ្គូផ្គង​សម្រាប់​ការ​បង្ហាញ​របស់​អ្នក ។"
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr "កំណត់​វិធី​ដែល​ពណ៌​ត្រូវ​បាន​បម្លែង​ពី​តំបន់​ការងារ​ទៅ​ជា​ឧបករណ៍​ប្លែង​បោះពុម្ព ។"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr "គ្មាន​ការ​គ្រប់គ្រង​ពណ៌"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr "​ពណ៌​បាន​គ្រប់គ្រង​ការ​បង្ហាញ"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr "បោះពុម្ព​ការ​ប្លែង"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr "ដែល​អាច​យល់​បាន"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr "ពណ៌មាត្រ​ដែល​ទាក់ទង"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "intent|Saturation"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr "ពណ៌មាត្រ​ដាច់ខាត"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:97
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "តម្លៃ​សម្រាប់​ថូខឹន %s មិនមែន​ជា​ខ្សែ UTF-8 ត្រឹមត្រូវ​មួយ"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:436
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "'បាទ/ចាស' ឬ 'ទេ' ដែល​រំពឹង​ទុក សម្រាប់​ថូខឹន​ប៊ូលីន %s បាន​ទទួល '%s'"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:510
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "តម្លៃ​មិន​ត្រឹមត្រូវ '%s' សម្រាប់​ថូខឹន %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:525
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "តម្លៃ​មិនត្រឹមត្រូវ '%ld' សម្រាប់​ថូខឹន %s"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:594
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "ខណៈពេល​ញែក​ថូខឹន '%s' ៖ %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467 ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+#: ../libpicmanwidgets/picmancolorprofilestore.c:569
+msgid "fatal parse error"
+msgstr "កំហុស​ញែក​ធ្ងន់ធ្ងរ"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "មិន​អាច​ពង្រីក ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:78
+#: ../libpicmanconfig/picmanconfigwriter.c:693
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "កំហុស​ក្នុង​ការ​សរសេរ​ទៅ​កាន់ '%s' ៖ %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:136
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "មិន​អាច​បង្កើត​ឯកសារ​បណ្ដោះអាសន្ន​សម្រាប់ '%s' ៖ %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:149
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "មិន​អាច​បើក '%s' ដើម្បី​សរសេរ ៖ %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:674
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"កំហុស​ក្នុង​ការ​សរសេរ​ទៅ​កាន់​ឯកសារ​បណ្ដោះអាសន្ន​សម្រាប់ '%s' ៖ %s\n"
+"ឯកសារ​ដើម​មិន​ត្រូវ​បាន​ប៉ះពាល់​ទេ ។"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:682
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"កំហុស​ក្នុង​ការ​សរសេរ​ទៅ​កាន់​ឯកសារ​បណ្ដោះអាសន្ន​សម្រាប់ '%s' ៖ %s\n"
+"គ្មាន​ឯកសារ​ត្រូវ​បាន​បង្កើត ។"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:711
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "មិន​អាច​បង្កើត '%s' ៖ %s"
+
+#: ../libpicmanconfig/picmanscanner.c:255
+msgid "invalid UTF-8 string"
+msgstr "ខ្សែ​អក្សរ UTF-8 មិន​ត្រឹមត្រូវ"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "កំហុស​ខណៈ​ពេល​ញែក '%s' នៅ​ក្នុង​បន្ទាត់ %d ៖ %s"
+
+#: ../libpicmanmodule/picmanmodule.c:153 ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280 ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "កំហុស​ក្នុង​ការ​ផ្ទុក​ម៉ូឌុល '%s' ៖ %s"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "កំហុស​ម៉ូឌុល"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr "បាន​ផ្ទុក"
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr "ការផ្ទុក​បាន​បរាជ័យ"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr "មិន​បាន​ផ្ទុក"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:125
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"មិន​អាច​កំណត់​ថតផ្ទះ​ត្រឹមត្រូវ​មួយបានទេ ។\n"
+"រូបភាព​តូចៗ​នឹង​ត្រូវ​បាន​រក្សាទុក​នៅ​ក្នុង​ថត​សម្រាប់​ឯកសារ​បណ្ដោះអាសន្ន (%s) ជំនួស​វិញ ។"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:249 ../libpicmanthumb/picmanthumb-utils.c:317
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "បាន​បរាជ័យ​ក្នុង​ការ​បង្កើត​ថត​រូបភាព​តូច '%s' ។"
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "រូបភាព​តូចៗ​គ្មាន​ស្លាក URI ទេ"
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "មិន​អាច​បង្កើត​រូបភាព​តូច​សម្រាប់ %s ៖ %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "_ស្វែងរក ៖"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "_ពណ៌​ផ្ទៃខាង​មុខ"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "_ពណ៌​ផ្ទៃខាង​ក្រោយ"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr "ពណ៌​ខ្មៅ"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "_ពណ៌ស"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:141
+msgid "Select color profile from disk..."
+msgstr "ជ្រើស​ទម្រង់​ពណ៌​ពី​ថាស..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:257
+msgid "profile|None"
+msgstr "ទម្រង់|គ្មាន"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr "មាត្រ​ដ្ឋាន"
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "បច្ចុប្បន្ន ៖"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "ចាស់ ៖"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr "ការ​កំណត់​ពណ៌​គោល ១៦ ដូច​ដែល​បាន​ប្រើ​ក្នុង HTML និង CSS ។ ធាតុ​នេះ​ក៏ព្រមទទួល​ឈ្មោះ​ពណ៌ CSS ។"
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr "ការកំណត់ HTML ៖"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr "បើក​កម្មវិធីជ្រើស​ឯកសារ​ដើម្បី​រកមើល​ថត​របស់​អ្នក"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr "បើក​កម្មវិធី​ជ្រើស​ឯកសារ​ដើម្បី​រកមើល​ឯកសារ​របស់​អ្នក"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "ជ្រើស​ថត"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "ជ្រើស​ឯកសារ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr "គីឡូបៃ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr "មេកាបៃ"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr "ជីកាបៃ"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "Nothing selected"
+msgstr "គ្មានអ្វី​បាន​ជ្រើស"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "ជ្រើស​ទាំងអស់"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr "ជ្រើស​ជួរ ៖"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr "បើក​ទំព័រ​ជា"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "ទំព័រ 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:512
+#: ../libpicmanwidgets/picmanpageselector.c:749
+#, c-format
+msgid "Page %d"
+msgstr "ទំព័រ %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1176
+msgid "One page selected"
+msgstr "បាន​ជ្រើស​មួយ​ទំព័រ"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+#: ../libpicmanwidgets/picmanpageselector.c:1187
+#, c-format
+msgid "%d page selected"
+msgstr "បាន​ជ្រើស​ទំព័រ %d"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "​អាច​សរសេរ​បាន"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "ថត"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr "ចុច​លើ​ឧបករណ៍​ចាក់​ពណ៌ បន្ទាប់​មក​ចុច​ពណ៌​នៅ​កន្លែង​ណា​មួយ​នៅ​លើ​អេក្រង់​របស់​អ្នក ដើម្បី ជ្រើស​ពណ៌ ។"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr "ពិនិត្យ​មើល​ទំហំ"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr "ពិនិត្យ​រចនាប័ទ្ម"
+
+#. toggle button to (des)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "_មើលជាមុន"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1901
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "វាល​បញ្ចូល​អត្ថបទ​នេះ​ត្រូវ​បាន​កំណត់​ទៅ​ជា %d តួអក្សរ ។"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "Anchor"
+msgstr "យុថ្កា"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "C_enter"
+msgstr "កណ្ដាល"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Duplicate"
+msgstr "_ស្ទួន"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "_Edit"
+msgstr "_កែសម្រួល"
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Linked"
+msgstr "បានតភ្ជាប់"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste as New"
+msgstr "បិទភ្ជាប់ជាថ្មី"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "Paste Into"
+msgstr "បិទភ្ជាប់​ទីកាន់"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "_Reset"
+msgstr "_កំណត់​ឡើងវិញ"
+
+#: ../libpicmanwidgets/picmanstock.c:121
+msgid "Visible"
+msgstr "មើលឃើញ"
+
+#: ../libpicmanwidgets/picmanstock.c:157 ../libpicmanwidgets/picmanstock.c:161
+msgid "_Stroke"
+msgstr "_ខ្វាច់"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_etter Spacing"
+msgstr "ចន្លោះ​តួអក្សរ"
+
+#: ../libpicmanwidgets/picmanstock.c:174
+msgid "L_ine Spacing"
+msgstr "ចន្លោះ​​បន្ទាត់"
+
+#: ../libpicmanwidgets/picmanstock.c:190
+msgid "_Resize"
+msgstr "_ផ្លាស់ប្ដូរ​ទំហំ"
+
+#: ../libpicmanwidgets/picmanstock.c:191 ../libpicmanwidgets/picmanstock.c:319
+msgid "_Scale"
+msgstr "_មាត្រដ្ឋាន"
+
+#: ../libpicmanwidgets/picmanstock.c:295
+msgid "Cr_op"
+msgstr "​ច្រឹប"
+
+#: ../libpicmanwidgets/picmanstock.c:314
+msgid "_Transform"
+msgstr "_ប្លែង"
+
+#: ../libpicmanwidgets/picmanstock.c:318
+msgid "_Rotate"
+msgstr "_បង្វិល"
+
+#: ../libpicmanwidgets/picmanstock.c:320
+msgid "_Shear"
+msgstr "_កាត់"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "ច្រើនទៀត..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:577
+msgid "Unit Selection"
+msgstr "ជម្រើស​ឯកតា"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:626
+msgid "Unit"
+msgstr "ឯកតា"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:630
+msgid "Factor"
+msgstr "កត្តា"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1005
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"ប្រើ​តម្លៃ​នេះ​​សម្រាប់​ប្រភព​កម្មវិធី​បង្កើត​ចំនួន​ដោយ​ចៃដន្យ - វា​អនុញ្ញាត​ឲ្យ​អ្នក​ធ្វើ​ប្រតិបត្តិ \"ដោយ​ចៃដន្យ"
+"\" ម្ដង​ទៀត"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1009
+msgid "_New Seed"
+msgstr "_ប្រភព​ថ្មី"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1022
+msgid "Seed random number generator with a generated random number"
+msgstr "កម្មវិធី​បង្កើត​ចំនួន​ចៃដន្យ​របស់​ប្រភព​​ជាមួយ​ចំនួន​ចៃដន្យ​ដែល​បាន​បង្កើត​"
+
+#: ../libpicmanwidgets/picmanwidgets.c:1026
+msgid "_Randomize"
+msgstr "_ធ្វើដោយចៃដន្យ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "បញ្ឈរ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "ផ្ដេក"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "ភាព​លាំៗ​នៃ​ពណ៌"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "តិត្ថិភាព"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "តម្លៃ"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "ស្រទាប់"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "រូបភាព"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "ពង្រីក"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "បង្រួម"
+
+#: ../modules/cdisplay_colorblind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "មិន​អាច​មើល​ឃើញ​ពណ៌ (មិន​ដឹង​ពណ៌​ក្រហម)"
+
+#: ../modules/cdisplay_colorblind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "មើល​ពណ៌​មិន​ឃើញ (​មិន​ដឹង​​ពណ៌​បៃតង)"
+
+#: ../modules/cdisplay_colorblind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "មើល​ពណ៌​មិន​ឃើញ​ (​មិន​ដឹង​ពណ៌​ខៀវ​)"
+
+#: ../modules/cdisplay_colorblind.c:200
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "តម្រង​ការ​ប្លែង​ឳនភាព​ពណ៌ (​ក្បួន​ដោះស្រាយ Brettel-Vienot-Mollon)"
+
+#: ../modules/cdisplay_colorblind.c:292
+msgid "Color Deficient Vision"
+msgstr "កំណែ​ពណ៌​មិន​គ្រប់គ្រាន់"
+
+#: ../modules/cdisplay_colorblind.c:507
+msgid "Color _deficiency type:"
+msgstr "ប្រភេទ​ពណ៌​មិន​គ្រប់គ្រាន់"
+
+#: ../modules/cdisplay_gamma.c:91
+msgid "Gamma color display filter"
+msgstr "តម្រង​បង្ហាញ​ពណ៌​ហ្គាម៉ា"
+
+#: ../modules/cdisplay_gamma.c:160
+msgid "Gamma"
+msgstr "ហ្គាម៉ា"
+
+#: ../modules/cdisplay_gamma.c:253
+msgid "_Gamma:"
+msgstr "_ហ្គាម៉ា ៖"
+
+#: ../modules/cdisplay_highcontrast.c:91
+msgid "High Contrast color display filter"
+msgstr "តម្រង​បង្ហាញ​ពណ៌​កម្រិត​ពណ៌​ខ្ពស់"
+
+#: ../modules/cdisplay_highcontrast.c:160
+msgid "Contrast"
+msgstr "កម្រិត​ពណ៌"
+
+#: ../modules/cdisplay_highcontrast.c:253
+msgid "Contrast c_ycles:"
+msgstr "រង្វង់កម្រិតពណ៌ ៖"
+
+#: ../modules/cdisplay_lcms.c:105
+msgid "Color management display filter using ICC color profiles"
+msgstr "តម្រង​បង្ហាញ​ការ​គ្រប់គ្រង​ពណ៌ ដោយ​ប្រើ​ទម្រង់ពណ៌ ICC"
+
+#: ../modules/cdisplay_lcms.c:166
+msgid "Color Management"
+msgstr "ការ​គ្រប់គ្រង​ពណ៌"
+
+#: ../modules/cdisplay_lcms.c:235
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr "តម្រង​នេះ​យក​ការ​កំណត់​រចនាសម្ព័ន្ធ​របស់​វា​ពី​ភាគ​គ្រប់គ្រង​ពណ៌​នៅ​ក្នុង​ប្រអប់​ចំណូល​ចិត្ត ។"
+
+#: ../modules/cdisplay_lcms.c:249
+msgid "Mode of operation:"
+msgstr "របៀប​នៃ​ប្រតិបត្តិការ ៖"
+
+#: ../modules/cdisplay_lcms.c:256
+msgid "Image profile:"
+msgstr "ទម្រង់​រូបភាព ៖"
+
+#: ../modules/cdisplay_lcms.c:263
+msgid "Monitor profile:"
+msgstr "ទម្រង់​ត្រួតពិនិត្យ ៖"
+
+#: ../modules/cdisplay_lcms.c:270
+msgid "Print simulation profile:"
+msgstr "ទម្រង់​បន្លែង​បោះពុម្ព ៖"
+
+#: ../modules/cdisplay_proof.c:102
+msgid "Color proof filter using ICC color profile"
+msgstr "តម្រង់​មើល​ពណ៌​ ដោយ​ប្រើ​ទម្រង់​ពណ៌ ICC"
+
+#: ../modules/cdisplay_proof.c:179
+msgid "Color Proof"
+msgstr "មើល​ពណ៌"
+
+#: ../modules/cdisplay_proof.c:306
+msgid "_Intent:"
+msgstr "_បំណង ៖"
+
+#: ../modules/cdisplay_proof.c:310
+msgid "Choose an ICC Color Profile"
+msgstr "ជ្រើស​ទម្រង់​ពណ៌ ICC មួយ"
+
+#: ../modules/cdisplay_proof.c:313
+msgid "_Profile:"
+msgstr "_ទម្រង់ ៖"
+
+#: ../modules/cdisplay_proof.c:318
+msgid "_Black Point Compensation"
+msgstr "_ការ​ជួសជុល​ចំណុច​ខ្មៅ"
+
+#: ../modules/colorsel_cmyk.c:73
+msgid "CMYK color selector"
+msgstr "ឧបករណ៍​ជ្រើ​ស​ពណ៌ CMYK"
+
+#: ../modules/colorsel_cmyk.c:130
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/colorsel_cmyk.c:148
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/colorsel_cmyk.c:150
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/colorsel_cmyk.c:152
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/colorsel_cmyk.c:154
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/colorsel_cmyk.c:158
+msgid "Cyan"
+msgstr "ពណ៌​​ផ្ទៃមេឃ"
+
+#: ../modules/colorsel_cmyk.c:159
+msgid "Magenta"
+msgstr "​ក្រហម​ស្វាយ"
+
+#: ../modules/colorsel_cmyk.c:160
+msgid "Yellow"
+msgstr "ពណ៌​លឿង"
+
+#: ../modules/colorsel_cmyk.c:161
+msgid "Black"
+msgstr "ពណ៌ខ្មៅ"
+
+#: ../modules/colorsel_cmyk.c:195
+msgid "Black _pullout:"
+msgstr "ការ​ដក​ពណ៌​ខ្មៅ​ចេញ ៖"
+
+#: ../modules/colorsel_cmyk.c:212
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "ភាគរយ​របស់​ពណ៌ខ្មៅ​ត្រូវដក​ចេញ​របស់​តំណ​ដែល​មាន​ពណ៌ ។"
+
+#: ../modules/colorsel_triangle.c:104
+msgid "Painter-style triangle color selector"
+msgstr "ឧបករណ៍​ជ្រើស​ពណ៌​រចនាប័ទ្ម​រាង​ត្រីកោណ​​របស់​ឧបករណ៍​គូរ"
+
+#: ../modules/colorsel_triangle.c:170
+msgid "Triangle"
+msgstr "ត្រីកោណ"
+
+#: ../modules/colorsel_water.c:84
+msgid "Watercolor style color selector"
+msgstr "ឧបករណ៍​ជ្រើស​ពណ៌​រចនាប័ទ្ម​ពណ៌​ទឹក"
+
+#: ../modules/colorsel_water.c:150
+msgid "Watercolor"
+msgstr "ពណ៌​ទឹក"
+
+#: ../modules/colorsel_water.c:213
+msgid "Pressure"
+msgstr "សម្ពាធ"
+
+#: ../modules/controller_linux_input.c:58
+msgid "Button 0"
+msgstr "ប៊ូតុង 0"
+
+#: ../modules/controller_linux_input.c:59
+msgid "Button 1"
+msgstr "ប៊ូតុង ១"
+
+#: ../modules/controller_linux_input.c:60
+msgid "Button 2"
+msgstr "ប៊ូតុង ២"
+
+#: ../modules/controller_linux_input.c:61
+msgid "Button 3"
+msgstr "ប៊ូតុង ៣"
+
+#: ../modules/controller_linux_input.c:62
+msgid "Button 4"
+msgstr "ប៊ូតុង ៤"
+
+#: ../modules/controller_linux_input.c:63
+msgid "Button 5"
+msgstr "ប៊ូតុង ៥"
+
+#: ../modules/controller_linux_input.c:64
+msgid "Button 6"
+msgstr "ប៊ូតុង ៦"
+
+#: ../modules/controller_linux_input.c:65
+msgid "Button 7"
+msgstr "ប៊ូតុង ៧"
+
+#: ../modules/controller_linux_input.c:66
+msgid "Button 8"
+msgstr "ប៊ូតុង ៨"
+
+#: ../modules/controller_linux_input.c:67
+msgid "Button 9"
+msgstr "ប៊ូតុង ៩"
+
+#: ../modules/controller_linux_input.c:68
+msgid "Button Mouse"
+msgstr "ប៊ូតុង​កណ្ដុរ"
+
+#: ../modules/controller_linux_input.c:69
+msgid "Button Left"
+msgstr "ប៊ូតុង​​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:70
+msgid "Button Right"
+msgstr "ប៊ូតុង​​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:71
+msgid "Button Middle"
+msgstr "ប៊ូតុង​កណ្ដាល"
+
+#: ../modules/controller_linux_input.c:72
+msgid "Button Side"
+msgstr "ប៊ូតុង​ចំហៀង​"
+
+#: ../modules/controller_linux_input.c:73
+msgid "Button Extra"
+msgstr "ប៊ូតុង​បន្ថែម"
+
+#: ../modules/controller_linux_input.c:74
+msgid "Button Forward"
+msgstr "ប៊ូតុង​ទៅ​មុខ"
+
+#: ../modules/controller_linux_input.c:75
+msgid "Button Back"
+msgstr "ប៊ូតុង​ថយក្រោយ"
+
+#: ../modules/controller_linux_input.c:76
+msgid "Button Task"
+msgstr "ប៊ូតុង​ភារកិច្ច"
+
+#: ../modules/controller_linux_input.c:78
+msgid "Button Wheel"
+msgstr "កង់ប៊ូតុង​"
+
+#: ../modules/controller_linux_input.c:81
+msgid "Button Gear Down"
+msgstr "ប៊ូតុង​បន្ថយ​ល្បឿន​"
+
+#: ../modules/controller_linux_input.c:84
+msgid "Button Gear Up"
+msgstr "ប៊ូតុង​បន្ថែម​ល្បឿម"
+
+#: ../modules/controller_linux_input.c:90
+#: ../modules/controller_dx_dinput.c:469
+msgid "X Move Left"
+msgstr "X ផ្លាស់ទី​ទៅ​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:91
+#: ../modules/controller_dx_dinput.c:472
+msgid "X Move Right"
+msgstr "X ផ្លាស់ទី​ទៅ​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:92
+msgid "Y Move Forward"
+msgstr "Y ផ្លាស់ទី​បន្ត"
+
+#: ../modules/controller_linux_input.c:93
+msgid "Y Move Back"
+msgstr "Y ផ្លាស់ទី​ថយក្រោយ"
+
+#: ../modules/controller_linux_input.c:94
+#: ../modules/controller_dx_dinput.c:487
+msgid "Z Move Up"
+msgstr "Z ផ្លាស់ទី​ឡើង​លើ"
+
+#: ../modules/controller_linux_input.c:95
+#: ../modules/controller_dx_dinput.c:490
+msgid "Z Move Down"
+msgstr "Z ផ្លាស់ទី​ចុះក្រោម"
+
+#: ../modules/controller_linux_input.c:97
+msgid "X Axis Tilt Forward"
+msgstr "ក្រឡាក្បឿង​អ័ក្ស X ទៅ​មុខ"
+
+#: ../modules/controller_linux_input.c:98
+msgid "X Axis Tilt Back"
+msgstr "ក្រឡាក្បឿង​អ័ក្ស X ថយ​ក្រោយ"
+
+#: ../modules/controller_linux_input.c:99
+#: ../modules/controller_dx_dinput.c:505
+msgid "Y Axis Tilt Right"
+msgstr "ក្រឡា​ក្បឿង​អ័ក្ស Y ទៅ​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:100
+#: ../modules/controller_dx_dinput.c:508
+msgid "Y Axis Tilt Left"
+msgstr "ក្រឡាក្បឿង​អ័ក្ស Y ទៅ​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:101
+#: ../modules/controller_dx_dinput.c:514
+msgid "Z Axis Turn Left"
+msgstr "ត្រឡប់​អ័ក្ស Z ទៅ​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:102
+#: ../modules/controller_dx_dinput.c:517
+msgid "Z Axis Turn Right"
+msgstr "ត្រឡប់​អ័ក្ស Z ទៅ​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr "ត្រឡប់កង់​ថយ​ក្រោយ​ផ្ដេក"
+
+#: ../modules/controller_linux_input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr "ត្រឡប់​កង់​ទៅ​មុខ​ផ្ដេក"
+
+#: ../modules/controller_linux_input.c:106
+msgid "Dial Turn Left"
+msgstr "រវៃ​ទៅ​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:107
+msgid "Dial Turn Right"
+msgstr "រវៃ​ទៅ​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:108
+msgid "Wheel Turn Left"
+msgstr "កង់​វិល​ទៅ​ឆ្វេង"
+
+#: ../modules/controller_linux_input.c:109
+msgid "Wheel Turn Right"
+msgstr "កង់​វិល​ទៅ​ស្ដាំ"
+
+#: ../modules/controller_linux_input.c:179
+msgid "Linux input event controller"
+msgstr "កម្មវិធី​បញ្ជា​ព្រឹត្តិការណ៍​បញ្ចូល​របស់​លីនុច"
+
+#: ../modules/controller_linux_input.c:249
+#: ../modules/controller_dx_dinput.c:227 ../modules/controller_midi.c:245
+msgid "Device:"
+msgstr "ឧបករណ៍ ៖"
+
+#: ../modules/controller_linux_input.c:250
+msgid "The name of the device to read Linux Input events from."
+msgstr "ឈ្មោះ​របស់​​ឧបករណ៍​សម្រាប់​អាន​ព្រឹត្តិការ​ណ៍បញ្ចូល​របស់​លីនុច ។"
+
+#: ../modules/controller_linux_input.c:261
+msgid "Linux Input"
+msgstr "ការបញ្ចូល​របស់​លីនុច"
+
+#: ../modules/controller_linux_input.c:539
+msgid "Linux Input Events"
+msgstr "ព្រឹត្តិការ​ណ៍បញ្ចូលរបស់​​លីនុច"
+
+#: ../modules/controller_linux_input.c:551
+#: ../modules/controller_dx_dinput.c:1122 ../modules/controller_midi.c:533
+msgid "No device configured"
+msgstr "គ្មាន​ឧបករណ៍​បាន​កំណត់​រចនាសម្ព័ន្ធ"
+
+#: ../modules/controller_linux_input.c:577 ../modules/controller_midi.c:482
+#: ../modules/controller_midi.c:508
+#, c-format
+msgid "Reading from %s"
+msgstr "កំពុង​អាន​ពី %s"
+
+#: ../modules/controller_linux_input.c:595
+#: ../modules/controller_linux_input.c:649 ../modules/controller_midi.c:464
+#: ../modules/controller_midi.c:525 ../modules/controller_midi.c:596
+#, c-format
+msgid "Device not available: %s"
+msgstr "មិនមាន​ឧបករណ៍ ៖ %s"
+
+#: ../modules/controller_linux_input.c:614
+#: ../modules/controller_dx_dinput.c:1147
+msgid "Device not available"
+msgstr "មិនមាន​ឧបករណ៍"
+
+#: ../modules/controller_linux_input.c:658 ../modules/controller_midi.c:605
+msgid "End of file"
+msgstr "ចុង​ឯកសារ"
+
+#: ../modules/controller_dx_dinput.c:157
+msgid "DirectX DirectInput event controller"
+msgstr "វត្ថុ​បញ្ជា​ព្រឹត្តិការណ៍ DirectX DirectInput"
+
+#: ../modules/controller_dx_dinput.c:228
+msgid "The device to read DirectInput events from."
+msgstr "ឧបករណ៍​ត្រូវ​​អាន​ព្រឹត្តិការណ៍​ DirectInput ។"
+
+#: ../modules/controller_dx_dinput.c:237
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller_dx_dinput.c:446
+#, c-format
+msgid "Button %d"
+msgstr "ប៊ូតុង %d"
+
+#: ../modules/controller_dx_dinput.c:449
+#, c-format
+msgid "Button %d Press"
+msgstr "ចុច​ប៊ូតុង %d"
+
+#: ../modules/controller_dx_dinput.c:452
+#, c-format
+msgid "Button %d Release"
+msgstr "លែង​ប៊ូតុង %d"
+
+#: ../modules/controller_dx_dinput.c:478
+msgid "Y Move Away"
+msgstr "Y ផ្លាស់ទី​ឆ្ងាយ"
+
+#: ../modules/controller_dx_dinput.c:481
+msgid "Y Move Near"
+msgstr "Y ផ្លាស់ទី​ជិត"
+
+#: ../modules/controller_dx_dinput.c:496
+msgid "X Axis Tilt Away"
+msgstr "ឆ្ងាយ​ក្រឡាក្បឿង​អ័ក្ស X"
+
+#: ../modules/controller_dx_dinput.c:499
+msgid "X Axis Tilt Near"
+msgstr "ជិត​ក្រឡា​ក្បឿង​អ័ក្ស X"
+
+#: ../modules/controller_dx_dinput.c:528
+#, c-format
+msgid "Slider %d Increase"
+msgstr "បង្កើន​គ្រាប់​រំកិល %d"
+
+#: ../modules/controller_dx_dinput.c:531
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "បន្ថយ​គ្រាប់​រំកិល %d"
+
+#: ../modules/controller_dx_dinput.c:541
+#, c-format
+msgid "POV %d X View"
+msgstr "ទិដ្ឋភាព POV %d X"
+
+#: ../modules/controller_dx_dinput.c:544
+#, c-format
+msgid "POV %d Y View"
+msgstr "ទិដ្ឋភាព POV %d Y"
+
+#: ../modules/controller_dx_dinput.c:547
+#, c-format
+msgid "POV %d Return"
+msgstr "ត្រឡប់ POV %d"
+
+#: ../modules/controller_dx_dinput.c:1111
+msgid "DirectInput Events"
+msgstr "ព្រឹត្តិការណ៍ DirectInput"
+
+#: ../modules/controller_midi.c:167
+msgid "MIDI event controller"
+msgstr "ឧបករណ៍​បញ្ជា​ព្រឹត្តិការណ៍មីឌី"
+
+#: ../modules/controller_midi.c:236
+msgid "The name of the device to read MIDI events from."
+msgstr "ឈ្មោះឧបករណ៍ត្រូវអានព្រឹត្តិការណ៍មីឌី ។"
+
+#: ../modules/controller_midi.c:239
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "បញ្ចូល 'alsa' ត្រូវ​ប្រើ​លំដាប់ ALSA ។"
+
+#: ../modules/controller_midi.c:254
+msgid "Channel:"
+msgstr "​ឆានែល​ ៖"
+
+#: ../modules/controller_midi.c:255
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr "ឆានែល​មីឌី​ត្រូវ​អាន​ព្រឹត្តិការណ៍ ។ កំណត់​ទៅ -១ ដើម្បី​អាន​ពី​ឆានែល​មីឌី​ទាំងអស់ ។"
+
+#: ../modules/controller_midi.c:259
+msgid "MIDI"
+msgstr "មីឌី"
+
+#: ../modules/controller_midi.c:383
+#, c-format
+msgid "Note %02x on"
+msgstr "ចំណាំ %02x បើក"
+
+#: ../modules/controller_midi.c:386
+#, c-format
+msgid "Note %02x off"
+msgstr "ចំណាំ %02x បិទ"
+
+#: ../modules/controller_midi.c:389
+#, c-format
+msgid "Controller %03d"
+msgstr "វត្ថុ​បញ្ជា %03d"
+
+#: ../modules/controller_midi.c:436
+msgid "MIDI Events"
+msgstr "ព្រឹត្តិការណ៍"
+
+#: ../modules/controller_midi.c:454
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller_midi.c:456
+msgid "PICMAN MIDI Input Controller"
+msgstr "វត្ថុ​បញ្ជា​ការ​បញ្ចូល​មីឌី​របស់ PICMAN"
+

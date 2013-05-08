@@ -1,5 +1,5 @@
 /*
- * pcx.c GIMP plug-in for loading & saving PCX files
+ * pcx.c PICMAN plug-in for loading & saving PCX files
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +26,16 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-pcx-load"
 #define SAVE_PROC      "file-pcx-save"
 #define PLUG_IN_BINARY "file-pcx"
-#define PLUG_IN_ROLE   "gimp-file-pcx"
+#define PLUG_IN_ROLE   "picman-file-pcx"
 
 
 /* Declare local functions.  */
@@ -43,9 +43,9 @@
 static void   query      (void);
 static void   run        (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 
 static gint32 load_image (const gchar      *filename,
                           GError          **error);
@@ -92,7 +92,7 @@ static void   writeline  (FILE             *fp,
                           gint              bytes);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -105,27 +105,27 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
-  };
-
-  static const GimpParamDef save_args[] =
-  {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name entered"             }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  static const PicmanParamDef save_args[] =
+  {
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name entered"             }
+  };
+
+  picman_install_procedure (LOAD_PROC,
                           "Loads files in Zsoft PCX file format",
                           "FIXME: write help for pcx_load",
                           "Francisco Bustamante & Nick Lamb",
@@ -133,18 +133,18 @@ query (void)
                           "January 1997",
                           N_("ZSoft PCX image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-pcx");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-pcx");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "pcx,pcc",
                                     "",
                                     "0&,byte,10,2&,byte,1,3&,byte,>0,3,byte,<9");
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Saves files in ZSoft PCX file format",
                           "FIXME: write help for pcx_save",
                           "Francisco Bustamante & Nick Lamb",
@@ -152,27 +152,27 @@ query (void)
                           "January 1997",
                           N_("ZSoft PCX image"),
                           "INDEXED, RGB, GRAY",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-pcx");
-  gimp_register_save_handler (SAVE_PROC, "pcx,pcc", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-pcx");
+  picman_register_save_handler (SAVE_PROC, "pcx,pcc", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -183,8 +183,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -193,12 +193,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type = GIMP_PDB_IMAGE;
+          values[1].type = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
@@ -209,17 +209,17 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      (GIMP_EXPORT_CAN_HANDLE_RGB |
-                                       GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                       GIMP_EXPORT_CAN_HANDLE_INDEXED));
-          if (export == GIMP_EXPORT_CANCEL)
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      (PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                       PICMAN_EXPORT_CAN_HANDLE_GRAY |
+                                       PICMAN_EXPORT_CAN_HANDLE_INDEXED));
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -229,42 +229,42 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (nparams != 5)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (! save_image (param[3].data.d_string, image_ID, drawable_ID,
                             &error))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -360,18 +360,18 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   if (fread (header_buf, 128, 1, fd) == 0)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Could not read header from '%s'"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (fd);
       return -1;
     }
@@ -382,7 +382,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a PCX file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (fd);
       return -1;
     }
@@ -393,13 +393,13 @@ load_image (const gchar  *filename,
   height       = GUINT16_FROM_LE (pcx_header.y2) - offset_y + 1;
   bytesperline = GUINT16_FROM_LE (pcx_header.bytesperline);
 
-  if ((width < 0) || (width > GIMP_MAX_IMAGE_SIZE))
+  if ((width < 0) || (width > PICMAN_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image width: %d"), width);
       fclose (fd);
       return -1;
     }
-  if ((height < 0) || (height > GIMP_MAX_IMAGE_SIZE))
+  if ((height < 0) || (height > PICMAN_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image height: %d"), height);
       fclose (fd);
@@ -422,33 +422,33 @@ load_image (const gchar  *filename,
 
   if (pcx_header.planes == 3 && pcx_header.bpp == 8)
     {
-      image= gimp_image_new (width, height, GIMP_RGB);
-      layer= gimp_layer_new (image, _("Background"), width, height,
-                             GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
+      image= picman_image_new (width, height, PICMAN_RGB);
+      layer= picman_layer_new (image, _("Background"), width, height,
+                             PICMAN_RGB_IMAGE, 100, PICMAN_NORMAL_MODE);
     }
   else
     {
-      image= gimp_image_new (width, height, GIMP_INDEXED);
-      layer= gimp_layer_new (image, _("Background"), width, height,
-                             GIMP_INDEXED_IMAGE, 100, GIMP_NORMAL_MODE);
+      image= picman_image_new (width, height, PICMAN_INDEXED);
+      layer= picman_layer_new (image, _("Background"), width, height,
+                             PICMAN_INDEXED_IMAGE, 100, PICMAN_NORMAL_MODE);
     }
-  gimp_image_set_filename (image, filename);
-  gimp_image_insert_layer (image, layer, -1, 0);
-  gimp_layer_set_offsets (layer, offset_x, offset_y);
+  picman_image_set_filename (image, filename);
+  picman_image_insert_layer (image, layer, -1, 0);
+  picman_layer_set_offsets (layer, offset_x, offset_y);
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   if (pcx_header.planes == 1 && pcx_header.bpp == 1)
     {
       dest = g_new (guchar, ((gsize) width) * height);
       load_1 (fd, width, height, dest, bytesperline);
-      gimp_image_set_colormap (image, mono, 2);
+      picman_image_set_colormap (image, mono, 2);
     }
   else if (pcx_header.planes == 4 && pcx_header.bpp == 1)
     {
       dest = g_new (guchar, ((gsize) width) * height);
       load_4 (fd, width, height, dest, bytesperline);
-      gimp_image_set_colormap (image, pcx_header.colormap, 16);
+      picman_image_set_colormap (image, pcx_header.colormap, 16);
     }
   else if (pcx_header.planes == 1 && pcx_header.bpp == 8)
     {
@@ -456,7 +456,7 @@ load_image (const gchar  *filename,
       load_8 (fd, width, height, dest, bytesperline);
       fseek (fd, -768L, SEEK_END);
       fread (cmap, 768, 1, fd);
-      gimp_image_set_colormap (image, cmap, 256);
+      picman_image_set_colormap (image, cmap, 256);
     }
   else if (pcx_header.planes == 3 && pcx_header.bpp == 8)
     {
@@ -477,7 +477,7 @@ load_image (const gchar  *filename,
   g_free (dest);
   g_object_unref (buffer);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image;
 }
@@ -496,7 +496,7 @@ load_8 (FILE    *fp,
     {
       readline (fp, line, bytes);
       memcpy (buf, line, width);
-      gimp_progress_update ((double) row / (double) height);
+      picman_progress_update ((double) row / (double) height);
     }
 
   g_free (line);
@@ -522,7 +522,7 @@ load_24 (FILE    *fp,
               buf[x * 3 + c] = line[x];
             }
         }
-      gimp_progress_update ((double) y / (double) height);
+      picman_progress_update ((double) y / (double) height);
     }
 
   g_free (line);
@@ -548,7 +548,7 @@ load_1 (FILE    *fp,
           else
             buf[x] = 0;
         }
-      gimp_progress_update ((double) y / (double) height);
+      picman_progress_update ((double) y / (double) height);
     }
 
   g_free (line);
@@ -577,7 +577,7 @@ load_4 (FILE    *fp,
                 buf[x] += (1 << c);
             }
         }
-      gimp_progress_update ((double) y / (double) height);
+      picman_progress_update ((double) y / (double) height);
     }
 
   g_free (line);
@@ -626,7 +626,7 @@ save_image (const gchar  *filename,
   FILE          *fp;
   GeglBuffer    *buffer;
   const Babl    *format;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   guchar        *cmap= NULL;
   guchar        *pixels;
   gint           offset_x, offset_y;
@@ -634,16 +634,16 @@ save_image (const gchar  *filename,
   gint           colors, i;
   guint8         header_buf[128];
 
-  drawable_type = gimp_drawable_type (layer);
-  gimp_drawable_offsets (layer, &offset_x, &offset_y);
+  drawable_type = picman_drawable_type (layer);
+  picman_drawable_offsets (layer, &offset_x, &offset_y);
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   width  = gegl_buffer_get_width  (buffer);
   height = gegl_buffer_get_height (buffer);
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   pcx_header.manufacturer = 0x0a;
   pcx_header.version = 5;
@@ -651,8 +651,8 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE:
-      cmap                    = gimp_image_get_colormap (image, &colors);
+    case PICMAN_INDEXED_IMAGE:
+      cmap                    = picman_image_get_colormap (image, &colors);
       pcx_header.bpp          = 8;
       pcx_header.planes       = 1;
       pcx_header.color        = GUINT16_TO_LE (1);
@@ -660,7 +660,7 @@ save_image (const gchar  *filename,
       format                  = NULL;
       break;
 
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       pcx_header.bpp          = 8;
       pcx_header.planes       = 3;
       pcx_header.color        = GUINT16_TO_LE (1);
@@ -668,7 +668,7 @@ save_image (const gchar  *filename,
       format                  = babl_format ("R'G'B' u8");
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       pcx_header.bpp          = 8;
       pcx_header.planes       = 1;
       pcx_header.color        = GUINT16_TO_LE (2);
@@ -717,7 +717,7 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
@@ -736,7 +736,7 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       save_8 (fp, width, height, pixels);
       fputc (0x0c, fp);
       fwrite (cmap, colors, 3, fp);
@@ -748,11 +748,11 @@ save_image (const gchar  *filename,
         }
       break;
 
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       save_24 (fp, width, height, pixels);
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       save_8 (fp, width, height, pixels);
       fputc (0x0c, fp);
       for (i = 0; i < 256; i++)
@@ -774,7 +774,7 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Writing to file '%s' failed: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
@@ -793,7 +793,7 @@ save_8 (FILE         *fp,
     {
       writeline (fp, buf, width);
       buf += width;
-      gimp_progress_update ((double) row / (double) height);
+      picman_progress_update ((double) row / (double) height);
     }
 }
 
@@ -819,7 +819,7 @@ save_24 (FILE         *fp,
           writeline (fp, line, width);
         }
       buf += width * 3;
-      gimp_progress_update ((double) y / (double) height);
+      picman_progress_update ((double) y / (double) height);
     }
   g_free (line);
 }

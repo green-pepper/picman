@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Lens plug-in - adjust for lens distortion
@@ -25,15 +25,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC     "plug-in-lens-distortion"
 #define PLUG_IN_BINARY   "lens-distortion"
-#define PLUG_IN_ROLE     "gimp-lens-distortion"
+#define PLUG_IN_ROLE     "picman-lens-distortion"
 
 #define RESPONSE_RESET   1
 
@@ -67,12 +67,12 @@ typedef struct
 static void     query (void);
 static void     run   (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *param,
+                       const PicmanParam  *param,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals);
+                       PicmanParam       **return_vals);
 
-static void     lens_distort    (GimpDrawable *drawable);
-static gboolean lens_dialog     (GimpDrawable *drawable);
+static void     lens_distort    (PicmanDrawable *drawable);
+static gboolean lens_dialog     (PicmanDrawable *drawable);
 
 
 static LensValues         vals = { 0.0, 0.0, 0.0, 0.0 };
@@ -82,7 +82,7 @@ static gint               drawable_width, drawable_height;
 static guchar             background_color[4];
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -96,20 +96,20 @@ MAIN ()
 static void
 query (void)
 {
-  static GimpParamDef args[] =
+  static PicmanParamDef args[] =
     {
-      { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-      { GIMP_PDB_IMAGE,    "image",       "Input image (unused)" },
-      { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable" },
-      { GIMP_PDB_FLOAT,    "offset-x",    "Effect centre offset in X" },
-      { GIMP_PDB_FLOAT,    "offset-y",    "Effect centre offset in Y" },
-      { GIMP_PDB_FLOAT,    "main-adjust", "Amount of second-order distortion" },
-      { GIMP_PDB_FLOAT,    "edge-adjust", "Amount of fourth-order distortion" },
-      { GIMP_PDB_FLOAT,    "rescale",     "Rescale overall image size" },
-      { GIMP_PDB_FLOAT,    "brighten",    "Adjust brightness in corners" }
+      { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+      { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)" },
+      { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable" },
+      { PICMAN_PDB_FLOAT,    "offset-x",    "Effect centre offset in X" },
+      { PICMAN_PDB_FLOAT,    "offset-y",    "Effect centre offset in Y" },
+      { PICMAN_PDB_FLOAT,    "main-adjust", "Amount of second-order distortion" },
+      { PICMAN_PDB_FLOAT,    "edge-adjust", "Amount of fourth-order distortion" },
+      { PICMAN_PDB_FLOAT,    "rescale",     "Rescale overall image size" },
+      { PICMAN_PDB_FLOAT,    "brighten",    "Adjust brightness in corners" }
     };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Corrects lens distortion"),
                           "Corrects barrel or pincushion lens distortion.",
                           "David Hodson, Aurimas Juška",
@@ -117,7 +117,7 @@ query (void)
                           "Version 1.0.10",
                           N_("Lens Distortion..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -125,52 +125,52 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRGB            background;
-  GimpPDBStatusType  status   = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRGB            background;
+  PicmanPDBStatusType  status   = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
 
   run_mode = param[0].data.d_int32;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N ();
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   drawable_width = drawable->width;
   drawable_height = drawable->height;
 
   /* Get background color */
-  gimp_context_get_background (&background);
-  gimp_rgb_set_alpha (&background, 0.0);
-  gimp_drawable_get_color_uchar (drawable->drawable_id, &background,
+  picman_context_get_background (&background);
+  picman_rgb_set_alpha (&background, 0.0);
+  picman_drawable_get_color_uchar (drawable->drawable_id, &background,
                                  background_color);
 
   /* Set the tile cache size */
-  gimp_tile_cache_ntiles (2 * MAX (drawable->ntile_rows, drawable->ntile_cols));
+  picman_tile_cache_ntiles (2 * MAX (drawable->ntile_rows, drawable->ntile_cols));
 
   *nreturn_vals = 1;
   *return_vals = values;
 
   switch (run_mode) {
-  case GIMP_RUN_INTERACTIVE:
-    gimp_get_data (PLUG_IN_PROC, &vals);
+  case PICMAN_RUN_INTERACTIVE:
+    picman_get_data (PLUG_IN_PROC, &vals);
     if (! lens_dialog (drawable))
       return;
     break;
 
-  case GIMP_RUN_NONINTERACTIVE:
+  case PICMAN_RUN_NONINTERACTIVE:
     if (nparams != 9)
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
 
-    if (status == GIMP_PDB_SUCCESS)
+    if (status == PICMAN_PDB_SUCCESS)
       {
         vals.centre_x = param[3].data.d_float;
         vals.centre_y = param[4].data.d_float;
@@ -182,25 +182,25 @@ run (const gchar      *name,
 
     break;
 
-  case GIMP_RUN_WITH_LAST_VALS:
-    gimp_get_data (PLUG_IN_PROC, &vals);
+  case PICMAN_RUN_WITH_LAST_VALS:
+    picman_get_data (PLUG_IN_PROC, &vals);
     break;
 
   default:
     break;
   }
 
-  if ( status == GIMP_PDB_SUCCESS )
+  if ( status == PICMAN_PDB_SUCCESS )
     {
       lens_distort (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &vals, sizeof (LensValues));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &vals, sizeof (LensValues));
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
   values[0].data.d_status = status;
@@ -313,7 +313,7 @@ lens_distort_func (gint              ix,
                    gint              iy,
                    guchar           *dest,
                    gint              bpp,
-                   GimpPixelFetcher *pft)
+                   PicmanPixelFetcher *pft)
 {
   gdouble  src_x, src_y, mag;
   gdouble  brighten;
@@ -340,7 +340,7 @@ lens_distort_func (gint              ix,
           if (x >= 0  && y >= 0 &&
               x < drawable_width &&  y < drawable_height)
             {
-              gimp_pixel_fetcher_get_pixel (pft, x, y, pixel);
+              picman_pixel_fetcher_get_pixel (pft, x, y, pixel);
             }
           else
             {
@@ -359,51 +359,51 @@ lens_distort_func (gint              ix,
 }
 
 static void
-lens_distort (GimpDrawable *drawable)
+lens_distort (PicmanDrawable *drawable)
 {
-  GimpRgnIterator  *iter;
-  GimpPixelFetcher *pft;
-  GimpRGB           background;
+  PicmanRgnIterator  *iter;
+  PicmanPixelFetcher *pft;
+  PicmanRGB           background;
 
   lens_setup_calc (drawable->width, drawable->height);
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
 
-  gimp_context_get_background (&background);
-  gimp_rgb_set_alpha (&background, 0.0);
-  gimp_pixel_fetcher_set_bg_color (pft, &background);
-  gimp_pixel_fetcher_set_edge_mode (pft, GIMP_PIXEL_FETCHER_EDGE_BACKGROUND);
+  picman_context_get_background (&background);
+  picman_rgb_set_alpha (&background, 0.0);
+  picman_pixel_fetcher_set_bg_color (pft, &background);
+  picman_pixel_fetcher_set_edge_mode (pft, PICMAN_PIXEL_FETCHER_EDGE_BACKGROUND);
 
-  gimp_progress_init (_("Lens distortion"));
+  picman_progress_init (_("Lens distortion"));
 
-  iter = gimp_rgn_iterator_new (drawable, 0);
-  gimp_rgn_iterator_dest (iter, (GimpRgnFuncDest) lens_distort_func, pft);
-  gimp_rgn_iterator_free (iter);
+  iter = picman_rgn_iterator_new (drawable, 0);
+  picman_rgn_iterator_dest (iter, (PicmanRgnFuncDest) lens_distort_func, pft);
+  picman_rgn_iterator_free (iter);
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 }
 
 static void
-lens_distort_preview (GimpDrawable *drawable,
-                      GimpPreview  *preview)
+lens_distort_preview (PicmanDrawable *drawable,
+                      PicmanPreview  *preview)
 {
   guchar               *dest;
   guchar               *pixel;
   gint                  width, height, bpp;
   gint                  x, y;
-  GimpPixelFetcher     *pft;
-  GimpRGB               background;
+  PicmanPixelFetcher     *pft;
+  PicmanRGB               background;
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
 
-  gimp_context_get_background (&background);
-  gimp_rgb_set_alpha (&background, 0.0);
-  gimp_pixel_fetcher_set_bg_color (pft, &background);
-  gimp_pixel_fetcher_set_edge_mode (pft, GIMP_PIXEL_FETCHER_EDGE_BACKGROUND);
+  picman_context_get_background (&background);
+  picman_rgb_set_alpha (&background, 0.0);
+  picman_pixel_fetcher_set_bg_color (pft, &background);
+  picman_pixel_fetcher_set_edge_mode (pft, PICMAN_PIXEL_FETCHER_EDGE_BACKGROUND);
 
   lens_setup_calc (drawable->width, drawable->height);
 
-  dest = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  dest = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                        &width, &height, &bpp);
   pixel = dest;
 
@@ -413,7 +413,7 @@ lens_distort_preview (GimpDrawable *drawable,
         {
           gint sx, sy;
 
-          gimp_preview_untransform (preview, x, y, &sx, &sy);
+          picman_preview_untransform (preview, x, y, &sx, &sy);
 
           lens_distort_func (sx, sy, pixel, bpp, pft);
 
@@ -421,9 +421,9 @@ lens_distort_preview (GimpDrawable *drawable,
         }
     }
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 
-  gimp_preview_draw_buffer (preview, dest, width * bpp);
+  picman_preview_draw_buffer (preview, dest, width * bpp);
   g_free (dest);
 }
 
@@ -462,7 +462,7 @@ lens_response (GtkWidget *widget,
 }
 
 static gboolean
-lens_dialog (GimpDrawable *drawable)
+lens_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -472,13 +472,13 @@ lens_dialog (GimpDrawable *drawable)
   gint       row = 0;
   gboolean   run = FALSE;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Lens Distortion"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Lens Distortion"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -490,7 +490,7 @@ lens_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -498,7 +498,7 @@ lens_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -512,7 +512,7 @@ lens_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Main:"), 120, 6,
                               vals.square_a, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -520,13 +520,13 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.square_a);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Edge:"), 120, 6,
                               vals.quad_a, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -534,13 +534,13 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.quad_a);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Zoom:"), 120, 6,
                               vals.scale_a, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -548,13 +548,13 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.scale_a);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Brighten:"), 120, 6,
                               vals.brighten, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -562,13 +562,13 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.brighten);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_X shift:"), 120, 6,
                               vals.centre_x, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -576,13 +576,13 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.centre_x);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Y shift:"), 120, 6,
                               vals.centre_y, -100.0, 100.0, 0.1, 1.0, 3,
                               TRUE, 0, 0,
@@ -590,10 +590,10 @@ lens_dialog (GimpDrawable *drawable)
   adjustments = g_slist_append (adjustments, adj);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &vals.centre_y);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   g_signal_connect (dialog, "response",

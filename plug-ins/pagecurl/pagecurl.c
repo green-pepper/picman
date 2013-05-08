@@ -1,9 +1,9 @@
-/* Page Curl 0.9 --- image filter plug-in for GIMP
+/* Page Curl 0.9 --- image filter plug-in for PICMAN
  * Copyright (C) 1996 Federico Mena Quintero
- * Ported to Gimp 1.0 1998 by Simon Budig <Simon.Budig@unix-ag.org>
+ * Ported to Picman 1.0 1998 by Simon Budig <Simon.Budig@unix-ag.org>
  *
  * You can contact me at quartic@polloux.fciencias.unam.mx
- * You can contact the original GIMP authors at gimp@xcf.berkeley.edu
+ * You can contact the original PICMAN authors at picman@xcf.berkeley.edu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 
 /*
  * Version History
- * 0.5: (1996) Version for Gimp 0.54 by Federico Mena Quintero
- * 0.6: (Feb '98) First Version for Gimp 0.99.x, very buggy.
+ * 0.5: (1996) Version for Picman 0.54 by Federico Mena Quintero
+ * 0.6: (Feb '98) First Version for Picman 0.99.x, very buggy.
  * 0.8: (Mar '98) First "stable" version
  * 0.9: (May '98)
  *      - Added support for Gradients. It is now possible to map
@@ -42,17 +42,17 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "pagecurl-icons.h"
 
 
 #define PLUG_IN_PROC    "plug-in-pagecurl"
 #define PLUG_IN_BINARY  "pagecurl"
-#define PLUG_IN_ROLE    "gimp-pagecurl"
+#define PLUG_IN_ROLE    "picman-pagecurl"
 #define PLUG_IN_VERSION "July 2004, 1.0"
 #define NGRADSAMPLES    256
 
@@ -110,9 +110,9 @@ typedef struct
 static void      query                 (void);
 static void      run                   (const gchar      *name,
                                         gint              nparams,
-                                        const GimpParam  *param,
+                                        const PicmanParam  *param,
                                         gint             *nreturn_vals,
-                                        GimpParam       **return_vals);
+                                        PicmanParam       **return_vals);
 static void       set_default_params   (void);
 
 static void       dialog_scale_update  (GtkAdjustment    *adjustment,
@@ -130,7 +130,7 @@ static guchar   * get_gradient_samples (gint32            drawable_id,
 
 /***** Variables *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -143,7 +143,7 @@ static CurlParams curl;
 /* Image parameters */
 
 static gint32        image_id;
-static GimpDrawable *curl_layer;
+static PicmanDrawable *curl_layer;
 
 static const guint8 *curl_pixbufs[] =
 {
@@ -166,13 +166,13 @@ static gint   drawable_position;
 
 /* Center and radius of circle */
 
-static GimpVector2 center;
+static PicmanVector2 center;
 static double      radius;
 
 /* Useful points to keep around */
 
-static GimpVector2 left_tangent;
-static GimpVector2 right_tangent;
+static PicmanVector2 left_tangent;
+static PicmanVector2 right_tangent;
 
 /* Slopes --- these are *not* in the usual geometric sense! */
 
@@ -194,25 +194,25 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image"                          },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable"                       },
-    { GIMP_PDB_INT32,    "colors",      "FG- and BG-Color (0), Current gradient (1), Current gradient reversed (2)" },
-    { GIMP_PDB_INT32,    "edge",
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image"                          },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable"                       },
+    { PICMAN_PDB_INT32,    "colors",      "FG- and BG-Color (0), Current gradient (1), Current gradient reversed (2)" },
+    { PICMAN_PDB_INT32,    "edge",
         "Edge to curl (1-4, clockwise, starting in the lower right edge)"   },
-    { GIMP_PDB_INT32,    "orientation", "Vertical (0), Horizontal (1)"         },
-    { GIMP_PDB_INT32,    "shade",
+    { PICMAN_PDB_INT32,    "orientation", "Vertical (0), Horizontal (1)"         },
+    { PICMAN_PDB_INT32,    "shade",
         "Shade the region under the curl (1) or not (0)"                    },
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_LAYER, "Curl Layer", "The new layer with the curl." }
+    { PICMAN_PDB_LAYER, "Curl Layer", "The new layer with the curl." }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
 			  N_("Curl up one of the image corners"),
 			  "This plug-in creates a pagecurl-effect.",
 			  "Federico Mena Quintero and Simon Budig",
@@ -220,25 +220,25 @@ query (void)
 			  PLUG_IN_VERSION,
 			  N_("_Pagecurl..."),
 			  "RGB*, GRAY*",
-			  GIMP_PLUGIN,
+			  PICMAN_PLUGIN,
 			  G_N_ELEMENTS (args),
 			  G_N_ELEMENTS (return_vals),
 			  args,
 			  return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[2];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
   gint32            drawable_id;
 
   run_mode = param[0].data.d_int32;
@@ -248,39 +248,39 @@ run (const gchar      *name,
   set_default_params ();
 
   /*  Possibly retrieve data  */
-  gimp_get_data (PLUG_IN_PROC, &curl);
+  picman_get_data (PLUG_IN_PROC, &curl);
 
   *nreturn_vals = 2;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
-  values[1].type = GIMP_PDB_LAYER;
+  values[1].type = PICMAN_PDB_LAYER;
   values[1].data.d_layer = -1;
 
   /*  Get the specified drawable  */
   drawable_id = param[2].data.d_drawable;
   image_id = param[1].data.d_image;
 
-  if ((gimp_drawable_is_rgb (drawable_id) ||
-       gimp_drawable_is_gray (drawable_id)) &&
-      gimp_drawable_mask_intersect (drawable_id, &sel_x, &sel_y,
+  if ((picman_drawable_is_rgb (drawable_id) ||
+       picman_drawable_is_gray (drawable_id)) &&
+      picman_drawable_mask_intersect (drawable_id, &sel_x, &sel_y,
                                     &true_sel_width, &true_sel_height))
     {
       switch (run_mode)
 	{
-	case GIMP_RUN_INTERACTIVE:
+	case PICMAN_RUN_INTERACTIVE:
 	  /*  First acquire information with a dialog  */
 	  if (! dialog ())
 	    return;
 	  break;
 
-	case GIMP_RUN_NONINTERACTIVE:
+	case PICMAN_RUN_NONINTERACTIVE:
 	  /*  Make sure all the arguments are there!  */
 	  if (nparams != 7)
-	    status = GIMP_PDB_CALLING_ERROR;
+	    status = PICMAN_PDB_CALLING_ERROR;
 
-	  if (status == GIMP_PDB_SUCCESS)
+	  if (status == PICMAN_PDB_SUCCESS)
 	    {
               curl.colors      = CLAMP (param[3].data.d_int32,
                                         0, CURL_COLORS_LAST);
@@ -292,27 +292,27 @@ run (const gchar      *name,
 	    }
 	  break;
 
-	case GIMP_RUN_WITH_LAST_VALS:
+	case PICMAN_RUN_WITH_LAST_VALS:
 	  break;
 
 	default:
 	  break;
 	}
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
 	{
 	  values[1].data.d_layer = page_curl (drawable_id);
 
-	  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+	  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
-	  if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &curl, sizeof (CurlParams));
+	  if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &curl, sizeof (CurlParams));
 	}
     }
   else
     /* Sorry - no indexed/noalpha images */
-    status = GIMP_PDB_EXECUTION_ERROR;
+    status = PICMAN_PDB_EXECUTION_ERROR;
 
   values[0].data.d_status = status;
 }
@@ -437,11 +437,11 @@ dialog (void)
   GtkObject *adjustment;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Pagecurl Effect"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Pagecurl Effect"), PLUG_IN_ROLE,
                             NULL, 0,
-			    gimp_standard_help_func, PLUG_IN_PROC,
+			    picman_standard_help_func, PLUG_IN_PROC,
 
 			    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			    GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -453,7 +453,7 @@ dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -461,7 +461,7 @@ dialog (void)
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new (_("Curl Location"));
+  frame = picman_frame_new (_("Curl Location"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
   table = gtk_table_new (3, 2, TRUE);
@@ -500,7 +500,7 @@ dialog (void)
                                       curl.edge == i);
 
         g_object_set_data (G_OBJECT (button),
-                           "gimp-item-data", GINT_TO_POINTER (i));
+                           "picman-item-data", GINT_TO_POINTER (i));
 
         gtk_table_attach (GTK_TABLE (table), button,
                           CURL_EDGE_LEFT  (i) ? 0 : 1,
@@ -511,7 +511,7 @@ dialog (void)
         gtk_widget_show (button);
 
         g_signal_connect (button, "toggled",
-                          G_CALLBACK (gimp_radio_button_update),
+                          G_CALLBACK (picman_radio_button_update),
                           &curl.edge);
 
         g_signal_connect (button, "toggled",
@@ -523,7 +523,7 @@ dialog (void)
   gtk_widget_show (table);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Curl Orientation"));
+  frame = picman_frame_new (_("Curl Orientation"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -550,13 +550,13 @@ dialog (void)
                                       curl.orientation == i);
 
         g_object_set_data (G_OBJECT (button),
-                           "gimp-item-data", GINT_TO_POINTER (i));
+                           "picman-item-data", GINT_TO_POINTER (i));
 
         gtk_box_pack_end (GTK_BOX (hbox), button, TRUE, TRUE, 0);
         gtk_widget_show (button);
 
         g_signal_connect (button, "toggled",
-                          G_CALLBACK (gimp_radio_button_update),
+                          G_CALLBACK (picman_radio_button_update),
                           &curl.orientation);
 
         g_signal_connect (button, "toggled",
@@ -574,33 +574,33 @@ dialog (void)
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &curl.shade);
 
-  combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
 
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                              GIMP_INT_STORE_VALUE,    CURL_COLORS_GRADIENT_REVERSE,
-                              GIMP_INT_STORE_LABEL,    _("Current gradient (reversed)"),
-                              GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_GRADIENT,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                              PICMAN_INT_STORE_VALUE,    CURL_COLORS_GRADIENT_REVERSE,
+                              PICMAN_INT_STORE_LABEL,    _("Current gradient (reversed)"),
+                              PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_GRADIENT,
                               -1);
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                              GIMP_INT_STORE_VALUE,    CURL_COLORS_GRADIENT,
-                              GIMP_INT_STORE_LABEL,    _("Current gradient"),
-                              GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_GRADIENT,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                              PICMAN_INT_STORE_VALUE,    CURL_COLORS_GRADIENT,
+                              PICMAN_INT_STORE_LABEL,    _("Current gradient"),
+                              PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_GRADIENT,
                               -1);
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                              GIMP_INT_STORE_VALUE,    CURL_COLORS_FG_BG,
-                              GIMP_INT_STORE_LABEL,    _("Foreground / background colors"),
-                              GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_DEFAULT_COLORS,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                              PICMAN_INT_STORE_VALUE,    CURL_COLORS_FG_BG,
+                              PICMAN_INT_STORE_LABEL,    _("Foreground / background colors"),
+                              PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_DEFAULT_COLORS,
                               -1);
 
   gtk_box_pack_start (GTK_BOX (vbox), combo, FALSE, FALSE, 0);
   gtk_widget_show (combo);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               curl.colors,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &curl.colors);
 
   gtk_widget_show (dialog);
@@ -610,7 +610,7 @@ dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adjustment = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adjustment = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Opacity:"), 100, 0,
                                      curl.opacity * 100.0, 0.0, 100.0,
                                      1.0, 1.0, 0.0,
@@ -620,7 +620,7 @@ dialog (void)
                     G_CALLBACK (dialog_scale_update),
                     &curl.opacity);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -633,18 +633,18 @@ init_calculation (gint32 drawable_id)
   gdouble      k;
   gdouble      alpha, beta;
   gdouble      angle;
-  GimpVector2  v1, v2;
+  PicmanVector2  v1, v2;
   gint32      *image_layers;
   gint32       nlayers;
-  GimpRGB      color;
+  PicmanRGB      color;
 
-  gimp_layer_add_alpha (drawable_id);
+  picman_layer_add_alpha (drawable_id);
 
   /* Image parameters */
 
   /* Determine Position of original Layer in the Layer stack. */
 
-  image_layers = gimp_image_get_layers (image_id, &nlayers);
+  image_layers = picman_image_get_layers (image_id, &nlayers);
   drawable_position = 0;
   while (drawable_position < nlayers &&
 	 image_layers[drawable_position] != drawable_id)
@@ -668,25 +668,25 @@ init_calculation (gint32 drawable_id)
   alpha = atan ((double) sel_height / sel_width);
   beta = alpha / 2.0;
   k = sel_width / ((G_PI + alpha) * sin (beta) + cos (beta));
-  gimp_vector2_set (&center, k * cos (beta), k * sin (beta));
+  picman_vector2_set (&center, k * cos (beta), k * sin (beta));
   radius = center.y;
 
   /* left_tangent  */
 
-  gimp_vector2_set (&left_tangent, radius * -sin (alpha), radius * cos (alpha));
-  gimp_vector2_add (&left_tangent, &left_tangent, &center);
+  picman_vector2_set (&left_tangent, radius * -sin (alpha), radius * cos (alpha));
+  picman_vector2_add (&left_tangent, &left_tangent, &center);
 
   /* right_tangent */
 
-  gimp_vector2_sub (&v1, &left_tangent, &center);
-  gimp_vector2_set (&v2, sel_width - center.x, sel_height - center.y);
-  angle = -2.0 * acos (gimp_vector2_inner_product (&v1, &v2) /
-		       (gimp_vector2_length (&v1) *
-                        gimp_vector2_length (&v2)));
-  gimp_vector2_set (&right_tangent,
+  picman_vector2_sub (&v1, &left_tangent, &center);
+  picman_vector2_set (&v2, sel_width - center.x, sel_height - center.y);
+  angle = -2.0 * acos (picman_vector2_inner_product (&v1, &v2) /
+		       (picman_vector2_length (&v1) *
+                        picman_vector2_length (&v2)));
+  picman_vector2_set (&right_tangent,
 		    v1.x * cos (angle) + v1.y * -sin (angle),
 		    v1.x * sin (angle) + v1.y * cos (angle));
-  gimp_vector2_add (&right_tangent, &right_tangent, &center);
+  picman_vector2_add (&right_tangent, &right_tangent, &center);
 
   /* Slopes */
 
@@ -698,11 +698,11 @@ init_calculation (gint32 drawable_id)
 
   /* Colors */
 
-  gimp_context_get_foreground (&color);
-  gimp_rgb_get_uchar (&color, &fore_color[0], &fore_color[1], &fore_color[2]);
+  picman_context_get_foreground (&color);
+  picman_rgb_get_uchar (&color, &fore_color[0], &fore_color[1], &fore_color[2]);
 
-  gimp_context_get_background (&color);
-  gimp_rgb_get_uchar (&color, &back_color[0], &back_color[1], &back_color[2]);
+  picman_context_get_background (&color);
+  picman_rgb_get_uchar (&color, &back_color[0], &back_color[1], &back_color[2]);
 }
 
 static gint32
@@ -714,55 +714,55 @@ do_curl_effect (gint32 drawable_id)
   gint          x1, y1, k;
   guint         alpha_pos, progress, max_progress;
   gdouble       intensity, alpha;
-  GimpVector2   v, dl, dr;
+  PicmanVector2   v, dl, dr;
   gdouble       dl_mag, dr_mag, angle, factor;
   guchar       *pp, *dest, fore_grayval, back_grayval;
   guchar       *gradsamp;
-  GimpPixelRgn  dest_rgn;
+  PicmanPixelRgn  dest_rgn;
   gpointer      pr;
   gint32        curl_layer_id;
   guchar       *grad_samples  = NULL;
 
-  color_image = gimp_drawable_is_rgb (drawable_id);
+  color_image = picman_drawable_is_rgb (drawable_id);
 
   curl_layer =
-    gimp_drawable_get (gimp_layer_new (image_id,
+    picman_drawable_get (picman_layer_new (image_id,
 				       _("Curl Layer"),
 				       true_sel_width,
 				       true_sel_height,
 				       color_image ?
-                                       GIMP_RGBA_IMAGE : GIMP_GRAYA_IMAGE,
-				       100, GIMP_NORMAL_MODE));
+                                       PICMAN_RGBA_IMAGE : PICMAN_GRAYA_IMAGE,
+				       100, PICMAN_NORMAL_MODE));
 
   curl_layer_id = curl_layer->drawable_id;
 
-  gimp_image_insert_layer (image_id, curl_layer->drawable_id,
-                           gimp_item_get_parent (drawable_id),
+  picman_image_insert_layer (image_id, curl_layer->drawable_id,
+                           picman_item_get_parent (drawable_id),
                            drawable_position);
-  gimp_drawable_fill (curl_layer->drawable_id, GIMP_TRANSPARENT_FILL);
+  picman_drawable_fill (curl_layer->drawable_id, PICMAN_TRANSPARENT_FILL);
 
-  gimp_drawable_offsets (drawable_id, &x1, &y1);
-  gimp_layer_set_offsets (curl_layer->drawable_id, sel_x + x1, sel_y + y1);
-  gimp_tile_cache_ntiles (2 * (curl_layer->width / gimp_tile_width () + 1));
+  picman_drawable_offsets (drawable_id, &x1, &y1);
+  picman_layer_set_offsets (curl_layer->drawable_id, sel_x + x1, sel_y + y1);
+  picman_tile_cache_ntiles (2 * (curl_layer->width / picman_tile_width () + 1));
 
-  gimp_pixel_rgn_init (&dest_rgn, curl_layer,
+  picman_pixel_rgn_init (&dest_rgn, curl_layer,
 		       0, 0, true_sel_width, true_sel_height, TRUE, TRUE);
 
   /* Init shade_under */
-  gimp_vector2_set (&dl, -sel_width, -sel_height);
-  dl_mag = gimp_vector2_length (&dl);
-  gimp_vector2_set (&dr,
+  picman_vector2_set (&dl, -sel_width, -sel_height);
+  dl_mag = picman_vector2_length (&dl);
+  picman_vector2_set (&dr,
 		    -(sel_width - right_tangent.x),
 		    -(sel_height - right_tangent.y));
-  dr_mag = gimp_vector2_length (&dr);
-  alpha = acos (gimp_vector2_inner_product (&dl, &dr) / (dl_mag * dr_mag));
+  dr_mag = picman_vector2_length (&dr);
+  alpha = acos (picman_vector2_inner_product (&dl, &dr) / (dl_mag * dr_mag));
 
   /* Init shade_curl */
 
-  fore_grayval = GIMP_RGB_LUMINANCE (fore_color[0],
+  fore_grayval = PICMAN_RGB_LUMINANCE (fore_color[0],
                                      fore_color[1],
                                      fore_color[2]) + 0.5;
-  back_grayval = GIMP_RGB_LUMINANCE (back_color[0],
+  back_grayval = PICMAN_RGB_LUMINANCE (back_color[0],
                                      back_color[1],
                                      back_color[2]) + 0.5;
 
@@ -785,9 +785,9 @@ do_curl_effect (gint32 drawable_id)
   alpha_pos = dest_rgn.bpp - 1;
 
   /* Main loop */
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       dest = dest_rgn.data;
 
@@ -828,8 +828,8 @@ do_curl_effect (gint32 drawable_id)
 		{
 		  v.x = -(sel_width - x);
 		  v.y = -(sel_height - y);
-		  angle = acos (gimp_vector2_inner_product (&v, &dl) /
-				(gimp_vector2_length (&v) * dl_mag));
+		  angle = acos (picman_vector2_inner_product (&v, &dl) /
+				(picman_vector2_length (&v) * dl_mag));
 
 		  if (inside_circle (x, y) || below_diagb (x, y))
 		    {
@@ -900,15 +900,15 @@ do_curl_effect (gint32 drawable_id)
 	  dest += dest_rgn.rowstride;
 	}
       progress += dest_rgn.w * dest_rgn.h;
-      gimp_progress_update ((double) progress / (double) max_progress);
+      picman_progress_update ((double) progress / (double) max_progress);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (curl_layer);
-  gimp_drawable_merge_shadow (curl_layer->drawable_id, FALSE);
-  gimp_drawable_update (curl_layer->drawable_id,
+  picman_progress_update (1.0);
+  picman_drawable_flush (curl_layer);
+  picman_drawable_merge_shadow (curl_layer->drawable_id, FALSE);
+  picman_drawable_update (curl_layer->drawable_id,
 			0, 0, curl_layer->width, curl_layer->height);
-  gimp_drawable_detach (curl_layer);
+  picman_drawable_detach (curl_layer);
 
   g_free (grad_samples);
 
@@ -920,32 +920,32 @@ do_curl_effect (gint32 drawable_id)
 static void
 clear_curled_region (gint32 drawable_id)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gpointer      pr;
   gint          x = 0;
   gint          y = 0;
   guint         x1, y1, i;
   guchar       *dest, *src, *pp, *sp;
   guint         alpha_pos, progress, max_progress;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
   max_progress = 2 * sel_width * sel_height;
   progress = max_progress / 2;
 
-  drawable = gimp_drawable_get (drawable_id);
+  drawable = picman_drawable_get (drawable_id);
 
-  gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
+  picman_pixel_rgn_init (&src_rgn, drawable,
 		       sel_x, sel_y, true_sel_width, true_sel_height,
 		       FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
 		       sel_x, sel_y, true_sel_width, true_sel_height,
 		       TRUE, TRUE);
   alpha_pos = dest_rgn.bpp - 1;
 
-  for (pr = gimp_pixel_rgns_register (2, &dest_rgn, &src_rgn);
+  for (pr = picman_pixel_rgns_register (2, &dest_rgn, &src_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       dest = dest_rgn.data;
       src = src_rgn.data;
@@ -1000,16 +1000,16 @@ clear_curled_region (gint32 drawable_id)
 	}
 
       progress += dest_rgn.w * dest_rgn.h;
-      gimp_progress_update ((double) progress / (double) max_progress);
+      picman_progress_update ((double) progress / (double) max_progress);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable_id, TRUE);
-  gimp_drawable_update (drawable_id,
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable_id, TRUE);
+  picman_drawable_update (drawable_id,
                         sel_x, sel_y,
                         true_sel_width, true_sel_height);
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gint32
@@ -1017,9 +1017,9 @@ page_curl (gint32 drawable_id)
 {
   gint curl_layer_id;
 
-  gimp_image_undo_group_start (image_id);
+  picman_image_undo_group_start (image_id);
 
-  gimp_progress_init (_("Page Curl"));
+  picman_progress_init (_("Page Curl"));
 
   init_calculation (drawable_id);
 
@@ -1027,14 +1027,14 @@ page_curl (gint32 drawable_id)
 
   clear_curled_region (drawable_id);
 
-  gimp_image_undo_group_end (image_id);
+  picman_image_undo_group_end (image_id);
 
   return curl_layer_id;
 }
 
 /*
   Returns NGRADSAMPLES samples of active gradient.
-  Each sample has (gimp_drawable_bpp (drawable_id)) bytes.
+  Each sample has (picman_drawable_bpp (drawable_id)) bytes.
   "ripped" from gradmap.c.
  */
 static guchar *
@@ -1048,16 +1048,16 @@ get_gradient_samples (gint32    drawable_id,
   gint     bpp, color, has_alpha, alpha;
   gint     i, j;
 
-  gradient_name = gimp_context_get_gradient ();
+  gradient_name = picman_context_get_gradient ();
 
-  gimp_gradient_get_uniform_samples (gradient_name, NGRADSAMPLES, reverse,
+  picman_gradient_get_uniform_samples (gradient_name, NGRADSAMPLES, reverse,
                                      &n_f_samples, &f_samples);
 
   g_free (gradient_name);
 
-  bpp       = gimp_drawable_bpp (drawable_id);
-  color     = gimp_drawable_is_rgb (drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable_id);
+  bpp       = picman_drawable_bpp (drawable_id);
+  color     = picman_drawable_is_rgb (drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable_id);
   alpha     = (has_alpha ? bpp - 1 : bpp);
 
   b_samples = g_new (guchar, NGRADSAMPLES * bpp);
@@ -1071,7 +1071,7 @@ get_gradient_samples (gint32    drawable_id,
         for (j = 0; j < 3; j++)
           b_samp[j] = f_samp[j] * 255;
       else
-        b_samp[0] = GIMP_RGB_LUMINANCE (f_samp[0], f_samp[1], f_samp[2]) * 255;
+        b_samp[0] = PICMAN_RGB_LUMINANCE (f_samp[0], f_samp[1], f_samp[2]) * 255;
 
       if (has_alpha)
         b_samp[alpha] = f_samp[3] * 255;

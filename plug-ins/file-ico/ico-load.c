@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GIMP Plug-in for Windows Icon files.
+ * PICMAN Plug-in for Windows Icon files.
  * Copyright (C) 2002 Christian Kreibich <christian@whoop.org>.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include <png.h>
 
@@ -35,7 +35,7 @@
 #include "ico.h"
 #include "ico-load.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define A_VAL(p) ((guchar *)(p))[3]
@@ -43,10 +43,10 @@
 #define G_VAL(p) ((guchar *)(p))[1]
 #define B_VAL(p) ((guchar *)(p))[0]
 
-#define A_VAL_GIMP(p) ((guchar *)(p))[3]
-#define R_VAL_GIMP(p) ((guchar *)(p))[0]
-#define G_VAL_GIMP(p) ((guchar *)(p))[1]
-#define B_VAL_GIMP(p) ((guchar *)(p))[2]
+#define A_VAL_PICMAN(p) ((guchar *)(p))[3]
+#define R_VAL_PICMAN(p) ((guchar *)(p))[0]
+#define G_VAL_PICMAN(p) ((guchar *)(p))[1]
+#define B_VAL_PICMAN(p) ((guchar *)(p))[2]
 
 
 static gint       ico_read_int8  (FILE        *fp,
@@ -483,14 +483,14 @@ ico_read_icon (FILE    *fp,
                                                            w, y * w + x)];
             guint32 *dest = dest_vec + (h - 1 - y) * w + x;
 
-            R_VAL_GIMP (dest) = R_VAL (&color);
-            G_VAL_GIMP (dest) = G_VAL (&color);
-            B_VAL_GIMP (dest) = B_VAL (&color);
+            R_VAL_PICMAN (dest) = R_VAL (&color);
+            G_VAL_PICMAN (dest) = G_VAL (&color);
+            B_VAL_PICMAN (dest) = B_VAL (&color);
 
             if (ico_get_bit_from_data (and_map, w, y * w + x))
-              A_VAL_GIMP (dest) = 0;
+              A_VAL_PICMAN (dest) = 0;
             else
-              A_VAL_GIMP (dest) = 255;
+              A_VAL_PICMAN (dest) = 255;
           }
       break;
 
@@ -502,14 +502,14 @@ ico_read_icon (FILE    *fp,
                                                               w, y * w + x)];
             guint32 *dest = dest_vec + (h - 1 - y) * w + x;
 
-            R_VAL_GIMP (dest) = R_VAL (&color);
-            G_VAL_GIMP (dest) = G_VAL (&color);
-            B_VAL_GIMP (dest) = B_VAL (&color);
+            R_VAL_PICMAN (dest) = R_VAL (&color);
+            G_VAL_PICMAN (dest) = G_VAL (&color);
+            B_VAL_PICMAN (dest) = B_VAL (&color);
 
             if (ico_get_bit_from_data (and_map, w, y * w + x))
-              A_VAL_GIMP (dest) = 0;
+              A_VAL_PICMAN (dest) = 0;
             else
-              A_VAL_GIMP (dest) = 255;
+              A_VAL_PICMAN (dest) = 255;
           }
       break;
 
@@ -521,14 +521,14 @@ ico_read_icon (FILE    *fp,
                                                             w, y * w + x)];
             guint32 *dest = dest_vec + (h - 1 - y) * w + x;
 
-            R_VAL_GIMP (dest) = R_VAL (&color);
-            G_VAL_GIMP (dest) = G_VAL (&color);
-            B_VAL_GIMP (dest) = B_VAL (&color);
+            R_VAL_PICMAN (dest) = R_VAL (&color);
+            G_VAL_PICMAN (dest) = G_VAL (&color);
+            B_VAL_PICMAN (dest) = B_VAL (&color);
 
             if (ico_get_bit_from_data (and_map, w, y * w + x))
-              A_VAL_GIMP (dest) = 0;
+              A_VAL_PICMAN (dest) = 0;
             else
-              A_VAL_GIMP (dest) = 255;
+              A_VAL_PICMAN (dest) = 255;
           }
       break;
 
@@ -546,20 +546,20 @@ ico_read_icon (FILE    *fp,
               {
                 guint32 *dest = dest_vec + (h - 1 - y) * w + x;
 
-                B_VAL_GIMP (dest) = row[0];
-                G_VAL_GIMP (dest) = row[1];
-                R_VAL_GIMP (dest) = row[2];
+                B_VAL_PICMAN (dest) = row[0];
+                G_VAL_PICMAN (dest) = row[1];
+                R_VAL_PICMAN (dest) = row[2];
 
                 if (data.bpp < 32)
                   {
                     if (ico_get_bit_from_data (and_map, w, y * w + x))
-                      A_VAL_GIMP (dest) = 0;
+                      A_VAL_PICMAN (dest) = 0;
                     else
-                      A_VAL_GIMP (dest) = 255;
+                      A_VAL_PICMAN (dest) = 255;
                   }
                 else
                   {
-                    A_VAL_GIMP (dest) = row[3];
+                    A_VAL_PICMAN (dest) = row[3];
                   }
 
                 row += bytespp;
@@ -611,11 +611,11 @@ ico_load_layer (FILE        *fp,
 
   /* read successfully. add to image */
   g_snprintf (name, sizeof (name), _("Icon #%i"), icon_num+1);
-  layer = gimp_layer_new (image, name, width, height,
-                          GIMP_RGBA_IMAGE, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image, layer, -1, icon_num);
+  layer = picman_layer_new (image, name, width, height,
+                          PICMAN_RGBA_IMAGE, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image, layer, -1, icon_num);
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   gegl_buffer_set (buffer, GEGL_RECTANGLE (0, 0, width, height), 0,
                    NULL, buf, GEGL_AUTO_ROWSTRIDE);
@@ -639,15 +639,15 @@ ico_load_image (const gchar  *filename,
   guint        icon_count;
   gint         maxsize;
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   fp = g_fopen (filename, "rb");
   if (! fp )
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -683,8 +683,8 @@ ico_load_image (const gchar  *filename,
     }
   D(("image size: %ix%i\n", max_width, max_height));
 
-  image = gimp_image_new (max_width, max_height, GIMP_RGB);
-  gimp_image_set_filename (image, filename);
+  image = picman_image_new (max_width, max_height, PICMAN_RGB);
+  picman_image_set_filename (image, filename);
 
   maxsize = max_width * max_height * 4;
   buf = g_new (guchar, max_width * max_height * 4);
@@ -696,7 +696,7 @@ ico_load_image (const gchar  *filename,
   g_free (info);
   fclose (fp);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image;
 }
@@ -717,15 +717,15 @@ ico_load_thumbnail_image (const gchar  *filename,
   gint         i, icon_count;
   guchar      *buf;
 
-  gimp_progress_init_printf (_("Opening thumbnail for '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening thumbnail for '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   fp = g_fopen (filename, "rb");
   if (! fp )
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -771,7 +771,7 @@ ico_load_thumbnail_image (const gchar  *filename,
   if (w <= 0 || h <= 0)
     return -1;
 
-  image = gimp_image_new (w, h, GIMP_RGB);
+  image = picman_image_new (w, h, PICMAN_RGB);
   buf = g_new (guchar, w*h*4);
   ico_load_layer (fp, image, match, buf, w*h*4, info+match);
   g_free (buf);
@@ -781,7 +781,7 @@ ico_load_thumbnail_image (const gchar  *filename,
 
   D(("*** thumbnail successfully loaded.\n\n"));
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (info);
   fclose (fp);

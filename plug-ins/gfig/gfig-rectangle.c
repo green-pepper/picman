@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates images containing vector type drawings.
  *
@@ -24,14 +24,14 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "gfig.h"
 #include "gfig-dobject.h"
 #include "gfig-rectangle.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 static void        d_draw_rectangle   (GfigObject *obj,
                                        cairo_t    *cr);
@@ -117,18 +117,18 @@ d_paint_rectangle (GfigObject *obj)
 
   if (gfig_context_get_current_style ()->fill_type != FILL_NONE)
     {
-      gimp_context_push ();
-      gimp_context_set_feather (selopt.feather);
-      gimp_context_set_feather_radius (selopt.feather_radius, selopt.feather_radius);
-      gimp_image_select_rectangle (gfig_context->image_id,
+      picman_context_push ();
+      picman_context_set_feather (selopt.feather);
+      picman_context_set_feather_radius (selopt.feather_radius, selopt.feather_radius);
+      picman_image_select_rectangle (gfig_context->image_id,
                                    selopt.type,
                                    dpnts[0], dpnts[1],
                                    dpnts[2] - dpnts[0],
                                    dpnts[3] - dpnts[1]);
-      gimp_context_pop ();
+      picman_context_pop ();
 
       paint_layer_fill (dpnts[0], dpnts[1], dpnts[2], dpnts[3]);
-      gimp_selection_none (gfig_context->image_id);
+      picman_selection_none (gfig_context->image_id);
     }
 
   if (obj->style.paint_type == PAINT_BRUSH_TYPE)

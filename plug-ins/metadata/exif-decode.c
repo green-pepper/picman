@@ -1,6 +1,6 @@
 /* exif-decode.c - decodes exif data and converts it to XMP
  *
- * Copyright (C) 2004-2005, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2004-2005, Róman Joost <romanofski@picman.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@
 
 #include <glib.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include <libexif/exif-data.h>
 
@@ -61,13 +61,13 @@ xmp_merge_from_exifbuffer (XMPModel     *xmp_model,
                            GError       **error)
 {
    ExifData *exif_data;
-   GimpParasite *parasite = gimp_image_get_parasite (image_ID, "exif-data");
+   PicmanParasite *parasite = picman_image_get_parasite (image_ID, "exif-data");
 
    if (!parasite)
      return FALSE;
 
-   exif_data = exif_data_new_from_data (gimp_parasite_data (parasite),
-                                        gimp_parasite_data_size (parasite));
+   exif_data = exif_data_new_from_data (picman_parasite_data (parasite),
+                                        picman_parasite_data_size (parasite));
    if (exif_data) {
      exif_data_foreach_content (exif_data,
                                 (void *) exif_foreach_content_cb,

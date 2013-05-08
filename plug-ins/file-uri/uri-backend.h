@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 gboolean      uri_backend_init               (const gchar  *plugin_name,
                                               gboolean      run,
-                                              GimpRunMode   run_mode,
+                                              PicmanRunMode   run_mode,
                                               GError      **error);
 void          uri_backend_shutdown           (void);
 
@@ -33,14 +33,14 @@ const gchar * uri_backend_get_save_protocols (void);
 
 gboolean      uri_backend_load_image         (const gchar  *uri,
                                               const gchar  *tmpname,
-                                              GimpRunMode   run_mode,
+                                              PicmanRunMode   run_mode,
                                               GError      **error);
 gboolean      uri_backend_save_image         (const gchar  *uri,
                                               const gchar  *tmpname,
-                                              GimpRunMode   run_mode,
+                                              PicmanRunMode   run_mode,
                                               GError      **error);
 gchar       * uri_backend_map_image          (const gchar  *uri,
-                                              GimpRunMode   run_mode);
+                                              PicmanRunMode   run_mode);
 
 
 #endif /* __URI_BACKEND_H__ */

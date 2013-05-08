@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -24,7 +24,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "imap_browse.h"
 #include "imap_main.h"
@@ -32,7 +32,7 @@
 #include "imap_string.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 typedef struct {
   DefaultDialog_t *dialog;
@@ -126,7 +126,7 @@ create_settings_dialog(void)
    gtk_widget_show(swin);
    gtk_container_add(GTK_CONTAINER(swin), view);
 
-   frame = gimp_frame_new(_("Map File Format"));
+   frame = picman_frame_new(_("Map File Format"));
    gtk_widget_show(frame);
    gtk_table_attach_defaults(GTK_TABLE(table), frame, 0, 2, 9, 10);
    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);

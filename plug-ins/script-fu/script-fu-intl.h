@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * script-fu-intl.h
@@ -34,7 +34,7 @@
 
 #define INIT_I18N()	G_STMT_START{			          \
   bindtextdomain (GETTEXT_PACKAGE"-script-fu",                    \
-                  gimp_locale_directory ());                      \
+                  picman_locale_directory ());                      \
   bind_textdomain_codeset (GETTEXT_PACKAGE"-script-fu", "UTF-8"); \
   textdomain (GETTEXT_PACKAGE"-script-fu");                       \
 }G_STMT_END

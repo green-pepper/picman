@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 #include <string.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC        "plug-in-retinex"
 #define PLUG_IN_BINARY      "contrast-retinex"
-#define PLUG_IN_ROLE        "gimp-contrast-retinex"
+#define PLUG_IN_ROLE        "picman-contrast-retinex"
 #define MAX_RETINEX_SCALES    8
 #define MIN_GAUSSIAN_SCALE   16
 #define MAX_GAUSSIAN_SCALE  250
@@ -76,14 +76,14 @@ typedef struct
 static void     query                       (void);
 static void     run                         (const gchar      *name,
                                              gint              nparams,
-                                             const GimpParam  *param,
+                                             const PicmanParam  *param,
                                              gint             *nreturn_vals,
-                                             GimpParam       **return_vals);
+                                             PicmanParam       **return_vals);
 
-/* Gimp */
-static gboolean retinex_dialog              (GimpDrawable *drawable);
-static void     retinex                     (GimpDrawable *drawable,
-                                             GimpPreview  *preview);
+/* Picman */
+static gboolean retinex_dialog              (PicmanDrawable *drawable);
+static void     retinex                     (PicmanDrawable *drawable,
+                                             PicmanPreview  *preview);
 
 static void     retinex_scales_distribution (gfloat       *scales,
                                              gint          nscales,
@@ -128,7 +128,7 @@ static RetinexParams rvals =
   1.2              /* A voir */
 };
 
-static GimpPlugInInfo PLUG_IN_INFO =
+static PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -141,18 +141,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"        },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)"                },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable"                      },
-    { GIMP_PDB_INT32,    "scale",       "Biggest scale value"                 },
-    { GIMP_PDB_INT32,    "nscales",     "Number of scales"                    },
-    { GIMP_PDB_INT32,    "scales-mode", "Retinex distribution through scales" },
-    { GIMP_PDB_FLOAT,    "cvar",        "Variance value"                      }
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"        },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)"                },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable"                      },
+    { PICMAN_PDB_INT32,    "scale",       "Biggest scale value"                 },
+    { PICMAN_PDB_INT32,    "nscales",     "Number of scales"                    },
+    { PICMAN_PDB_INT32,    "scales-mode", "Retinex distribution through scales" },
+    { PICMAN_PDB_FLOAT,    "cvar",        "Variance value"                      }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Enhance contrast using the Retinex method"),
                           "The Retinex Image Enhancement Algorithm is an "
                           "automatic image enhancement method that enhances "
@@ -165,24 +165,24 @@ query (void)
                           "2003",
                           N_("Retine_x..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Modify");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Modify");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               x, y, width, height;
 
   run_mode = param[0].data.d_int32;
@@ -192,40 +192,40 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x, &y, &width, &height) ||
       width  < MIN_GAUSSIAN_SCALE ||
       height < MIN_GAUSSIAN_SCALE)
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
-      gimp_drawable_detach (drawable);
+      status = PICMAN_PDB_EXECUTION_ERROR;
+      picman_drawable_detach (drawable);
       values[0].data.d_status = status;
       return;
     }
 
-  gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+  picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &rvals);
+      picman_get_data (PLUG_IN_PROC, &rvals);
 
       /*  First acquire information with a dialog  */
       if (! retinex_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 7)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -236,41 +236,41 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &rvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &rvals);
       break;
 
     default:
       break;
     }
 
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id)))
     {
-      gimp_progress_init (_("Retinex"));
+      picman_progress_init (_("Retinex"));
 
       retinex (drawable, NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &rvals, sizeof (RetinexParams));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &rvals, sizeof (RetinexParams));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   values[0].data.d_status = status;
 }
 
 
 static gboolean
-retinex_dialog (GimpDrawable *drawable)
+retinex_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -280,11 +280,11 @@ retinex_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Retinex Image Enhancement"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Retinex Image Enhancement"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -296,7 +296,7 @@ retinex_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -304,7 +304,7 @@ retinex_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -318,64 +318,64 @@ retinex_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (_("Uniform"), filter_uniform,
+  combo = picman_int_combo_box_new (_("Uniform"), filter_uniform,
                                   _("Low"),     filter_low,
                                   _("High"),    filter_high,
                                   NULL);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), rvals.scales_mode,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), rvals.scales_mode,
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &rvals.scales_mode);
   g_signal_connect_swapped (combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Level:"), 0.0, 0.5,
                              combo, 2, FALSE);
   gtk_widget_show (combo);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Scale:"), SCALE_WIDTH, ENTRY_WIDTH,
                               rvals.scale,
                               MIN_GAUSSIAN_SCALE, MAX_GAUSSIAN_SCALE, 1, 1, 0,
                               TRUE, 0, 0, NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &rvals.scale);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("Scale _division:"), SCALE_WIDTH, ENTRY_WIDTH,
                               rvals.nscales,
                               0, MAX_RETINEX_SCALES, 1, 1, 0,
                               TRUE, 0, 0, NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &rvals.nscales);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("Dy_namic:"), SCALE_WIDTH, ENTRY_WIDTH,
                               rvals.cvar, 0, 4, 0.1, 0.1, 1,
                               TRUE, 0, 0, NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_float_adjustment_update),
+                    G_CALLBACK (picman_float_adjustment_update),
                     &rvals.cvar);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -386,14 +386,14 @@ retinex_dialog (GimpDrawable *drawable)
  * Applies the algorithm
  */
 static void
-retinex (GimpDrawable *drawable,
-         GimpPreview  *preview)
+retinex (PicmanDrawable *drawable,
+         PicmanPreview  *preview)
 {
   gint          x, y, width, height;
   gint          size, bytes;
   guchar       *src  = NULL;
   guchar       *psrc = NULL;
-  GimpPixelRgn  dst_rgn, src_rgn;
+  PicmanPixelRgn  dst_rgn, src_rgn;
 
   bytes = drawable->bpp;
 
@@ -402,12 +402,12 @@ retinex (GimpDrawable *drawable,
    */
   if (preview)
     {
-      src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+      src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                           &width, &height, &bytes);
     }
   else
     {
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x, &y, &width, &height))
         return;
 
@@ -424,10 +424,10 @@ retinex (GimpDrawable *drawable,
       memset (src, 0, sizeof (guchar) * size);
 
       /* Fill allocated memory with pixel data */
-      gimp_pixel_rgn_init (&src_rgn, drawable,
+      picman_pixel_rgn_init (&src_rgn, drawable,
                            x, y, width, height,
                            FALSE, FALSE);
-      gimp_pixel_rgn_get_rect (&src_rgn, src, x, y, width, height);
+      picman_pixel_rgn_get_rect (&src_rgn, src, x, y, width, height);
     }
 
   /*
@@ -438,20 +438,20 @@ retinex (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, psrc, width * bytes);
+      picman_preview_draw_buffer (preview, psrc, width * bytes);
     }
   else
     {
-      gimp_pixel_rgn_init (&dst_rgn, drawable,
+      picman_pixel_rgn_init (&dst_rgn, drawable,
                            x, y, width, height,
                            TRUE, TRUE);
-      gimp_pixel_rgn_set_rect (&dst_rgn, psrc, x, y, width, height);
+      picman_pixel_rgn_set_rect (&dst_rgn, psrc, x, y, width, height);
 
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 
   g_free (src);
@@ -630,7 +630,7 @@ MSRCR (guchar *src, gint width, gint height, gint bytes, gboolean preview_mode)
 
   if (!preview_mode)
     {
-      gimp_progress_init (_("Retinex: filtering"));
+      picman_progress_init (_("Retinex: filtering"));
       max_preview = 3 * rvals.nscales;
     }
 
@@ -729,7 +729,7 @@ MSRCR (guchar *src, gint width, gint height, gint bytes, gboolean preview_mode)
             }
 
            if (!preview_mode)
-             gimp_progress_update ((channel * rvals.nscales + scale) /
+             picman_progress_update ((channel * rvals.nscales + scale) /
                                    max_preview);
         }
     }
@@ -761,7 +761,7 @@ MSRCR (guchar *src, gint width, gint height, gint bytes, gboolean preview_mode)
     }
 
 /*  if (!preview_mode)
-    gimp_progress_update ((2.0 + (rvals.nscales * 3)) /
+    picman_progress_update ((2.0 + (rvals.nscales * 3)) /
                           ((rvals.nscales * 3) + 3));*/
 
   /*

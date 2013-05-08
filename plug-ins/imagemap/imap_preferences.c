@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -27,8 +27,8 @@
 
 #include <glib/gstdio.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "imap_command.h"
 #include "imap_file.h"
@@ -39,7 +39,7 @@
 #include "imap_preferences.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 typedef struct {
    DefaultDialog_t      *dialog;
@@ -170,7 +170,7 @@ preferences_load(PreferencesData_t *data)
    char buf[256];
    gchar *filename;
 
-   filename = gimp_personal_rc_file ("imagemaprc");
+   filename = picman_personal_rc_file ("imagemaprc");
 
    in = g_fopen(filename, "rb");
    g_free(filename);
@@ -193,7 +193,7 @@ preferences_save(PreferencesData_t *data)
    gchar *filename;
    ColorSelData_t *colors = &data->colors;
 
-   filename = gimp_personal_rc_file ("imagemaprc");
+   filename = picman_personal_rc_file ("imagemaprc");
 
    out = g_fopen(filename, "wb");
    if (out) {
@@ -294,8 +294,8 @@ preferences_ok_cb(gpointer data)
 static void
 get_button_color (GtkWidget *button, GdkColor *color)
 {
-  GimpRGB rgb;
-  gimp_color_button_get_color (GIMP_COLOR_BUTTON (button), &rgb);
+  PicmanRGB rgb;
+  picman_color_button_get_color (PICMAN_COLOR_BUTTON (button), &rgb);
   color->red = rgb.r * 0xffff;
   color->green = rgb.g * 0xffff;
   color->blue = rgb.b * 0xffff;
@@ -315,10 +315,10 @@ get_button_colors(PreferencesDialog_t *dialog, ColorSelData_t *colors)
 static void
 set_button_color (GtkWidget *button, GdkColor *color)
 {
-  GimpRGB rgb;
-  gimp_rgb_set (&rgb, color->red, color->green, color->blue);
-  gimp_rgb_multiply (&rgb, 1.0 / 0xffff);
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (button), &rgb);
+  PicmanRGB rgb;
+  picman_rgb_set (&rgb, color->red, color->green, color->blue);
+  picman_rgb_multiply (&rgb, 1.0 / 0xffff);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (button), &rgb);
 }
 
 static void
@@ -361,7 +361,7 @@ create_general_tab(PreferencesDialog_t *data, GtkWidget *notebook)
    GtkWidget *frame;
    GtkWidget *hbox;
 
-   frame = gimp_frame_new( _("Default Map Type"));
+   frame = picman_frame_new( _("Default Map Type"));
    gtk_widget_show(frame);
    gtk_table_attach_defaults(GTK_TABLE(table), frame, 0, 2, 0, 1);
    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
@@ -415,10 +415,10 @@ static GtkWidget*
 create_color_field(PreferencesDialog_t *data, GtkWidget *table, gint row,
                    gint col)
 {
-   GimpRGB color = {0.0, 0.0, 0.0, 1.0};
-   GtkWidget *area = gimp_color_button_new (_("Select Color"), 16, 8, &color,
-                                            GIMP_COLOR_AREA_FLAT);
-   gimp_color_button_set_update (GIMP_COLOR_BUTTON (area), TRUE);
+   PicmanRGB color = {0.0, 0.0, 0.0, 1.0};
+   GtkWidget *area = picman_color_button_new (_("Select Color"), 16, 8, &color,
+                                            PICMAN_COLOR_AREA_FLAT);
+   picman_color_button_set_update (PICMAN_COLOR_BUTTON (area), TRUE);
    gtk_table_attach_defaults (GTK_TABLE (table), area, col, col + 1, row,
                               row + 1);
    gtk_widget_show (area);

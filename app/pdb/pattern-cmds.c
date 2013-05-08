@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,76 +25,76 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimppattern.h"
-#include "core/gimptempbuf.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanpattern.h"
+#include "core/picmantempbuf.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-pattern_get_info_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+pattern_get_info_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 width = 0;
   gint32 height = 0;
   gint32 bpp = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPattern *pattern = gimp_pdb_get_pattern (gimp, name, error);
+      PicmanPattern *pattern = picman_pdb_get_pattern (picman, name, error);
 
       if (pattern)
         {
-          width  = gimp_temp_buf_get_width  (pattern->mask);
-          height = gimp_temp_buf_get_height (pattern->mask);
-          bpp    = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask));
+          width  = picman_temp_buf_get_width  (pattern->mask);
+          height = picman_temp_buf_get_height (pattern->mask);
+          bpp    = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask));
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), bpp);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-pattern_get_pixels_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+pattern_get_pixels_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 width = 0;
   gint32 height = 0;
@@ -102,137 +102,137 @@ pattern_get_pixels_invoker (GimpProcedure         *procedure,
   gint32 num_color_bytes = 0;
   guint8 *color_bytes = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPattern *pattern = gimp_pdb_get_pattern (gimp, name, error);
+      PicmanPattern *pattern = picman_pdb_get_pattern (picman, name, error);
 
       if (pattern)
         {
-          width           = gimp_temp_buf_get_width  (pattern->mask);
-          height          = gimp_temp_buf_get_height (pattern->mask);
-          bpp             = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask));
-          num_color_bytes = gimp_temp_buf_get_data_size (pattern->mask);
-          color_bytes     = g_memdup (gimp_temp_buf_get_data (pattern->mask),
+          width           = picman_temp_buf_get_width  (pattern->mask);
+          height          = picman_temp_buf_get_height (pattern->mask);
+          bpp             = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask));
+          num_color_bytes = picman_temp_buf_get_data_size (pattern->mask);
+          color_bytes     = g_memdup (picman_temp_buf_get_data (pattern->mask),
                                       num_color_bytes);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), num_color_bytes);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 5), color_bytes, num_color_bytes);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 4), num_color_bytes);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 5), color_bytes, num_color_bytes);
     }
 
   return return_vals;
 }
 
 void
-register_pattern_procs (GimpPDB *pdb)
+register_pattern_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-pattern-get-info
+   * picman-pattern-get-info
    */
-  procedure = gimp_procedure_new (pattern_get_info_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-pattern-get-info");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-pattern-get-info",
+  procedure = picman_procedure_new (pattern_get_info_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-pattern-get-info");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-pattern-get-info",
                                      "Retrieve information about the specified pattern.",
                                      "This procedure retrieves information about the specified pattern. This includes the pattern extents (width and height).",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The pattern name.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The pattern width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The pattern height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bpp",
                                                           "bpp",
                                                           "The pattern bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-pattern-get-pixels
+   * picman-pattern-get-pixels
    */
-  procedure = gimp_procedure_new (pattern_get_pixels_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-pattern-get-pixels");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-pattern-get-pixels",
+  procedure = picman_procedure_new (pattern_get_pixels_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-pattern-get-pixels");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-pattern-get-pixels",
                                      "Retrieve information about the specified pattern (including pixels).",
                                      "This procedure retrieves information about the specified. This includes the pattern extents (width and height), its bpp and its pixel data.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The pattern name.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The pattern width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The pattern height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bpp",
                                                           "bpp",
                                                           "The pattern bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-color-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-color-bytes",
                                                           "num color bytes",
                                                           "Number of pattern bytes",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("color-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("color-bytes",
                                                                "color bytes",
                                                                "The pattern data.",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

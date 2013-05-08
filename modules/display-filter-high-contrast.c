@@ -1,5 +1,5 @@
-/* GIMP - The GNU Image Manipulation Program
- * Copyright (C) 1999 Manish Singh <yosh@gimp.org>
+/* PICMAN - The GNU Image Manipulation Program
+ * Copyright (C) 1999 Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 #define DEFAULT_CONTRAST 1.0
@@ -44,7 +44,7 @@ typedef struct _CdisplayContrastClass CdisplayContrastClass;
 
 struct _CdisplayContrast
 {
-  GimpColorDisplay  parent_instance;
+  PicmanColorDisplay  parent_instance;
 
   gdouble           contrast;
   guchar            lookup[256];
@@ -52,7 +52,7 @@ struct _CdisplayContrast
 
 struct _CdisplayContrastClass
 {
-  GimpColorDisplayClass  parent_instance;
+  PicmanColorDisplayClass  parent_instance;
 };
 
 
@@ -74,18 +74,18 @@ static void        cdisplay_contrast_get_property    (GObject          *object,
                                                       GValue           *value,
                                                       GParamSpec       *pspec);
 
-static void        cdisplay_contrast_convert_surface (GimpColorDisplay *display,
+static void        cdisplay_contrast_convert_surface (PicmanColorDisplay *display,
                                                       cairo_surface_t  *surface);
-static GtkWidget * cdisplay_contrast_configure       (GimpColorDisplay *display);
+static GtkWidget * cdisplay_contrast_configure       (PicmanColorDisplay *display);
 static void        cdisplay_contrast_set_contrast    (CdisplayContrast *contrast,
                                                       gdouble           value);
 
 
-static const GimpModuleInfo cdisplay_contrast_info =
+static const PicmanModuleInfo cdisplay_contrast_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("High Contrast color display filter"),
-  "Jay Cox <jaycox@gimp.org>",
+  "Jay Cox <jaycox@picman.org>",
   "v0.2",
   "(c) 2000, released under the GPL",
   "October 14, 2000"
@@ -93,17 +93,17 @@ static const GimpModuleInfo cdisplay_contrast_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (CdisplayContrast, cdisplay_contrast,
-                       GIMP_TYPE_COLOR_DISPLAY)
+                       PICMAN_TYPE_COLOR_DISPLAY)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &cdisplay_contrast_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   cdisplay_contrast_register_type (module);
 
@@ -114,19 +114,19 @@ static void
 cdisplay_contrast_class_init (CdisplayContrastClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpColorDisplayClass *display_class = GIMP_COLOR_DISPLAY_CLASS (klass);
+  PicmanColorDisplayClass *display_class = PICMAN_COLOR_DISPLAY_CLASS (klass);
 
   object_class->get_property     = cdisplay_contrast_get_property;
   object_class->set_property     = cdisplay_contrast_set_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CONTRAST,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CONTRAST,
                                    "contrast", NULL,
                                    0.01, 10.0, DEFAULT_CONTRAST,
                                    0);
 
   display_class->name            = _("Contrast");
-  display_class->help_id         = "gimp-colordisplay-contrast";
-  display_class->stock_id        = GIMP_STOCK_DISPLAY_FILTER_CONTRAST;
+  display_class->help_id         = "picman-colordisplay-contrast";
+  display_class->stock_id        = PICMAN_STOCK_DISPLAY_FILTER_CONTRAST;
 
   display_class->convert_surface = cdisplay_contrast_convert_surface;
   display_class->configure       = cdisplay_contrast_configure;
@@ -181,7 +181,7 @@ cdisplay_contrast_set_property (GObject      *object,
 }
 
 static void
-cdisplay_contrast_convert_surface (GimpColorDisplay *display,
+cdisplay_contrast_convert_surface (PicmanColorDisplay *display,
                                    cairo_surface_t  *surface)
 {
   CdisplayContrast *contrast = CDISPLAY_CONTRAST (display);
@@ -215,11 +215,11 @@ cdisplay_contrast_convert_surface (GimpColorDisplay *display,
       i = width;
       while (i--)
         {
-          GIMP_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
           r = contrast->lookup[r];
           g = contrast->lookup[g];
           b = contrast->lookup[b];
-          GIMP_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
           buf += 4;
         }
       buf += skip;
@@ -227,7 +227,7 @@ cdisplay_contrast_convert_surface (GimpColorDisplay *display,
 }
 
 static GtkWidget *
-cdisplay_contrast_configure (GimpColorDisplay *display)
+cdisplay_contrast_configure (PicmanColorDisplay *display)
 {
   CdisplayContrast *contrast = CDISPLAY_CONTRAST (display);
   GtkWidget        *hbox;
@@ -240,7 +240,7 @@ cdisplay_contrast_configure (GimpColorDisplay *display)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_prop_spin_button_new (G_OBJECT (contrast), "contrast",
+  spinbutton = picman_prop_spin_button_new (G_OBJECT (contrast), "contrast",
                                           0.1, 1.0, 3);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
   gtk_widget_show (spinbutton);
@@ -270,6 +270,6 @@ cdisplay_contrast_set_contrast (CdisplayContrast *contrast,
         }
 
       g_object_notify (G_OBJECT (contrast), "contrast");
-      gimp_color_display_changed (GIMP_COLOR_DISPLAY (contrast));
+      picman_color_display_changed (PICMAN_COLOR_DISPLAY (contrast));
     }
 }

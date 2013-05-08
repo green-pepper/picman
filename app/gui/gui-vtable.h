@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #define __GUI_VTABLE_H__
 
 
-void   gui_vtable_init (Gimp *gimp);
+void   gui_vtable_init (Picman *picman);
 
 
 #endif /* __GUI_VTABLE_H__ */

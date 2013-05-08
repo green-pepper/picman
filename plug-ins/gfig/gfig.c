@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates images containing vector type drawings.
  *
@@ -33,8 +33,8 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "gfig.h"
 #include "gfig-style.h"
@@ -52,7 +52,7 @@
 #include "gfig-star.h"
 #include "gfig-stock.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define GFIG_HEADER      "GFIG Version 0.2\n"
@@ -60,12 +60,12 @@
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -93,7 +93,7 @@ static gint       load_options            (GFigObj *gfig,
 GfigObjectClass dobj_class[10];
 GFigContext  *gfig_context;
 GtkWidget    *top_level_dlg;
-GimpDrawable *gfig_drawable;
+PicmanDrawable *gfig_drawable;
 GList        *gfig_list;
 gdouble       org_scale_x_factor, org_scale_y_factor;
 
@@ -110,15 +110,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_INT32,    "dummy",    "dummy" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_INT32,    "dummy",    "dummy" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create geometric shapes"),
                           "Draw Vector Graphics and paint them onto your images.  "
                           "Gfig allows you to draw many types of objects "
@@ -132,24 +132,24 @@ query (void)
                           "1997",
                           N_("_Gfig..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               pwidth, pheight;
 
   INIT_I18N ();
@@ -166,20 +166,20 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_image_undo_group_start (gfig_context->image_id);
+  picman_image_undo_group_start (gfig_context->image_id);
 
-  gimp_context_push ();
+  picman_context_push ();
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /* TMP Hack - clear any selections */
-  if (! gimp_selection_is_empty (gfig_context->image_id))
-    gimp_selection_none (gfig_context->image_id);
+  if (! picman_selection_is_empty (gfig_context->image_id))
+    picman_selection_none (gfig_context->image_id);
 
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &sel_x1, &sel_y1, &sel_x2, &sel_y2);
 
   sel_width  = sel_x2 - sel_x1;
@@ -208,55 +208,55 @@ run (const gchar      *name,
   org_scale_y_factor = scale_y_factor =
     (gdouble) sel_height / (gdouble) preview_height;
 
-  gimp_tile_cache_ntiles ((drawable->width + gimp_tile_width () - 1) /
-                          gimp_tile_width ());
+  picman_tile_cache_ntiles ((drawable->width + picman_tile_width () - 1) /
+                          picman_tile_width ());
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   /* initialize */
   gfig_init_object_classes ();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-    case GIMP_RUN_WITH_LAST_VALS:
-      /*gimp_get_data (PLUG_IN_PROC, &selvals);*/
+    case PICMAN_RUN_INTERACTIVE:
+    case PICMAN_RUN_WITH_LAST_VALS:
+      /*picman_get_data (PLUG_IN_PROC, &selvals);*/
       if (! gfig_dialog ())
         {
-          gimp_drawable_detach (gfig_drawable);
-          gimp_image_undo_group_end (gfig_context->image_id);
+          picman_drawable_detach (gfig_drawable);
+          picman_image_undo_group_end (gfig_context->image_id);
 
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
-      status = GIMP_PDB_CALLING_ERROR;
+    case PICMAN_RUN_NONINTERACTIVE:
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
 
     default:
       break;
     }
 
-  gimp_context_pop ();
+  picman_context_pop ();
 
-  gimp_image_undo_group_end (gfig_context->image_id);
+  picman_image_undo_group_end (gfig_context->image_id);
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush ();
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush ();
   else
 #if 0
-  if (run_mode == GIMP_RUN_INTERACTIVE)
-    gimp_set_data (PLUG_IN_PROC, &selvals, sizeof (SelectItVals));
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
+    picman_set_data (PLUG_IN_PROC, &selvals, sizeof (SelectItVals));
   else
 #endif /* 0 */
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  /* gimp_drawable_detach (drawable) already done above, don't do it twice */
+  /* picman_drawable_detach (drawable) already done above, don't do it twice */
 }
 
 /*
@@ -431,7 +431,7 @@ gfig_load (const gchar *filename,
   if (!fp)
     {
       g_message (_("Could not open '%s' for reading: %s"),
-                  gimp_filename_to_utf8 (filename), g_strerror (errno));
+                  picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -454,7 +454,7 @@ gfig_load (const gchar *filename,
   if (strcmp (magic1, "GFIG") || strcmp (magic2, "Version"))
     {
       g_message ("File '%s' is not a gfig file",
-                  gimp_filename_to_utf8 (gfig->filename));
+                  picman_filename_to_utf8 (gfig->filename));
       gfig_free (gfig);
       return NULL;
     }
@@ -474,7 +474,7 @@ gfig_load (const gchar *filename,
   if (load_options (gfig, fp))
     {
       g_message ("File '%s' corrupt file - Line %d Option section incorrect",
-                 gimp_filename_to_utf8 (filename), line_no);
+                 picman_filename_to_utf8 (filename), line_no);
       gfig_free (gfig);
       return NULL;
     }
@@ -482,7 +482,7 @@ gfig_load (const gchar *filename,
   if (gfig_load_styles (gfig, fp))
     {
       g_message ("File '%s' corrupt file - Line %d Option section incorrect",
-                 gimp_filename_to_utf8 (filename), line_no);
+                 picman_filename_to_utf8 (filename), line_no);
       gfig_free (gfig);
       return NULL;
     }
@@ -498,7 +498,7 @@ gfig_load (const gchar *filename,
   if (chk_count != load_count)
     {
       g_message ("File '%s' corrupt file - Line %d Object count to small",
-                 gimp_filename_to_utf8 (filename), line_no);
+                 picman_filename_to_utf8 (filename), line_no);
       gfig_free (gfig);
       return NULL;
     }
@@ -717,27 +717,27 @@ gfig_save_as_string (void)
 gboolean
 gfig_save_as_parasite (void)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   GString       *string;
 
   string = gfig_save_as_string ();
 
-  parasite = gimp_parasite_new ("gfig",
-                                GIMP_PARASITE_PERSISTENT |
-                                GIMP_PARASITE_UNDOABLE,
+  parasite = picman_parasite_new ("gfig",
+                                PICMAN_PARASITE_PERSISTENT |
+                                PICMAN_PARASITE_UNDOABLE,
                                 string->len, string->str);
 
   g_string_free (string, TRUE);
 
-  if (!gimp_item_attach_parasite (gfig_context->drawable_id, parasite))
+  if (!picman_item_attach_parasite (gfig_context->drawable_id, parasite))
     {
       g_message (_("Error trying to save figure as a parasite: "
                    "can't attach parasite to drawable."));
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
       return FALSE;
     }
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
   return TRUE;
 }
 
@@ -746,31 +746,31 @@ gfig_load_from_parasite (void)
 {
   FILE         *fp;
   gchar        *fname;
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   GFigObj      *gfig;
 
-  parasite = gimp_item_get_parasite (gfig_context->drawable_id, "gfig");
+  parasite = picman_item_get_parasite (gfig_context->drawable_id, "gfig");
   if (! parasite)
     return NULL;
 
-  fname = gimp_temp_name ("gfigtmp");
+  fname = picman_temp_name ("gfigtmp");
 
   fp = g_fopen (fname, "wb");
   if (!fp)
     {
       g_message (_("Error trying to open temporary file '%s' "
                    "for parasite loading: %s"),
-                 gimp_filename_to_utf8 (fname), g_strerror (errno));
+                 picman_filename_to_utf8 (fname), g_strerror (errno));
       return NULL;
     }
 
-  fwrite (gimp_parasite_data (parasite),
+  fwrite (picman_parasite_data (parasite),
           sizeof (guchar),
-          gimp_parasite_data_size (parasite),
+          picman_parasite_data_size (parasite),
           fp);
   fclose (fp);
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
 
   gfig = gfig_load (fname, "(none)");
 
@@ -795,7 +795,7 @@ gfig_save_callbk (void)
   if (!fp)
     {
       g_message (_("Could not open '%s' for writing: %s"),
-                 gimp_filename_to_utf8 (savename), g_strerror (errno));
+                 picman_filename_to_utf8 (savename), g_strerror (errno));
       return;
     }
 

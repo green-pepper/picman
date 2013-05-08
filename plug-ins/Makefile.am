@@ -14,7 +14,7 @@ print = print
 endif
 
 if BUILD_PYTHON
-pygimp = pygimp
+pypicman = pypicman
 endif
 
 if BUILD_SCRIPT_FU
@@ -54,7 +54,7 @@ endif
 
 SUBDIRS = \
 	$(script_fu)		\
-	$(pygimp)		\
+	$(pypicman)		\
 	color-rotate		\
 	file-bmp		\
 	$(file_compressor)	\
@@ -69,7 +69,7 @@ SUBDIRS = \
 	flame			\
 	fractal-explorer	\
 	gfig			\
-	gimpressionist		\
+	picmanressionist		\
 	gradient-flare		\
 	help			\
 	$(help_browser)		\

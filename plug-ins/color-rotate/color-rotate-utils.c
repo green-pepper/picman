@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Colormap-Rotation plug-in. Exchanges two color ranges.
  *
@@ -28,7 +28,7 @@
  *
  * Version 2.0, 04 April 1999.
  *  Nearly complete rewrite, made plug-in stable.
- *  (Works with GIMP 1.1 and GTK+ 1.2)
+ *  (Works with PICMAN 1.1 and GTK+ 1.2)
  *
  * Version 1.0, 27 March 1997.
  *  Initial (unstable) release by Pavel Grinfeld
@@ -37,8 +37,8 @@
 
 #include "config.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "color-rotate.h"
 #include "color-rotate-utils.h"
@@ -176,13 +176,13 @@ rcm_is_gray (float s)
 /* reduce image/selection for preview */
 
 ReducedImage*
-rcm_reduce_image (GimpDrawable *drawable,
-		  GimpDrawable *mask,
+rcm_reduce_image (PicmanDrawable *drawable,
+		  PicmanDrawable *mask,
 		  gint          LongerSize,
 		  gint          Slctn)
 {
   guint32       image;
-  GimpPixelRgn  srcPR, srcMask;
+  PicmanPixelRgn  srcPR, srcMask;
   ReducedImage *temp;
   guchar       *tempRGB, *src_row, *tempmask, *src_mask_row;
   gint          i, j, x1, x2, y1, y2;
@@ -196,7 +196,7 @@ rcm_reduce_image (GimpDrawable *drawable,
 
   /* get bounds of image or selection */
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   if (((x2-x1) != drawable->width) || ((y2-y1) != drawable->height))
     NoSelectionMade = FALSE;
@@ -225,13 +225,13 @@ rcm_reduce_image (GimpDrawable *drawable,
 
   /* clamp to image size since this is the size of the mask */
 
-  gimp_drawable_offsets (drawable->drawable_id, &offx, &offy);
-  image = gimp_item_get_image (drawable->drawable_id);
+  picman_drawable_offsets (drawable->drawable_id, &offx, &offy);
+  image = picman_item_get_image (drawable->drawable_id);
 
-  x1 = CLAMP (x1, - offx, gimp_image_width (image) - offx);
-  x2 = CLAMP (x2, - offx, gimp_image_width (image) - offx);
-  y1 = CLAMP (y1, - offy, gimp_image_height (image) - offy);
-  y2 = CLAMP (y2, - offy, gimp_image_height (image) - offy);
+  x1 = CLAMP (x1, - offx, picman_image_width (image) - offx);
+  x2 = CLAMP (x2, - offx, picman_image_width (image) - offx);
+  y1 = CLAMP (y1, - offy, picman_image_height (image) - offy);
+  y2 = CLAMP (y2, - offy, picman_image_height (image) - offy);
 
   /* calculate size of preview */
 
@@ -258,8 +258,8 @@ rcm_reduce_image (GimpDrawable *drawable,
   tempHSV  = g_new (gdouble, RW * RH * bytes);
   tempmask = g_new (guchar, RW * RH);
 
-  gimp_pixel_rgn_init (&srcPR, drawable, x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&srcMask, mask,
+  picman_pixel_rgn_init (&srcPR, drawable, x1, y1, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&srcMask, mask,
                        x1 + offx, y1 + offy, width, height, FALSE, FALSE);
 
   src_row = g_new (guchar, width * bytes);
@@ -272,8 +272,8 @@ rcm_reduce_image (GimpDrawable *drawable,
       gint whichcol, whichrow;
 
       whichrow = (float)i * (float)height / (float)RH;
-      gimp_pixel_rgn_get_row (&srcPR, src_row, x1, y1 + whichrow, width);
-      gimp_pixel_rgn_get_row (&srcMask, src_mask_row,
+      picman_pixel_rgn_get_row (&srcPR, src_row, x1, y1 + whichrow, width);
+      picman_pixel_rgn_get_row (&srcMask, src_mask_row,
                               x1 + offx, y1 + offy + whichrow, width);
 
       for (j = 0; j < RW; j++)
@@ -285,7 +285,7 @@ rcm_reduce_image (GimpDrawable *drawable,
           else
             tempmask[i*RW+j] = src_mask_row[whichcol];
 
-          gimp_rgb_to_hsv4 (&src_row[whichcol*bytes], &H, &S, &V);
+          picman_rgb_to_hsv4 (&src_row[whichcol*bytes], &H, &S, &V);
 
           tempRGB[i*RW*bytes+j*bytes+0] = src_row[whichcol*bytes+0];
           tempRGB[i*RW*bytes+j*bytes+1] = src_row[whichcol*bytes+1];
@@ -371,7 +371,7 @@ rcm_render_preview (GtkWidget *preview)
                     case GRAY_TO:
                       unchanged = FALSE;
                       skip = TRUE;
-                      gimp_hsv_to_rgb4 (rgb,
+                      picman_hsv_to_rgb4 (rgb,
                                         Current.Gray->hue/TP,
                                         Current.Gray->satur,
                                         V);
@@ -392,7 +392,7 @@ rcm_render_preview (GtkWidget *preview)
                                   H * TP);
 
                   H = angle_mod_2PI(H) / TP;
-                  gimp_hsv_to_rgb4 (rgb, H,S,V);
+                  picman_hsv_to_rgb4 (rgb, H,S,V);
                 }
 
               if (unchanged)
@@ -430,9 +430,9 @@ rcm_render_preview (GtkWidget *preview)
         }
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, RW, RH,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           a,
                           RW * 4);
   g_free (a);
@@ -468,13 +468,13 @@ rcm_render_circle (GtkWidget *preview,
             {
               h = arctg (sum / 2.0 - j, i - sum / 2.0) / (2 * G_PI);
               v = 1 - sqrt (s) / 4;
-              gimp_hsv_to_rgb4 (&a[(j*sum+i)*3], h, s, v);
+              picman_hsv_to_rgb4 (&a[(j*sum+i)*3], h, s, v);
             }
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, sum, sum,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           a,
                           sum * 3);
   g_free (a);

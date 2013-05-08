@@ -14,28 +14,28 @@ libm = -lm
 endif
 
 if HAVE_WINDRES
-include $(top_srcdir)/build/windows/gimprc-plug-ins.rule
-include gimprc.common
+include $(top_srcdir)/build/windows/picmanrc-plug-ins.rule
+include picmanrc.common
 endif
 
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la $(libm)
-libgimpmodule = $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la $(libm)
+libpicmanmodule = $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
 
 
 AM_LDFLAGS = $(mwindows)
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
 EXTRA_DIST = \
 	mkgen.pl	\
 	plugin-defs.pl	\
-	gimprc.common
+	picmanrc.common
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -220,14 +220,14 @@ alien_map_SOURCES = \
 	alien-map.c
 
 alien_map_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -237,14 +237,14 @@ align_layers_SOURCES = \
 	align-layers.c
 
 align_layers_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -254,11 +254,11 @@ animation_optimize_SOURCES = \
 	animation-optimize.c
 
 animation_optimize_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -269,14 +269,14 @@ animation_play_SOURCES = \
 	animation-play.c
 
 animation_play_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -287,11 +287,11 @@ antialias_SOURCES = \
 	antialias.c
 
 antialias_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -302,14 +302,14 @@ apply_canvas_SOURCES = \
 	apply-canvas.c
 
 apply_canvas_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -319,14 +319,14 @@ blinds_SOURCES = \
 	blinds.c
 
 blinds_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -336,11 +336,11 @@ blur_SOURCES = \
 	blur.c
 
 blur_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -351,14 +351,14 @@ blur_gauss_SOURCES = \
 	blur-gauss.c
 
 blur_gauss_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -370,14 +370,14 @@ blur_gauss_selective_SOURCES = \
 	blur-gauss-selective.c
 
 blur_gauss_selective_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -387,14 +387,14 @@ blur_motion_SOURCES = \
 	blur-motion.c
 
 blur_motion_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -404,14 +404,14 @@ border_average_SOURCES = \
 	border-average.c
 
 border_average_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -421,14 +421,14 @@ bump_map_SOURCES = \
 	bump-map.c
 
 bump_map_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -438,14 +438,14 @@ cartoon_SOURCES = \
 	cartoon.c
 
 cartoon_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -455,14 +455,14 @@ channel_mixer_SOURCES = \
 	channel-mixer.c
 
 channel_mixer_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -472,14 +472,14 @@ checkerboard_SOURCES = \
 	checkerboard.c
 
 checkerboard_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -489,14 +489,14 @@ cml_explorer_SOURCES = \
 	cml-explorer.c
 
 cml_explorer_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -506,14 +506,14 @@ color_cube_analyze_SOURCES = \
 	color-cube-analyze.c
 
 color_cube_analyze_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -523,14 +523,14 @@ color_enhance_SOURCES = \
 	color-enhance.c
 
 color_enhance_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -540,14 +540,14 @@ color_exchange_SOURCES = \
 	color-exchange.c
 
 color_exchange_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -557,14 +557,14 @@ colorify_SOURCES = \
 	colorify.c
 
 colorify_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -574,14 +574,14 @@ colormap_remap_SOURCES = \
 	colormap-remap.c
 
 colormap_remap_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -591,14 +591,14 @@ compose_SOURCES = \
 	compose.c
 
 compose_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -608,11 +608,11 @@ contrast_normalize_SOURCES = \
 	contrast-normalize.c
 
 contrast_normalize_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -623,14 +623,14 @@ contrast_retinex_SOURCES = \
 	contrast-retinex.c
 
 contrast_retinex_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -640,11 +640,11 @@ contrast_stretch_SOURCES = \
 	contrast-stretch.c
 
 contrast_stretch_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -655,11 +655,11 @@ contrast_stretch_hsv_SOURCES = \
 	contrast-stretch-hsv.c
 
 contrast_stretch_hsv_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -670,14 +670,14 @@ convolution_matrix_SOURCES = \
 	convolution-matrix.c
 
 convolution_matrix_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -687,11 +687,11 @@ crop_zealous_SOURCES = \
 	crop-zealous.c
 
 crop_zealous_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -702,14 +702,14 @@ cubism_SOURCES = \
 	cubism.c
 
 cubism_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -719,14 +719,14 @@ curve_bend_SOURCES = \
 	curve-bend.c
 
 curve_bend_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -736,14 +736,14 @@ decompose_SOURCES = \
 	decompose.c
 
 decompose_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -753,14 +753,14 @@ deinterlace_SOURCES = \
 	deinterlace.c
 
 deinterlace_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -770,14 +770,14 @@ depth_merge_SOURCES = \
 	depth-merge.c
 
 depth_merge_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -787,14 +787,14 @@ despeckle_SOURCES = \
 	despeckle.c
 
 despeckle_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -804,14 +804,14 @@ destripe_SOURCES = \
 	destripe.c
 
 destripe_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -821,14 +821,14 @@ diffraction_SOURCES = \
 	diffraction.c
 
 diffraction_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -838,14 +838,14 @@ displace_SOURCES = \
 	displace.c
 
 displace_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -855,14 +855,14 @@ edge_SOURCES = \
 	edge.c
 
 edge_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -872,14 +872,14 @@ edge_dog_SOURCES = \
 	edge-dog.c
 
 edge_dog_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -889,11 +889,11 @@ edge_laplace_SOURCES = \
 	edge-laplace.c
 
 edge_laplace_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -904,14 +904,14 @@ edge_neon_SOURCES = \
 	edge-neon.c
 
 edge_neon_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -921,14 +921,14 @@ edge_sobel_SOURCES = \
 	edge-sobel.c
 
 edge_sobel_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -938,14 +938,14 @@ emboss_SOURCES = \
 	emboss.c
 
 emboss_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -955,14 +955,14 @@ engrave_SOURCES = \
 	engrave.c
 
 engrave_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -972,14 +972,14 @@ file_aa_SOURCES = \
 	file-aa.c
 
 file_aa_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(AA_LIBS)		\
@@ -991,14 +991,14 @@ file_cel_SOURCES = \
 	file-cel.c
 
 file_cel_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1009,14 +1009,14 @@ file_csource_SOURCES = \
 	file-csource.c
 
 file_csource_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1027,11 +1027,11 @@ file_desktop_link_SOURCES = \
 	file-desktop-link.c
 
 file_desktop_link_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -1044,14 +1044,14 @@ file_dicom_SOURCES = \
 	file-dicom.c
 
 file_dicom_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1062,14 +1062,14 @@ file_gbr_SOURCES = \
 	file-gbr.c
 
 file_gbr_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1080,14 +1080,14 @@ file_gegl_SOURCES = \
 	file-gegl.c
 
 file_gegl_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1098,11 +1098,11 @@ file_gif_load_SOURCES = \
 	file-gif-load.c
 
 file_gif_load_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(GEGL_LIBS)		\
@@ -1114,14 +1114,14 @@ file_gif_save_SOURCES = \
 	file-gif-save.c
 
 file_gif_save_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1132,14 +1132,14 @@ file_gih_SOURCES = \
 	file-gih.c
 
 file_gih_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1150,11 +1150,11 @@ file_glob_SOURCES = \
 	file-glob.c
 
 file_glob_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -1165,14 +1165,14 @@ file_header_SOURCES = \
 	file-header.c
 
 file_header_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1183,14 +1183,14 @@ file_html_table_SOURCES = \
 	file-html-table.c
 
 file_html_table_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1201,11 +1201,11 @@ file_jp2_load_SOURCES = \
 	file-jp2-load.c
 
 file_jp2_load_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(GEGL_LIBS)		\
@@ -1220,14 +1220,14 @@ file_mng_SOURCES = \
 	file-mng.c
 
 file_mng_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(MNG_LIBS)		\
@@ -1239,14 +1239,14 @@ file_pat_SOURCES = \
 	file-pat.c
 
 file_pat_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1257,14 +1257,14 @@ file_pcx_SOURCES = \
 	file-pcx.c
 
 file_pcx_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1277,14 +1277,14 @@ file_pdf_load_SOURCES = \
 	file-pdf-load.c
 
 file_pdf_load_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(POPPLER_LIBS)		\
 	$(RT_LIBS)		\
@@ -1297,14 +1297,14 @@ file_pdf_save_SOURCES = \
 	file-pdf-save.c
 
 file_pdf_save_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(CAIRO_PDF_LIBS)		\
@@ -1316,14 +1316,14 @@ file_pix_SOURCES = \
 	file-pix.c
 
 file_pix_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1336,14 +1336,14 @@ file_png_SOURCES = \
 	file-png.c
 
 file_png_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(PNG_LIBS)		\
@@ -1355,14 +1355,14 @@ file_pnm_SOURCES = \
 	file-pnm.c
 
 file_pnm_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1373,14 +1373,14 @@ file_ps_SOURCES = \
 	file-ps.c
 
 file_ps_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GS_LIBS)		\
 	$(RT_LIBS)		\
@@ -1391,14 +1391,14 @@ file_psp_SOURCES = \
 	file-psp.c
 
 file_psp_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(Z_LIBS)		\
@@ -1410,14 +1410,14 @@ file_raw_SOURCES = \
 	file-raw.c
 
 file_raw_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1427,14 +1427,14 @@ file_sunras_SOURCES = \
 	file-sunras.c
 
 file_sunras_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1446,14 +1446,14 @@ file_svg_SOURCES = \
 	file-svg.c
 
 file_svg_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(SVG_LIBS)		\
 	$(RT_LIBS)		\
@@ -1464,14 +1464,14 @@ file_tga_SOURCES = \
 	file-tga.c
 
 file_tga_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1482,14 +1482,14 @@ file_tiff_load_SOURCES = \
 	file-tiff-load.c
 
 file_tiff_load_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(TIFF_LIBS)		\
@@ -1501,14 +1501,14 @@ file_tiff_save_SOURCES = \
 	file-tiff-save.c
 
 file_tiff_save_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(TIFF_LIBS)		\
 	$(RT_LIBS)		\
@@ -1521,14 +1521,14 @@ file_wmf_SOURCES = \
 	file-wmf.c
 
 file_wmf_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(WMF_LIBS)		\
 	$(RT_LIBS)		\
@@ -1539,14 +1539,14 @@ file_xbm_SOURCES = \
 	file-xbm.c
 
 file_xbm_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
@@ -1557,14 +1557,14 @@ file_xmc_SOURCES = \
 	file-xmc.c
 
 file_xmc_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(XMC_LIBS)		\
 	$(RT_LIBS)		\
@@ -1575,14 +1575,14 @@ file_xpm_SOURCES = \
 	file-xpm.c
 
 file_xpm_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(XPM_LIBS)		\
@@ -1594,14 +1594,14 @@ file_xwd_SOURCES = \
 	file-xwd.c
 
 file_xwd_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1611,14 +1611,14 @@ film_SOURCES = \
 	film.c
 
 film_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1628,14 +1628,14 @@ filter_pack_SOURCES = \
 	filter-pack.c
 
 filter_pack_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1645,14 +1645,14 @@ fractal_trace_SOURCES = \
 	fractal-trace.c
 
 fractal_trace_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1662,11 +1662,11 @@ goat_exercise_SOURCES = \
 	goat-exercise.c
 
 goat_exercise_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(GEGL_LIBS)		\
@@ -1678,11 +1678,11 @@ gradient_map_SOURCES = \
 	gradient-map.c
 
 gradient_map_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -1693,14 +1693,14 @@ grid_SOURCES = \
 	grid.c
 
 grid_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1710,11 +1710,11 @@ guillotine_SOURCES = \
 	guillotine.c
 
 guillotine_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -1725,14 +1725,14 @@ hot_SOURCES = \
 	hot.c
 
 hot_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1742,14 +1742,14 @@ illusion_SOURCES = \
 	illusion.c
 
 illusion_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1759,14 +1759,14 @@ iwarp_SOURCES = \
 	iwarp.c
 
 iwarp_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1776,14 +1776,14 @@ jigsaw_SOURCES = \
 	jigsaw.c
 
 jigsaw_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1795,14 +1795,14 @@ lcms_SOURCES = \
 	lcms.c
 
 lcms_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(LCMS_LIBS)		\
@@ -1814,14 +1814,14 @@ lens_apply_SOURCES = \
 	lens-apply.c
 
 lens_apply_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1831,14 +1831,14 @@ lens_distortion_SOURCES = \
 	lens-distortion.c
 
 lens_distortion_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1848,14 +1848,14 @@ lens_flare_SOURCES = \
 	lens-flare.c
 
 lens_flare_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1865,14 +1865,14 @@ mail_SOURCES = \
 	mail.c
 
 mail_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1882,14 +1882,14 @@ max_rgb_SOURCES = \
 	max-rgb.c
 
 max_rgb_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1899,14 +1899,14 @@ mosaic_SOURCES = \
 	mosaic.c
 
 mosaic_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1916,14 +1916,14 @@ newsprint_SOURCES = \
 	newsprint.c
 
 newsprint_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1933,14 +1933,14 @@ nl_filter_SOURCES = \
 	nl-filter.c
 
 nl_filter_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1950,14 +1950,14 @@ noise_hsv_SOURCES = \
 	noise-hsv.c
 
 noise_hsv_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1967,14 +1967,14 @@ noise_rgb_SOURCES = \
 	noise-rgb.c
 
 noise_rgb_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -1984,14 +1984,14 @@ noise_solid_SOURCES = \
 	noise-solid.c
 
 noise_solid_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2001,14 +2001,14 @@ noise_spread_SOURCES = \
 	noise-spread.c
 
 noise_spread_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2018,14 +2018,14 @@ nova_SOURCES = \
 	nova.c
 
 nova_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2035,14 +2035,14 @@ oilify_SOURCES = \
 	oilify.c
 
 oilify_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2052,14 +2052,14 @@ photocopy_SOURCES = \
 	photocopy.c
 
 photocopy_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2069,14 +2069,14 @@ plasma_SOURCES = \
 	plasma.c
 
 plasma_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2086,14 +2086,14 @@ plugin_browser_SOURCES = \
 	plugin-browser.c
 
 plugin_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2103,14 +2103,14 @@ procedure_browser_SOURCES = \
 	procedure-browser.c
 
 procedure_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2120,14 +2120,14 @@ qbist_SOURCES = \
 	qbist.c
 
 qbist_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2137,14 +2137,14 @@ red_eye_removal_SOURCES = \
 	red-eye-removal.c
 
 red_eye_removal_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2154,14 +2154,14 @@ ripple_SOURCES = \
 	ripple.c
 
 ripple_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2171,11 +2171,11 @@ rotate_SOURCES = \
 	rotate.c
 
 rotate_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -2186,14 +2186,14 @@ sample_colorize_SOURCES = \
 	sample-colorize.c
 
 sample_colorize_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2205,14 +2205,14 @@ screenshot_SOURCES = \
 	screenshot.c
 
 screenshot_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(SCREENSHOT_LIBS)		\
@@ -2224,14 +2224,14 @@ sharpen_SOURCES = \
 	sharpen.c
 
 sharpen_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2241,14 +2241,14 @@ shift_SOURCES = \
 	shift.c
 
 shift_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2258,14 +2258,14 @@ sinus_SOURCES = \
 	sinus.c
 
 sinus_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2275,14 +2275,14 @@ smooth_palette_SOURCES = \
 	smooth-palette.c
 
 smooth_palette_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2292,14 +2292,14 @@ softglow_SOURCES = \
 	softglow.c
 
 softglow_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2309,14 +2309,14 @@ sparkle_SOURCES = \
 	sparkle.c
 
 sparkle_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2326,14 +2326,14 @@ sphere_designer_SOURCES = \
 	sphere-designer.c
 
 sphere_designer_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2343,14 +2343,14 @@ tile_SOURCES = \
 	tile.c
 
 tile_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2360,14 +2360,14 @@ tile_glass_SOURCES = \
 	tile-glass.c
 
 tile_glass_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2377,14 +2377,14 @@ tile_paper_SOURCES = \
 	tile-paper.c
 
 tile_paper_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2394,11 +2394,11 @@ tile_seamless_SOURCES = \
 	tile-seamless.c
 
 tile_seamless_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)		\
@@ -2409,14 +2409,14 @@ tile_small_SOURCES = \
 	tile-small.c
 
 tile_small_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2426,14 +2426,14 @@ unit_editor_SOURCES = \
 	unit-editor.c
 
 unit_editor_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2443,14 +2443,14 @@ unsharp_mask_SOURCES = \
 	unsharp-mask.c
 
 unsharp_mask_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2460,14 +2460,14 @@ value_propagate_SOURCES = \
 	value-propagate.c
 
 value_propagate_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2477,14 +2477,14 @@ van_gogh_lic_SOURCES = \
 	van-gogh-lic.c
 
 van_gogh_lic_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2494,14 +2494,14 @@ video_SOURCES = \
 	video.c
 
 video_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2511,14 +2511,14 @@ warp_SOURCES = \
 	warp.c
 
 warp_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2528,14 +2528,14 @@ waves_SOURCES = \
 	waves.c
 
 waves_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2545,14 +2545,14 @@ web_browser_SOURCES = \
 	web-browser.c
 
 web_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2564,14 +2564,14 @@ web_page_SOURCES = \
 	web-page.c
 
 web_page_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(WEBKIT_LIBS)		\
 	$(RT_LIBS)		\
@@ -2582,14 +2582,14 @@ whirl_pinch_SOURCES = \
 	whirl-pinch.c
 
 whirl_pinch_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
@@ -2599,14 +2599,14 @@ wind_SOURCES = \
 	wind.c
 
 wind_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanmodule)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\

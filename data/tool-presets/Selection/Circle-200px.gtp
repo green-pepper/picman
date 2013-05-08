@@ -1,8 +1,8 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-ellipse-select")
+(stock-id "picman-tool-ellipse-select")
 (name "Circle 200px")
-(tool-options "GimpRectangleSelectOptions"
+(tool-options "PicmanRectangleSelectOptions"
     (aspect-denominator 200.000000)
     (aspect-numerator 200.000000)
     (desired-fixed-size-height 200.000000)
@@ -10,7 +10,7 @@
     (fixed-rule size)
     (fixed-rule-active yes)
     (overridden-fixed-size yes)
-    (tool "gimp-ellipse-select-tool")
+    (tool "picman-ellipse-select-tool")
     (operation add))
 (use-fg-bg no)
 (use-brush no)
@@ -20,4 +20,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

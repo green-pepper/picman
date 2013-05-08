@@ -1,12 +1,12 @@
-# translation of gimp-plug-ins.HEAD.po to Arabic
-# Arabic translations for gimp-plug-ins package.
-# Copyright (C) 2006 THE gimp-plug-ins'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp-plug-ins package.
+# translation of picman-plug-ins.HEAD.po to Arabic
+# Arabic translations for picman-plug-ins package.
+# Copyright (C) 2006 THE picman-plug-ins'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman-plug-ins package.
 # Anas Husseini, <anas_h_34@hotmail.com>, 2007, 2008.
 # Khaled Hosny <khaledhosny@eglug.org>, 2008, 2010, 2011, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-plug-ins.HEAD\n"
+"Project-Id-Version: picman-plug-ins.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 01:56+0200\n"
 "PO-Revision-Date: 2012-04-01 01:56+0200\n"
@@ -424,7 +424,7 @@ msgid "Optimizing animation"
 msgstr "تحسين الصور المتحركة"
 
 #: ../plug-ins/common/animation-play.c:169
-msgid "Preview a GIMP layer-based animation"
+msgid "Preview a PICMAN layer-based animation"
 msgstr "معاينة صور متحركة طبقية الأساس لجمب"
 
 #: ../plug-ins/common/animation-play.c:174
@@ -620,7 +620,7 @@ msgstr "_عمودي"
 #: ../plug-ins/file-psd/psd-image-res-load.c:1001
 #: ../plug-ins/file-psd/psd-load.c:1637 ../plug-ins/file-sgi/sgi.c:407
 #: ../plug-ins/gfig/gfig-dialog.c:1321
-#: ../plug-ins/gimpressionist/general.c:139
+#: ../plug-ins/picmanressionist/general.c:139
 #: ../plug-ins/map-object/map-object-apply.c:252 ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1162
 msgid "Background"
@@ -1029,8 +1029,8 @@ msgstr "تحميل إعدادات دامح القنوات"
 #: ../plug-ins/common/file-xmc.c:663 ../plug-ins/common/file-xmc.c:848
 #: ../plug-ins/common/file-xwd.c:433 ../plug-ins/common/sphere-designer.c:2010
 #: ../plug-ins/file-bmp/bmp-read.c:153 ../plug-ins/file-faxg3/faxg3.c:229
-#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-gimp.c:459
-#: ../plug-ins/file-fli/fli-gimp.c:496 ../plug-ins/file-ico/ico-load.c:651
+#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-picman.c:459
+#: ../plug-ins/file-fli/fli-picman.c:496 ../plug-ins/file-ico/ico-load.c:651
 #: ../plug-ins/file-ico/ico-load.c:729 ../plug-ins/file-jpeg/jpeg-load.c:117
 #: ../plug-ins/file-jpeg/jpeg-load.c:889 ../plug-ins/file-psd/psd-load.c:130
 #: ../plug-ins/file-psd/psd-thumb-load.c:79
@@ -1039,8 +1039,8 @@ msgstr "تحميل إعدادات دامح القنوات"
 #: ../plug-ins/flame/flame.c:411
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1865
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:923
-#: ../plug-ins/gfig/gfig.c:433 ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/gfig/gfig.c:433 ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1367
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1065,7 +1065,7 @@ msgstr "حفظ إعدادات دامج القنوات"
 #: ../plug-ins/common/file-xbm.c:1036 ../plug-ins/common/file-xmc.c:1455
 #: ../plug-ins/common/file-xwd.c:619 ../plug-ins/common/sphere-designer.c:2121
 #: ../plug-ins/file-bmp/bmp-write.c:306 ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:750 ../plug-ins/file-ico/ico-save.c:1007
+#: ../plug-ins/file-fli/fli-picman.c:750 ../plug-ins/file-ico/ico-save.c:1007
 #: ../plug-ins/file-jpeg/jpeg-save.c:332 ../plug-ins/file-psd/psd-save.c:1652
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:166
 #: ../plug-ins/file-xjt/xjt.c:1276 ../plug-ins/file-xjt/xjt.c:1715
@@ -1100,7 +1100,7 @@ msgid "Checkerboard"
 msgstr "لوحة الشطرنج"
 
 #: ../plug-ins/common/checkerboard.c:413 ../plug-ins/common/file-xmc.c:1162
-#: ../plug-ins/gimpressionist/sizemap.c:510
+#: ../plug-ins/picmanressionist/sizemap.c:510
 msgid "_Size:"
 msgstr "ال_حجم:"
 
@@ -1304,8 +1304,8 @@ msgstr "عشوائية من البذرة (متشاركة)"
 
 #: ../plug-ins/common/cml-explorer.c:300 ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "التدرج"
 
@@ -1316,8 +1316,8 @@ msgstr "الإشباع"
 
 #: ../plug-ins/common/cml-explorer.c:302 ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "القيمة"
 
@@ -2226,8 +2226,8 @@ msgstr "انعطاف المنحنيات"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1262
-#: ../plug-ins/gimpressionist/orientmap.c:590
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:590
+#: ../plug-ins/picmanressionist/sizemap.c:459
 #: ../plug-ins/print/print-page-layout.c:175
 msgid "Preview"
 msgstr "معاينة"
@@ -2813,7 +2813,7 @@ msgstr "_نصف القطر 1:"
 msgid "R_adius 2:"
 msgstr "ن_صف القطر 2:"
 
-#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "ا_عكس"
 
@@ -3020,7 +3020,7 @@ msgstr "تحميل لوحة KISS"
 #: ../plug-ins/common/file-xbm.c:742 ../plug-ins/common/file-xmc.c:675
 #: ../plug-ins/common/file-xpm.c:352 ../plug-ins/common/file-xwd.c:524
 #: ../plug-ins/file-bmp/bmp-read.c:158 ../plug-ins/file-faxg3/faxg3.c:213
-#: ../plug-ins/file-fli/fli-gimp.c:501 ../plug-ins/file-ico/ico-load.c:644
+#: ../plug-ins/file-fli/fli-picman.c:501 ../plug-ins/file-ico/ico-load.c:644
 #: ../plug-ins/file-jpeg/jpeg-load.c:123 ../plug-ins/file-psd/psd-load.c:135
 #: ../plug-ins/file-sgi/sgi.c:330 ../plug-ins/file-xjt/xjt.c:3333
 #, c-format
@@ -3048,7 +3048,7 @@ msgstr "عمق البتات غير مدعوم (%d)!"
 #: ../plug-ins/common/file-xbm.c:1041 ../plug-ins/common/file-xmc.c:1460
 #: ../plug-ins/common/file-xpm.c:638 ../plug-ins/common/file-xwd.c:624
 #: ../plug-ins/file-bmp/bmp-write.c:317 ../plug-ins/file-fits/fits.c:481
-#: ../plug-ins/file-fli/fli-gimp.c:718 ../plug-ins/file-ico/ico-save.c:1001
+#: ../plug-ins/file-fli/fli-picman.c:718 ../plug-ins/file-ico/ico-save.c:1001
 #: ../plug-ins/file-jpeg/jpeg-save.c:289 ../plug-ins/file-psd/psd-save.c:1657
 #: ../plug-ins/file-sgi/sgi.c:576 ../plug-ins/file-xjt/xjt.c:1696
 #, c-format
@@ -3139,7 +3139,7 @@ msgid "Cannot operate on unknown image types."
 msgstr "لا يمكن التطبيق على أنواع صور غير معروفة."
 
 #: ../plug-ins/common/file-gbr.c:154 ../plug-ins/common/file-gbr.c:175
-msgid "GIMP brush"
+msgid "PICMAN brush"
 msgstr "فرشاة جمب"
 
 #: ../plug-ins/common/file-gbr.c:399 ../plug-ins/common/file-pat.c:418
@@ -3153,7 +3153,7 @@ msgstr "صيغة الفرشاة غير مدعومة"
 
 #: ../plug-ins/common/file-gbr.c:447
 #, c-format
-msgid "Error in GIMP brush file '%s'"
+msgid "Error in PICMAN brush file '%s'"
 msgstr "خطأ في ملف فرشاة '%s' في جمب"
 
 #: ../plug-ins/common/file-gbr.c:455
@@ -3168,7 +3168,7 @@ msgid "Unnamed"
 msgstr "بدون اسم"
 
 #: ../plug-ins/common/file-gbr.c:653
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
 msgstr "فراشي جمب إما رمادية التدرج أو RGBA"
 
 #: ../plug-ins/common/file-gbr.c:770
@@ -3181,7 +3181,7 @@ msgid "Spacing:"
 msgstr "التباعد:"
 
 #: ../plug-ins/common/file-gbr.c:795 ../plug-ins/common/file-gih.c:888
-#: ../plug-ins/common/file-pat.c:568 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:568 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "الوصف:"
 
@@ -3314,15 +3314,15 @@ msgid "The default comment is limited to %d characters."
 msgstr "التعليق الافتراضي محدود بـ %d حرفًا."
 
 #: ../plug-ins/common/file-gih.c:209 ../plug-ins/common/file-gih.c:230
-msgid "GIMP brush (animated)"
+msgid "PICMAN brush (animated)"
 msgstr "فرشاة جمب (متحركة)"
 
 #: ../plug-ins/common/file-gih.c:480
-msgid "Error in GIMP brush pipe file."
+msgid "Error in PICMAN brush pipe file."
 msgstr "خطأ في جمب في ملف أنبوب الفرشاة."
 
 #: ../plug-ins/common/file-gih.c:546
-msgid "GIMP brush file appears to be corrupted."
+msgid "PICMAN brush file appears to be corrupted."
 msgstr "ملف فرشاة جمب يبدو فاسدًا."
 
 #: ../plug-ins/common/file-gih.c:696
@@ -3684,7 +3684,7 @@ msgid "MNG animation"
 msgstr "MNG متحركة"
 
 #: ../plug-ins/common/file-pat.c:123 ../plug-ins/common/file-pat.c:145
-msgid "GIMP pattern"
+msgid "PICMAN pattern"
 msgstr "نموذج جمب"
 
 #: ../plug-ins/common/file-pat.c:378
@@ -4000,7 +4000,7 @@ msgid "Invalid X resolution."
 msgstr "استبانة X غير صالحة."
 
 #: ../plug-ins/common/file-pnm.c:555
-msgid "Image width is larger than GIMP can handle."
+msgid "Image width is larger than PICMAN can handle."
 msgstr "عرض الصورة أكبر مما يستطيع جمب معالجته."
 
 #: ../plug-ins/common/file-pnm.c:562
@@ -4008,7 +4008,7 @@ msgid "Invalid Y resolution."
 msgstr "استبانة Y غير صالحة."
 
 #: ../plug-ins/common/file-pnm.c:564
-msgid "Image height is larger than GIMP can handle."
+msgid "Image height is larger than PICMAN can handle."
 msgstr "ارتفاع الصورة أكبر مما يستطيع جمب معالجته."
 
 #: ../plug-ins/common/file-pnm.c:574
@@ -4119,8 +4119,8 @@ msgid "B/W"
 msgstr "أسود/أبيض"
 
 #: ../plug-ins/common/file-ps.c:3097 ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "اللون"
@@ -4358,7 +4358,7 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
 "عرض الصورة أكبر مما يستطيع جمب معالجته."
@@ -4378,7 +4378,7 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
 "ارتفاع الصورة أكبر مما يستطيع جمب معالجته."
@@ -4480,7 +4480,7 @@ msgstr "استيرا_د المسارات"
 
 #: ../plug-ins/common/file-svg.c:944
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
 msgstr "استيراد عناصر مسار الـ SVG ليمكن استخدامها مع أداة مسار جمب"
 
 #: ../plug-ins/common/file-svg.c:952
@@ -4555,7 +4555,7 @@ msgstr "قناة TIFF"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
@@ -7312,7 +7312,7 @@ msgid "Use the background color"
 msgstr "استخدم لون الخلفية"
 
 #: ../plug-ins/common/sphere-designer.c:293
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "صلب"
 
@@ -7409,7 +7409,7 @@ msgstr "جدول اختيار الألوان"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2763
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:553
 msgid "Scale:"
 msgstr "تحجيم:"
@@ -7703,7 +7703,7 @@ msgstr "محفوظ"
 
 #: ../plug-ins/common/unit-editor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr ""
 "تعريف الوحدات سيُحفظ قبل الخروج من جمب فقط إن كان هذا العمود مؤشرًا عليه."
@@ -7714,7 +7714,7 @@ msgstr "المعرف"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
+"This string will be used to identify a unit in PICMAN's configuration files."
 msgstr "هذا النص سيُستخدم لمطابقة وحدة في ملفات إعدادات جمب."
 
 #: ../plug-ins/common/unit-editor.c:98
@@ -7784,7 +7784,7 @@ msgid "Create a new unit using the currently selected unit as template"
 msgstr "إنشاء وحدة جديدة باستخدام الوحدة المحددة كقالب"
 
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
+msgid "Create or alter units used in PICMAN"
 msgstr "إنشاء أو تبديل الوحدات المستخدمة في جمب"
 
 #: ../plug-ins/common/unit-editor.c:150
@@ -8480,7 +8480,7 @@ msgstr "ك_لاهما"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "القيم العالية تحصر التأثير إلى مساحات قليلة من الصورة"
 
-#: ../plug-ins/common/wind.c:1025 ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/common/wind.c:1025 ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "الق_وة:"
 
@@ -8547,8 +8547,8 @@ msgstr ""
 #: ../plug-ins/file-bmp/bmp-write.c:886
 msgid ""
 "Some applications can not read BMP images that include color space "
-"information. GIMP writes color space information by default. Enabling this "
-"option will cause GIMP to not write color space information to the file."
+"information. PICMAN writes color space information by default. Enabling this "
+"option will cause PICMAN to not write color space information to the file."
 msgstr ""
 
 #. Advanced Options
@@ -8638,34 +8638,34 @@ msgctxt "composing"
 msgid "None"
 msgstr "لا شيء"
 
-#: ../plug-ins/file-fli/fli-gimp.c:166 ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166 ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr "صور AutoDesk FLIC المتحركة"
 
-#: ../plug-ins/file-fli/fli-gimp.c:561
+#: ../plug-ins/file-fli/fli-picman.c:561
 #, c-format
 msgid "Frame (%i)"
 msgstr "المشهد (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr "عذرًا، يمكن حفظ الصور الرمادية والمفهرسة فقط."
 
-#: ../plug-ins/file-fli/fli-gimp.c:847
+#: ../plug-ins/file-fli/fli-picman.c:847
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - تحميل مكدس المشاهد"
 
-#: ../plug-ins/file-fli/fli-gimp.c:876 ../plug-ins/file-fli/fli-gimp.c:932
+#: ../plug-ins/file-fli/fli-picman.c:876 ../plug-ins/file-fli/fli-picman.c:932
 msgctxt "frame-range"
 msgid "From:"
 msgstr "من:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:885 ../plug-ins/file-fli/fli-gimp.c:941
+#: ../plug-ins/file-fli/fli-picman.c:885 ../plug-ins/file-fli/fli-picman.c:941
 msgctxt "frame-range"
 msgid "To:"
 msgstr "إلى:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:915
+#: ../plug-ins/file-fli/fli-picman.c:915
 msgid "GFLI 1.3"
 msgstr ""
 
@@ -8738,7 +8738,7 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "وفقًا لبيانات EXIF، هذه الصورة تم تدويرها."
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:426
-msgid "Would you like GIMP to rotate it into the standard orientation?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
 msgstr "هل تريد من جمب أن يديرها إلى اتجاهها القياسي؟"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:247
@@ -8988,7 +8988,7 @@ msgstr ""
 "مستخدمًا النمط العادي عوضًا عن ذلك."
 
 #: ../plug-ins/file-psd/psd-save.c:634
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
 msgstr "خطأ. لم يمكن تحويل نوع صورة جمب الأساسي إلى نمط PSD"
 
 #: ../plug-ins/file-psd/psd-save.c:1622
@@ -9153,8 +9153,8 @@ msgid "URI"
 msgstr "URI"
 
 #: ../plug-ins/file-xjt/xjt.c:485 ../plug-ins/file-xjt/xjt.c:503
-msgid "GIMP compressed XJT image"
-msgstr "GIMP ضغط صورة XJT"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMAN ضغط صورة XJT"
 
 #: ../plug-ins/file-xjt/xjt.c:733
 #, c-format
@@ -9266,8 +9266,8 @@ msgstr "إعطاء قيم ع_شوائية"
 msgid "Same"
 msgstr "مماثل"
 
-#: ../plug-ins/flame/flame.c:746 ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/flame/flame.c:746 ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "عشوائي"
 
@@ -9422,16 +9422,16 @@ msgid "C_amera"
 msgstr "كامي_را"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
-#: ../plug-ins/gfig/gfig-dialog.c:275 ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/gfig/gfig-dialog.c:275 ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"لا يوجد %s في gimprc:\n"
+"لا يوجد %s في picmanrc:\n"
 "تحتاج لإضافة إدخال مثل\n"
 "(%s \"%s\")\n"
 "إلى ملفك ال %s."
@@ -9964,7 +9964,7 @@ msgid "Max undo:"
 msgstr "عدد محاولات التراجع الأقصى:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1320
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "شفاف"
 
@@ -10058,7 +10058,7 @@ msgid "Left"
 msgstr "يسار"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1753
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "الاتجاه:"
 
@@ -10117,294 +10117,294 @@ msgstr "خطأ أثناء محاولة حفظ الصورة كطفيلية: لا 
 msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr "خطأ أثناء محاولة فتح الملف المؤقت %s لتحميل الطفيلية: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:243
+#: ../plug-ins/picmanressionist/brush.c:243
 msgid "Can only save drawables!"
 msgstr "يمكن فقط حفظ الرسوميات!"
 
-#: ../plug-ins/gimpressionist/brush.c:248
+#: ../plug-ins/picmanressionist/brush.c:248
 msgid "Save Brush"
 msgstr "حفظ الفرشاة"
 
-#: ../plug-ins/gimpressionist/brush.c:503
+#: ../plug-ins/picmanressionist/brush.c:503
 msgid "_Brush"
 msgstr "_فرشاة"
 
-#: ../plug-ins/gimpressionist/brush.c:540
+#: ../plug-ins/picmanressionist/brush.c:540
 msgid "Gamma:"
 msgstr "غاما:"
 
-#: ../plug-ins/gimpressionist/brush.c:558
+#: ../plug-ins/picmanressionist/brush.c:558
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "تغيير الغاما (السطوع) للفرشاة المحددة"
 
-#: ../plug-ins/gimpressionist/brush.c:566
+#: ../plug-ins/picmanressionist/brush.c:566
 msgid "Select:"
 msgstr "اختيار:"
 
-#: ../plug-ins/gimpressionist/brush.c:595
+#: ../plug-ins/picmanressionist/brush.c:595
 msgid "Aspect ratio:"
 msgstr "نسبة المظهر:"
 
-#: ../plug-ins/gimpressionist/brush.c:599
+#: ../plug-ins/picmanressionist/brush.c:599
 msgid "Specifies the aspect ratio of the brush"
 msgstr "تحديد نسبة مظهر الفرشاة"
 
-#: ../plug-ins/gimpressionist/brush.c:608
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:608
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "النجدة:"
 
-#: ../plug-ins/gimpressionist/brush.c:612
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:612
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "تحديد مقدار التجسيم الذي يجب تطبيقه على الصورة (بالنسبة المئوية)"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "اللو_ن"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "الم_توسط تحت الفرشاة"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "مرك_ز الفرشاة"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "اللون فاسد بسبب متوسط البكسلات تحت الفرشاة"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "نمذجة اللون من البكسل في وسط الفرشاة"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "_ضجيج اللون:"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "إضافة ضجيج عشوائي إلى اللون"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3530
 msgid "_General"
 msgstr "_عام"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "الحفاظ على الأصلي"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "المحافظة على الصورة الأصلية كخلفية"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "من الورق"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "نسخ نقش الورقة المختارة كخلفية"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "خلفية صلبة الألوان"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "استخدام خلفية شفافة؛ فقط ضربات الفرشاة التي أضيفت ستظهر"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "تلوين الحواف"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "اختر إن كنت تريد السماح بالتلوين خارج حواف الصورة"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
+#: ../plug-ins/picmanressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "قابلة للتبليط"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "اختر في حال كنت تريد تقسيم الصورة إلى بلاطات غير مخيطة"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "ظل ساقط"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "إضافة تأثير ظل إلى كل ضربة فرشاة"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "تغميق الحافة:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "كم ينبغي \"إظلام\" الحواف لكل ضربة فرشاة"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "تغميق الظل:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "كم يجب \"تغميق\" الظل الساقط"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "عمق الظل:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr "عمق الظل الساقط، أي كم ينبغي له أن يبعد عن الكائن"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "غشاوة الظل:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "كم مقدار الغشاوة التي ينبغي إضافتها إلى الظل الساقط"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "عتبة الانحراف:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "قيمة لا ينبغي تجاوزها للتحديدات التكييفية"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "تأدية عمليات فنية متعددة"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "_GIMPressionist..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "_PICMANressionist..."
 
-#: ../plug-ins/gimpressionist/gimp.c:164
+#: ../plug-ins/picmanressionist/picman.c:164
 msgid "The selection does not intersect the active layer or mask."
 msgstr ""
 
-#: ../plug-ins/gimpressionist/gimp.c:391
+#: ../plug-ins/picmanressionist/picman.c:391
 msgid "Painting"
 msgstr "تلوين"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPressionist"
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANressionist"
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "الاتجا_ه:"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "الاتجاهات:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "عدد الاتجاهات (للفرشاة مثلًا) التي ينبغي استخدامها"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "زاوية البدء:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "زاوية البداية لأول فرشاة سيتم إنشاؤها"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "اتساع الزاوية:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "مقدار زاوية أو فرشاة سيتم إنشاؤها"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "جعل قيمة (السطوع) للمنطقة تحدد اتجاه ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "نصف القطر"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "المسافة من مركز الصورة تحدد اتجاه ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "اختيار اتجاه عشوائي لكل ضربة فرشاة"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "نصف قطري"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "جعل الاتجاه من مركو الصورة يحدد اتجاه ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "الجريان"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "ضربات الفرشاة تتبع نموذج \"الجريان\""
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "تدرج المنطقة يحدد اتجاه ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "تكيفي"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "الاتجاه الذي يوافق الصورة الأصلية أكثر هو الذي سيُختار"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "يدوي"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "تحديد اتجاه ضربة الفرشاة يدويًا"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "فتح محرر تعيين الاتجاه"
 
-#: ../plug-ins/gimpressionist/orientmap.c:523
+#: ../plug-ins/picmanressionist/orientmap.c:523
 msgid "Orientation Map Editor"
 msgstr "محرر تعيين الاتجاهات"
 
-#: ../plug-ins/gimpressionist/orientmap.c:552
+#: ../plug-ins/picmanressionist/orientmap.c:552
 msgid "Vectors"
 msgstr "المتجهات"
 
-#: ../plug-ins/gimpressionist/orientmap.c:564
+#: ../plug-ins/picmanressionist/orientmap.c:564
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -10412,289 +10412,289 @@ msgstr ""
 "حقل المتجه. انقر بالزر الأيسر لتحريك المتجه المحدد، انقر بالزر الأيمن "
 "لتوجيهه نحو الفأرة، انقر بالزر الأوسط لإضافة متجه جديد."
 
-#: ../plug-ins/gimpressionist/orientmap.c:588
-#: ../plug-ins/gimpressionist/sizemap.c:457
+#: ../plug-ins/picmanressionist/orientmap.c:588
+#: ../plug-ins/picmanressionist/sizemap.c:457
 msgid "Adjust the preview's brightness"
 msgstr "ضبط سطوع المعاينة"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "اختيار المتجه السابق"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "اختيار المتجه التالي"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:489
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:489
 msgid "A_dd"
 msgstr "إ_ضافة"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "إضافة متجه جديد"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:496
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:496
 msgid "_Kill"
 msgstr "قت_ل"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "حذف المتجه المحد"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "النوع"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "_عادي"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "د_وامة"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "دوامة_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "دوامة_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:541
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:541
 msgid "_Voronoi"
 msgstr "_فورنوي"
 
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
 msgstr "نمط فورنوي يجعل المتجه الأقرب إلى النقطة المعطاة فقط يتأثر"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "ال_زاوية:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "تغيير زاوية المتجه المحدد"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "إزاحة ال_زاوية:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr "إزاحة جميع المتجهات بزاوية معينة"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "تغيير قوة المتجه المحدد"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "قوة الق_وة:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:536
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:536
 msgid "Change the exponent of the strength"
 msgstr "تغيير أس القوة"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "ور_ق"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "عكس نقش الأوراق"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "ت_غطية"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "تطبيق الورق كما هو (من دون تجسيمه)"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "تحديد مقياس النقش (بالنسبة المئوية للملف الأصلي)"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "التمو_ضع"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "التموضع"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "عشوائيًا"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "موزعة زوجيًا"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "وضع ضربات الفرشاة عشوائيًا في أرجاء الصورة"
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "ضربات الفرشاة متوزعة زوجيًا عبر الصورة"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "موسّطة"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "تركيز ضربات الفرشاة حول مركز الصورة"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "_كثافة ضربة الفرشاة:"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "الكثافة النسبية لضربات الفرشاة"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:648
+#: ../plug-ins/picmanressionist/ppmtool.c:648
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "فشل حفظ ملف الـ PPM '%s': %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "حفظ الحالي"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "افتراضيات Gimpressionist"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "افتراضيات Picmanressionist"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "الضب_ط المسبق"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "حفظ الحالي..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "حفظ الإعدادات الحالية إلى الملف المحدد"
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "قراءة الإعداد الحالي إلى الذاكرة"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "حذف الضبط المسبق المحدد"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "إعادة قراءة مجلد الضبط المسبق"
 
-#: ../plug-ins/gimpressionist/preview.c:174
-#: ../plug-ins/gimpressionist/repaint.c:1182
+#: ../plug-ins/picmanressionist/preview.c:174
+#: ../plug-ins/picmanressionist/repaint.c:1182
 #: ../plug-ins/imagemap/imap_polygon.c:515
 #: ../plug-ins/lighting/lighting-ui.c:1082
 msgid "_Update"
 msgstr "_تحديث"
 
-#: ../plug-ins/gimpressionist/preview.c:180
+#: ../plug-ins/picmanressionist/preview.c:180
 msgid "Refresh the Preview window"
 msgstr "إنعاش نافذة المعاينة"
 
-#: ../plug-ins/gimpressionist/preview.c:188
+#: ../plug-ins/picmanressionist/preview.c:188
 msgid "Revert to the original image"
 msgstr "ارتداد إلى الصورة الأصلية"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "ال_حجم"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 #, fuzzy
 msgid "Size variants:"
 msgstr "نقا_ط المسامير:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "عدد أحجام الفرشاة التي ينبغي استخدامها"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "الحجم الأدنى:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "أصغر فرشاة سيتم إنشاؤها"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "الحجم الأقصى:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "أكبر فرشاة سيتم إنشاؤها"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "جعل قيمة (السطوع) للمنطقة تحدد حجم ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr "المسافة من مركز الصورة تحدد حجم ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "اختيار حجم عشوائي لكل ضربة فرشاة"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "جعل الاتجاه من المركز يحدد حجم ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "تدرج المنطقة يحدد حجم ضربة الفرشاة"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "حجم الفرشاة الذي يطابق الصورة الأصلية أكثر هو الذي سيُختار"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "تحديد حجم ضربة الفرشاة يدويًا"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "فتح محرر تعيين الحجم"
 
-#: ../plug-ins/gimpressionist/sizemap.c:397
+#: ../plug-ins/picmanressionist/sizemap.c:397
 msgid "Size Map Editor"
 msgstr "محرر تعيين الحجم"
 
-#: ../plug-ins/gimpressionist/sizemap.c:426
+#: ../plug-ins/picmanressionist/sizemap.c:426
 msgid "Smvectors"
 msgstr "متجهات sm"
 
-#: ../plug-ins/gimpressionist/sizemap.c:436
+#: ../plug-ins/picmanressionist/sizemap.c:436
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -10702,39 +10702,39 @@ msgstr ""
 "حقل متجهات sm. انقر بالزر الأيسر لتحريك متجه sm، وبالزر الأيمن لتوجيهه نحو "
 "الفأرة، وبالزر الأوسط لإضافة متجه sm جديد."
 
-#: ../plug-ins/gimpressionist/sizemap.c:480
+#: ../plug-ins/picmanressionist/sizemap.c:480
 msgid "Select previous smvector"
 msgstr "اختيار متجه sm السابق"
 
-#: ../plug-ins/gimpressionist/sizemap.c:487
+#: ../plug-ins/picmanressionist/sizemap.c:487
 msgid "Select next smvector"
 msgstr "اختيار متجه sm التالي"
 
-#: ../plug-ins/gimpressionist/sizemap.c:494
+#: ../plug-ins/picmanressionist/sizemap.c:494
 msgid "Add new smvector"
 msgstr "إضافة متجه sm جديد"
 
-#: ../plug-ins/gimpressionist/sizemap.c:501
+#: ../plug-ins/picmanressionist/sizemap.c:501
 msgid "Delete selected smvector"
 msgstr "حذف متجه sm المحدد"
 
-#: ../plug-ins/gimpressionist/sizemap.c:514
+#: ../plug-ins/picmanressionist/sizemap.c:514
 msgid "Change the angle of the selected smvector"
 msgstr "تغيير زاوية متجه sm المحدد"
 
-#: ../plug-ins/gimpressionist/sizemap.c:521
+#: ../plug-ins/picmanressionist/sizemap.c:521
 msgid "S_trength:"
 msgstr "ال_قوة:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:525
+#: ../plug-ins/picmanressionist/sizemap.c:525
 msgid "Change the strength of the selected smvector"
 msgstr "تغيير قوة متجه sm المحدد"
 
-#: ../plug-ins/gimpressionist/sizemap.c:532
+#: ../plug-ins/picmanressionist/sizemap.c:532
 msgid "St_rength exp.:"
 msgstr "أ_س القوة:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:548
+#: ../plug-ins/picmanressionist/sizemap.c:548
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -11097,7 +11097,7 @@ msgstr "الوهج ال_ثاني:"
 
 #: ../plug-ins/help-browser/dialog.c:184
 #: ../plug-ins/help-browser/dialog.c:1133
-msgid "GIMP Help Browser"
+msgid "PICMAN Help Browser"
 msgstr "مستعرض مساعدة جمب"
 
 #: ../plug-ins/help-browser/dialog.c:582
@@ -11155,7 +11155,7 @@ msgid "Toggle the visibility of the sidebar"
 msgstr ""
 
 #: ../plug-ins/help-browser/dialog.c:674
-msgid "Visit the GIMP documentation website"
+msgid "Visit the PICMAN documentation website"
 msgstr "قم بزيارة موقع توثيق جمب"
 
 #: ../plug-ins/help-browser/dialog.c:1174
@@ -11172,38 +11172,38 @@ msgctxt "search"
 msgid "_Next"
 msgstr "ال_تالي"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:187
+#: ../plug-ins/help/picmanhelpdomain.c:187
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 "رجاءً قم بتنصيب حزمة المساعدة الإضافية أو استخدم دليل المستخدم على الخط في "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "معرف المساعدة '%s' غير معروف"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, fuzzy, c-format
 msgid "Loading index from '%s'"
 msgstr "خطأ أثناء قراءة تروسية ملف BMP من '%s'"
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11430,7 +11430,7 @@ msgid "Clear"
 msgstr "مسح"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "إنشاء"
 
@@ -11455,41 +11455,41 @@ msgid "Edit Object"
 msgstr "تحرير الكائن"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
 msgstr "استخدام أدلة جمب"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "تب_ديل"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "الك_ل"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "إضافة أدلة إضافية"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "الحد الأ_يسر"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "الحد الأيم_ن"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "الحد الأعل_ى"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "الحد الأس_فل"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "محدد موقع المعلومات (URL) الأسا_س:"
 
@@ -11920,7 +11920,7 @@ msgid "Grid Settings..."
 msgstr "إعدادات الشبكة..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
+msgid "Use PICMAN Guides..."
 msgstr "استخدم أدلة جمب..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
@@ -13022,7 +13022,7 @@ msgstr "لم يُلتقط أي بيانات"
 
 #~ msgid ""
 #~ "Error starting Ghostscript. Make sure that Ghostscript is installed and - "
-#~ "if necessary - use the environment variable GS_PROG to tell GIMP about "
+#~ "if necessary - use the environment variable GS_PROG to tell PICMAN about "
 #~ "its location.\n"
 #~ "(%s)"
 #~ msgstr ""
@@ -13065,13 +13065,13 @@ msgstr "لم يُلتقط أي بيانات"
 #~ msgid "Hotspot _X:"
 #~ msgstr "البقعة الساخنة _X:"
 
-#~ msgid "A big hello from the GIMP team!"
+#~ msgid "A big hello from the PICMAN team!"
 #~ msgstr "تحية كبيرة من فريق جمب!"
 
 #~ msgid "Gee Zoom"
 #~ msgstr "تحجيم جي"
 
-#~ msgid "Thank You for Choosing GIMP"
+#~ msgid "Thank You for Choosing PICMAN"
 #~ msgstr "شكرًا لك لاختيارك جمب"
 
 #~ msgid "An obsolete creation by %s"

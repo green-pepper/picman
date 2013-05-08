@@ -1,4 +1,4 @@
-/* tiff saving for GIMP
+/* tiff saving for PICMAN
  *  -Peter Mattis
  *
  * The TIFF loading code has been completely revamped by Nick Lamb
@@ -56,7 +56,7 @@
 
 #include <glib/gstdio.h>
 #ifdef G_OS_WIN32
-#include <libgimpbase/gimpwin32-io.h>
+#include <libpicmanbase/picmanwin32-io.h>
 #endif
 
 #ifndef _O_BINARY
@@ -65,16 +65,16 @@
 
 #include <tiffio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC      "file-tiff-save"
 #define SAVE2_PROC     "file-tiff-save2"
 #define PLUG_IN_BINARY "file-tiff-save"
-#define PLUG_IN_ROLE   "gimp-file-tiff-save"
+#define PLUG_IN_ROLE   "picman-file-tiff-save"
 
 
 typedef struct
@@ -87,8 +87,8 @@ typedef struct
 typedef struct
 {
   gint32        ID;
-  GimpDrawable *drawable;
-  GimpPixelRgn  pixel_rgn;
+  PicmanDrawable *drawable;
+  PicmanPixelRgn  pixel_rgn;
   guchar       *pixels;
   guchar       *pixel;
 } channel_data;
@@ -98,9 +98,9 @@ typedef struct
 static void   query     (void);
 static void   run       (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gboolean  image_is_monochrome (gint32 image);
 
@@ -133,7 +133,7 @@ static TIFF     *tiff_open              (const gchar *filename,
                                          const gchar *mode,
                                          GError     **error);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -148,7 +148,7 @@ static TiffSaveVals tsvals =
 };
 
 static gchar       *image_comment = NULL;
-static GimpRunMode  run_mode      = GIMP_RUN_INTERACTIVE;
+static PicmanRunMode  run_mode      = PICMAN_RUN_INTERACTIVE;
 
 
 MAIN ()
@@ -157,52 +157,52 @@ static void
 query (void)
 {
 #define COMMON_SAVE_ARGS \
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },\
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },\
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },\
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },\
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },\
-    { GIMP_PDB_INT32,    "compression",  "Compression type: { NONE (0), LZW (1), PACKBITS (2), DEFLATE (3), JPEG (4), CCITT G3 Fax (5), CCITT G4 Fax (6) }" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },\
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },\
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },\
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },\
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },\
+    { PICMAN_PDB_INT32,    "compression",  "Compression type: { NONE (0), LZW (1), PACKBITS (2), DEFLATE (3), JPEG (4), CCITT G3 Fax (5), CCITT G4 Fax (6) }" }
 
-  static const GimpParamDef save_args_old[] =
+  static const PicmanParamDef save_args_old[] =
   {
     COMMON_SAVE_ARGS
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
     COMMON_SAVE_ARGS,
-    { GIMP_PDB_INT32, "save-transp-pixels", "Keep the color data masked by an alpha channel intact" }
+    { PICMAN_PDB_INT32, "save-transp-pixels", "Keep the color data masked by an alpha channel intact" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves files in the tiff file format",
                           "Saves files in the Tagged Image File Format.  "
                           "The value for the saved comment is taken "
-                          "from the 'gimp-comment' parasite.",
+                          "from the 'picman-comment' parasite.",
                           "Spencer Kimball & Peter Mattis",
                           "Spencer Kimball & Peter Mattis",
                           "1995-1996,2000-2003",
                           N_("TIFF image"),
                           "RGB*, GRAY*, INDEXED",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args_old), 0,
                           save_args_old, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/tiff");
-  gimp_register_save_handler (SAVE_PROC, "tif,tiff", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/tiff");
+  picman_register_save_handler (SAVE_PROC, "tif,tiff", "");
 
-  gimp_install_procedure (SAVE2_PROC,
+  picman_install_procedure (SAVE2_PROC,
                           "saves files in the tiff file format",
                           "Saves files in the Tagged Image File Format.  "
                           "The value for the saved comment is taken "
-                          "from the 'gimp-comment' parasite.",
+                          "from the 'picman-comment' parasite.",
                           "Spencer Kimball & Peter Mattis",
                           "Spencer Kimball & Peter Mattis",
                           "1995-1996,2000-2003",
                           N_("TIFF image"),
                           "RGB*, GRAY*, INDEXED",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 }
@@ -210,17 +210,17 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpParasite      *parasite;
+  static PicmanParam   values[2];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanParasite      *parasite;
   gint32             image;
   gint32             drawable;
   gint32             orig_image;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   run_mode = param[0].data.d_int32;
@@ -230,8 +230,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   TIFFSetWarningHandler (tiff_warning);
   TIFFSetErrorHandler (tiff_error);
@@ -244,22 +244,22 @@ run (const gchar      *name,
       drawable = param[2].data.d_int32;
 
       /* Do this right this time, if POSSIBLE query for parasites, otherwise
-         or if there isn't one, choose the default comment from the gimprc. */
+         or if there isn't one, choose the default comment from the picmanrc. */
 
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image, &drawable, NULL,
-                                      (GIMP_EXPORT_CAN_HANDLE_RGB |
-                                       GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                       GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                       GIMP_EXPORT_CAN_HANDLE_ALPHA ));
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image, &drawable, NULL,
+                                      (PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                       PICMAN_EXPORT_CAN_HANDLE_GRAY |
+                                       PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                       PICMAN_EXPORT_CAN_HANDLE_ALPHA ));
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -267,37 +267,37 @@ run (const gchar      *name,
           break;
         }
 
-      parasite = gimp_image_get_parasite (orig_image, "gimp-comment");
+      parasite = picman_image_get_parasite (orig_image, "picman-comment");
       if (parasite)
         {
-          image_comment = g_strndup (gimp_parasite_data (parasite),
-                                     gimp_parasite_data_size (parasite));
-          gimp_parasite_free (parasite);
+          image_comment = g_strndup (picman_parasite_data (parasite),
+                                     picman_parasite_data_size (parasite));
+          picman_parasite_free (parasite);
         }
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &tsvals);
+          picman_get_data (SAVE_PROC, &tsvals);
 
-          parasite = gimp_image_get_parasite (orig_image, "tiff-save-options");
+          parasite = picman_image_get_parasite (orig_image, "tiff-save-options");
           if (parasite)
             {
-              const TiffSaveVals *pvals = gimp_parasite_data (parasite);
+              const TiffSaveVals *pvals = picman_parasite_data (parasite);
 
               tsvals.compression        = pvals->compression;
               tsvals.save_transp_pixels = pvals->save_transp_pixels;
             }
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
 
           /*  First acquire information with a dialog  */
-          if (! save_dialog (gimp_drawable_has_alpha (drawable),
+          if (! save_dialog (picman_drawable_has_alpha (drawable),
                              image_is_monochrome (image)))
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams == 6 || nparams == 7)
             {
@@ -310,7 +310,7 @@ run (const gchar      *name,
                 case 4: tsvals.compression = COMPRESSION_JPEG;      break;
                 case 5: tsvals.compression = COMPRESSION_CCITTFAX3; break;
                 case 6: tsvals.compression = COMPRESSION_CCITTFAX4; break;
-                default: status = GIMP_PDB_CALLING_ERROR; break;
+                default: status = PICMAN_PDB_CALLING_ERROR; break;
                 }
 
               if (nparams == 7)
@@ -320,55 +320,55 @@ run (const gchar      *name,
             }
           else
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &tsvals);
+          picman_get_data (SAVE_PROC, &tsvals);
 
-          parasite = gimp_image_get_parasite (orig_image, "tiff-save-options");
+          parasite = picman_image_get_parasite (orig_image, "tiff-save-options");
           if (parasite)
             {
-              const TiffSaveVals *pvals = gimp_parasite_data (parasite);
+              const TiffSaveVals *pvals = picman_parasite_data (parasite);
 
               tsvals.compression        = pvals->compression;
               tsvals.save_transp_pixels = pvals->save_transp_pixels;
             }
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string, image, drawable, orig_image,
                           &error))
             {
               /*  Store mvals data  */
-              gimp_set_data (SAVE_PROC, &tsvals, sizeof (TiffSaveVals));
+              picman_set_data (SAVE_PROC, &tsvals, sizeof (TiffSaveVals));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -446,7 +446,7 @@ image_is_monochrome (gint32 image)
 
   g_return_val_if_fail (image != -1, FALSE);
 
-  colors = gimp_image_get_colormap (image, &num_colors);
+  colors = picman_image_get_colormap (image, &num_colors);
 
   if (colors)
     {
@@ -502,9 +502,9 @@ save_paths (TIFF   *tif,
   gdouble width, height;
   GString *ps_tag;
 
-  width = gimp_image_width (image);
-  height = gimp_image_height (image);
-  vectors = gimp_image_get_vectors (image, &num_vectors);
+  width = picman_image_width (image);
+  height = picman_image_height (image);
+  vectors = picman_image_get_vectors (image, &num_vectors);
 
   if (num_vectors <= 0)
     return FALSE;
@@ -530,7 +530,7 @@ save_paths (TIFF   *tif,
        * - use iso8859-1 if possible
        * - otherwise use UTF-8, prepended with \xef\xbb\xbf (Byte-Order-Mark)
        */
-      name = gimp_item_get_name (vectors[v]);
+      name = picman_item_get_name (vectors[v]);
       tmpname = g_convert (name, -1, "iso8859-1", "utf-8", NULL, &len, &err);
 
       if (tmpname && err == NULL)
@@ -567,20 +567,20 @@ save_paths (TIFF   *tif,
       pointrecord[1] = 6;  /* fill rule record */
       g_string_append_len (data, pointrecord, 26);
 
-      strokes = gimp_vectors_get_strokes (vectors[v], &num_strokes);
+      strokes = picman_vectors_get_strokes (vectors[v], &num_strokes);
 
       for (s = 0; s < num_strokes; s++)
         {
-          GimpVectorsStrokeType type;
+          PicmanVectorsStrokeType type;
           gdouble  *points;
           gint      num_points;
           gboolean  closed;
           gint      p = 0;
 
-          type = gimp_vectors_stroke_get_points (vectors[v], strokes[s],
+          type = picman_vectors_stroke_get_points (vectors[v], strokes[s],
                                                  &num_points, &points, &closed);
 
-          if (type != GIMP_VECTORS_STROKE_TYPE_BEZIER ||
+          if (type != PICMAN_VECTORS_STROKE_TYPE_BEZIER ||
               num_points > 65535 ||
               num_points % 6)
             {
@@ -676,9 +676,9 @@ save_image (const gchar  *filename,
   guchar        *cmap;
   gint           num_colors;
   gint           success;
-  GimpDrawable  *drawable;
-  GimpImageType  drawable_type;
-  GimpPixelRgn   pixel_rgn;
+  PicmanDrawable  *drawable;
+  PicmanImageType  drawable_type;
+  PicmanPixelRgn   pixel_rgn;
   gint           tile_height;
   gint           y, yend;
   gboolean       is_bw    = FALSE;
@@ -696,7 +696,7 @@ save_image (const gchar  *filename,
 #endif
 
   predictor = 0;
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   rowsperstrip = tile_height;
 
   tif = tiff_open (filename, "w", error);
@@ -706,29 +706,29 @@ save_image (const gchar  *filename,
       if (! error)
         g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                      _("Could not open '%s' for writing: %s"),
-                     gimp_filename_to_utf8 (filename), g_strerror (errno));
+                     picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
   TIFFSetWarningHandler (tiff_warning);
   TIFFSetErrorHandler (tiff_error);
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
-  drawable = gimp_drawable_get (layer);
-  drawable_type = gimp_drawable_type (layer);
-  gimp_pixel_rgn_init (&pixel_rgn, drawable,
+  drawable = picman_drawable_get (layer);
+  drawable_type = picman_drawable_type (layer);
+  picman_pixel_rgn_init (&pixel_rgn, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
 
   cols = drawable->width;
   rows = drawable->height;
 
-  gimp_tile_cache_ntiles (1 + drawable->width / gimp_tile_width ());
+  picman_tile_cache_ntiles (1 + drawable->width / picman_tile_width ());
 
   switch (drawable_type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       predictor       = 2;
       samplesperpixel = 3;
       bitspersample   = 8;
@@ -737,7 +737,7 @@ save_image (const gchar  *filename,
       alpha           = FALSE;
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       samplesperpixel = 1;
       bitspersample   = 8;
       photometric     = PHOTOMETRIC_MINISBLACK;
@@ -745,7 +745,7 @@ save_image (const gchar  *filename,
       alpha           = FALSE;
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       predictor       = 2;
       samplesperpixel = 4;
       bitspersample   = 8;
@@ -754,7 +754,7 @@ save_image (const gchar  *filename,
       alpha           = TRUE;
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       samplesperpixel = 2;
       bitspersample   = 8;
       photometric     = PHOTOMETRIC_MINISBLACK;
@@ -762,8 +762,8 @@ save_image (const gchar  *filename,
       alpha           = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
-      cmap = gimp_image_get_colormap (image, &num_colors);
+    case PICMAN_INDEXED_IMAGE:
+      cmap = picman_image_get_colormap (image, &num_colors);
 
       if (num_colors == 2 || num_colors == 1)
         {
@@ -803,7 +803,7 @@ save_image (const gchar  *filename,
       g_free (cmap);
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    "%s",
                    "TIFF save cannot handle indexed images with alpha channel.");
@@ -857,12 +857,12 @@ save_image (const gchar  *filename,
     gdouble  xresolution;
     gdouble  yresolution;
     gushort  save_unit = RESUNIT_INCH;
-    GimpUnit unit;
+    PicmanUnit unit;
     gfloat   factor;
 
-    gimp_image_get_resolution (orig_image, &xresolution, &yresolution);
-    unit = gimp_image_get_unit (orig_image);
-    factor = gimp_unit_get_factor (unit);
+    picman_image_get_resolution (orig_image, &xresolution, &yresolution);
+    unit = picman_image_get_unit (orig_image);
+    factor = picman_unit_get_factor (unit);
 
     /*  if we have a metric unit, save the resolution as centimeters
      */
@@ -887,7 +887,7 @@ save_image (const gchar  *filename,
 
     gint     offset_x, offset_y;
 
-    gimp_drawable_offsets (layer, &offset_x, &offset_y);
+    picman_drawable_offsets (layer, &offset_x, &offset_y);
 
     if (offset_x || offset_y)
       {
@@ -923,31 +923,31 @@ save_image (const gchar  *filename,
    * detaches a previous incarnation of the parasite. */
   if (image_comment && *image_comment)
     {
-      GimpParasite *parasite;
+      PicmanParasite *parasite;
 
       TIFFSetField (tif, TIFFTAG_IMAGEDESCRIPTION, image_comment);
-      parasite = gimp_parasite_new ("gimp-comment",
-                                    GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new ("picman-comment",
+                                    PICMAN_PARASITE_PERSISTENT,
                                     strlen (image_comment) + 1, image_comment);
-      gimp_image_attach_parasite (orig_image, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (orig_image, parasite);
+      picman_parasite_free (parasite);
     }
 
   /* do we have an ICC profile? If so, write it to the TIFF file */
 #ifdef TIFFTAG_ICCPROFILE
   {
-    GimpParasite *parasite;
+    PicmanParasite *parasite;
     uint32        profile_size;
     const guchar *icc_profile;
 
-    parasite = gimp_image_get_parasite (orig_image, "icc-profile");
+    parasite = picman_image_get_parasite (orig_image, "icc-profile");
     if (parasite)
       {
-        profile_size = gimp_parasite_data_size (parasite);
-        icc_profile = gimp_parasite_data (parasite);
+        profile_size = picman_parasite_data_size (parasite);
+        icc_profile = picman_parasite_data (parasite);
 
         TIFFSetField (tif, TIFFTAG_ICCPROFILE, profile_size, icc_profile);
-        gimp_parasite_free (parasite);
+        picman_parasite_free (parasite);
       }
   }
 #endif
@@ -955,7 +955,7 @@ save_image (const gchar  *filename,
   /* save path data */
   save_paths (tif, orig_image);
 
-  if (!is_bw && drawable_type == GIMP_INDEXED_IMAGE)
+  if (!is_bw && drawable_type == PICMAN_INDEXED_IMAGE)
     TIFFSetField (tif, TIFFTAG_COLORMAP, red, grn, blu);
 
   /* array to rearrange data */
@@ -968,7 +968,7 @@ save_image (const gchar  *filename,
       yend = y + tile_height;
       yend = MIN (yend, rows);
 
-      gimp_pixel_rgn_get_rect (&pixel_rgn, src, 0, y, cols, yend - y);
+      picman_pixel_rgn_get_rect (&pixel_rgn, src, 0, y, cols, yend - y);
 
       for (row = y; row < yend; row++)
         {
@@ -976,7 +976,7 @@ save_image (const gchar  *filename,
 
           switch (drawable_type)
             {
-            case GIMP_INDEXED_IMAGE:
+            case PICMAN_INDEXED_IMAGE:
               if (is_bw)
                 {
                   byte2bit (t, bytesperrow, data, invert);
@@ -988,11 +988,11 @@ save_image (const gchar  *filename,
                 }
               break;
 
-            case GIMP_GRAY_IMAGE:
+            case PICMAN_GRAY_IMAGE:
               success = (TIFFWriteScanline (tif, t, row, 0) >= 0);
               break;
 
-            case GIMP_GRAYA_IMAGE:
+            case PICMAN_GRAYA_IMAGE:
               for (col = 0; col < cols*samplesperpixel; col+=samplesperpixel)
                 {
                   if (tsvals.save_transp_pixels)
@@ -1011,11 +1011,11 @@ save_image (const gchar  *filename,
               success = (TIFFWriteScanline (tif, data, row, 0) >= 0);
               break;
 
-            case GIMP_RGB_IMAGE:
+            case PICMAN_RGB_IMAGE:
               success = (TIFFWriteScanline (tif, t, row, 0) >= 0);
               break;
 
-            case GIMP_RGBA_IMAGE:
+            case PICMAN_RGBA_IMAGE:
               for (col = 0; col < cols*samplesperpixel; col+=samplesperpixel)
                 {
                   if (tsvals.save_transp_pixels)
@@ -1051,15 +1051,15 @@ save_image (const gchar  *filename,
         }
 
       if ((row % 32) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) rows);
+        picman_progress_update ((gdouble) row / (gdouble) rows);
     }
 
   TIFFFlushData (tif);
   TIFFClose (tif);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
   g_free (data);
   g_free (src);
 
@@ -1081,16 +1081,16 @@ save_dialog (gboolean has_alpha,
   GtkWidget *g4;
   gboolean   run;
 
-  dialog = gimp_export_dialog_new (_("TIFF"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("TIFF"), PLUG_IN_BINARY, SAVE_PROC);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       vbox, FALSE, TRUE, 0);
 
   /*  compression  */
-  frame = gimp_int_radio_group_new (TRUE, _("Compression"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Compression"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &tsvals.compression, tsvals.compression,
 
                                     _("_None"),      COMPRESSION_NONE,     NULL,
@@ -1111,7 +1111,7 @@ save_dialog (gboolean has_alpha,
       if (tsvals.compression == COMPRESSION_CCITTFAX3 ||
           tsvals.compression ==  COMPRESSION_CCITTFAX4)
         {
-          gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (g3),
+          picman_int_radio_group_set_active (GTK_RADIO_BUTTON (g3),
                                            COMPRESSION_NONE);
         }
     }
@@ -1129,7 +1129,7 @@ save_dialog (gboolean has_alpha,
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &tsvals.save_transp_pixels);
 
   /* comment entry */
@@ -1155,7 +1155,7 @@ save_dialog (gboolean has_alpha,
   gtk_widget_show (vbox);
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

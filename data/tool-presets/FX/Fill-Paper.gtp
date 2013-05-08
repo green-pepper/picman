@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-bucket-fill")
+(stock-id "picman-tool-bucket-fill")
 (name "Fill Paper (Multiply ! Sel.Pattern)")
-(tool-options "GimpBucketFillOptions"
-    (tool "gimp-bucket-fill-tool")
+(tool-options "PicmanBucketFillOptions"
+    (tool "picman-bucket-fill-tool")
     (foreground (color-rgb 0.102075 0.183901 0.594317))
     (opacity 0.500000)
     (paint-mode multiply-mode)
@@ -20,4 +20,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

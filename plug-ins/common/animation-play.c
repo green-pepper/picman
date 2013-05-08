@@ -1,11 +1,11 @@
 /*
  * Animation Playback plug-in version 0.99.1
  *
- * (c) Adam D. Moss : 1997-2000 : adam@gimp.org : adam@foxbox.org
+ * (c) Adam D. Moss : 1997-2000 : adam@picman.org : adam@foxbox.org
  * (c) Mircea Purdea : 2009 : someone_else@exhalus.net
  * (c) Jehan : 2012 : jehan at girinstud.io
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,16 +34,16 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 #undef GDK_DISABLE_DEPRECATED
-#include <libgimp/gimpui.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-animationplay"
 #define PLUG_IN_BINARY "animation-play"
-#define PLUG_IN_ROLE   "gimp-animation-play"
+#define PLUG_IN_ROLE   "picman-animation-play"
 #define DITHERTYPE     GDK_RGB_DITHER_NORMAL
 
 
@@ -71,9 +71,9 @@ typedef struct
 static void        query                     (void);
 static void        run                       (const gchar      *name,
                                               gint              nparams,
-                                              const GimpParam  *param,
+                                              const PicmanParam  *param,
                                               gint             *nreturn_vals,
-                                              GimpParam       **return_vals);
+                                              PicmanParam       **return_vals);
 
 static void        initialize                (void);
 static void        build_dialog              (gchar           *imagename);
@@ -133,7 +133,7 @@ static gboolean    is_ms_tag                 (const gchar     *str,
                                               gint            *taglength);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -157,7 +157,7 @@ static guint              width                     = -1,
                           height                    = -1;
 static gint32            *layers                    = NULL;
 static gint32             total_layers              = 0;
-static GimpImageBaseType  imagetype;
+static PicmanImageBaseType  imagetype;
 static guchar            *palette                   = NULL;
 static gint               ncolours;
 
@@ -200,40 +200,40 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable (unused)"      }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable (unused)"      }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
-                          N_("Preview a GIMP layer-based animation"),
+  picman_install_procedure (PLUG_IN_PROC,
+                          N_("Preview a PICMAN layer-based animation"),
                           "",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "1997, 1998...",
                           N_("_Playback..."),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Animation");
-  gimp_plugin_icon_register (PLUG_IN_PROC, GIMP_ICON_TYPE_STOCK_ID,
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Animation");
+  picman_plugin_icon_register (PLUG_IN_PROC, PICMAN_ICON_TYPE_STOCK_ID,
                              (const guint8 *) GTK_STOCK_MEDIA_PLAY);
 }
 
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[1];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
@@ -243,25 +243,25 @@ run (const gchar      *name,
 
   run_mode = param[0].data.d_int32;
 
- if (run_mode == GIMP_RUN_NONINTERACTIVE && n_params != 3)
+ if (run_mode == PICMAN_RUN_NONINTERACTIVE && n_params != 3)
    {
-     status = GIMP_PDB_CALLING_ERROR;
+     status = PICMAN_PDB_CALLING_ERROR;
    }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_get_data (PLUG_IN_PROC, &settings);
+      picman_get_data (PLUG_IN_PROC, &settings);
       image_id = param[1].data.d_image;
 
       initialize ();
       gtk_main ();
-      gimp_set_data (PLUG_IN_PROC, &settings, sizeof (settings));
+      picman_set_data (PLUG_IN_PROC, &settings, sizeof (settings));
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -530,7 +530,7 @@ static void
 help_callback (GtkAction *action,
                gpointer   data)
 {
-  gimp_standard_help_func (PLUG_IN_PROC, data);
+  picman_standard_help_func (PLUG_IN_PROC, data);
 }
 
 
@@ -638,7 +638,7 @@ ui_manager_new (GtkWidget *window)
       NULL, "space", N_("Start playback"),
       G_CALLBACK (play_callback), FALSE },
 
-    { "detach", GIMP_STOCK_DETACH,
+    { "detach", PICMAN_STOCK_DETACH,
       N_("Detach"), NULL,
       N_("Detach the animation from the dialog window"),
       G_CALLBACK (detach_callback), FALSE }
@@ -772,7 +772,7 @@ build_dialog (gchar             *imagename)
   gint         index;
   gchar       *text;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -785,7 +785,7 @@ build_dialog (gchar             *imagename)
                     G_CALLBACK (popup_menu),
                     NULL);
 
-  gimp_help_connect (window, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+  picman_help_connect (window, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
   ui_manager = ui_manager_new (window);
 
@@ -869,7 +869,7 @@ build_dialog (gchar             *imagename)
                     G_CALLBACK (zoomcombo_changed),
                     NULL);
 
-  gimp_help_set_help_data (zoomcombo, _("Zoom"), NULL);
+  picman_help_set_help_data (zoomcombo, _("Zoom"), NULL);
 
   /* fps combo */
   fpscombo = gtk_combo_box_text_new ();
@@ -890,7 +890,7 @@ build_dialog (gchar             *imagename)
                     G_CALLBACK (fpscombo_changed),
                     NULL);
 
-  gimp_help_set_help_data (fpscombo, _("Default framerate"), NULL);
+  picman_help_set_help_data (fpscombo, _("Default framerate"), NULL);
 
   /* Speed Combo */
   speedcombo = gtk_combo_box_text_new ();
@@ -910,7 +910,7 @@ build_dialog (gchar             *imagename)
                     G_CALLBACK (speedcombo_changed),
                     NULL);
 
-  gimp_help_set_help_data (speedcombo, _("Playback speed"), NULL);
+  picman_help_set_help_data (speedcombo, _("Playback speed"), NULL);
 
   action = gtk_ui_manager_get_action (ui_manager,
                                       "/anim-play-popup/speed-reset");
@@ -1008,7 +1008,7 @@ init_frames (void)
   /* Cleanup before re-generation. */
   if (frames)
     {
-      gimp_image_delete (frames_image_id);
+      picman_image_delete (frames_image_id);
       g_free (frames);
       g_free (frame_durations);
     }
@@ -1016,18 +1016,18 @@ init_frames (void)
   frame_durations = g_try_malloc0_n (total_frames, sizeof (guint32));
   if (! frames || ! frame_durations)
     {
-      gimp_message (_("Memory could not be allocated to the frame container."));
+      picman_message (_("Memory could not be allocated to the frame container."));
       gtk_main_quit ();
-      gimp_quit ();
+      picman_quit ();
       return;
     }
-  frames_image_id = gimp_image_new (width, height, imagetype);
+  frames_image_id = picman_image_new (width, height, imagetype);
   /* Save processing time and memory by not saving history and merged frames. */
-  gimp_image_undo_disable (frames_image_id);
+  picman_image_undo_disable (frames_image_id);
 
   for (i = 0; i < total_frames; i++)
     {
-      layer_name = gimp_item_get_name (layers[total_layers - (i + 1)]);
+      layer_name = picman_item_get_name (layers[total_layers - (i + 1)]);
       if (layer_name)
         {
           duration = parse_ms_tag (layer_name);
@@ -1037,16 +1037,16 @@ init_frames (void)
 
       if (i > 0 && disposal != DISPOSE_REPLACE)
         {
-          previous_frame = gimp_layer_copy (frames[i - 1]);
-          gimp_image_insert_layer (frames_image_id, previous_frame, 0, -1);
-          gimp_item_set_visible (previous_frame, TRUE);
+          previous_frame = picman_layer_copy (frames[i - 1]);
+          picman_image_insert_layer (frames_image_id, previous_frame, 0, -1);
+          picman_item_set_visible (previous_frame, TRUE);
         }
-      new_layer = gimp_layer_new_from_drawable (layers[total_layers - (i + 1)], frames_image_id);
-      gimp_image_insert_layer (frames_image_id, new_layer, 0, -1);
-      gimp_item_set_visible (new_layer, TRUE);
-      new_frame = gimp_image_merge_visible_layers (frames_image_id, GIMP_CLIP_TO_IMAGE);
+      new_layer = picman_layer_new_from_drawable (layers[total_layers - (i + 1)], frames_image_id);
+      picman_image_insert_layer (frames_image_id, new_layer, 0, -1);
+      picman_item_set_visible (new_layer, TRUE);
+      new_frame = picman_image_merge_visible_layers (frames_image_id, PICMAN_CLIP_TO_IMAGE);
       frames[i] = new_frame;
-      gimp_item_set_visible (new_frame, FALSE);
+      picman_item_set_visible (new_frame, FALSE);
 
       if (duration <= 0)
         duration = settings.default_frame_duration;
@@ -1084,23 +1084,23 @@ initialize (void)
   g_free (palette);
 
   /* Catch the case when the user has closed the image in the meantime. */
-  if (! gimp_image_is_valid (image_id))
+  if (! picman_image_is_valid (image_id))
     {
-      gimp_message (_("Invalid image. Did you close it?"));
+      picman_message (_("Invalid image. Did you close it?"));
       gtk_main_quit ();
       return;
     }
 
-  width     = gimp_image_width (image_id);
-  height    = gimp_image_height (image_id);
-  layers    = gimp_image_get_layers (image_id, &total_layers);
-  imagetype = gimp_image_base_type (image_id);
+  width     = picman_image_width (image_id);
+  height    = picman_image_height (image_id);
+  layers    = picman_image_get_layers (image_id, &total_layers);
+  imagetype = picman_image_base_type (image_id);
 
-  if (imagetype == GIMP_INDEXED)
+  if (imagetype == PICMAN_INDEXED)
     {
-      palette = gimp_image_get_colormap (image_id, &ncolours);
+      palette = picman_image_get_colormap (image_id, &ncolours);
     }
-  else if (imagetype == GIMP_GRAY)
+  else if (imagetype == PICMAN_GRAY)
     {
       gint i;
 
@@ -1113,8 +1113,8 @@ initialize (void)
     }
 
   if (!window)
-    build_dialog (gimp_image_get_name (image_id));
-  refresh_dialog (gimp_image_get_name (image_id));
+    build_dialog (picman_image_get_name (image_id));
+  refresh_dialog (picman_image_get_name (image_id));
 
   init_frames ();
   render_frame (frame_number);
@@ -1157,7 +1157,7 @@ render_frame (gint32 whichframe)
       total_alpha_preview ();
     }
 
-  buffer = gimp_drawable_get_buffer (frames[whichframe]);
+  buffer = picman_drawable_get_buffer (frames[whichframe]);
 
   /* Fetch and scale the whole raw new frame */
   gegl_buffer_get (buffer, GEGL_RECTANGLE (0, 0, drawing_width, drawing_height),

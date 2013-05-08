@@ -1,6 +1,6 @@
-## Makefile.am for gimp/menus
+## Makefile.am for picman/menus
 
-menudatadir = $(gimpdatadir)/menus
+menudatadir = $(picmandatadir)/menus
 
 menudata_in_files = \
 	dockable-menu.xml.in	\
@@ -50,7 +50,7 @@ EXTRA_DIST = \
 MAINTAINERCLEANFILES = $(menudata_built_files)
 
 
-if GIMP_UNSTABLE
+if PICMAN_UNSTABLE
 UNSTABLE_MENU_PARAMS = --stringparam unstable-menus yes
 endif
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,24 +20,24 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-quick-mask.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-quick-mask.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "dialogs/channel-options-dialog.h"
 
 #include "actions.h"
 #include "quick-mask-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -53,16 +53,16 @@ void
 quick_mask_toggle_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gboolean   active;
   return_if_no_image (image, data);
 
   active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (active != gimp_image_get_quick_mask_state (image))
+  if (active != picman_image_get_quick_mask_state (image))
     {
-      gimp_image_set_quick_mask_state (image, active);
-      gimp_image_flush (image);
+      picman_image_set_quick_mask_state (image, active);
+      picman_image_flush (image);
     }
 }
 
@@ -71,16 +71,16 @@ quick_mask_invert_cmd_callback (GtkAction *action,
                                 GtkAction *current,
                                 gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       value;
   return_if_no_image (image, data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  if (value != gimp_image_get_quick_mask_inverted (image))
+  if (value != picman_image_get_quick_mask_inverted (image))
     {
-      gimp_image_quick_mask_invert (image);
-      gimp_image_flush (image);
+      picman_image_quick_mask_invert (image);
+      picman_image_flush (image);
     }
 }
 
@@ -89,13 +89,13 @@ quick_mask_configure_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
   ChannelOptionsDialog *options;
-  GimpImage            *image;
+  PicmanImage            *image;
   GtkWidget            *widget;
-  GimpRGB               color;
+  PicmanRGB               color;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  gimp_image_get_quick_mask_color (image, &color);
+  picman_image_get_quick_mask_color (image, &color);
 
   options = channel_options_dialog_new (image, NULL,
                                         action_data_get_context (data),
@@ -103,10 +103,10 @@ quick_mask_configure_cmd_callback (GtkAction *action,
                                         &color,
                                         NULL,
                                         _("Quick Mask Attributes"),
-                                        "gimp-quick-mask-edit",
-                                        GIMP_STOCK_QUICK_MASK_ON,
+                                        "picman-quick-mask-edit",
+                                        PICMAN_STOCK_QUICK_MASK_ON,
                                         _("Edit Quick Mask Attributes"),
-                                        GIMP_HELP_QUICK_MASK_EDIT,
+                                        PICMAN_HELP_QUICK_MASK_EDIT,
                                         _("Edit Quick Mask Color"),
                                         _("_Mask opacity:"),
                                         FALSE);
@@ -128,18 +128,18 @@ quick_mask_configure_response (GtkWidget            *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpRGB old_color;
-      GimpRGB new_color;
+      PicmanRGB old_color;
+      PicmanRGB new_color;
 
-      gimp_image_get_quick_mask_color (options->image, &old_color);
-      gimp_color_button_get_color (GIMP_COLOR_BUTTON (options->color_panel),
+      picman_image_get_quick_mask_color (options->image, &old_color);
+      picman_color_button_get_color (PICMAN_COLOR_BUTTON (options->color_panel),
                                    &new_color);
 
-      if (gimp_rgba_distance (&old_color, &new_color) > 0.0001)
+      if (picman_rgba_distance (&old_color, &new_color) > 0.0001)
         {
-          gimp_image_set_quick_mask_color (options->image, &new_color);
+          picman_image_set_quick_mask_color (options->image, &new_color);
 
-          gimp_image_flush (options->image);
+          picman_image_flush (options->image);
         }
     }
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,94 +25,94 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer-filter.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontainer-filter.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-gradients_refresh_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_refresh_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
-  gimp_data_factory_data_refresh (gimp->gradient_factory, context);
+  picman_data_factory_data_refresh (picman->gradient_factory, context);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-gradients_get_list_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_get_list_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *filter;
   gint32 num_gradients = 0;
   gchar **gradient_list = NULL;
 
-  filter = g_value_get_string (gimp_value_array_index (args, 0));
+  filter = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gradient_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->gradient_factory),
+      gradient_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->gradient_factory),
                                                               filter, &num_gradients);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_gradients);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), gradient_list, num_gradients);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_gradients);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), gradient_list, num_gradients);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-gradients_sample_uniform_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_sample_uniform_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 num_samples;
   gboolean reverse;
   gint32 array_length = 0;
   gdouble *color_samples = NULL;
 
-  num_samples = g_value_get_int (gimp_value_array_index (args, 0));
-  reverse = g_value_get_boolean (gimp_value_array_index (args, 1));
+  num_samples = g_value_get_int (picman_value_array_index (args, 0));
+  reverse = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGradient        *gradient;
-      GimpGradientSegment *seg = NULL;
+      PicmanGradient        *gradient;
+      PicmanGradientSegment *seg = NULL;
       gdouble              pos, delta;
-      GimpRGB              color;
+      PicmanRGB              color;
       gdouble             *pv;
 
       pos   = 0.0;
@@ -122,11 +122,11 @@ gradients_sample_uniform_invoker (GimpProcedure         *procedure,
 
       pv = color_samples = g_new (gdouble, array_length);
 
-      gradient = gimp_context_get_gradient (context);
+      gradient = picman_context_get_gradient (context);
 
       while (num_samples--)
         {
-          seg = gimp_gradient_get_color_at (gradient, context, seg,
+          seg = picman_gradient_get_color_at (gradient, context, seg,
                                             pos, reverse, &color);
 
           *pv++ = color.r;
@@ -138,54 +138,54 @@ gradients_sample_uniform_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), array_length);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 2), color_samples, array_length);
+      g_value_set_int (picman_value_array_index (return_vals, 1), array_length);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 2), color_samples, array_length);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-gradients_sample_custom_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_sample_custom_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 num_samples;
   const gdouble *positions;
   gboolean reverse;
   gint32 array_length = 0;
   gdouble *color_samples = NULL;
 
-  num_samples = g_value_get_int (gimp_value_array_index (args, 0));
-  positions = gimp_value_get_floatarray (gimp_value_array_index (args, 1));
-  reverse = g_value_get_boolean (gimp_value_array_index (args, 2));
+  num_samples = g_value_get_int (picman_value_array_index (args, 0));
+  positions = picman_value_get_floatarray (picman_value_array_index (args, 1));
+  reverse = g_value_get_boolean (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpGradient        *gradient;
-      GimpGradientSegment *seg = NULL;
-      GimpRGB              color;
+      PicmanGradient        *gradient;
+      PicmanGradientSegment *seg = NULL;
+      PicmanRGB              color;
       gdouble             *pv;
 
       array_length = num_samples * 4;
 
       pv = color_samples = g_new (gdouble, array_length);
 
-      gradient = gimp_context_get_gradient (context);
+      gradient = picman_context_get_gradient (context);
 
       while (num_samples--)
         {
-          seg = gimp_gradient_get_color_at (gradient, context, seg,
+          seg = picman_gradient_get_color_at (gradient, context, seg,
                                             *positions, reverse, &color);
 
           *pv++ = color.r;
@@ -197,28 +197,28 @@ gradients_sample_custom_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), array_length);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 2), color_samples, array_length);
+      g_value_set_int (picman_value_array_index (return_vals, 1), array_length);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 2), color_samples, array_length);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-gradients_get_gradient_data_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_get_gradient_data_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 sample_size;
   gboolean reverse;
@@ -226,33 +226,33 @@ gradients_get_gradient_data_invoker (GimpProcedure         *procedure,
   gint32 width = 0;
   gdouble *grad_data = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  sample_size = g_value_get_int (gimp_value_array_index (args, 1));
-  reverse = g_value_get_boolean (gimp_value_array_index (args, 2));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  sample_size = g_value_get_int (picman_value_array_index (args, 1));
+  reverse = g_value_get_boolean (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpGradient *gradient;
+      PicmanGradient *gradient;
 
       if (sample_size < 1 || sample_size > 10000)
-        sample_size = GIMP_GRADIENT_DEFAULT_SAMPLE_SIZE;
+        sample_size = PICMAN_GRADIENT_DEFAULT_SAMPLE_SIZE;
 
       if (name && strlen (name))
-        gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+        gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
       else
-        gradient = gimp_context_get_gradient (context);
+        gradient = picman_context_get_gradient (context);
 
       if (gradient)
         {
-          GimpGradientSegment *seg = NULL;
+          PicmanGradientSegment *seg = NULL;
           gdouble             *pv;
           gdouble              pos, delta;
-          GimpRGB              color;
+          PicmanRGB              color;
 
           pos   = 0.0;
           delta = 1.0 / (sample_size - 1);
 
-          actual_name = g_strdup (gimp_object_get_name (gradient));
+          actual_name = g_strdup (picman_object_get_name (gradient));
           grad_data   = g_new (gdouble, sample_size * 4);
           width       = sample_size * 4;
 
@@ -260,7 +260,7 @@ gradients_get_gradient_data_invoker (GimpProcedure         *procedure,
 
           while (sample_size--)
             {
-              seg = gimp_gradient_get_color_at (gradient, context, seg,
+              seg = picman_gradient_get_color_at (gradient, context, seg,
                                                 pos, reverse, &color);
 
               *pv++ = color.r;
@@ -275,212 +275,212 @@ gradients_get_gradient_data_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_take_string (gimp_value_array_index (return_vals, 1), actual_name);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), width);
-      gimp_value_take_floatarray (gimp_value_array_index (return_vals, 3), grad_data, width);
+      g_value_take_string (picman_value_array_index (return_vals, 1), actual_name);
+      g_value_set_int (picman_value_array_index (return_vals, 2), width);
+      picman_value_take_floatarray (picman_value_array_index (return_vals, 3), grad_data, width);
     }
 
   return return_vals;
 }
 
 void
-register_gradients_procs (GimpPDB *pdb)
+register_gradients_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-gradients-refresh
+   * picman-gradients-refresh
    */
-  procedure = gimp_procedure_new (gradients_refresh_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-refresh");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-refresh",
+  procedure = picman_procedure_new (gradients_refresh_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-refresh");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-refresh",
                                      "Refresh current gradients. This function always succeeds.",
                                      "This procedure retrieves all gradients currently in the user's gradient path and updates the gradient dialogs accordingly.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2002",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-get-list
+   * picman-gradients-get-list
    */
-  procedure = gimp_procedure_new (gradients_get_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-get-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-get-list",
+  procedure = picman_procedure_new (gradients_get_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-get-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-get-list",
                                      "Retrieve the list of loaded gradients.",
-                                     "This procedure returns a list of the gradients that are currently loaded. You can later use the 'gimp-context-set-gradient' function to set the active gradient.",
+                                     "This procedure returns a list of the gradients that are currently loaded. You can later use the 'picman-context-set-gradient' function to set the active gradient.",
                                      "Federico Mena Quintero",
                                      "Federico Mena Quintero",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filter",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filter",
                                                        "filter",
                                                        "An optional regular expression used to filter the list",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-gradients",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-gradients",
                                                           "num gradients",
                                                           "The number of loaded gradients",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("gradient-list",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("gradient-list",
                                                                  "gradient list",
                                                                  "The list of gradient names",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-sample-uniform
+   * picman-gradients-sample-uniform
    */
-  procedure = gimp_procedure_new (gradients_sample_uniform_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-sample-uniform");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-sample-uniform",
-                                     "Deprecated: Use 'gimp-gradient-get-uniform-samples' instead.",
-                                     "Deprecated: Use 'gimp-gradient-get-uniform-samples' instead.",
+  procedure = picman_procedure_new (gradients_sample_uniform_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-sample-uniform");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-sample-uniform",
+                                     "Deprecated: Use 'picman-gradient-get-uniform-samples' instead.",
+                                     "Deprecated: Use 'picman-gradient-get-uniform-samples' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-gradient-get-uniform-samples");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-samples",
+                                     "picman-gradient-get-uniform-samples");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-samples",
                                                       "num samples",
                                                       "The number of samples to take",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("reverse",
                                                      "reverse",
                                                      "Use the reverse gradient",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("array-length",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("array-length",
                                                           "array length",
                                                           "Length of the color_samples array (4 * num_samples)",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("color-samples",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("color-samples",
                                                                 "color samples",
                                                                 "Color samples: { R1, G1, B1, A1, ..., Rn, Gn, Bn, An }",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-sample-custom
+   * picman-gradients-sample-custom
    */
-  procedure = gimp_procedure_new (gradients_sample_custom_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-sample-custom");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-sample-custom",
-                                     "Deprecated: Use 'gimp-gradient-get-custom-samples' instead.",
-                                     "Deprecated: Use 'gimp-gradient-get-custom-samples' instead.",
+  procedure = picman_procedure_new (gradients_sample_custom_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-sample-custom");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-sample-custom",
+                                     "Deprecated: Use 'picman-gradient-get-custom-samples' instead.",
+                                     "Deprecated: Use 'picman-gradient-get-custom-samples' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-gradient-get-custom-samples");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-samples",
+                                     "picman-gradient-get-custom-samples");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-samples",
                                                       "num samples",
                                                       "The number of samples to take",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("positions",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("positions",
                                                             "positions",
                                                             "The list of positions to sample along the gradient",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("reverse",
                                                      "reverse",
                                                      "Use the reverse gradient",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("array-length",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("array-length",
                                                           "array length",
                                                           "Length of the color_samples array (4 * num_samples)",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("color-samples",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("color-samples",
                                                                 "color samples",
                                                                 "Color samples: { R1, G1, B1, A1, ..., Rn, Gn, Bn, An }",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-get-gradient-data
+   * picman-gradients-get-gradient-data
    */
-  procedure = gimp_procedure_new (gradients_get_gradient_data_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-get-gradient-data");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-get-gradient-data",
-                                     "Deprecated: Use 'gimp-gradient-get-uniform-samples' instead.",
-                                     "Deprecated: Use 'gimp-gradient-get-uniform-samples' instead.",
+  procedure = picman_procedure_new (gradients_get_gradient_data_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-get-gradient-data");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-get-gradient-data",
+                                     "Deprecated: Use 'picman-gradient-get-uniform-samples' instead.",
+                                     "Deprecated: Use 'picman-gradient-get-uniform-samples' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-gradient-get-uniform-samples");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                     "picman-gradient-get-uniform-samples");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The gradient name (\"\" means current active gradient)",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("sample-size",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("sample-size",
                                                       "sample size",
                                                       "Size of the sample to return when the gradient is changed",
                                                       1, 10000, 1,
-                                                      GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("reverse",
                                                      "reverse",
                                                      "Use the reverse gradient",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("actual-name",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("actual-name",
                                                            "actual name",
                                                            "The gradient name",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The gradient sample width (r,g,b,a)",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_float_array ("grad-data",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_float_array ("grad-data",
                                                                 "grad data",
                                                                 "The gradient sample data",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

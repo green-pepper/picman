@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Copyright (C) 2003  Simon Budig
@@ -21,8 +21,8 @@
 #define __STROKE_DIALOG_H__
 
 
-GtkWidget * stroke_dialog_new (GimpItem    *item,
-                               GimpContext *context,
+GtkWidget * stroke_dialog_new (PicmanItem    *item,
+                               PicmanContext *context,
                                const gchar *title,
                                const gchar *stock_id,
                                const gchar *help_id,

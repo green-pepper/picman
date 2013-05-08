@@ -1,0 +1,1962 @@
+# translation of picman-libpicman.picman-2-6.po to Tamil
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Dr.T.vasudevan <agnihot3@gmail.com>, 2010.
+# Dr,T,Vasudevan <agnihot3@gmail.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman.picman-2-6\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&component=general\n"
+"POT-Creation-Date: 2010-03-17 23:18+0000\n"
+"PO-Revision-Date: 2010-03-21 17:37+0530\n"
+"Last-Translator: Dr,T,Vasudevan <agnihot3@gmail.com>\n"
+"Language-Team: Tamil <Ubuntu-l10n-tam@lists.ubuntu.com>>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 0.3\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1045
+msgid "success"
+msgstr "வெற்றி"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1049
+msgid "execution error"
+msgstr "செயலாக்கத்தில் பிழை"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1053
+msgid "calling error"
+msgstr "அழைப்பு பிழை "
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1057
+msgid "cancelled"
+msgstr ""
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr "தூரிகை தேர்வு"
+
+#: ../libpicman/picmanbrushselectbutton.c:913
+#: ../libpicman/picmanpatternselectbutton.c:714
+msgid "_Browse..."
+msgstr "_மேலோடு..."
+
+#: ../libpicman/picmanexport.c:217 ../libpicman/picmanexport.c:253
+#, c-format
+#, fuzzy
+msgid "%s plug-in can't handle layers"
+msgstr "."
+
+#: ../libpicman/picmanexport.c:218 ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr "புலனாகும் அடுக்குகளை ஒருங்கிணை"
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+#, fuzzy
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr "."
+
+#: ../libpicman/picmanexport.c:235 ../libpicman/picmanexport.c:244
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s சொருகி அடுக்குகளை அசைவூட்ட சட்டங்கள் ஆக மட்டுமே கையாள முடியும்"
+
+#: ../libpicman/picmanexport.c:236 ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr "அசைவூட்டமாக சேமி"
+
+#: ../libpicman/picmanexport.c:245 ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr "பிம்பத்தை தட்டையாக்கு"
+
+#: ../libpicman/picmanexport.c:262
+msgid "%s plug-in can't handle transparency"
+msgstr "%s சொருகி ஊடு தெரிதல் ஐ கையாள முடியாது"
+
+#: ../libpicman/picmanexport.c:271
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s சொருகி அடுக்கு மறை  மூடிகளை  கையாள முடியாது"
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr "அடுக்கு மறைமூடிகளை ஏற்றுக "
+
+#: ../libpicman/picmanexport.c:280
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s சொருகி ஆர்பி ஜிபிம்பங்களை மட்டுமே  கையாள முடியும்"
+
+#: ../libpicman/picmanexport.c:281 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr "ஆர்ஜிபி ஆக மாற்றுக"
+
+#: ../libpicman/picmanexport.c:289
+msgid "%s plug-in can only handle grayscale images"
+msgstr "%s சொருகி சாம்பல் நிற அளவுகளை மட்டுமே  கையாள முடியும்"
+
+#: ../libpicman/picmanexport.c:290 ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr "சாம்பல்நிற அளவாக மாற்றுக "
+
+#: ../libpicman/picmanexport.c:298
+msgid "%s plug-in can only handle indexed images"
+msgstr "%s சொருகி அட்டவணைப்படுத்திய பிம்பங்களை மட்டுமே  கையாள முடியும்"
+
+#: ../libpicman/picmanexport.c:299 ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"முன்னிருப்பு அமைப்பை பயன்படுத்தி அட்டவணையிட்டதாக மாற்றுக\n"
+"(விடையை நுண் திருத்த கைமுறையாக செய்க )"
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+#, fuzzy
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr "அங். இரண்டு நிறம் வரிசைப்படுத்தப்பட்டது"
+
+#: ../libpicman/picmanexport.c:309
+#, fuzzy
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr "வரை இ வரை"
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+#, fuzzy
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "அங். ஆர்ஜிபி சாம்பல்நிற அளவை"
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+#, fuzzy
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "அங். ஆர்ஜிபி வரிசைப்படுத்தப்பட்டது"
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+#, fuzzy
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "அங். சாம்பல்நிற அளவை வரிசைப்படுத்தப்பட்டது"
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+#, fuzzy
+msgid "%s plug-in needs an alpha channel"
+msgstr "அங்."
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr "ஆல்ஃபா வாய்க்காலை சேர்"
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr "சேமிப்பை உறுதி செய்க"
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr "கோப்பை ஏற்றுமதி செய்க"
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "_I புறக்கணிக்கவும்"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "(_E) ஏற்றுமதி செய் "
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+#, fuzzy
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr "படம் முன் க்கு பின்வருபவை:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+#, fuzzy
+msgid "The export conversion won't modify your original image."
+msgstr "படம்."
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+#, fuzzy
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr "வரை a பார்க்கக்கூடியது."
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+#, fuzzy
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr "வரை a பார்க்கக்கூடியது."
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "எழுத்து வகை தெரிவு செய்தல்"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr ""
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr "சீர் நிற மாற்றம் தேர்வு"
+
+#: ../libpicman/picmanmenu.c:450 ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(வெற்று)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr "நிறத்தட்டு தேர்வு"
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr "தோரணி தேர்வு"
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "பெயர் ஆல்"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr "விளக்கம் ஆல்  "
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr "உதவி ஆல்  "
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr "ஆசிரியர் ஆல் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr "காப்புரிமை ஆல்  "
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr "தேதி ஆல் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "வகை ஆல் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "தேடுகிறது"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr "தேடுகிறது பெயரால் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr "தேடுகிறது  விளக்கத்தால்"
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr "தேடுகிறது உதவியால்"
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr "தேடுகிறது ஆசிரியரால்"
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr "தேடுகிறது காப்புரிமையால் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr "தேடுகிறது தேதியால் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr "தேடுகிறது வகையால் "
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+#, fuzzy
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "d"
+msgstr[1] "d"
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr "உங்கள் கேள்விக்கு பொருத்தங்கள் இல்லை "
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+#, fuzzy
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "d"
+msgstr[1] "d"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516 ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr "பொருத்தங்கள் காணப்படவில்லை"
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr "திருப்பு மதிப்புக்கள்"
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr "கூடுதல் செய்தி"
+
+#: ../libpicman/picmanprocview.c:209
+msgid "Author:"
+msgstr "ஆசிரியர்:"
+
+#: ../libpicman/picmanprocview.c:221
+msgid "Date:"
+msgstr "தேதி:"
+
+#: ../libpicman/picmanprocview.c:233
+msgid "Copyright:"
+msgstr "காப்புரிமை:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "சதவீதம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_White (full opacity)"
+msgstr "(_W) வெள்ளை (முழு ஒளிபுகாமை)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "_Black (full transparency)"
+msgstr "(_B) கருப்பு (முழு ஒளி ஊடுருவும் தன்மை)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#, fuzzy
+msgid "Layer's _alpha channel"
+msgstr "அடுக்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#, fuzzy
+msgid "_Transfer layer's alpha channel"
+msgstr "அனுப்பு"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Selection"
+msgstr "_S தேர்வு"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "_Grayscale copy of layer"
+msgstr "_G அடுக்கின் சாம்பல் நிற நகல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgid "C_hannel"
+msgstr "(_h) வாய்க்கால்"
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (RGB)"
+msgstr "முன்புலத்தில் இலிருந்து பின்புலம் (ஆர்ஜிபி)"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to BG (HSV)"
+msgstr "முன்புலத்தில் இலிருந்து பின்புலம் ( ஹெச்எஸ்வி )"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "FG to transparent"
+msgstr "முன்னணி நிறமின்மைக்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgid "Custom gradient"
+msgstr "தனிப்பயன் சமச்சீர் நிற மாற்றம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "FG color fill"
+msgstr "முன்னணி நிறம் நிரப்பல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "BG color fill"
+msgstr "பின்னணி நிறம் நிரப்பல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgid "Pattern fill"
+msgstr "தோரணி நிரப்பல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Add to the current selection"
+msgstr "நடப்பு தேர்வுக்கு சேர்"
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Subtract from the current selection"
+msgstr "நடப்பு தேர்வில் இருந்து நீக்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Replace the current selection"
+msgstr "நடப்பு தேர்வை மாற்று"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgid "Intersect with the current selection"
+msgstr "நடப்பு தேர்வுடன் இடைவெட்டு "
+
+#: ../libpicmanbase/picmanbaseenums.c:163 ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "சிகப்பு"
+
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "பச்சை"
+
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "நீலம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:166
+msgid "Gray"
+msgstr "சாம்பல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:167 ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:168 ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "ஆல்ஃபா"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Small"
+msgstr "சிறிய"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Medium"
+msgstr "நடுத்தரம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:199
+msgid "Large"
+msgstr "பெரிய"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Light checks"
+msgstr "வெளிர் நிற கட்டங்கள்"
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Mid-tone checks"
+msgstr "நடு நிற கட்டங்கள்"
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Dark checks"
+msgstr "ஆழ்ந்த நிற வெள்ளை கட்டங்கள்"
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "White only"
+msgstr "வெள்ளை மட்டும்"
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Gray only"
+msgstr "சாம்பல் மட்டும்"
+
+#: ../libpicmanbase/picmanbaseenums.c:236
+msgid "Black only"
+msgstr "கருப்பு மட்டும்"
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Image"
+msgstr "பிம்பம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:265
+msgid "Pattern"
+msgstr "தோரணி"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Lightness"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Luminosity"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:296
+msgid "Average"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Dodge"
+msgstr "சாயல் மாற்றம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:325
+msgid "Burn"
+msgstr "எழுதுதல்"
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "gradient|Linear"
+msgstr "லினியர்"
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Bi-linear"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:391
+msgid "Radial"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:392 ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgid "Square"
+msgstr "சதுரம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (sym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Conical (asym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (angular)"
+msgstr "வடிவ (கோண)"
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (spherical)"
+msgstr "வடிவ (உருளையான)"
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Shaped (dimpled)"
+msgstr "வடிவ (சிறுகுழிகளுள்ள)"
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (cw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:399
+msgid "Spiral (ccw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (dots)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Intersections (crosshairs)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Dashed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Double dashed"
+msgstr "இரட்டை கோடிட்ட"
+
+#: ../libpicmanbase/picmanbaseenums.c:434
+msgid "Solid"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Stock ID"
+msgstr "இருப்பு குறி"
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+#, fuzzy
+msgid "Inline pixbuf"
+msgstr "உள்ளே"
+
+#: ../libpicmanbase/picmanbaseenums.c:465
+msgid "Image file"
+msgstr "பிம்ப கோப்பு"
+
+#: ../libpicmanbase/picmanbaseenums.c:494
+msgid "RGB color"
+msgstr "ஆர்ஜிபி நிறம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:495 ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:496
+#, fuzzy
+msgid "Indexed color"
+msgstr "நிறம்"
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB"
+msgstr "ஆர்ஜிபி"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "RGB-alpha"
+msgstr "ஆர்ஜிபி- ஆல்ஃபா"
+
+#: ../libpicmanbase/picmanbaseenums.c:531
+msgid "Grayscale-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:533
+msgid "Indexed-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|None"
+msgstr "ஒன்றுமில்லை"
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "interpolation|Linear"
+msgstr "லினியர்"
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:566
+msgid "Sinc (Lanczos3)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Constant"
+msgstr "மாறிலி"
+
+#: ../libpicmanbase/picmanbaseenums.c:595
+msgid "Incremental"
+msgstr "பெருகும்"
+
+#: ../libpicmanbase/picmanbaseenums.c:624 ../modules/display-filter-lcms.c:191
+msgid "None"
+msgstr "ஒன்றுமில்லை"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Sawtooth wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:626
+msgid "Triangular wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+#, fuzzy
+msgid "Run interactively"
+msgstr "இயக்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+#, fuzzy
+msgid "Run non-interactively"
+msgstr "இயக்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:657
+#, fuzzy
+msgid "Run with last used values"
+msgstr "இயக்கு இதனால் கடைசி பயன்பட்டது"
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Pixels"
+msgstr "பிக்செல்கள்"
+
+#: ../libpicmanbase/picmanbaseenums.c:686
+msgid "Points"
+msgstr "புள்ளிகள்"
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Shadows"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Midtones"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:717
+msgid "Highlights"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+#, fuzzy
+msgid "Normal (Forward)"
+msgstr "இயல்பான அனுப்பு"
+
+#: ../libpicmanbase/picmanbaseenums.c:746
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Adjust"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Clip"
+msgstr "க்ளிப்"
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+#, fuzzy
+msgid "Crop to result"
+msgstr "வெட்டு வரை"
+
+#: ../libpicmanbase/picmanbaseenums.c:779
+#, fuzzy
+msgid "Crop with aspect"
+msgstr "வெட்டு இதனால்"
+
+#: ../libpicmanbase/picmanbaseenums.c:909
+#, fuzzy
+msgid "Internal PICMAN procedure"
+msgstr "கிம்ப்"
+
+#: ../libpicmanbase/picmanbaseenums.c:910
+msgid "PICMAN Plug-In"
+msgstr "கிம்ப் சொருகி"
+
+#: ../libpicmanbase/picmanbaseenums.c:911
+msgid "PICMAN Extension"
+msgstr "கிம்ப் நீட்சி"
+
+#: ../libpicmanbase/picmanbaseenums.c:912
+msgid "Temporary Procedure"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1074
+msgid "From left to right"
+msgstr "இடமிருந்து வலமாக"
+
+#: ../libpicmanbase/picmanbaseenums.c:1075
+msgid "From right to left"
+msgstr "வலமிருந்து இடமாக"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgid "Left justified"
+msgstr "இடது ஒழுங்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgid "Right justified"
+msgstr "வலது ஒழுங்கு"
+
+#: ../libpicmanbase/picmanbaseenums.c:1107
+msgid "Centered"
+msgstr "மையப்படுத்தப்பட்டது"
+
+#: ../libpicmanbase/picmanbaseenums.c:1108
+msgid "Filled"
+msgstr ""
+
+#: ../libpicmanbase/picmanutils.c:170 ../libpicmanbase/picmanutils.c:175
+#: ../modules/display-filter-lcms.c:183
+#: ../modules/color-selector-cmyk-lcms.c:422
+#: ../modules/color-selector-cmyk-lcms.c:428
+msgid "(invalid UTF-8 string)"
+msgstr "(செல்லுபடியாகாத UTF-8 சரம்)"
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+#, fuzzy
+msgid "Mode of operation for color management."
+msgstr "முறை இதில் க்கு நிறம்."
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+#, fuzzy
+msgid "The color profile of your (primary) monitor."
+msgstr "நிறம் இதில்."
+
+#: ../libpicmanconfig/picmancolorconfig.c:46
+#, fuzzy
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr "கிம்ப் வரை நிறம் இருக்கிறது பயன்பட்டது a."
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+#, fuzzy
+msgid "The default RGB working space color profile."
+msgstr "ஆர்ஜிபி இடைவெளி நிறம்."
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+#, fuzzy
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "சிஎம்ஒய்கே  நிறம் பயன்பட்டது வரை ஆர்ஜிபி மற்றும் சிஎம்ஒய்கே ."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+#, fuzzy
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "நிறம் பயன்பட்டது க்கு a."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+#, fuzzy
+msgid "Sets how colors are mapped for your display."
+msgstr "நிறங்கள் க்கு."
+
+#: ../libpicmanconfig/picmancolorconfig.c:58
+#, fuzzy
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr "நிறங்கள் ஆர்ஜிபி இடைவெளி வரை சாதனம்."
+
+#: ../libpicmanconfig/picmancolorconfig.c:61
+#, fuzzy
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr "நிறங்கள் அங். நிறம் இடைவெளி."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+#, fuzzy
+msgid "The color to use for marking colors which are out of gamut."
+msgstr "நிறம் வரை க்கு நிறங்கள் இதில்."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+#, fuzzy
+msgid "No color management"
+msgstr "இல்லை நிறம்"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+#, fuzzy
+msgid "Color managed display"
+msgstr "நிறம்"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+#, fuzzy
+msgid "Print simulation"
+msgstr "அச்சிடு"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr "தெவிட்டம்"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:97
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "டோக்கன் %sன் மதிப்பு சரியான யூடிஎஃப்-8 சரமில்லை"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:436
+#, c-format
+#, fuzzy
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "ஆம் இல்லை க்கு பூலியன்"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:510
+#, c-format
+#, fuzzy
+msgid "invalid value '%s' for token %s"
+msgstr "செல்லுபடியாகாத க்கு"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:525
+#, c-format
+#, fuzzy
+msgid "invalid value '%ld' for token %s"
+msgstr "செல்லுபடியாகாத க்கு"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:594
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-iface.c:474
+#: ../libpicmanconfig/picmanconfig-iface.c:487 ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+#, fuzzy
+msgid "fatal parse error"
+msgstr "ஆபத்தான பகுப்பு பிழை"
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+#, fuzzy
+msgid "Cannot expand ${%s}"
+msgstr "விரிவு"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:78
+#: ../libpicmanconfig/picmanconfigwriter.c:718
+#, c-format
+#, fuzzy
+msgid "Error writing to '%s': %s"
+msgstr "பிழை வரை"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:136
+#, c-format
+#, fuzzy
+msgid "Could not create temporary file for '%s': %s"
+msgstr "கோப்பு க்கு"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:149
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "எழுதுவதற்கு '%s'ஐ திறக்கமுடியவில்லை: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:679
+#: ../libpicmanconfig/picmanconfigwriter.c:699
+#, c-format
+#, fuzzy
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr "பிழை வரை கோப்பு க்கு கோப்பு."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:707
+#, c-format
+#, fuzzy
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr "பிழை வரை கோப்பு க்கு கோப்பு."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:731
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:255
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "செல்லுபடியாகாத யூடிஎஃப்-8 சரம்"
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+#, fuzzy
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "பிழை அங். d"
+
+#: ../libpicmanmodule/picmanmodule.c:153 ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280 ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+#, fuzzy
+msgid "Module '%s' load error: %s"
+msgstr "கூறு பிழை"
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr "கூறு பிழை"
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:377
+#, fuzzy
+msgid "Load failed"
+msgstr "பளு்றி"
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:123
+#, c-format
+#, fuzzy
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr "a இல்லம் அடைவு அங். அடைவு க்கு கோப்புகள்."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:247 ../libpicmanthumb/picmanthumb-utils.c:315
+#, c-format
+#, fuzzy
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "தோற்றது  வரை அடைவு."
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+#, c-format
+#, fuzzy
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "குறும்படம் உள்ளது இல்லை URI"
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+#, fuzzy
+msgid "Could not create thumbnail for %s: %s"
+msgstr "க்கு"
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "தேடல்: (_S)"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr "(_F) முன்புலம் நிறம்"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "(_B) பின்புலம் நிறம்"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "_W வெள்ளை"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:144
+#, fuzzy
+msgid "Select color profile from disk..."
+msgstr "தேர்வு நிறம்."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "ஒன்றுமில்லை"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "நடப்பு:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr "பதினறும வண்ண குறிப்பு -  ஹெச்டிஎம்எல்(ஹெச்டிஎம்எல் (html)) மற்றும் சிஎஸ்எஸ் (CSS) இலை குறிப்பிட்டபடி. இந்த உள்ளீடு சிஎஸ்எஸ் (CSS) வண்ண பெயர்களையும் ஏற்றுக்கொள்ளும்"
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr "_n ஹெச்டிஎம்எல்(HTML):"
+
+#: ../libpicmanwidgets/picmanhelpui.c:420
+#, fuzzy
+msgid "Press F1 for more help"
+msgstr "அழுத்து க்கு உதவி"
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+#, fuzzy
+msgid "Open a file selector to browse your folders"
+msgstr "திற a கோப்பு வரை"
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+#, fuzzy
+msgid "Open a file selector to browse your files"
+msgstr "திற a கோப்பு வரை கோப்புகள்"
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "அடைவை தேர்வு செய்"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "கோப்பை தேர்வு செய்யவும்"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr ""
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1166
+#, fuzzy
+msgid "Nothing selected"
+msgstr "எதுவுமில்லை தேர்ந்தெடுக்கப்பட்டது"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "அனைத்தையும் தேர்ந்தெடு (_A)"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+#, fuzzy
+msgid "Select _range:"
+msgstr "தேர்வு:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+#, fuzzy
+msgid "Open _pages as"
+msgstr "திற"
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr "பக்கம் 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:508
+#: ../libpicmanwidgets/picmanpageselector.c:744
+#, c-format
+msgid "Page %d"
+msgstr "பக்கம் %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "One page selected"
+msgstr "ஒரு பக்கம் தேர்ந்தெடுக்கப்பட்டது"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+#: ../libpicmanwidgets/picmanpageselector.c:1182
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d பக்கம் தேர்ந்தெடுக்கப்பட்டன"
+msgstr[1] "எல்லா %d பக்கங்களும் தேர்ந்தெடுக்கப்பட்டன"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr "எழுதக்கூடியது"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "அடைவு"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+#, fuzzy
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+#, fuzzy
+msgid "Check Size"
+msgstr "செக் அளவு"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+#, fuzzy
+msgid "Check Style"
+msgstr "செக் பாணி"
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "_P முன்பார்வை"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1860
+#, c-format
+#, fuzzy
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "உரை இருக்கிறது வரை d."
+msgstr[1] "உரை இருக்கிறது வரை d."
+
+#: ../libpicmanwidgets/picmanstock.c:112
+msgid "Anchor"
+msgstr "நங்கூரம்"
+
+#: ../libpicmanwidgets/picmanstock.c:113
+msgid "C_enter"
+msgstr "_e மையம்"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "_Duplicate"
+msgstr "(_D) படியெடு"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Edit"
+msgstr "திருத்து (_E)"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "Linked"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:117
+#, fuzzy
+msgid "Paste as New"
+msgstr "ஒட்டு புதிய"
+
+#: ../libpicmanwidgets/picmanstock.c:118
+#, fuzzy
+msgid "Paste Into"
+msgstr "ஒட்டு"
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "_Reset"
+msgstr "_R மீட்டமை"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "Visible"
+msgstr "பார்க்கக்க்கூடியது"
+
+#: ../libpicmanwidgets/picmanstock.c:156 ../libpicmanwidgets/picmanstock.c:160
+msgid "_Stroke"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:172
+#, fuzzy
+msgid "L_etter Spacing"
+msgstr " இடைவெளி"
+
+#: ../libpicmanwidgets/picmanstock.c:173
+#, fuzzy
+msgid "L_ine Spacing"
+msgstr "L இடைவெளி"
+
+#: ../libpicmanwidgets/picmanstock.c:189
+msgid "_Resize"
+msgstr "மறுஅளவு (_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:190 ../libpicmanwidgets/picmanstock.c:320
+msgid "_Scale"
+msgstr "_அளவு மாற்று"
+
+#: ../libpicmanwidgets/picmanstock.c:296
+msgid "Cr_op"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "_Transform"
+msgstr "(_T) உருமாற்று"
+
+#: ../libpicmanwidgets/picmanstock.c:319
+msgid "_Rotate"
+msgstr "சுழற்று (_R)"
+
+#: ../libpicmanwidgets/picmanstock.c:321
+msgid "_Shear"
+msgstr "_S பிள"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:581
+msgid "Unit Selection"
+msgstr "அலகு தேர்வு"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:629
+msgid "Unit"
+msgstr "அலகு"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:633
+msgid "Factor"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:511
+#, fuzzy
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr "பயன்படுத்து க்கு எண் வரை a"
+
+#: ../libpicmanwidgets/picmanwidgets.c:515
+#, fuzzy
+msgid "_New Seed"
+msgstr "புதிய"
+
+#: ../libpicmanwidgets/picmanwidgets.c:528
+#, fuzzy
+msgid "Seed random number generator with a generated random number"
+msgstr "எண் இதனால் a எண்"
+
+#: ../libpicmanwidgets/picmanwidgets.c:532
+msgid "_Randomize"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "நேர்வாக்கில்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "அகலவாக்கில்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "சாயல்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "தெவிட்டம்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "மதிப்பு"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "அடுக்குகள்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "பிம்பங்கள்"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "சிறிதாக்கு"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "பெரிதாக்கு"
+
+#: ../modules/display-filter-color-blind.c:67
+#, fuzzy
+msgid "Protanopia (insensitivity to red)"
+msgstr "வரை சிவப்பு"
+
+#: ../modules/display-filter-color-blind.c:69
+#, fuzzy
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "வரை பச்சை"
+
+#: ../modules/display-filter-color-blind.c:71
+#, fuzzy
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "வரை நீளம்"
+
+#: ../modules/display-filter-color-blind.c:198
+#, fuzzy
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "நிறம் வடிப்பி படிமுறை"
+
+#: ../modules/display-filter-color-blind.c:261
+#, fuzzy
+msgid "Color Deficient Vision"
+msgstr "நிறம்"
+
+#: ../modules/display-filter-color-blind.c:483
+#, fuzzy
+msgid "Color _deficiency type:"
+msgstr "நிறம்:"
+
+#: ../modules/display-filter-gamma.c:90
+#, fuzzy
+msgid "Gamma color display filter"
+msgstr "காமா நிறம் வடிப்பி"
+
+#: ../modules/display-filter-gamma.c:129
+msgid "Gamma"
+msgstr "காமா"
+
+#: ../modules/display-filter-gamma.c:232
+msgid "_Gamma:"
+msgstr "_G காமா:"
+
+#: ../modules/display-filter-high-contrast.c:90
+msgid "High Contrast color display filter"
+msgstr "அதிகமான வேறுபாடு நிறம் வடிப்பி"
+
+#: ../modules/display-filter-high-contrast.c:129
+msgid "Contrast"
+msgstr "வேறுபாடு"
+
+#: ../modules/display-filter-high-contrast.c:232
+#, fuzzy
+msgid "Contrast c_ycles:"
+msgstr "வேறுபாடு c:"
+
+#: ../modules/display-filter-lcms.c:102
+#, fuzzy
+msgid "Color management display filter using ICC color profiles"
+msgstr "நிறம் வடிப்பி நிறம்"
+
+#: ../modules/display-filter-lcms.c:134
+msgid "Color Management"
+msgstr "நிற மேலாண்மை"
+
+#: ../modules/display-filter-lcms.c:212
+#, fuzzy
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr "வடிப்பி நிறம் செக்ஷன் அங். விருப்பங்கள் உரையாடல்."
+
+#: ../modules/display-filter-lcms.c:226
+#, fuzzy
+msgid "Mode of operation:"
+msgstr "முறை இதில்:"
+
+#: ../modules/display-filter-lcms.c:233
+#, fuzzy
+msgid "Image profile:"
+msgstr "பிம்பம்:"
+
+#: ../modules/display-filter-lcms.c:241
+#, fuzzy
+msgid "Monitor profile:"
+msgstr "மானிட்டர்:"
+
+#: ../modules/display-filter-lcms.c:249
+#, fuzzy
+msgid "Print simulation profile:"
+msgstr "அச்சிடு:"
+
+#: ../modules/display-filter-proof.c:97
+#, fuzzy
+msgid "Color proof filter using ICC color profile"
+msgstr "நிறம் வடிப்பி நிறம்"
+
+#: ../modules/display-filter-proof.c:145
+#, fuzzy
+msgid "Color Proof"
+msgstr "நிறம்"
+
+#: ../modules/display-filter-proof.c:311
+#, fuzzy
+msgid "Choose an ICC Color Profile"
+msgstr "நிறம் விவரகுறிப்பு"
+
+#: ../modules/display-filter-proof.c:338
+msgid "All files (*.*)"
+msgstr "அனைத்து கோப்புக்களும் (*.*)"
+
+#: ../modules/display-filter-proof.c:343
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ஐசிசி  நிறம் உருவரை (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:401
+msgid "_Profile:"
+msgstr "_P விவரகுறிப்பு:"
+
+#: ../modules/display-filter-proof.c:407
+msgid "_Intent:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:412
+#, fuzzy
+msgid "_Black Point Compensation"
+msgstr "கருப்பு புள்ளி"
+
+#: ../modules/color-selector-cmyk.c:71
+#, fuzzy
+msgid "CMYK color selector"
+msgstr "சிஎம்ஒய்கே  நிறம்"
+
+#: ../modules/color-selector-cmyk.c:102
+#: ../modules/color-selector-cmyk-lcms.c:150
+msgid "CMYK"
+msgstr "சிஎம்ஒய்கே "
+
+#. Cyan
+#: ../modules/color-selector-cmyk.c:125
+#: ../modules/color-selector-cmyk-lcms.c:169
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk.c:127
+#: ../modules/color-selector-cmyk-lcms.c:171
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk.c:129
+#: ../modules/color-selector-cmyk-lcms.c:173
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk.c:131
+#: ../modules/color-selector-cmyk-lcms.c:175
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk.c:135
+#: ../modules/color-selector-cmyk-lcms.c:179
+msgid "Cyan"
+msgstr "மயில் நீலம்"
+
+#: ../modules/color-selector-cmyk.c:136
+#: ../modules/color-selector-cmyk-lcms.c:180
+msgid "Magenta"
+msgstr "மெஜந்தா"
+
+#: ../modules/color-selector-cmyk.c:137
+#: ../modules/color-selector-cmyk-lcms.c:181
+msgid "Yellow"
+msgstr "மஞ்சள்"
+
+#: ../modules/color-selector-cmyk.c:138
+#: ../modules/color-selector-cmyk-lcms.c:182
+msgid "Black"
+msgstr "கருப்பு"
+
+#: ../modules/color-selector-cmyk.c:172
+#, fuzzy
+msgid "Black _pullout:"
+msgstr "கருப்பு:"
+
+#: ../modules/color-selector-cmyk.c:189
+#, fuzzy
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "இதில் கருப்பு வரை இதில்."
+
+#: ../modules/color-selector-cmyk-lcms.c:87
+#, fuzzy
+msgid "CMYK color selector (using color profile)"
+msgstr "சிஎம்ஒய்கே  நிறம் நிறம்"
+
+#: ../modules/color-selector-cmyk-lcms.c:410
+#, fuzzy
+msgid "Profile: (none)"
+msgstr "விவரகுறிப்பு"
+
+#: ../modules/color-selector-cmyk-lcms.c:431
+#, c-format
+msgid "Profile: %s"
+msgstr "விவரகுறிப்பு: %s"
+
+#: ../modules/color-selector-water.c:82
+#, fuzzy
+msgid "Watercolor style color selector"
+msgstr "பாங்கு நிறம்"
+
+#: ../modules/color-selector-water.c:118
+msgid "Watercolor"
+msgstr ""
+
+#: ../modules/color-selector-water.c:186
+msgid "Pressure"
+msgstr ""
+
+#: ../modules/color-selector-wheel.c:103
+#, fuzzy
+msgid "HSV color wheel"
+msgstr "ஹெச்எஸ்வி  நிறம்"
+
+#: ../modules/color-selector-wheel.c:134
+msgid "Wheel"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 0"
+msgstr "பட்டன் 0"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 1"
+msgstr "பட்டன் 1"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 2"
+msgstr "பட்டன் 2"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 3"
+msgstr "பட்டன் 3"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 4"
+msgstr "பட்டன் 4"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 5"
+msgstr "பட்டன் 5"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 6"
+msgstr "பட்டன் 6"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 7"
+msgstr "பட்டன் 7"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 8"
+msgstr "பட்டன் 8"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button 9"
+msgstr "பட்டன் 9"
+
+#: ../modules/controller-linux-input.c:68
+#, fuzzy
+msgid "Button Mouse"
+msgstr "பட்டன் சுட்டி"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Left"
+msgstr "பட்டன் இடது"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Right"
+msgstr "பட்டன் வலது"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Middle"
+msgstr "பட்டன் மத்திய"
+
+#: ../modules/controller-linux-input.c:72
+#, fuzzy
+msgid "Button Side"
+msgstr "பட்டன்"
+
+#: ../modules/controller-linux-input.c:73
+#, fuzzy
+msgid "Button Extra"
+msgstr "பட்டன்"
+
+#: ../modules/controller-linux-input.c:74
+#, fuzzy
+msgid "Button Forward"
+msgstr "பட்டன் அனுப்பு"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Back"
+msgstr "பட்டன் பின்"
+
+#: ../modules/controller-linux-input.c:76
+msgid "Button Task"
+msgstr "பட்டன் பணி"
+
+#: ../modules/controller-linux-input.c:78
+#, fuzzy
+msgid "Button Wheel"
+msgstr "பட்டன்"
+
+#: ../modules/controller-linux-input.c:81
+#, fuzzy
+msgid "Button Gear Down"
+msgstr "பட்டன் கீழ்"
+
+#: ../modules/controller-linux-input.c:84
+#, fuzzy
+msgid "Button Gear Up"
+msgstr "பட்டன் மேல்"
+
+#: ../modules/controller-linux-input.c:90
+#: ../modules/controller-dx-dinput.c:443
+msgid "X Move Left"
+msgstr "X நகர்த்து இடது"
+
+#: ../modules/controller-linux-input.c:91
+#: ../modules/controller-dx-dinput.c:446
+msgid "X Move Right"
+msgstr "X நகர்த்து வலது"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Forward"
+msgstr "Y நகர்த்து அனுப்பு"
+
+#: ../modules/controller-linux-input.c:93
+msgid "Y Move Back"
+msgstr "Y நகர்த்து பின்"
+
+#: ../modules/controller-linux-input.c:94
+#: ../modules/controller-dx-dinput.c:461
+#, fuzzy
+msgid "Z Move Up"
+msgstr "நகர்த்து மேல்"
+
+#: ../modules/controller-linux-input.c:95
+#: ../modules/controller-dx-dinput.c:464
+#, fuzzy
+msgid "Z Move Down"
+msgstr "நகர்த்து கீழ்"
+
+#: ../modules/controller-linux-input.c:97
+#, fuzzy
+msgid "X Axis Tilt Forward"
+msgstr "X அனுப்பு"
+
+#: ../modules/controller-linux-input.c:98
+#, fuzzy
+msgid "X Axis Tilt Back"
+msgstr "X பின்"
+
+#: ../modules/controller-linux-input.c:99
+#: ../modules/controller-dx-dinput.c:479
+#, fuzzy
+msgid "Y Axis Tilt Right"
+msgstr "Y வலது"
+
+#: ../modules/controller-linux-input.c:100
+#: ../modules/controller-dx-dinput.c:482
+#, fuzzy
+msgid "Y Axis Tilt Left"
+msgstr "Y இடது"
+
+#: ../modules/controller-linux-input.c:101
+#: ../modules/controller-dx-dinput.c:488
+#, fuzzy
+msgid "Z Axis Turn Left"
+msgstr "இடது"
+
+#: ../modules/controller-linux-input.c:102
+#: ../modules/controller-dx-dinput.c:491
+#, fuzzy
+msgid "Z Axis Turn Right"
+msgstr "வலது"
+
+#: ../modules/controller-linux-input.c:104
+#, fuzzy
+msgid "Horiz. Wheel Turn Back"
+msgstr "பின்"
+
+#: ../modules/controller-linux-input.c:105
+#, fuzzy
+msgid "Horiz. Wheel Turn Forward"
+msgstr "அனுப்பு"
+
+#: ../modules/controller-linux-input.c:106
+#, fuzzy
+msgid "Dial Turn Left"
+msgstr "அழை இடது"
+
+#: ../modules/controller-linux-input.c:107
+#, fuzzy
+msgid "Dial Turn Right"
+msgstr "அழை வலது"
+
+#: ../modules/controller-linux-input.c:108
+#, fuzzy
+msgid "Wheel Turn Left"
+msgstr "இடது"
+
+#: ../modules/controller-linux-input.c:109
+#, fuzzy
+msgid "Wheel Turn Right"
+msgstr "வலது"
+
+#: ../modules/controller-linux-input.c:178
+msgid "Linux input event controller"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:218
+#: ../modules/controller-dx-dinput.c:196 ../modules/controller-midi.c:212
+msgid "Device:"
+msgstr "சாதனம்:"
+
+#: ../modules/controller-linux-input.c:219
+#, fuzzy
+msgid "The name of the device to read Linux Input events from."
+msgstr "பெயர் இதில் சாதனம் வரை படி உள்ளீடு."
+
+#: ../modules/controller-linux-input.c:230
+#, fuzzy
+msgid "Linux Input"
+msgstr "உள்ளீடு"
+
+#: ../modules/controller-linux-input.c:513
+#, fuzzy
+msgid "Linux Input Events"
+msgstr "உள்ளீடு நிகழ்வுகள்"
+
+#: ../modules/controller-linux-input.c:525
+#: ../modules/controller-dx-dinput.c:1095 ../modules/controller-midi.c:505
+#, fuzzy
+msgid "No device configured"
+msgstr "இல்லை சாதனம்"
+
+#: ../modules/controller-linux-input.c:551 ../modules/controller-midi.c:454
+#: ../modules/controller-midi.c:480
+#, c-format
+#, fuzzy
+msgid "Reading from %s"
+msgstr "ரீடிங்"
+
+#: ../modules/controller-linux-input.c:569
+#: ../modules/controller-linux-input.c:623 ../modules/controller-midi.c:436
+#: ../modules/controller-midi.c:497 ../modules/controller-midi.c:568
+#, c-format
+#, fuzzy
+msgid "Device not available: %s"
+msgstr "சாதனம்"
+
+#: ../modules/controller-linux-input.c:588
+#: ../modules/controller-dx-dinput.c:1120
+#, fuzzy
+msgid "Device not available"
+msgstr "சாதனம்"
+
+#: ../modules/controller-linux-input.c:632 ../modules/controller-midi.c:577
+msgid "End of file"
+msgstr "கோப்பு முடிவு"
+
+#: ../modules/controller-dx-dinput.c:156
+msgid "DirectX DirectInput event controller"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:197
+#, fuzzy
+msgid "The device to read DirectInput events from."
+msgstr "சாதனம் வரை படி."
+
+#: ../modules/controller-dx-dinput.c:206
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:420
+#, c-format
+msgid "Button %d"
+msgstr "பட்டன் %d"
+
+#: ../modules/controller-dx-dinput.c:423
+#, c-format
+msgid "Button %d Press"
+msgstr "பட்டன் %d  அழுத்து"
+
+#: ../modules/controller-dx-dinput.c:426
+#, c-format
+msgid "Button %d Release"
+msgstr "பட்டன் %d விடுவி"
+
+#: ../modules/controller-dx-dinput.c:452
+msgid "Y Move Away"
+msgstr "Y நகர்த்து வெளியில்"
+
+#: ../modules/controller-dx-dinput.c:455
+#, fuzzy
+msgid "Y Move Near"
+msgstr "Y நகர்த்து"
+
+#: ../modules/controller-dx-dinput.c:470
+#, fuzzy
+msgid "X Axis Tilt Away"
+msgstr "X வெளியில்"
+
+#: ../modules/controller-dx-dinput.c:473
+#, fuzzy
+msgid "X Axis Tilt Near"
+msgstr "X"
+
+#: ../modules/controller-dx-dinput.c:502
+#, c-format
+#, fuzzy
+msgid "Slider %d Increase"
+msgstr "நகர்த்தி d"
+
+#: ../modules/controller-dx-dinput.c:505
+#, c-format
+#, fuzzy
+msgid "Slider %d Decrease"
+msgstr "நகர்த்தி d"
+
+#: ../modules/controller-dx-dinput.c:515
+#, c-format
+#, fuzzy
+msgid "POV %d X View"
+msgstr "d X காட்சி"
+
+#: ../modules/controller-dx-dinput.c:518
+#, c-format
+#, fuzzy
+msgid "POV %d Y View"
+msgstr "d Y காட்சி"
+
+#: ../modules/controller-dx-dinput.c:521
+#, c-format
+#, fuzzy
+msgid "POV %d Return"
+msgstr "d திரும்பு"
+
+#: ../modules/controller-dx-dinput.c:1084
+#, fuzzy
+msgid "DirectInput Events"
+msgstr "நிகழ்வுகள்"
+
+#: ../modules/controller-midi.c:164
+msgid "MIDI event controller"
+msgstr ""
+
+#: ../modules/controller-midi.c:203
+#, fuzzy
+msgid "The name of the device to read MIDI events from."
+msgstr "பெயர் இதில் சாதனம் வரை படி."
+
+#: ../modules/controller-midi.c:206
+#, fuzzy
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "என்டர் வரை."
+
+#: ../modules/controller-midi.c:221
+#, fuzzy
+msgid "Channel:"
+msgstr "தடம்"
+
+#: ../modules/controller-midi.c:222
+#, fuzzy
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr "வரை படி அமை வரை க்கு அனைத்து."
+
+#: ../modules/controller-midi.c:226
+msgid "MIDI"
+msgstr ""
+
+#: ../modules/controller-midi.c:355
+#, c-format
+#, fuzzy
+msgid "Note %02x on"
+msgstr "குறிப்பு இயக்கு"
+
+#: ../modules/controller-midi.c:358
+#, c-format
+#, fuzzy
+msgid "Note %02x off"
+msgstr "குறிப்பு இயக்கமில்லை"
+
+#: ../modules/controller-midi.c:361
+#, c-format
+msgid "Controller %03d"
+msgstr ""
+
+#: ../modules/controller-midi.c:408
+#, fuzzy
+msgid "MIDI Events"
+msgstr "நிகழ்வுகள்"
+
+#: ../modules/controller-midi.c:426
+msgid "PICMAN"
+msgstr "கிம்ப்"
+
+#: ../modules/controller-midi.c:428
+#, fuzzy
+msgid "PICMAN MIDI Input Controller"
+msgstr "கிம்ப் உள்ளீடு"
+
+

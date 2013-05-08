@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,101 +20,101 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpdata.h"
+#include "core/picmancontext.h"
+#include "core/picmandata.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "data-commands.h"
 #include "patterns-actions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry patterns_actions[] =
+static const PicmanActionEntry patterns_actions[] =
 {
-  { "patterns-popup", GIMP_STOCK_PATTERN,
+  { "patterns-popup", PICMAN_STOCK_PATTERN,
     NC_("patterns-action", "Patterns Menu"), NULL, NULL, NULL,
-    GIMP_HELP_PATTERN_DIALOG },
+    PICMAN_HELP_PATTERN_DIALOG },
 
   { "patterns-open-as-image", GTK_STOCK_OPEN,
     NC_("patterns-action", "_Open Pattern as Image"), "",
     NC_("patterns-action", "Open this pattern as an image"),
     G_CALLBACK (data_open_as_image_cmd_callback),
-    GIMP_HELP_PATTERN_OPEN_AS_IMAGE },
+    PICMAN_HELP_PATTERN_OPEN_AS_IMAGE },
 
   { "patterns-new", GTK_STOCK_NEW,
     NC_("patterns-action", "_New Pattern"), "",
     NC_("patterns-action", "Create a new pattern"),
     G_CALLBACK (data_new_cmd_callback),
-    GIMP_HELP_PATTERN_NEW },
+    PICMAN_HELP_PATTERN_NEW },
 
-  { "patterns-duplicate", GIMP_STOCK_DUPLICATE,
+  { "patterns-duplicate", PICMAN_STOCK_DUPLICATE,
     NC_("patterns-action", "D_uplicate Pattern"), NULL,
     NC_("patterns-action", "Duplicate this pattern"),
     G_CALLBACK (data_duplicate_cmd_callback),
-    GIMP_HELP_PATTERN_DUPLICATE },
+    PICMAN_HELP_PATTERN_DUPLICATE },
 
   { "patterns-copy-location", GTK_STOCK_COPY,
     NC_("patterns-action", "Copy Pattern _Location"), "",
     NC_("patterns-action", "Copy pattern file location to clipboard"),
     G_CALLBACK (data_copy_location_cmd_callback),
-    GIMP_HELP_PATTERN_COPY_LOCATION },
+    PICMAN_HELP_PATTERN_COPY_LOCATION },
 
   { "patterns-delete", GTK_STOCK_DELETE,
     NC_("patterns-action", "_Delete Pattern"), "",
     NC_("patterns-action", "Delete this pattern"),
     G_CALLBACK (data_delete_cmd_callback),
-    GIMP_HELP_PATTERN_DELETE },
+    PICMAN_HELP_PATTERN_DELETE },
 
   { "patterns-refresh", GTK_STOCK_REFRESH,
     NC_("patterns-action", "_Refresh Patterns"), "",
     NC_("patterns-action", "Refresh patterns"),
     G_CALLBACK (data_refresh_cmd_callback),
-    GIMP_HELP_PATTERN_REFRESH }
+    PICMAN_HELP_PATTERN_REFRESH }
 };
 
-static const GimpStringActionEntry patterns_edit_actions[] =
+static const PicmanStringActionEntry patterns_edit_actions[] =
 {
   { "patterns-edit", GTK_STOCK_EDIT,
     NC_("patterns-action", "_Edit Pattern..."), NULL,
     NC_("patterns-action", "Edit pattern"),
-    "gimp-pattern-editor",
-    GIMP_HELP_PATTERN_EDIT }
+    "picman-pattern-editor",
+    PICMAN_HELP_PATTERN_EDIT }
 };
 
 
 void
-patterns_actions_setup (GimpActionGroup *group)
+patterns_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "patterns-action",
+  picman_action_group_add_actions (group, "patterns-action",
                                  patterns_actions,
                                  G_N_ELEMENTS (patterns_actions));
 
-  gimp_action_group_add_string_actions (group, "patterns-action",
+  picman_action_group_add_string_actions (group, "patterns-action",
                                         patterns_edit_actions,
                                         G_N_ELEMENTS (patterns_edit_actions),
                                         G_CALLBACK (data_edit_cmd_callback));
 }
 
 void
-patterns_actions_update (GimpActionGroup *group,
+patterns_actions_update (PicmanActionGroup *group,
                          gpointer         user_data)
 {
-  GimpContext *context  = action_data_get_context (user_data);
-  GimpPattern *pattern  = NULL;
-  GimpData    *data     = NULL;
+  PicmanContext *context  = action_data_get_context (user_data);
+  PicmanPattern *pattern  = NULL;
+  PicmanData    *data     = NULL;
   const gchar *filename = NULL;
 
   if (context)
     {
-      pattern = gimp_context_get_pattern (context);
+      pattern = picman_context_get_pattern (context);
 
       if (action_data_sel_count (user_data) > 1)
         {
@@ -123,20 +123,20 @@ patterns_actions_update (GimpActionGroup *group,
 
       if (pattern)
         {
-          data = GIMP_DATA (pattern);
+          data = PICMAN_DATA (pattern);
 
-          filename = gimp_data_get_filename (data);
+          filename = picman_data_get_filename (data);
         }
     }
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("patterns-edit",          pattern && FALSE);
   SET_SENSITIVE ("patterns-open-as-image", pattern && filename);
-  SET_SENSITIVE ("patterns-duplicate",     pattern && GIMP_DATA_GET_CLASS (data)->duplicate);
+  SET_SENSITIVE ("patterns-duplicate",     pattern && PICMAN_DATA_GET_CLASS (data)->duplicate);
   SET_SENSITIVE ("patterns-copy-location", pattern && filename);
-  SET_SENSITIVE ("patterns-delete",        pattern && gimp_data_is_deletable (data));
+  SET_SENSITIVE ("patterns-delete",        pattern && picman_data_is_deletable (data));
 
 #undef SET_SENSITIVE
 }

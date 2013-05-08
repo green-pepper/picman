@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,18 +24,18 @@
 #include <errno.h>
 
 #include <glib/gstdio.h>
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "psd.h"
 #include "psd-util.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /*  Local constants */
 #define MIN_RUN     3
 
 /*  Local function prototypes  */
-static gchar *          gimp_layer_mode_effects_name    (const GimpLayerModeEffects      mode);
+static gchar *          picman_layer_mode_effects_name    (const PicmanLayerModeEffects      mode);
 
 
 /* Utility function */
@@ -123,7 +123,7 @@ fread_pascal_string (gint32         *bytes_read,
         }
     }
 
-  utf8_str = gimp_any_to_utf8 (str, len, NULL);
+  utf8_str = picman_any_to_utf8 (str, len, NULL);
   *bytes_written = strlen (utf8_str);
   g_free (str);
 
@@ -603,75 +603,75 @@ encode_packbits (const gchar   *src,
   return g_string_free (dst_str, FALSE);
 }
 
-GimpLayerModeEffects
-psd_to_gimp_blend_mode (const gchar *psd_mode)
+PicmanLayerModeEffects
+psd_to_picman_blend_mode (const gchar *psd_mode)
 {
   if (g_ascii_strncasecmp (psd_mode, "norm", 4) == 0)           /* Normal (ps3) */
-    return GIMP_NORMAL_MODE;
+    return PICMAN_NORMAL_MODE;
   if (g_ascii_strncasecmp (psd_mode, "dark", 4) == 0)           /* Darken (ps3) */
-    return GIMP_DARKEN_ONLY_MODE;
+    return PICMAN_DARKEN_ONLY_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lite", 4) == 0)           /* Lighten (ps3) */
-      return GIMP_LIGHTEN_ONLY_MODE;
+      return PICMAN_LIGHTEN_ONLY_MODE;
   if (g_ascii_strncasecmp (psd_mode, "hue ", 4) == 0)           /* Hue (ps3) */
-    return GIMP_HUE_MODE;
+    return PICMAN_HUE_MODE;
   if (g_ascii_strncasecmp (psd_mode, "sat ", 4) == 0)           /* Saturation (ps3) */
     {
       if (CONVERSION_WARNINGS)
         {
           static gchar  *mode_name = "SATURATION";
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      mode_name);
         }
-      return GIMP_SATURATION_MODE;
+      return PICMAN_SATURATION_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "colr", 4) == 0)           /* Color (ps3) */
-    return GIMP_COLOR_MODE;
+    return PICMAN_COLOR_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lum ", 4) == 0)           /* Luminosity (ps3) */
     {
       if (CONVERSION_WARNINGS)
         {
           static gchar  *mode_name = "LUMINOSITY (VALUE)";
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      mode_name);
         }
-      return GIMP_VALUE_MODE;
+      return PICMAN_VALUE_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "mul ", 4) == 0)           /* Multiply (ps3) */
-    return GIMP_MULTIPLY_MODE;
+    return PICMAN_MULTIPLY_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lddg", 4) == 0)           /* Linear Dodge (cs2) */
-    return GIMP_ADDITION_MODE;
+    return PICMAN_ADDITION_MODE;
   if (g_ascii_strncasecmp (psd_mode, "scrn", 4) == 0)           /* Screen (ps3) */
-    return GIMP_SCREEN_MODE;
+    return PICMAN_SCREEN_MODE;
   if (g_ascii_strncasecmp (psd_mode, "diss", 4) == 0)           /* Dissolve (ps3) */
-    return GIMP_DISSOLVE_MODE;
+    return PICMAN_DISSOLVE_MODE;
   if (g_ascii_strncasecmp (psd_mode, "over", 4) == 0)           /* Overlay (ps3) */
     {
       if (CONVERSION_WARNINGS)
         {
           static gchar  *mode_name = "OVERLAY";
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      mode_name);
         }
-      return GIMP_OVERLAY_MODE;
+      return PICMAN_OVERLAY_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "hLit", 4) == 0)           /* Hard light (ps3) */
-    return GIMP_HARDLIGHT_MODE;
+    return PICMAN_HARDLIGHT_MODE;
   if (g_ascii_strncasecmp (psd_mode, "sLit", 4) == 0)           /* Soft light (ps3) */
     {
       if (CONVERSION_WARNINGS)
         {
           static gchar  *mode_name = "SOFT LIGHT";
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      mode_name);
         }
-    return GIMP_SOFTLIGHT_MODE;
+    return PICMAN_SOFTLIGHT_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "diff", 4) == 0)           /* Difference (ps3) */
-    return GIMP_DIFFERENCE_MODE;
+    return PICMAN_DIFFERENCE_MODE;
   if (g_ascii_strncasecmp (psd_mode, "smud", 4) == 0)           /* Exclusion (ps6) */
     {
       if (CONVERSION_WARNINGS)
@@ -680,12 +680,12 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "div ", 4) == 0)           /* Color dodge (ps6) */
-      return GIMP_DODGE_MODE;
+      return PICMAN_DODGE_MODE;
   if (g_ascii_strncasecmp (psd_mode, "idiv", 4) == 0)           /* Color burn (ps6) */
-      return GIMP_BURN_MODE;
+      return PICMAN_BURN_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lbrn", 4) == 0)           /* Linear burn (ps7)*/
     {
       if (CONVERSION_WARNINGS)
@@ -694,10 +694,10 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "lddg", 4) == 0)           /* Linear dodge (ps7)*/
-    return GIMP_ADDITION_MODE;
+    return PICMAN_ADDITION_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lLit", 4) == 0)           /* Linear light (ps7)*/
     {
       if (CONVERSION_WARNINGS)
@@ -706,7 +706,7 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "pLit", 4) == 0)           /* Pin light (ps7)*/
     {
@@ -716,7 +716,7 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "vLit", 4) == 0)           /* Vivid light (ps7)*/
     {
@@ -726,7 +726,7 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
   if (g_ascii_strncasecmp (psd_mode, "hMix", 4) == 0)           /* Hard Mix (CS)*/
     {
@@ -736,7 +736,7 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                      mode_name);
         }
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     }
 
   if (CONVERSION_WARNINGS)
@@ -746,123 +746,123 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
                  mode_name);
       g_free (mode_name);
     }
-  return GIMP_NORMAL_MODE;
+  return PICMAN_NORMAL_MODE;
 }
 
 gchar *
-gimp_to_psd_blend_mode (const GimpLayerModeEffects gimp_layer_mode)
+picman_to_psd_blend_mode (const PicmanLayerModeEffects picman_layer_mode)
 {
   gchar        *psd_mode;
 
-  switch (gimp_layer_mode)
+  switch (picman_layer_mode)
     {
-      case GIMP_NORMAL_MODE:
+      case PICMAN_NORMAL_MODE:
         psd_mode = g_strndup ("norm", 4);                       /* Normal (ps3) */
         break;
-      case GIMP_DISSOLVE_MODE:
+      case PICMAN_DISSOLVE_MODE:
         psd_mode = g_strndup ("diss", 4);                       /* Dissolve (ps3) */
         break;
-      case GIMP_BEHIND_MODE:
+      case PICMAN_BEHIND_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
-      case GIMP_MULTIPLY_MODE:
+      case PICMAN_MULTIPLY_MODE:
         psd_mode = g_strndup ("mul ", 4);                       /* Multiply (ps3) */
         break;
-      case GIMP_SCREEN_MODE:
+      case PICMAN_SCREEN_MODE:
         psd_mode = g_strndup ("scrn", 4);                       /* Screen (ps3) */
         break;
-      case GIMP_OVERLAY_MODE:
+      case PICMAN_OVERLAY_MODE:
         if (CONVERSION_WARNINGS)
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("over", 4);                       /* Overlay (ps3) */
         break;
-      case GIMP_DIFFERENCE_MODE:
+      case PICMAN_DIFFERENCE_MODE:
         psd_mode = g_strndup ("diff", 4);                       /* Difference (ps3) */
         break;
-      case GIMP_ADDITION_MODE:
+      case PICMAN_ADDITION_MODE:
         psd_mode = g_strndup ("lddg", 4);                       /* Linear dodge (ps7)*/
         break;
-      case GIMP_SUBTRACT_MODE:
+      case PICMAN_SUBTRACT_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
-      case GIMP_DARKEN_ONLY_MODE:
+      case PICMAN_DARKEN_ONLY_MODE:
         psd_mode = g_strndup ("dark", 4);                       /* Darken (ps3) */
         break;
-      case GIMP_LIGHTEN_ONLY_MODE:
+      case PICMAN_LIGHTEN_ONLY_MODE:
         psd_mode = g_strndup ("lite", 4);                       /* Lighten (ps3) */
         break;
-      case GIMP_HUE_MODE:
+      case PICMAN_HUE_MODE:
         psd_mode = g_strndup ("hue ", 4);                       /* Hue (ps3) */
         break;
-      case GIMP_SATURATION_MODE:
+      case PICMAN_SATURATION_MODE:
         if (CONVERSION_WARNINGS)
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("sat ", 4);                       /* Saturation (ps3) */
         break;
-      case GIMP_COLOR_MODE:
+      case PICMAN_COLOR_MODE:
         psd_mode = g_strndup ("colr", 4);                       /* Color (ps3) */
         break;
-      case GIMP_VALUE_MODE:
+      case PICMAN_VALUE_MODE:
         if (CONVERSION_WARNINGS)
-          g_message ("Gimp uses a different equation to photoshop for "
+          g_message ("Picman uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("lum ", 4);                       /* Luminosity (ps3) */
         break;
-      case GIMP_DIVIDE_MODE:
+      case PICMAN_DIVIDE_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
-      case GIMP_DODGE_MODE:
+      case PICMAN_DODGE_MODE:
         psd_mode = g_strndup ("div ", 4);                       /* Color Dodge (ps6) */
         break;
-      case GIMP_BURN_MODE:
+      case PICMAN_BURN_MODE:
         psd_mode = g_strndup ("idiv", 4);                       /* Color Burn (ps6) */
         break;
-      case GIMP_HARDLIGHT_MODE:
+      case PICMAN_HARDLIGHT_MODE:
         psd_mode = g_strndup ("hLit", 4);                       /* Hard Light (ps3) */
         break;
-      case GIMP_SOFTLIGHT_MODE:
+      case PICMAN_SOFTLIGHT_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
          psd_mode = g_strndup ("sLit", 4);                       /* Soft Light (ps3) */
         break;
-      case GIMP_GRAIN_EXTRACT_MODE:
+      case PICMAN_GRAIN_EXTRACT_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
-      case GIMP_GRAIN_MERGE_MODE:
+      case PICMAN_GRAIN_MERGE_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
-      case GIMP_COLOR_ERASE_MODE:
+      case PICMAN_COLOR_ERASE_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
         break;
 
       default:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
-                     gimp_layer_mode_effects_name (gimp_layer_mode));
+                     picman_layer_mode_effects_name (picman_layer_mode));
         psd_mode = g_strndup ("norm", 4);
     }
 
@@ -870,7 +870,7 @@ gimp_to_psd_blend_mode (const GimpLayerModeEffects gimp_layer_mode)
 }
 
 static gchar *
-gimp_layer_mode_effects_name (const GimpLayerModeEffects mode)
+picman_layer_mode_effects_name (const PicmanLayerModeEffects mode)
 {
   static gchar *layer_mode_effects_names[] =
   {
@@ -899,7 +899,7 @@ gimp_layer_mode_effects_name (const GimpLayerModeEffects mode)
     "COLOR ERASE"
   };
   static gchar *err_name = NULL;
-  if (mode >= 0 && mode <= GIMP_COLOR_ERASE_MODE)
+  if (mode >= 0 && mode <= PICMAN_COLOR_ERASE_MODE)
     return layer_mode_effects_names[mode];
   g_free (err_name);
 

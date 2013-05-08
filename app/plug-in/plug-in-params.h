@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 #define __PLUG_IN_PARAMS_H__
 
 
-GimpValueArray * plug_in_params_to_args (GParamSpec     **pspecs,
+PicmanValueArray * plug_in_params_to_args (GParamSpec     **pspecs,
                                          gint             n_pspecs,
                                          GPParam         *params,
                                          gint             n_params,
                                          gboolean         return_values,
                                          gboolean         full_copy);
-GPParam     * plug_in_args_to_params    (GimpValueArray  *args,
+GPParam     * plug_in_args_to_params    (PicmanValueArray  *args,
                                          gboolean         full_copy);
 
 

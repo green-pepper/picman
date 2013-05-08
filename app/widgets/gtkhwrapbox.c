@@ -1,4 +1,4 @@
-/* GTK - The GIMP Toolkit
+/* GTK - The PICMAN Toolkit
  * Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
  *
  * GtkHWrapBox: Horizontal wrapping box widget
@@ -26,7 +26,7 @@
 
 #include "gtkhwrapbox.h"
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 
 /* --- prototypes --- */

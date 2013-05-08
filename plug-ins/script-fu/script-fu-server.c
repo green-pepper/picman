@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ typedef short sa_family_t;	/* Not defined by winsock */
  */
 #define AI_ADDRCONFIG 0x0400
 #endif
-#include <libgimpbase/gimpwin32-io.h>
+#include <libpicmanbase/picmanwin32-io.h>
 #else
 #include <sys/socket.h>
 #ifdef HAVE_SYS_SELECT_H
@@ -64,8 +64,8 @@ typedef short sa_family_t;	/* Not defined by winsock */
 
 #include <glib/gstdio.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "script-fu-intl.h"
 
@@ -217,13 +217,13 @@ script_fu_server_get_mode (void)
 void
 script_fu_server_run (const gchar      *name,
                       gint              nparams,
-                      const GimpParam  *params,
+                      const PicmanParam  *params,
                       gint             *nreturn_vals,
-                      GimpParam       **return_vals)
+                      PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
 
   run_mode = params[0].data.d_int32;
 
@@ -232,7 +232,7 @@ script_fu_server_run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       if (server_interface ())
         {
           server_mode = TRUE;
@@ -242,7 +242,7 @@ script_fu_server_run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Set server_mode to TRUE  */
       server_mode = TRUE;
 
@@ -250,9 +250,9 @@ script_fu_server_run (const gchar      *name,
       server_start (params[1].data.d_int32, params[2].data.d_string);
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      status = GIMP_PDB_CALLING_ERROR;
-      g_warning ("Script-Fu server does not handle \"GIMP_RUN_WITH_LAST_VALS\"");
+    case PICMAN_RUN_WITH_LAST_VALS:
+      status = PICMAN_PDB_CALLING_ERROR;
+      g_warning ("Script-Fu server does not handle \"PICMAN_RUN_WITH_LAST_VALS\"");
 
     default:
       break;
@@ -261,7 +261,7 @@ script_fu_server_run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -431,20 +431,20 @@ server_progress_set_value (gdouble   percentage,
 static const gchar *
 server_progress_install (void)
 {
-  GimpProgressVtable vtable = { 0, };
+  PicmanProgressVtable vtable = { 0, };
 
   vtable.start     = server_progress_start;
   vtable.end       = server_progress_end;
   vtable.set_text  = server_progress_set_text;
   vtable.set_value = server_progress_set_value;
 
-  return gimp_progress_install_vtable (&vtable, NULL);
+  return picman_progress_install_vtable (&vtable, NULL);
 }
 
 static void
 server_progress_uninstall (const gchar *progress)
 {
-  gimp_progress_uninstall (progress);
+  picman_progress_uninstall (progress);
 }
 
 static void
@@ -702,7 +702,7 @@ make_socket (const struct addrinfo *ai)
       else
         {
           print_socket_api_error ("WSAStartup");
-          gimp_quit ();
+          picman_quit ();
         }
     }
 #endif
@@ -712,7 +712,7 @@ make_socket (const struct addrinfo *ai)
   if (sock < 0)
     {
       print_socket_api_error ("socket");
-      gimp_quit ();
+      picman_quit ();
     }
 
   setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &v, sizeof(v));
@@ -725,7 +725,7 @@ make_socket (const struct addrinfo *ai)
       if (setsockopt (sock, IPPROTO_IPV6, IPV6_V6ONLY, &v, sizeof(v)) < 0)
         {
           print_socket_api_error ("setsockopt");
-          gimp_quit();
+          picman_quit();
         }
     }
 #endif
@@ -733,7 +733,7 @@ make_socket (const struct addrinfo *ai)
   if (bind (sock, ai->ai_addr, ai->ai_addrlen) < 0)
     {
       print_socket_api_error ("bind");
-      gimp_quit ();
+      picman_quit ();
     }
 
   return sock;
@@ -809,11 +809,11 @@ server_interface (void)
 
   INIT_I18N();
 
-  gimp_ui_init ("script-fu", FALSE);
+  picman_ui_init ("script-fu", FALSE);
 
-  dlg = gimp_dialog_new (_("Script-Fu Server Options"), "gimp-script-fu",
+  dlg = picman_dialog_new (_("Script-Fu Server Options"), "picman-script-fu",
                          NULL, 0,
-                         gimp_standard_help_func, "plug-in-script-fu-server",
+                         picman_standard_help_func, "plug-in-script-fu-server",
 
                          GTK_STOCK_CANCEL,   GTK_RESPONSE_CANCEL,
                          _("_Start Server"), GTK_RESPONSE_OK,
@@ -843,13 +843,13 @@ server_interface (void)
   /*  The server port  */
   sint.port_entry = gtk_entry_new ();
   gtk_entry_set_text (GTK_ENTRY (sint.port_entry), "10008");
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Server port:"), 0.0, 0.5,
                              sint.port_entry, 1, FALSE);
 
   /*  The server logfile  */
   sint.log_entry = gtk_entry_new ();
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Server logfile:"), 0.0, 0.5,
                              sint.log_entry, 1, FALSE);
 

@@ -1,6 +1,6 @@
-/* curve_bend plugin for GIMP */
+/* curve_bend plugin for PICMAN */
 
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,9 +25,9 @@
  *  (2002/09/xx)  v1.1.18 mitch and gsr: clean interface
  *  (2000/02/16)  v1.1.17b hof: added spinbuttons for rotate entry
  *  (2000/02/16)  v1.1.17 hof: undo bugfix (#6012)
- *                             don't call gimp_undo_push_group_end
- *                             after gimp_displays_flush
- *  (1999/09/13)  v1.01  hof: PDB-calls updated for gimp 1.1.9
+ *                             don't call picman_undo_push_group_end
+ *                             after picman_displays_flush
+ *  (1999/09/13)  v1.01  hof: PDB-calls updated for picman 1.1.9
  *  (1999/05/10)  v1.0   hof: first public release
  *  (1999/04/23)  v0.0   hof: coding started,
  *                            splines and dialog parts are similar to curves.c
@@ -41,16 +41,16 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Defines */
 #define PLUG_IN_PROC        "plug-in-curve-bend"
 #define PLUG_IN_BINARY      "curve-bend"
-#define PLUG_IN_ROLE        "gimp-curve-bend"
+#define PLUG_IN_ROLE        "picman-curve-bend"
 #define PLUG_IN_VERSION     "v1.3.18 (2003/08/26)"
 #define PLUG_IN_IMAGE_TYPES "RGB*, GRAY*"
 #define PLUG_IN_AUTHOR      "Wolfgang Hofer (hof@hotbot.com)"
@@ -137,7 +137,7 @@ struct _BenderDialog
 
   GdkCursor *cursor_busy;
 
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   int        color;
   int        outline;
   gint       preview;
@@ -207,14 +207,14 @@ typedef double CRMatrix[4][4];
 
 typedef struct
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint       x1;
   gint       y1;
   gint       x2;
   gint       y2;
   gint       index_alpha;   /* 0 == no alpha, 1 == GREYA, 3 == RGBA */
   gint       bpp;
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
   gint       tile_width;
   gint       tile_height;
 } t_GDRW;
@@ -230,11 +230,11 @@ typedef struct
 static void  query (void);
 static void  run   (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *param,
+                    const PicmanParam  *param,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals);
+                    PicmanParam       **return_vals);
 
-static BenderDialog *  bender_new_dialog              (GimpDrawable *);
+static BenderDialog *  bender_new_dialog              (PicmanDrawable *);
 static void            bender_update                  (BenderDialog *, int);
 static void            bender_plot_curve              (BenderDialog *,
                                                        int, int, int, int,
@@ -264,12 +264,12 @@ static gint            bender_graph_events            (GtkWidget *, GdkEvent *,
 static void            bender_CR_compose              (CRMatrix, CRMatrix,
                                                        CRMatrix);
 static void            bender_init_min_max            (BenderDialog *, gint32);
-static BenderDialog *  do_dialog                      (GimpDrawable *);
-static void            p_init_gdrw                    (t_GDRW *gdrw, GimpDrawable *drawable,
+static BenderDialog *  do_dialog                      (PicmanDrawable *);
+static void            p_init_gdrw                    (t_GDRW *gdrw, PicmanDrawable *drawable,
                                                        int dirty, int shadow);
 static void            p_end_gdrw                     (t_GDRW *gdrw);
-static gint32          p_main_bend                    (BenderDialog *, GimpDrawable *, gint);
-static gint32          p_create_pv_image              (GimpDrawable *src_drawable, gint32 *layer_id);
+static gint32          p_main_bend                    (BenderDialog *, PicmanDrawable *, gint);
+static gint32          p_create_pv_image              (PicmanDrawable *src_drawable, gint32 *layer_id);
 static void            p_render_preview               (BenderDialog *cd, gint32 layer_id);
 static void            p_get_pixel                    (t_GDRW *gdrw,
                                                        gint32 x, gint32 y, guchar *pixel);
@@ -297,7 +297,7 @@ static int             p_save_pointfile               (BenderDialog *cd, const g
 
 
 /* Global Variables */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,   /* init_proc  */
   NULL,   /* quit_proc  */
@@ -333,22 +333,22 @@ p_pdb_procedure_available (const gchar *proc_name)
 {
   gint             l_nparams;
   gint             l_nreturn_vals;
-  GimpPDBProcType  l_proc_type;
+  PicmanPDBProcType  l_proc_type;
   gchar           *l_proc_blurb;
   gchar           *l_proc_help;
   gchar           *l_proc_author;
   gchar           *l_proc_copyright;
   gchar           *l_proc_date;
-  GimpParamDef    *l_params;
-  GimpParamDef    *l_return_vals;
+  PicmanParamDef    *l_params;
+  PicmanParamDef    *l_return_vals;
   gint             l_rc;
 
   l_rc = 0;
 
-  /* Query the gimp application's procedural database
+  /* Query the picman application's procedural database
    *  regarding a particular procedure.
    */
-  if (gimp_procedural_db_proc_info (proc_name,
+  if (picman_procedural_db_proc_info (proc_name,
                                     &l_proc_blurb,
                                     &l_proc_help,
                                     &l_proc_author,
@@ -369,7 +369,7 @@ p_pdb_procedure_available (const gchar *proc_name)
 #endif /* ROTATE_OPTIMIZE */
 
 static gint
-p_gimp_rotate (gint32  image_id,
+p_picman_rotate (gint32  image_id,
                gint32  drawable_id,
                gint32  interpolation,
                gdouble angle_deg)
@@ -379,7 +379,7 @@ p_gimp_rotate (gint32  image_id,
 
 #ifdef ROTATE_OPTIMIZE
   static gchar *l_rotate_proc = "plug-in-rotate";
-  GimpParam    *return_vals;
+  PicmanParam    *return_vals;
   gint          nreturn_vals;
   gint32        l_angle_step;
   gint          l_nparams;
@@ -395,16 +395,16 @@ p_gimp_rotate (gint32  image_id,
       if (l_nparams == 5)
         {
           /* use faster rotate plugin on multiples of 90 degrees */
-          return_vals = gimp_run_procedure (l_rotate_proc,
+          return_vals = picman_run_procedure (l_rotate_proc,
                                             &nreturn_vals,
-                                            GIMP_PDB_INT32, GIMP_RUN_NONINTERACTIVE,
-                                            GIMP_PDB_IMAGE, image_id,
-                                            GIMP_PDB_DRAWABLE, drawable_id,
-                                            GIMP_PDB_INT32, l_angle_step,
-                                            GIMP_PDB_INT32, FALSE,         /* dont rotate the whole image */
-                                            GIMP_PDB_END);
+                                            PICMAN_PDB_INT32, PICMAN_RUN_NONINTERACTIVE,
+                                            PICMAN_PDB_IMAGE, image_id,
+                                            PICMAN_PDB_DRAWABLE, drawable_id,
+                                            PICMAN_PDB_INT32, l_angle_step,
+                                            PICMAN_PDB_INT32, FALSE,         /* dont rotate the whole image */
+                                            PICMAN_PDB_END);
 
-          if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+          if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
             {
               return 0;
             }
@@ -414,19 +414,19 @@ p_gimp_rotate (gint32  image_id,
 
   l_angle_rad = (angle_deg * G_PI) / 180.0;
 
-  gimp_context_push ();
+  picman_context_push ();
   if (! interpolation)
-    gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-  gimp_context_set_transform_resize (GIMP_TRANSFORM_RESIZE_ADJUST);
-  l_rc = gimp_item_transform_rotate (drawable_id,
+    picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+  picman_context_set_transform_resize (PICMAN_TRANSFORM_RESIZE_ADJUST);
+  l_rc = picman_item_transform_rotate (drawable_id,
                                      l_angle_rad,
                                      TRUE /*auto_center*/,
                                      -1.0 /*center_x*/,
                                      -1.0 /*center_y*/);
-  gimp_context_pop ();
+  picman_context_pop ();
 
   if (l_rc == -1)
-    g_printerr ("Error: gimp_drawable_transform_rotate_default call failed\n");
+    g_printerr ("Error: picman_drawable_transform_rotate_default call failed\n");
 
   return l_rc;
 }
@@ -440,24 +440,24 @@ static gint32
 p_if_selection_float_it (gint32 image_id,
                          gint32 layer_id)
 {
-  if (! gimp_layer_is_floating_sel (layer_id))
+  if (! picman_layer_is_floating_sel (layer_id))
     {
       gint32   l_sel_channel_id;
       gint32   l_x1, l_x2, l_y1, l_y2;
       gint32   non_empty;
 
       /* check and see if we have a selection mask */
-      l_sel_channel_id  = gimp_image_get_selection (image_id);
+      l_sel_channel_id  = picman_image_get_selection (image_id);
 
-      gimp_selection_bounds (image_id, &non_empty, &l_x1, &l_y1, &l_x2, &l_y2);
+      picman_selection_bounds (image_id, &non_empty, &l_x1, &l_y1, &l_x2, &l_y2);
 
       if (non_empty && l_sel_channel_id >= 0)
         {
           /* selection is TRUE, make a layer (floating selection) from
              the selection  */
-          if (gimp_edit_copy (layer_id))
+          if (picman_edit_copy (layer_id))
             {
-              layer_id = gimp_edit_paste (layer_id, FALSE);
+              layer_id = picman_edit_paste (layer_id, FALSE);
             }
           else
             {
@@ -484,45 +484,45 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,      "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"},
-    { GIMP_PDB_IMAGE,      "image", "Input image" },
-    { GIMP_PDB_DRAWABLE,   "drawable", "Input drawable (must be a layer without layermask)"},
-    { GIMP_PDB_FLOAT,      "rotation", "Direction {angle 0 to 360 degree } of the bend effect"},
-    { GIMP_PDB_INT32,      "smoothing", "Smoothing { TRUE, FALSE }"},
-    { GIMP_PDB_INT32,      "antialias", "Antialias { TRUE, FALSE }"},
-    { GIMP_PDB_INT32,      "work-on-copy", "{ TRUE, FALSE } TRUE: copy the drawable and bend the copy"},
-    { GIMP_PDB_INT32,      "curve-type", " { 0, 1 } 0 == smooth (use 17 points), 1 == freehand (use 256 val_y) "},
-    { GIMP_PDB_INT32,      "argc-upper-point-x", "{2 <= argc <= 17} "},
-    { GIMP_PDB_FLOATARRAY, "upper-point-x", "array of 17 x point_koords { 0.0 <= x <= 1.0 or -1 for unused point }"},
-    { GIMP_PDB_INT32,      "argc-upper-point-y", "{2 <= argc <= 17} "},
-    { GIMP_PDB_FLOATARRAY, "upper-point-y", "array of 17 y point_koords { 0.0 <= y <= 1.0 or -1 for unused point }"},
-    { GIMP_PDB_INT32,      "argc-lower_point-x", "{2 <= argc <= 17} "},
-    { GIMP_PDB_FLOATARRAY, "lower-point-x", "array of 17 x point_koords { 0.0 <= x <= 1.0 or -1 for unused point }"},
-    { GIMP_PDB_INT32,      "argc-lower-point-y", "{2 <= argc <= 17} "},
-    { GIMP_PDB_FLOATARRAY, "lower_point_y", "array of 17 y point_koords { 0.0 <= y <= 1.0 or -1 for unused point }"},
-    { GIMP_PDB_INT32,      "argc-upper-val-y", "{ 256 } "},
-    { GIMP_PDB_INT8ARRAY,  "upper-val-y",   "array of 256 y freehand koord { 0 <= y <= 255 }"},
-    { GIMP_PDB_INT32,      "argc-lower-val-y", "{ 256 } "},
-    { GIMP_PDB_INT8ARRAY,  "lower-val-y",   "array of 256 y freehand koord { 0 <= y <= 255 }"}
+    { PICMAN_PDB_INT32,      "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"},
+    { PICMAN_PDB_IMAGE,      "image", "Input image" },
+    { PICMAN_PDB_DRAWABLE,   "drawable", "Input drawable (must be a layer without layermask)"},
+    { PICMAN_PDB_FLOAT,      "rotation", "Direction {angle 0 to 360 degree } of the bend effect"},
+    { PICMAN_PDB_INT32,      "smoothing", "Smoothing { TRUE, FALSE }"},
+    { PICMAN_PDB_INT32,      "antialias", "Antialias { TRUE, FALSE }"},
+    { PICMAN_PDB_INT32,      "work-on-copy", "{ TRUE, FALSE } TRUE: copy the drawable and bend the copy"},
+    { PICMAN_PDB_INT32,      "curve-type", " { 0, 1 } 0 == smooth (use 17 points), 1 == freehand (use 256 val_y) "},
+    { PICMAN_PDB_INT32,      "argc-upper-point-x", "{2 <= argc <= 17} "},
+    { PICMAN_PDB_FLOATARRAY, "upper-point-x", "array of 17 x point_koords { 0.0 <= x <= 1.0 or -1 for unused point }"},
+    { PICMAN_PDB_INT32,      "argc-upper-point-y", "{2 <= argc <= 17} "},
+    { PICMAN_PDB_FLOATARRAY, "upper-point-y", "array of 17 y point_koords { 0.0 <= y <= 1.0 or -1 for unused point }"},
+    { PICMAN_PDB_INT32,      "argc-lower_point-x", "{2 <= argc <= 17} "},
+    { PICMAN_PDB_FLOATARRAY, "lower-point-x", "array of 17 x point_koords { 0.0 <= x <= 1.0 or -1 for unused point }"},
+    { PICMAN_PDB_INT32,      "argc-lower-point-y", "{2 <= argc <= 17} "},
+    { PICMAN_PDB_FLOATARRAY, "lower_point_y", "array of 17 y point_koords { 0.0 <= y <= 1.0 or -1 for unused point }"},
+    { PICMAN_PDB_INT32,      "argc-upper-val-y", "{ 256 } "},
+    { PICMAN_PDB_INT8ARRAY,  "upper-val-y",   "array of 256 y freehand koord { 0 <= y <= 255 }"},
+    { PICMAN_PDB_INT32,      "argc-lower-val-y", "{ 256 } "},
+    { PICMAN_PDB_INT8ARRAY,  "lower-val-y",   "array of 256 y freehand koord { 0 <= y <= 255 }"}
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_LAYER, "bent-layer", "the handled layer" }
+    { PICMAN_PDB_LAYER, "bent-layer", "the handled layer" }
   };
 
-  static const GimpParamDef args_iter[] =
+  static const PicmanParamDef args_iter[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_INT32, "total-steps", "total number of steps (# of layers-1 to apply the related plug-in)" },
-    { GIMP_PDB_FLOAT, "current-step", "current (for linear iterations this is the layerstack position, otherwise some value inbetween)" },
-    { GIMP_PDB_INT32, "len-struct", "length of stored data structure with id is equal to the plug_in  proc_name" },
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_INT32, "total-steps", "total number of steps (# of layers-1 to apply the related plug-in)" },
+    { PICMAN_PDB_FLOAT, "current-step", "current (for linear iterations this is the layerstack position, otherwise some value inbetween)" },
+    { PICMAN_PDB_INT32, "len-struct", "length of stored data structure with id is equal to the plug_in  proc_name" },
   };
 
   /* the actual installation of the bend plugin */
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Bend the image using two control curves"),
                           "This plug-in does bend the active layer "
                           "If there is a current selection it is copied to "
@@ -546,16 +546,16 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Curve Bend..."),
                           PLUG_IN_IMAGE_TYPES,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args,
                           return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 
    /* the installation of the Iterator procedure for the bend plugin */
-  gimp_install_procedure (PLUG_IN_ITER_NAME,
+  picman_install_procedure (PLUG_IN_ITER_NAME,
                           "This procedure calculates the modified values "
                           "for one iterationstep for the call of "
                           "plug_in_curve_bend",
@@ -565,7 +565,7 @@ query (void)
                           PLUG_IN_VERSION,
                           NULL,    /* do not appear in menus */
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args_iter), 0,
                           args_iter, NULL);
 }
@@ -573,13 +573,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
   const gchar  *l_env;
   BenderDialog *cd;
-  GimpDrawable *l_active_drawable    = NULL;
+  PicmanDrawable *l_active_drawable    = NULL;
   gint32        l_active_drawable_id = -1;
   gint32        l_image_id           = -1;
   gint32        l_layer_id           = -1;
@@ -587,14 +587,14 @@ run (const gchar      *name,
   GError       *error                = NULL;
 
   /* Get the runmode from the in-parameters */
-  GimpRunMode run_mode = param[0].data.d_int32;
+  PicmanRunMode run_mode = param[0].data.d_int32;
 
   /* status variable, use it to check for errors in invocation usualy only
      during non-interactive calling */
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   /*always return at least the status to the caller. */
-  static GimpParam values[2];
+  static PicmanParam values[2];
 
   INIT_I18N ();
 
@@ -608,10 +608,10 @@ run (const gchar      *name,
 
   if (gb_debug) g_printerr ("\n\nDEBUG: run %s\n", name);
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  values[1].type         = GIMP_PDB_LAYER;
+  values[1].type         = PICMAN_PDB_LAYER;
   values[1].data.d_int32 = -1;
 
   *nreturn_vals = 2;
@@ -629,7 +629,7 @@ run (const gchar      *name,
        * "plug_in_gap_layers_run_animfilter"
        * (always run noninteractive)
        */
-      if ((run_mode == GIMP_RUN_NONINTERACTIVE) && (nparams == 4))
+      if ((run_mode == PICMAN_RUN_NONINTERACTIVE) && (nparams == 4))
         {
           total_steps  =  param[1].data.d_int32;
           current_step =  param[2].data.d_float;
@@ -640,8 +640,8 @@ run (const gchar      *name,
               /* get _FROM and _TO data,
                * This data was stored by plug_in_gap_layers_run_animfilter
                */
-              gimp_get_data (PLUG_IN_DATA_ITER_FROM, &bval_from);
-              gimp_get_data (PLUG_IN_DATA_ITER_TO,   &bval_to);
+              picman_get_data (PLUG_IN_DATA_ITER_FROM, &bval_from);
+              picman_get_data (PLUG_IN_DATA_ITER_TO,   &bval_to);
               bval = bval_from;
 
               p_delta_gdouble (&bval.rotation, bval_from.rotation,
@@ -657,16 +657,16 @@ run (const gchar      *name,
               bval.total_steps = total_steps;
               bval.current_step = current_step;
 
-              gimp_set_data (PLUG_IN_PROC, &bval, sizeof (bval));
+              picman_set_data (PLUG_IN_PROC, &bval, sizeof (bval));
             }
           else
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
       values[0].data.d_status = status;
@@ -677,21 +677,21 @@ run (const gchar      *name,
   l_image_id = param[1].data.d_int32;
   l_layer_id = param[2].data.d_drawable;
 
-  if (! gimp_item_is_layer (l_layer_id))
+  if (! picman_item_is_layer (l_layer_id))
     {
       g_set_error (&error, 0, 0, "%s",
                    _("Can operate on layers only "
                      "(but was called on channel or mask)."));
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /* check for layermask */
-  l_layer_mask_id = gimp_layer_get_mask (l_layer_id);
+  l_layer_mask_id = picman_layer_get_mask (l_layer_id);
   if (l_layer_mask_id >= 0)
     {
       g_set_error (&error, 0, 0, "%s",
                    _("Cannot operate on layers with masks."));
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /* if there is a selection, make it the floating selection layer */
@@ -699,33 +699,33 @@ run (const gchar      *name,
   if (l_active_drawable_id < 0)
     {
       /* could not float the selection because selection rectangle
-       * is completely empty return GIMP_PDB_EXECUTION_ERROR
+       * is completely empty return PICMAN_PDB_EXECUTION_ERROR
        */
       g_set_error (&error, 0, 0, "%s",
                    _("Cannot operate on empty selections."));
-       status = GIMP_PDB_EXECUTION_ERROR;
+       status = PICMAN_PDB_EXECUTION_ERROR;
     }
   else
     {
-      l_active_drawable = gimp_drawable_get (l_active_drawable_id);
+      l_active_drawable = picman_drawable_get (l_active_drawable_id);
     }
 
   /* how are we running today? */
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /* how are we running today? */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /* Possibly retrieve data from a previous run */
-          /* gimp_get_data (PLUG_IN_PROC, &g_bndvals); */
+          /* picman_get_data (PLUG_IN_PROC, &g_bndvals); */
 
           /* Get information from the dialog */
           cd = do_dialog (l_active_drawable);
           cd->show_progress = TRUE;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /* check to see if invoked with the correct number of parameters */
           if (nparams >= 20)
             {
@@ -762,11 +762,11 @@ run (const gchar      *name,
             }
           else
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           cd = g_new (BenderDialog, 1);
           cd->run = TRUE;
           cd->show_progress = TRUE;
@@ -781,10 +781,10 @@ run (const gchar      *name,
 
   if (! cd)
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /* Run the main function */
 
@@ -792,14 +792,14 @@ run (const gchar      *name,
         {
           gint32 l_bent_layer_id;
 
-          gimp_image_undo_group_start (l_image_id);
+          picman_image_undo_group_start (l_image_id);
 
           l_bent_layer_id = p_main_bend (cd, cd->drawable, cd->work_on_copy);
 
-          gimp_image_undo_group_end (l_image_id);
+          picman_image_undo_group_end (l_image_id);
 
           /* Store variable states for next run */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
             {
               p_store_values (cd);
             }
@@ -809,17 +809,17 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
         }
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -837,7 +837,7 @@ p_save_pointfile (BenderDialog *cd,
   if (!l_fp)
     {
       g_message (_("Could not open '%s' for writing: %s"),
-                 gimp_filename_to_utf8 (filename), g_strerror (errno));
+                 picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -889,7 +889,7 @@ p_load_pointfile (BenderDialog *cd,
   if (!l_fp)
     {
       g_message (_("Could not open '%s' for reading: %s"),
-                 gimp_filename_to_utf8 (filename), g_strerror (errno));
+                 picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -899,7 +899,7 @@ p_load_pointfile (BenderDialog *cd,
   if (! fgets (l_buff, 2000 - 1, l_fp))
     {
       g_message (_("Error while reading '%s': %s"),
-                 gimp_filename_to_utf8 (filename), g_strerror (errno));
+                 picman_filename_to_utf8 (filename), g_strerror (errno));
       fclose (l_fp);
       return -1;
     }
@@ -1009,7 +1009,7 @@ p_store_values (BenderDialog *cd)
   BenderValues l_bval;
 
   p_cd_to_bval(cd, &l_bval);
-  gimp_set_data(PLUG_IN_PROC, &l_bval, sizeof(l_bval));
+  picman_set_data(PLUG_IN_PROC, &l_bval, sizeof(l_bval));
 }
 
 static void
@@ -1020,7 +1020,7 @@ p_retrieve_values (BenderDialog *cd)
   l_bval.total_steps = 0;
   l_bval.current_step = -444.4;  /* init with an invalid  dummy value */
 
-  gimp_get_data (PLUG_IN_PROC, &l_bval);
+  picman_get_data (PLUG_IN_PROC, &l_bval);
 
   if (l_bval.total_steps == 0)
   {
@@ -1040,8 +1040,8 @@ p_retrieve_values (BenderDialog *cd)
     *cd->bval_curr = l_bval;
 
     /* it seems that we are called from GAP with "Varying Values" */
-    gimp_get_data(PLUG_IN_DATA_ITER_FROM, cd->bval_from);
-    gimp_get_data(PLUG_IN_DATA_ITER_TO,   cd->bval_to);
+    picman_get_data(PLUG_IN_DATA_ITER_FROM, cd->bval_from);
+    picman_get_data(PLUG_IN_DATA_ITER_TO,   cd->bval_to);
     *cd->bval_curr = l_bval;
     p_cd_from_bval(cd, cd->bval_curr);
     cd->work_on_copy = FALSE;
@@ -1125,12 +1125,12 @@ p_copy_yval (BenderDialog *cd,
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
 static BenderDialog *
-do_dialog (GimpDrawable *drawable)
+do_dialog (PicmanDrawable *drawable)
 {
   BenderDialog *cd;
 
   /* Init GTK  */
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   /*  The curve_bend dialog  */
   cd = bender_new_dialog (drawable);
@@ -1147,7 +1147,7 @@ do_dialog (GimpDrawable *drawable)
   gtk_main ();
   gdk_flush ();
 
-  gimp_image_delete(cd->preview_image_id);
+  picman_image_delete(cd->preview_image_id);
   cd->preview_image_id = -1;
   cd->preview_layer_id1 = -1;
   cd->preview_layer_id2 = -1;
@@ -1160,7 +1160,7 @@ do_dialog (GimpDrawable *drawable)
 /**************************/
 
 static BenderDialog *
-bender_new_dialog (GimpDrawable *drawable)
+bender_new_dialog (PicmanDrawable *drawable)
 {
   BenderDialog *cd;
   GtkWidget  *main_hbox;
@@ -1193,7 +1193,7 @@ bender_new_dialog (GimpDrawable *drawable)
   cd->rotation = 0.0;       /* vertical bend */
 
   cd->drawable = drawable;
-  cd->color = gimp_drawable_is_rgb (cd->drawable->drawable_id);
+  cd->color = picman_drawable_is_rgb (cd->drawable->drawable_id);
 
   cd->run = FALSE;
   cd->bval_from = NULL;
@@ -1221,9 +1221,9 @@ bender_new_dialog (GimpDrawable *drawable)
   p_retrieve_values(cd);       /* Possibly retrieve data from a previous run */
 
   /*  The shell and main vbox  */
-  cd->shell = gimp_dialog_new (_("Curve Bend"), PLUG_IN_ROLE,
+  cd->shell = picman_dialog_new (_("Curve Bend"), PLUG_IN_ROLE,
                                NULL, 0,
-                               gimp_standard_help_func, PLUG_IN_PROC,
+                               picman_standard_help_func, PLUG_IN_PROC,
 
                                GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1235,7 +1235,7 @@ bender_new_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (cd->shell));
+  picman_window_set_transient (GTK_WINDOW (cd->shell));
 
   g_signal_connect (cd->shell, "response",
                     G_CALLBACK (bender_response),
@@ -1258,7 +1258,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_widget_show (vbox);
 
   /* Preview area, top of column */
-  frame = gimp_frame_new (_("Preview"));
+  frame = picman_frame_new (_("Preview"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1276,7 +1276,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_container_add (GTK_CONTAINER (abox), frame);
   gtk_widget_show (frame);
 
-  cd->pv_widget = gimp_preview_area_new ();
+  cd->pv_widget = picman_preview_area_new ();
   gtk_widget_set_size_request (cd->pv_widget,
                                PREVIEW_SIZE_X, PREVIEW_SIZE_Y);
   gtk_container_add (GTK_CONTAINER (frame), cd->pv_widget);
@@ -1306,7 +1306,7 @@ bender_new_dialog (GimpDrawable *drawable)
                     cd);
 
   /* Options area, bottom of column */
-  frame = gimp_frame_new (_("Options"));
+  frame = picman_frame_new (_("Options"));
   gtk_box_pack_end (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1324,7 +1324,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      0, 0.0, 360.0, 1, 45, 90,
                                      0.5, 1);
   cd->rotate_data = GTK_ADJUSTMENT (data);
@@ -1369,7 +1369,7 @@ bender_new_dialog (GimpDrawable *drawable)
                     cd);
 
   /*  The curves graph  */
-  frame = gimp_frame_new (_("Modify Curves"));
+  frame = picman_frame_new (_("Modify Curves"));
   gtk_box_pack_start (GTK_BOX (main_hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1397,7 +1397,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Curve for Border"),
+  frame = picman_int_radio_group_new (TRUE, _("Curve for Border"),
                                     G_CALLBACK (bender_border_callback),
                                     &cd->outline, cd->outline,
 
@@ -1412,7 +1412,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Curve Type"),
+  frame = picman_int_radio_group_new (TRUE, _("Curve Type"),
                                     G_CALLBACK (bender_type_callback),
                                     &cd->curve_type, cd->curve_type,
 
@@ -1436,7 +1436,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Copy the active curve to the other border"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1448,7 +1448,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Mirror the active curve to the other border"),
                            NULL);
 
@@ -1461,7 +1461,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Swap the two curves"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1469,11 +1469,11 @@ bender_new_dialog (GimpDrawable *drawable)
                     cd);
 
   /*  The Reset button  */
-  button = gtk_button_new_from_stock (GIMP_STOCK_RESET);
+  button = gtk_button_new_from_stock (PICMAN_STOCK_RESET);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Reset the active curve"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1490,7 +1490,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Load the curves from a file"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1502,7 +1502,7 @@ bender_new_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Save the curves to a file"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1529,9 +1529,9 @@ bender_update (BenderDialog *cd,
       gdk_flush ();
 
       if (cd->preview_layer_id2 >= 0)
-         gimp_image_remove_layer(cd->preview_image_id, cd->preview_layer_id2);
+         picman_image_remove_layer(cd->preview_image_id, cd->preview_layer_id2);
 
-      cd->preview_layer_id2 = p_main_bend(cd, gimp_drawable_get (cd->preview_layer_id1), TRUE /* work_on_copy*/ );
+      cd->preview_layer_id2 = p_main_bend(cd, picman_drawable_get (cd->preview_layer_id1), TRUE /* work_on_copy*/ );
       p_render_preview(cd, cd->preview_layer_id2);
 
       if (update & UP_DRAW)
@@ -1546,7 +1546,7 @@ bender_update (BenderDialog *cd,
        * that holds the bent version of the preview (if there is one)
        */
       if (cd->preview_layer_id2 < 0)
-         cd->preview_layer_id2 = p_main_bend(cd, gimp_drawable_get (cd->preview_layer_id1), TRUE /* work_on_copy*/ );
+         cd->preview_layer_id2 = p_main_bend(cd, picman_drawable_get (cd->preview_layer_id1), TRUE /* work_on_copy*/ );
       p_render_preview(cd, cd->preview_layer_id2);
 
       if (update & UP_DRAW)
@@ -1830,7 +1830,7 @@ bender_border_callback (GtkWidget *widget,
 {
   BenderDialog *cd;
 
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
   cd = g_object_get_data (G_OBJECT (widget), "cd");
   bender_update (cd, UP_GRAPH | UP_DRAW);
 }
@@ -1841,7 +1841,7 @@ bender_type_callback (GtkWidget *widget,
 {
   BenderDialog *cd;
 
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   cd = g_object_get_data (G_OBJECT (widget), "cd");
   if (! cd)
@@ -2361,13 +2361,13 @@ p_render_preview (BenderDialog *cd,
 {
    guchar        l_pixel[4];
    guchar       *l_buf, *l_ptr;
-   GimpDrawable *l_pv_drawable;
+   PicmanDrawable *l_pv_drawable;
    gint          l_x, l_y;
    gint          l_ofx, l_ofy;
    t_GDRW        l_gdrw;
    t_GDRW       *gdrw;
 
-   l_pv_drawable = gimp_drawable_get (layer_id);
+   l_pv_drawable = picman_drawable_get (layer_id);
 
    l_ptr = l_buf = g_new (guchar, PREVIEW_BPP * PREVIEW_SIZE_X * PREVIEW_SIZE_Y);
    gdrw = &l_gdrw;
@@ -2401,9 +2401,9 @@ p_render_preview (BenderDialog *cd,
         l_ptr += PREVIEW_BPP;
      }
   }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (cd->pv_widget),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (cd->pv_widget),
                           0, 0, PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           l_buf,
                           PREVIEW_BPP * PREVIEW_SIZE_X);
   g_free (l_buf);
@@ -2525,26 +2525,26 @@ p_lower_curve_extend (BenderDialog *cd,
 static void
 p_end_gdrw (t_GDRW *gdrw)
 {
-  gimp_pixel_fetcher_destroy (gdrw->pft);
+  picman_pixel_fetcher_destroy (gdrw->pft);
 }
 
 static void
 p_init_gdrw (t_GDRW       *gdrw,
-             GimpDrawable *drawable,
+             PicmanDrawable *drawable,
              int           dirty,
              int           shadow)
 {
   gdrw->drawable = drawable;
-  gdrw->pft = gimp_pixel_fetcher_new (drawable, FALSE);
-  gimp_pixel_fetcher_set_edge_mode (gdrw->pft, GIMP_PIXEL_FETCHER_EDGE_BLACK);
-  gdrw->tile_width = gimp_tile_width ();
-  gdrw->tile_height = gimp_tile_height ();
+  gdrw->pft = picman_pixel_fetcher_new (drawable, FALSE);
+  picman_pixel_fetcher_set_edge_mode (gdrw->pft, PICMAN_PIXEL_FETCHER_EDGE_BLACK);
+  gdrw->tile_width = picman_tile_width ();
+  gdrw->tile_height = picman_tile_height ();
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &gdrw->x1,
+  picman_drawable_mask_bounds (drawable->drawable_id, &gdrw->x1,
                              &gdrw->y1, &gdrw->x2, &gdrw->y2);
 
   gdrw->bpp = drawable->bpp;
-  if (gimp_drawable_has_alpha(drawable->drawable_id))
+  if (picman_drawable_has_alpha(drawable->drawable_id))
     {
       /* index of the alpha channelbyte {1|3} */
       gdrw->index_alpha = gdrw->bpp - 1;
@@ -2567,7 +2567,7 @@ p_get_pixel (t_GDRW *gdrw,
 {
   pixel[1] = 255;
   pixel[3] = 255;  /* simulate full visible alpha channel */
-  gimp_pixel_fetcher_get_pixel (gdrw->pft, x, y, pixel);
+  picman_pixel_fetcher_get_pixel (gdrw->pft, x, y, pixel);
 }
 
 static void
@@ -2576,7 +2576,7 @@ p_put_pixel (t_GDRW *gdrw,
              gint32  y,
              guchar *pixel)
 {
-  gimp_pixel_fetcher_put_pixel (gdrw->pft, x, y, pixel);
+  picman_pixel_fetcher_put_pixel (gdrw->pft, x, y, pixel);
 }
 
 static void
@@ -2634,22 +2634,22 @@ p_put_mix_pixel (t_GDRW *gdrw,
  */
 
 static void
-p_clear_drawable (GimpDrawable *drawable)
+p_clear_drawable (PicmanDrawable *drawable)
 {
-   GimpPixelRgn  pixel_rgn;
+   PicmanPixelRgn  pixel_rgn;
    gpointer      pr;
    guint         l_row;
    guchar       *l_ptr;
 
-   gimp_pixel_rgn_init (&pixel_rgn, drawable,
+   picman_pixel_rgn_init (&pixel_rgn, drawable,
                              0, 0, drawable->width, drawable->height,
                              TRUE,  /* dirty */
                              FALSE  /* shadow */
                              );
 
    /* clear the drawable with 0 Bytes (black full-transparent pixels) */
-   for (pr = gimp_pixel_rgns_register (1, &pixel_rgn);
-        pr != NULL; pr = gimp_pixel_rgns_process (pr))
+   for (pr = picman_pixel_rgns_register (1, &pixel_rgn);
+        pr != NULL; pr = picman_pixel_rgns_process (pr))
    {
       l_ptr = pixel_rgn.data;
       for ( l_row = 0; l_row < pixel_rgn.h; l_row++ )
@@ -2665,25 +2665,25 @@ p_clear_drawable (GimpDrawable *drawable)
  * ============================================================================
  */
 static gint32
-p_create_pv_image (GimpDrawable *src_drawable,
+p_create_pv_image (PicmanDrawable *src_drawable,
                    gint32    *layer_id)
 {
   gint32        l_new_image_id;
   guint         l_new_width;
   guint         l_new_height;
-  GimpImageType l_type;
+  PicmanImageType l_type;
   guint         l_x, l_y;
   double        l_scale;
   guchar        l_pixel[4];
-  GimpDrawable *dst_drawable;
+  PicmanDrawable *dst_drawable;
   t_GDRW        l_src_gdrw;
   t_GDRW        l_dst_gdrw;
 
-  l_new_image_id = gimp_image_new (PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
-                   gimp_image_base_type (gimp_item_get_image (src_drawable->drawable_id)));
-  gimp_image_undo_disable (l_new_image_id);
+  l_new_image_id = picman_image_new (PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
+                   picman_image_base_type (picman_item_get_image (src_drawable->drawable_id)));
+  picman_image_undo_disable (l_new_image_id);
 
-  l_type = gimp_drawable_type(src_drawable->drawable_id);
+  l_type = picman_drawable_type(src_drawable->drawable_id);
   if (src_drawable->height > src_drawable->width)
   {
     l_new_height = PV_IMG_HEIGHT;
@@ -2697,20 +2697,20 @@ p_create_pv_image (GimpDrawable *src_drawable,
     l_scale = (float)src_drawable->width / PV_IMG_WIDTH;
   }
 
-  *layer_id = gimp_layer_new(l_new_image_id, "preview_original",
+  *layer_id = picman_layer_new(l_new_image_id, "preview_original",
                              l_new_width, l_new_height,
                              l_type,
                              100.0,    /* opacity */
                              0);       /* mode NORMAL */
-  if (!gimp_drawable_has_alpha(*layer_id))
+  if (!picman_drawable_has_alpha(*layer_id))
   {
     /* always add alpha channel */
-    gimp_layer_add_alpha(*layer_id);
+    picman_layer_add_alpha(*layer_id);
   }
 
-  gimp_image_insert_layer(l_new_image_id, *layer_id, -1, 0);
+  picman_image_insert_layer(l_new_image_id, *layer_id, -1, 0);
 
-  dst_drawable = gimp_drawable_get (*layer_id);
+  dst_drawable = picman_drawable_get (*layer_id);
   p_init_gdrw(&l_src_gdrw, src_drawable, FALSE, FALSE);
   p_init_gdrw(&l_dst_gdrw, dst_drawable,  TRUE,  FALSE);
 
@@ -2726,7 +2726,7 @@ p_create_pv_image (GimpDrawable *src_drawable,
   p_end_gdrw(&l_src_gdrw);
   p_end_gdrw(&l_dst_gdrw);
 
-  /* gimp_display_new(l_new_image_id); */
+  /* picman_display_new(l_new_image_id); */
   return l_new_image_id;
 }
 
@@ -2734,50 +2734,50 @@ p_create_pv_image (GimpDrawable *src_drawable,
  * p_add_layer
  * ============================================================================
  */
-static GimpDrawable*
+static PicmanDrawable*
 p_add_layer (gint       width,
              gint       height,
-             GimpDrawable *src_drawable)
+             PicmanDrawable *src_drawable)
 {
-  GimpImageType  l_type;
-  static GimpDrawable  *l_new_drawable;
+  PicmanImageType  l_type;
+  static PicmanDrawable  *l_new_drawable;
   gint32     l_new_layer_id;
   char      *l_name;
   char      *l_name2;
   gdouble    l_opacity;
-  GimpLayerModeEffects l_mode;
+  PicmanLayerModeEffects l_mode;
   gint       l_visible;
   gint32     image_id;
   gint       stack_position;
 
-  image_id = gimp_item_get_image (src_drawable->drawable_id);
+  image_id = picman_item_get_image (src_drawable->drawable_id);
   stack_position = 0;                                  /* TODO:  should be same as src_layer */
 
   /* copy type, name, opacity and mode from src_drawable */
-  l_type     = gimp_drawable_type (src_drawable->drawable_id);
-  l_visible  = gimp_item_get_visible (src_drawable->drawable_id);
+  l_type     = picman_drawable_type (src_drawable->drawable_id);
+  l_visible  = picman_item_get_visible (src_drawable->drawable_id);
 
-  l_name2 = gimp_item_get_name (src_drawable->drawable_id);
+  l_name2 = picman_item_get_name (src_drawable->drawable_id);
   l_name = g_strdup_printf ("%s_b", l_name2);
   g_free (l_name2);
 
-  l_mode = gimp_layer_get_mode (src_drawable->drawable_id);
-  l_opacity = gimp_layer_get_opacity (src_drawable->drawable_id);  /* full opacity */
+  l_mode = picman_layer_get_mode (src_drawable->drawable_id);
+  l_opacity = picman_layer_get_opacity (src_drawable->drawable_id);  /* full opacity */
 
-  l_new_layer_id = gimp_layer_new (image_id, l_name,
+  l_new_layer_id = picman_layer_new (image_id, l_name,
                                    width, height,
                                    l_type,
                                    l_opacity,
                                    l_mode);
 
   g_free (l_name);
-  if (!gimp_drawable_has_alpha (l_new_layer_id))
+  if (!picman_drawable_has_alpha (l_new_layer_id))
     {
       /* always add alpha channel */
-      gimp_layer_add_alpha (l_new_layer_id);
+      picman_layer_add_alpha (l_new_layer_id);
     }
 
-  l_new_drawable = gimp_drawable_get (l_new_layer_id);
+  l_new_drawable = picman_drawable_get (l_new_layer_id);
   if (!l_new_drawable)
     {
       g_printerr ("p_add_layer: can't get new_drawable\n");
@@ -2785,10 +2785,10 @@ p_add_layer (gint       width,
     }
 
   /* add the copied layer to the temp. working image */
-  gimp_image_insert_layer (image_id, l_new_layer_id, -1, stack_position);
+  picman_image_insert_layer (image_id, l_new_layer_id, -1, stack_position);
 
   /* copy visiblity state */
-  gimp_item_set_visible (l_new_layer_id, l_visible);
+  picman_item_set_visible (l_new_layer_id, l_visible);
 
   return l_new_drawable;
 }
@@ -2952,7 +2952,7 @@ p_vertical_bend (BenderDialog *cd,
   l_progress_step = 1.0 / l_progress_max;
   l_progress = 0.0;
   if (cd->show_progress)
-    gimp_progress_init ( _("Curve Bend"));
+    picman_progress_init ( _("Curve Bend"));
 
   for (l_row = l_first_row; l_row <= l_last_row; l_row++)
     {
@@ -2968,7 +2968,7 @@ p_vertical_bend (BenderDialog *cd,
             l_x2 = (l_col +1) * src_gdrw->tile_width;
 
           if (cd->show_progress)
-            gimp_progress_update (l_progress += l_progress_step);
+            picman_progress_update (l_progress += l_progress_step);
 
           for( ; l_x < l_x2; l_x++)
             {
@@ -3073,7 +3073,7 @@ p_vertical_bend (BenderDialog *cd,
                           guchar l_alpha_lo;
 
                           l_alpha_lo = 20;
-                          if (gimp_drawable_has_alpha(src_gdrw->drawable->drawable_id))
+                          if (picman_drawable_has_alpha(src_gdrw->drawable->drawable_id))
                             {
                               l_alpha_lo = MIN(20, mixcolor[src_gdrw->index_alpha]);
                             }
@@ -3183,7 +3183,7 @@ p_vertical_bend (BenderDialog *cd,
             }
         }
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (last_arr);
   g_free (first_arr);
@@ -3196,13 +3196,13 @@ p_vertical_bend (BenderDialog *cd,
 
 static gint32
 p_main_bend (BenderDialog *cd,
-             GimpDrawable    *original_drawable,
+             PicmanDrawable    *original_drawable,
              gint          work_on_copy)
 {
    t_GDRW  l_src_gdrw;
    t_GDRW  l_dst_gdrw;
-   GimpDrawable *dst_drawable;
-   GimpDrawable *src_drawable;
+   PicmanDrawable *dst_drawable;
+   PicmanDrawable *src_drawable;
    gint32    l_dst_height;
    gint32    l_image_id;
    gint32    l_tmp_layer_id;
@@ -3212,31 +3212,31 @@ p_main_bend (BenderDialog *cd,
    gint32    xmax, ymax;
 
    l_interpolation = cd->smoothing;
-   l_image_id = gimp_item_get_image (original_drawable->drawable_id);
-   gimp_drawable_offsets(original_drawable->drawable_id, &l_offset_x, &l_offset_y);
+   l_image_id = picman_item_get_image (original_drawable->drawable_id);
+   picman_drawable_offsets(original_drawable->drawable_id, &l_offset_x, &l_offset_y);
 
-   l_center_x = l_offset_x + (gimp_drawable_width  (original_drawable->drawable_id) / 2 );
-   l_center_y = l_offset_y + (gimp_drawable_height (original_drawable->drawable_id) / 2 );
+   l_center_x = l_offset_x + (picman_drawable_width  (original_drawable->drawable_id) / 2 );
+   l_center_y = l_offset_y + (picman_drawable_height (original_drawable->drawable_id) / 2 );
 
    /* always copy original_drawable to a tmp src_layer */
-   l_tmp_layer_id = gimp_layer_copy(original_drawable->drawable_id);
+   l_tmp_layer_id = picman_layer_copy(original_drawable->drawable_id);
    /* set layer invisible and dummyname and
     * add at top of the image while working
-    * (for the case of undo GIMP must know,
+    * (for the case of undo PICMAN must know,
     *  that the layer was part of the image)
     */
-   gimp_image_insert_layer (l_image_id, l_tmp_layer_id, -1, 0);
-   gimp_item_set_visible (l_tmp_layer_id, FALSE);
-   gimp_item_set_name (l_tmp_layer_id, "curve_bend_dummylayer");
+   picman_image_insert_layer (l_image_id, l_tmp_layer_id, -1, 0);
+   picman_item_set_visible (l_tmp_layer_id, FALSE);
+   picman_item_set_name (l_tmp_layer_id, "curve_bend_dummylayer");
 
    if(gb_debug) printf("p_main_bend  l_tmp_layer_id %d\n", (int)l_tmp_layer_id);
 
    if (cd->rotation != 0.0)
      {
        if(gb_debug) printf("p_main_bend rotate: %f\n", (float)cd->rotation);
-       p_gimp_rotate(l_image_id, l_tmp_layer_id, l_interpolation, cd->rotation);
+       p_picman_rotate(l_image_id, l_tmp_layer_id, l_interpolation, cd->rotation);
      }
-   src_drawable = gimp_drawable_get (l_tmp_layer_id);
+   src_drawable = picman_drawable_get (l_tmp_layer_id);
 
    xmax = ymax = src_drawable->width -1;
    cd->curve_ptr[OUTLINE_UPPER] = g_new (gint32, 1+xmax);
@@ -3259,17 +3259,17 @@ p_main_bend (BenderDialog *cd,
    else
      {
        /* work on the original */
-       gimp_layer_resize(original_drawable->drawable_id,
+       picman_layer_resize(original_drawable->drawable_id,
                          src_drawable->width,
                          l_dst_height,
                          l_offset_x, l_offset_y);
        if(gb_debug) printf("p_main_bend: DONE layer resize\n");
-       if(!gimp_drawable_has_alpha(original_drawable->drawable_id))
+       if(!picman_drawable_has_alpha(original_drawable->drawable_id))
          {
            /* always add alpha channel */
-           gimp_layer_add_alpha(original_drawable->drawable_id);
+           picman_layer_add_alpha(original_drawable->drawable_id);
          }
-       dst_drawable = gimp_drawable_get (original_drawable->drawable_id);
+       dst_drawable = picman_drawable_get (original_drawable->drawable_id);
      }
    p_clear_drawable(dst_drawable);
 
@@ -3285,7 +3285,7 @@ p_main_bend (BenderDialog *cd,
 
    if(cd->rotation != 0.0)
      {
-       p_gimp_rotate (l_image_id, dst_drawable->drawable_id,
+       p_picman_rotate (l_image_id, dst_drawable->drawable_id,
                       l_interpolation, (gdouble)(360.0 - cd->rotation));
 
        /* TODO: here we should crop dst_drawable to cut off full transparent borderpixels */
@@ -3295,12 +3295,12 @@ p_main_bend (BenderDialog *cd,
    /* set offsets of the resulting new layer
     *(center == center of original_drawable)
     */
-   l_offset_x = l_center_x - (gimp_drawable_width  (dst_drawable->drawable_id) / 2 );
-   l_offset_y = l_center_y - (gimp_drawable_height  (dst_drawable->drawable_id) / 2 );
-   gimp_layer_set_offsets (dst_drawable->drawable_id, l_offset_x, l_offset_y);
+   l_offset_x = l_center_x - (picman_drawable_width  (dst_drawable->drawable_id) / 2 );
+   l_offset_y = l_center_y - (picman_drawable_height  (dst_drawable->drawable_id) / 2 );
+   picman_layer_set_offsets (dst_drawable->drawable_id, l_offset_x, l_offset_y);
 
    /* delete the temp layer */
-   gimp_image_remove_layer (l_image_id, l_tmp_layer_id);
+   picman_image_remove_layer (l_image_id, l_tmp_layer_id);
 
    g_free (cd->curve_ptr[OUTLINE_UPPER]);
    g_free (cd->curve_ptr[OUTLINE_LOWER]);

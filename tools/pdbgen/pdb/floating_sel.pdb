@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub floating_sel_remove {
     $blurb = <<'BLURB';
@@ -36,15 +36,15 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_layer_is_floating_sel (floating_sel))
+  if (picman_layer_is_floating_sel (floating_sel))
     {
-      gimp_image_remove_layer (gimp_item_get_image (GIMP_ITEM (floating_sel)),
+      picman_image_remove_layer (picman_item_get_image (PICMAN_ITEM (floating_sel)),
                                floating_sel, TRUE, NULL);
     }
   else
     {
-      g_set_error_literal (error, GIMP_PDB_ERROR,
-                           GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error_literal (error, PICMAN_PDB_ERROR,
+                           PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            _("Cannot remove this layer because "
                              "it is not a floating selection."));
       success = FALSE;
@@ -75,14 +75,14 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_layer_is_floating_sel (floating_sel))
+  if (picman_layer_is_floating_sel (floating_sel))
     {
       floating_sel_anchor (floating_sel);
     }
   else
     {
-      g_set_error_literal (error, GIMP_PDB_ERROR,
-                           GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error_literal (error, PICMAN_PDB_ERROR,
+                           PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            _("Cannot anchor this layer because "
                              "it is not a floating selection."));
       success = FALSE;
@@ -115,14 +115,14 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_layer_is_floating_sel (floating_sel))
+  if (picman_layer_is_floating_sel (floating_sel))
     {
       success = floating_sel_to_layer (floating_sel, error);
     }
   else
     {
-      g_set_error_literal (error, GIMP_PDB_ERROR,
-                           GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error_literal (error, PICMAN_PDB_ERROR,
+                           PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            _("Cannot convert this layer to a normal layer "
                              "because it is not a floating selection."));
       success = FALSE;
@@ -153,9 +153,9 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     floating_sel_attach (layer, drawable);
   else
     success = FALSE;
@@ -199,11 +199,11 @@ CODE
 }
 
 
-@headers = qw("core/gimpimage.h"
-              "core/gimplayer-floating-sel.h"
-              "gimppdberror.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+@headers = qw("core/picmanimage.h"
+              "core/picmanlayer-floating-sel.h"
+              "picmanpdberror.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(floating_sel_remove
             floating_sel_anchor
@@ -215,7 +215,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Floating selections';
-$doc_title = 'gimpfloatingsel';
+$doc_title = 'picmanfloatingsel';
 $doc_short_desc = 'Functions for removing or attaching floating selections.';
 $doc_long_desc = 'Functions for removing or attaching floating selections.';
 

@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -30,8 +30,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h> /* for keyboard values */
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "imap_about.h"
 #include "imap_circle.h"
@@ -53,7 +53,7 @@
 #include "imap_stock.h"
 #include "imap_string.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define MAX_ZOOM_FACTOR 8
@@ -70,7 +70,7 @@ static PreferencesData_t _preferences = {CSIM, TRUE, FALSE, TRUE, TRUE, FALSE,
 FALSE, TRUE, DEFAULT_UNDO_LEVELS, DEFAULT_MRU_SIZE};
 static MRU_t *_mru;
 
-static GimpDrawable *_drawable;
+static PicmanDrawable *_drawable;
 static GdkCursorType _cursor = GDK_TOP_LEFT_ARROW;
 static gboolean     _show_url = TRUE;
 static gchar       *_filename = NULL;
@@ -90,12 +90,12 @@ static gpointer _button_press_param;
 static void  query  (void);
 static void  run    (const gchar      *name,
                      gint              nparams,
-                     const GimpParam  *param,
+                     const PicmanParam  *param,
                      gint             *nreturn_vals,
-                     GimpParam       **return_vals);
-static gint  dialog (GimpDrawable     *drawable);
+                     PicmanParam       **return_vals);
+static gint  dialog (PicmanDrawable     *drawable);
 
-const GimpPlugInInfo PLUG_IN_INFO = {
+const PicmanPlugInInfo PLUG_IN_INFO = {
    NULL,                        /* init_proc */
    NULL,                        /* quit_proc */
    query,                       /* query_proc */
@@ -109,15 +109,15 @@ MAIN ()
 
 static void query(void)
 {
-   static const GimpParamDef args[] = {
-      {GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }"},
-      {GIMP_PDB_IMAGE,    "image",    "Input image (unused)"},
-      {GIMP_PDB_DRAWABLE, "drawable", "Input drawable"},
+   static const PicmanParamDef args[] = {
+      {PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }"},
+      {PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"},
+      {PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"},
    };
-   static const GimpParamDef *return_vals = NULL;
+   static const PicmanParamDef *return_vals = NULL;
    static int nreturn_vals = 0;
 
-   gimp_install_procedure(PLUG_IN_PROC,
+   picman_install_procedure(PLUG_IN_PROC,
                           N_("Create a clickable imagemap"),
                           "",
                           "Maurits Rijk",
@@ -125,24 +125,24 @@ static void query(void)
                           "1998-2005",
                           N_("_Image Map..."),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), nreturn_vals,
                           args, return_vals);
 
-   gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Web");
+   picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Web");
 }
 
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-   static GimpParam values[1];
-   GimpDrawable *drawable;
-   GimpRunMode run_mode;
-   GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+   static PicmanParam values[1];
+   PicmanDrawable *drawable;
+   PicmanRunMode run_mode;
+   PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
    INIT_I18N ();
 
@@ -150,28 +150,28 @@ run (const gchar      *name,
    *return_vals = values;
 
    /*  Get the specified drawable  */
-   drawable = gimp_drawable_get(param[2].data.d_drawable);
+   drawable = picman_drawable_get(param[2].data.d_drawable);
    _drawable = drawable;
-   _image_name = gimp_image_get_name(param[1].data.d_image);
-   _image_width = gimp_image_width(param[1].data.d_image);
-   _image_height = gimp_image_height(param[1].data.d_image);
+   _image_name = picman_image_get_name(param[1].data.d_image);
+   _image_width = picman_image_width(param[1].data.d_image);
+   _image_height = picman_image_height(param[1].data.d_image);
 
-   _map_info.color = gimp_drawable_is_rgb(drawable->drawable_id);
+   _map_info.color = picman_drawable_is_rgb(drawable->drawable_id);
 
-   run_mode = (GimpRunMode) param[0].data.d_int32;
+   run_mode = (PicmanRunMode) param[0].data.d_int32;
 
-   if (run_mode == GIMP_RUN_INTERACTIVE) {
+   if (run_mode == PICMAN_RUN_INTERACTIVE) {
       if (!dialog(drawable)) {
          /* The dialog was closed, or something similarly evil happened. */
-         status = GIMP_PDB_EXECUTION_ERROR;
+         status = PICMAN_PDB_EXECUTION_ERROR;
       }
    }
 
-   if (status == GIMP_PDB_SUCCESS) {
-      gimp_drawable_detach(drawable);
+   if (status == PICMAN_PDB_SUCCESS) {
+      picman_drawable_detach(drawable);
    }
 
-   values[0].type = GIMP_PDB_STATUS;
+   values[0].type = PICMAN_PDB_STATUS;
    values[0].data.d_status = status;
 }
 
@@ -724,9 +724,9 @@ save_as_cern(gpointer param, OutputFunc_t output)
    gchar *next_token;
 
    write_cern_comment(param, output);
-   output(param, "-:Image map file created by GIMP Image Map plug-in\n");
+   output(param, "-:Image map file created by PICMAN Image Map plug-in\n");
    write_cern_comment(param, output);
-   output(param, "-:GIMP Image Map plug-in by Maurits Rijk\n");
+   output(param, "-:PICMAN Image Map plug-in by Maurits Rijk\n");
    write_cern_comment(param, output);
    output(param, "-:Please do not edit lines starting with \"#$\"\n");
    write_cern_comment(param, output);
@@ -762,8 +762,8 @@ save_as_csim(gpointer param, OutputFunc_t output)
           _image_width, _image_height, _map_info.title);
    output(param, "<map name=\"%s\">\n", _map_info.title);
    output(param,
-          "<!-- #$-:Image map file created by GIMP Image Map plug-in -->\n");
-   output(param, "<!-- #$-:GIMP Image Map plug-in by Maurits Rijk -->\n");
+          "<!-- #$-:Image map file created by PICMAN Image Map plug-in -->\n");
+   output(param, "<!-- #$-:PICMAN Image Map plug-in by Maurits Rijk -->\n");
    output(param,
           "<!-- #$-:Please do not edit lines starting with \"#$\" -->\n");
    output(param, "<!-- #$VERSION:2.3 -->\n");
@@ -787,8 +787,8 @@ save_as_ncsa(gpointer param, OutputFunc_t output)
    char *p;
    gchar *description;
 
-   output(param, "#$-:Image map file created by GIMP Image Map plug-in\n");
-   output(param, "#$-:GIMP Image Map plug-in by Maurits Rijk\n");
+   output(param, "#$-:Image map file created by PICMAN Image Map plug-in\n");
+   output(param, "#$-:PICMAN Image Map plug-in by Maurits Rijk\n");
    output(param, "#$-:Please do not edit lines starting with \"#$\"\n");
    output(param, "#$VERSION:2.3\n");
    output(param, "#$TITLE:%s\n", _map_info.title);
@@ -1113,7 +1113,7 @@ data_selected(Object_t *obj, gpointer data)
 void
 imap_help (void)
 {
-  gimp_standard_help_func ("plug-in-imagemap", NULL);
+  picman_standard_help_func ("plug-in-imagemap", NULL);
 }
 
 void
@@ -1185,9 +1185,9 @@ do_send_to_back(void)
 }
 
 void
-do_use_gimp_guides_dialog(void)
+do_use_picman_guides_dialog(void)
 {
-  command_execute (gimp_guides_command_new (_shapes, _drawable));
+  command_execute (picman_guides_command_new (_shapes, _drawable));
 }
 
 void
@@ -1209,14 +1209,14 @@ factory_move_down(void)
 }
 
 static gint
-dialog(GimpDrawable *drawable)
+dialog(PicmanDrawable *drawable)
 {
    GtkWidget    *dlg;
    GtkWidget    *hbox;
    GtkWidget    *main_vbox;
    GtkWidget    *tools;
 
-   gimp_ui_init (PLUG_IN_BINARY, TRUE);
+   picman_ui_init (PLUG_IN_BINARY, TRUE);
 
    set_arrow_func ();
 
@@ -1226,11 +1226,11 @@ dialog(GimpDrawable *drawable)
    gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
 
    main_set_title(NULL);
-   gimp_help_connect (dlg, gimp_standard_help_func, PLUG_IN_PROC, NULL);
+   picman_help_connect (dlg, picman_standard_help_func, PLUG_IN_PROC, NULL);
 
    gtk_window_set_position (GTK_WINDOW (dlg), GTK_WIN_POS_MOUSE);
 
-   gimp_window_set_transient (GTK_WINDOW (dlg));
+   picman_window_set_transient (GTK_WINDOW (dlg));
 
    g_signal_connect (dlg, "delete-event",
                      G_CALLBACK (close_callback), NULL);

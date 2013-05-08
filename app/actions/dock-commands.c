@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,25 +19,25 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimpdockwindow.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmandockwindow.h"
 
 #include "actions.h"
 #include "dock-commands.h"
 
 
-static GimpDockWindow *
+static PicmanDockWindow *
 dock_commands_get_dock_window_from_widget (GtkWidget *widget)
 {
   GtkWidget      *toplevel    = gtk_widget_get_toplevel (widget);
-  GimpDockWindow *dock_window = NULL;
+  PicmanDockWindow *dock_window = NULL;
 
-  if (GIMP_IS_DOCK_WINDOW (toplevel))
-    dock_window = GIMP_DOCK_WINDOW (toplevel);
+  if (PICMAN_IS_DOCK_WINDOW (toplevel))
+    dock_window = PICMAN_DOCK_WINDOW (toplevel);
 
   return dock_window;
 }
@@ -50,7 +50,7 @@ dock_toggle_image_menu_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
   GtkWidget      *widget      = NULL;
-  GimpDockWindow *dock_window = NULL;
+  PicmanDockWindow *dock_window = NULL;
   return_if_no_widget (widget, data);
 
   dock_window = dock_commands_get_dock_window_from_widget (widget);
@@ -58,7 +58,7 @@ dock_toggle_image_menu_cmd_callback (GtkAction *action,
   if (dock_window)
     {
       gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-      gimp_dock_window_set_show_image_menu (dock_window, active);
+      picman_dock_window_set_show_image_menu (dock_window, active);
     }
 }
 
@@ -67,7 +67,7 @@ dock_toggle_auto_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
   GtkWidget      *widget      = NULL;
-  GimpDockWindow *dock_window = NULL;
+  PicmanDockWindow *dock_window = NULL;
   return_if_no_widget (widget, data);
 
   dock_window = dock_commands_get_dock_window_from_widget (widget);
@@ -75,6 +75,6 @@ dock_toggle_auto_cmd_callback (GtkAction *action,
   if (dock_window)
     {
       gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-      gimp_dock_window_set_auto_follow_active (dock_window, active);
+      picman_dock_window_set_auto_follow_active (dock_window, active);
     }
 }

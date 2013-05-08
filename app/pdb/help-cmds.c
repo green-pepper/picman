@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,86 +23,86 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager-help-domain.h"
-#include "plug-in/gimppluginmanager.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager-help-domain.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-help_invoker (GimpProcedure         *procedure,
-              Gimp                  *gimp,
-              GimpContext           *context,
-              GimpProgress          *progress,
-              const GimpValueArray  *args,
+static PicmanValueArray *
+help_invoker (PicmanProcedure         *procedure,
+              Picman                  *picman,
+              PicmanContext           *context,
+              PicmanProgress          *progress,
+              const PicmanValueArray  *args,
               GError               **error)
 {
   gboolean success = TRUE;
   const gchar *help_domain;
   const gchar *help_id;
 
-  help_domain = g_value_get_string (gimp_value_array_index (args, 0));
-  help_id = g_value_get_string (gimp_value_array_index (args, 1));
+  help_domain = g_value_get_string (picman_value_array_index (args, 0));
+  help_id = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpPlugInManager *manager = gimp->plug_in_manager;
+      PicmanPlugInManager *manager = picman->plug_in_manager;
 
       if (! help_domain && manager->current_plug_in)
         help_domain = (gchar *)
-          gimp_plug_in_manager_get_help_domain (manager,
+          picman_plug_in_manager_get_help_domain (manager,
                                                 manager->current_plug_in->prog,
                                                 NULL);
 
-      gimp_help (gimp, progress, help_domain, help_id);
+      picman_help (picman, progress, help_domain, help_id);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_help_procs (GimpPDB *pdb)
+register_help_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-help
+   * picman-help
    */
-  procedure = gimp_procedure_new (help_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-help");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-help",
+  procedure = picman_procedure_new (help_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-help");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-help",
                                      "Load a help page.",
-                                     "This procedure loads the specified help page into the helpbrowser or what ever is configured as help viewer. The help page is identified by its domain and ID: if help_domain is NULL, we use the help_domain which was registered using the 'gimp-plugin-help-register' procedure. If help_domain is NULL and no help domain was registered, the help domain of the main GIMP installation is used.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure loads the specified help page into the helpbrowser or what ever is configured as help viewer. The help page is identified by its domain and ID: if help_domain is NULL, we use the help_domain which was registered using the 'picman-plugin-help-register' procedure. If help_domain is NULL and no help domain was registered, the help domain of the main PICMAN installation is used.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2000",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("help-domain",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("help-domain",
                                                        "help domain",
                                                        "The help domain in which help_id is registered",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("help-id",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("help-id",
                                                        "help id",
                                                        "The help page's ID",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

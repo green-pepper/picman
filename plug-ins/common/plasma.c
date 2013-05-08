@@ -1,5 +1,5 @@
 /*
- * This is a plugin for GIMP.
+ * This is a plugin for PICMAN.
  *
  * Copyright (C) 1996 Stephen Norris
  *
@@ -35,7 +35,7 @@
 /* Version 1.01 */
 
 /*
- * Ported to GIMP Plug-in API 1.0
+ * Ported to PICMAN Plug-in API 1.0
  *    by Eiichi Takamori <taka@ma1.seikyou.ne.jp>
  *
  * $Id$
@@ -58,17 +58,17 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
 
 #define PLUG_IN_PROC     "plug-in-plasma"
 #define PLUG_IN_BINARY   "plasma"
-#define PLUG_IN_ROLE     "gimp-plasma"
+#define PLUG_IN_ROLE     "picman-plasma"
 #define SCALE_WIDTH      48
 #define TILE_CACHE_SIZE  32
 
@@ -88,36 +88,36 @@ typedef struct
 static void       query (void);
 static void       run   (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static gboolean   plasma_dialog          (GimpDrawable  *drawable);
-static void plasma_seed_changed_callback (GimpDrawable  *drawable,
+static gboolean   plasma_dialog          (PicmanDrawable  *drawable);
+static void plasma_seed_changed_callback (PicmanDrawable  *drawable,
                                           gpointer       data);
 
-static void     plasma       (GimpDrawable *drawable,
+static void     plasma       (PicmanDrawable *drawable,
                               gboolean      preview_mode);
 static void     random_rgb   (GRand        *gr,
                               guchar       *pixel);
 static void     add_random   (GRand        *gr,
                               guchar       *pixel,
                               gint          amount);
-static GimpPixelFetcher *init_plasma  (GimpDrawable *drawable,
+static PicmanPixelFetcher *init_plasma  (PicmanDrawable *drawable,
                                        gboolean      preview_mode,
                                        GRand        *gr);
-static void     end_plasma   (GimpDrawable     *drawable,
-                              GimpPixelFetcher *pft,
+static void     end_plasma   (PicmanDrawable     *drawable,
+                              PicmanPixelFetcher *pft,
                               GRand            *gr);
-static void     get_pixel    (GimpPixelFetcher *pft,
+static void     get_pixel    (PicmanPixelFetcher *pft,
                               gint              x,
                               gint              y,
                               guchar           *pixel);
-static void     put_pixel    (GimpPixelFetcher *pft,
+static void     put_pixel    (PicmanPixelFetcher *pft,
                               gint              x,
                               gint              y,
                               guchar           *pixel);
-static gboolean do_plasma    (GimpPixelFetcher *pft,
+static gboolean do_plasma    (PicmanPixelFetcher *pft,
                               gint              x1,
                               gint              y1,
                               gint              x2,
@@ -129,7 +129,7 @@ static gboolean do_plasma    (GimpPixelFetcher *pft,
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -163,16 +163,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable"       },
-    { GIMP_PDB_INT32,    "seed",       "Random seed"          },
-    { GIMP_PDB_FLOAT,    "turbulence", "Turbulence of plasma" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable"       },
+    { PICMAN_PDB_INT32,    "seed",       "Random seed"          },
+    { PICMAN_PDB_FLOAT,    "turbulence", "Turbulence of plasma" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create a random plasma texture"),
                           "More help",
                           "Stephen Norris & (ported to 1.0 by) Eiichi Takamori",
@@ -180,24 +180,24 @@ query (void)
                           "May 2000",
                           N_("_Plasma..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Clouds");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Clouds");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -206,31 +206,31 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
 
       /*  First acquire information with a dialog  */
       if (! plasma_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -238,13 +238,13 @@ run (const gchar      *name,
           pvals.turbulence = (gdouble) param[4].data.d_float;
 
           if (pvals.turbulence <= 0)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
 
       if (pvals.random_seed)
         pvals.seed = g_random_int ();
@@ -254,38 +254,38 @@ run (const gchar      *name,
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Plasma"));
-          gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+          picman_progress_init (_("Plasma"));
+          picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
           plasma (drawable, FALSE);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE ||
-              (run_mode == GIMP_RUN_WITH_LAST_VALS))
-            gimp_set_data (PLUG_IN_PROC, &pvals, sizeof (PlasmaValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE ||
+              (run_mode == PICMAN_RUN_WITH_LAST_VALS))
+            picman_set_data (PLUG_IN_PROC, &pvals, sizeof (PlasmaValues));
         }
       else
         {
-          /* gimp_message ("plasma: cannot operate on indexed color images"); */
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /* picman_message ("plasma: cannot operate on indexed color images"); */
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
-plasma_dialog (GimpDrawable *drawable)
+plasma_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -295,11 +295,11 @@ plasma_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Plasma"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Plasma"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -311,7 +311,7 @@ plasma_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -319,7 +319,7 @@ plasma_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_aspect_preview_new (drawable, NULL);
+  preview = picman_aspect_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -333,34 +333,34 @@ plasma_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  seed = gimp_random_seed_new (&pvals.seed, &pvals.random_seed);
-  label = gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  seed = picman_random_seed_new (&pvals.seed, &pvals.random_seed);
+  label = picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                      _("Random _seed:"), 0.0, 0.5,
                                      seed, 2, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label),
-                                 GIMP_RANDOM_SEED_SPINBUTTON (seed));
+                                 PICMAN_RANDOM_SEED_SPINBUTTON (seed));
 
-  g_signal_connect_swapped (GIMP_RANDOM_SEED_SPINBUTTON_ADJ (seed),
+  g_signal_connect_swapped (PICMAN_RANDOM_SEED_SPINBUTTON_ADJ (seed),
                             "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("T_urbulence:"), SCALE_WIDTH, 0,
                               pvals.turbulence,
                               0.1, 7.0, 0.1, 1.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.turbulence);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -368,7 +368,7 @@ plasma_dialog (GimpDrawable *drawable)
 }
 
 static void
-plasma_seed_changed_callback (GimpDrawable *drawable,
+plasma_seed_changed_callback (PicmanDrawable *drawable,
                               gpointer      data)
 {
   plasma (drawable, TRUE);
@@ -379,10 +379,10 @@ plasma_seed_changed_callback (GimpDrawable *drawable,
  */
 
 static void
-plasma (GimpDrawable *drawable,
+plasma (PicmanDrawable *drawable,
         gboolean      preview_mode)
 {
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
   gint              depth;
   GRand            *gr;
 
@@ -412,25 +412,25 @@ plasma (GimpDrawable *drawable,
           depth++;
         }
       if (pft)
-        gimp_progress_update (1.0);
+        picman_progress_update (1.0);
     }
 
   end_plasma (drawable, pft, gr);
 }
 
-static GimpPixelFetcher*
-init_plasma (GimpDrawable *drawable,
+static PicmanPixelFetcher*
+init_plasma (PicmanDrawable *drawable,
              gboolean      preview_mode,
              GRand        *gr)
 {
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
 
   g_rand_set_seed (gr, pvals.seed);
 
   if (preview_mode)
     {
       ix1 = iy1 = 0;
-      gimp_preview_get_size (GIMP_PREVIEW (preview),
+      picman_preview_get_size (PICMAN_PREVIEW (preview),
                              &preview_width, &preview_height);
       ix2 = preview_width;
       iy2 = preview_height;
@@ -438,12 +438,12 @@ init_plasma (GimpDrawable *drawable,
 
       pft = NULL;
     }
-  else if (gimp_drawable_mask_intersect (drawable->drawable_id,
+  else if (picman_drawable_mask_intersect (drawable->drawable_id,
                                          &ix1, &iy1, &ix2, &iy2))
     {
       ix2 += ix1;
       iy2 += iy1;
-      pft = gimp_pixel_fetcher_new (drawable, TRUE);
+      pft = picman_pixel_fetcher_new (drawable, TRUE);
     }
   else
     {
@@ -451,7 +451,7 @@ init_plasma (GimpDrawable *drawable,
     }
 
   bpp       = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   alpha     = (has_alpha) ? bpp - 1 : bpp;
 
   progress     = 0;
@@ -461,22 +461,22 @@ init_plasma (GimpDrawable *drawable,
 }
 
 static void
-end_plasma (GimpDrawable     *drawable,
-            GimpPixelFetcher *pft,
+end_plasma (PicmanDrawable     *drawable,
+            PicmanPixelFetcher *pft,
             GRand            *gr)
 {
   if (pft)
     {
-      gimp_pixel_fetcher_destroy (pft);
+      picman_pixel_fetcher_destroy (pft);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             ix1, iy1, ix2 - ix1, iy2 - iy1);
     }
   else
     {
-      gimp_preview_draw_buffer (GIMP_PREVIEW (preview),
+      picman_preview_draw_buffer (PICMAN_PREVIEW (preview),
                                 preview_buffer, preview_width * bpp);
       g_free (preview_buffer);
     }
@@ -485,14 +485,14 @@ end_plasma (GimpDrawable     *drawable,
 }
 
 static void
-get_pixel (GimpPixelFetcher *pft,
+get_pixel (PicmanPixelFetcher *pft,
            gint              x,
            gint              y,
            guchar           *pixel)
 {
   if (pft)
     {
-      gimp_pixel_fetcher_get_pixel (pft, x, y, pixel);
+      picman_pixel_fetcher_get_pixel (pft, x, y, pixel);
     }
   else
     {
@@ -501,14 +501,14 @@ get_pixel (GimpPixelFetcher *pft,
 }
 
 static void
-put_pixel (GimpPixelFetcher *pft,
+put_pixel (PicmanPixelFetcher *pft,
            gint              x,
            gint              y,
            guchar           *pixel)
 {
   if (pft)
     {
-      gimp_pixel_fetcher_put_pixel (pft, x, y, pixel);
+      picman_pixel_fetcher_put_pixel (pft, x, y, pixel);
       progress++;
     }
   else
@@ -563,7 +563,7 @@ add_random (GRand  *gr,
 }
 
 static gboolean
-do_plasma (GimpPixelFetcher *pft,
+do_plasma (PicmanPixelFetcher *pft,
            gint              x1,
            gint              y1,
            gint              x2,
@@ -677,7 +677,7 @@ do_plasma (GimpPixelFetcher *pft,
 
       if (!(count % 2000) && pft)
         {
-          gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+          picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
 
       return x2 - x1 < 3 && y2 - y1 < 3;

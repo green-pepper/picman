@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-fractalexplorerdatadir = $(gimpdatadir)/fractalexplorer
+fractalexplorerdatadir = $(picmandatadir)/fractalexplorer
 
 fractalexplorerdata_DATA = \
 	Asteroid_Field		\

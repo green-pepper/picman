@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * image-properties-dialog.c
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,45 +25,45 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpimagecommenteditor.h"
-#include "widgets/gimpimagepropview.h"
-#include "widgets/gimpimageprofileview.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanimagecommenteditor.h"
+#include "widgets/picmanimagepropview.h"
+#include "widgets/picmanimageprofileview.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "image-properties-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GtkWidget *
-image_properties_dialog_new (GimpImage   *image,
-                             GimpContext *context,
+image_properties_dialog_new (PicmanImage   *image,
+                             PicmanContext *context,
                              GtkWidget   *parent)
 {
   GtkWidget *dialog;
   GtkWidget *notebook;
   GtkWidget *view;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
-  dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (image), context,
+  dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (image), context,
                                      _("Image Properties"),
-                                     "gimp-image-properties",
+                                     "picman-image-properties",
                                      GTK_STOCK_INFO,
                                      _("Image Properties"),
                                      parent,
-                                     gimp_standard_help_func,
-                                     GIMP_HELP_IMAGE_PROPERTIES,
+                                     picman_standard_help_func,
+                                     PICMAN_HELP_IMAGE_PROPERTIES,
 
                                      GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
 
@@ -78,18 +78,18 @@ image_properties_dialog_new (GimpImage   *image,
                       notebook, FALSE, FALSE, 0);
   gtk_widget_show (notebook);
 
-  view = gimp_image_prop_view_new (image);
+  view = picman_image_prop_view_new (image);
   gtk_container_set_border_width (GTK_CONTAINER (view), 12);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook),
                             view, gtk_label_new (_("Properties")));
   gtk_widget_show (view);
 
-  view = gimp_image_profile_view_new (image);
+  view = picman_image_profile_view_new (image);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook),
                             view, gtk_label_new (_("Color Profile")));
   gtk_widget_show (view);
 
-  view = gimp_image_comment_editor_new (image);
+  view = picman_image_comment_editor_new (image);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook),
                             view, gtk_label_new (_("Comment")));
   gtk_widget_show (view);

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,16 +22,16 @@
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpimageview.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmanimageview.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
 #include "images-commands.h"
 
@@ -42,28 +42,28 @@ void
 images_raise_views_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpImage           *image;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanImage           *image;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  image = gimp_context_get_image (context);
+  image = picman_context_get_image (context);
 
-  if (image && gimp_container_have (container, GIMP_OBJECT (image)))
+  if (image && picman_container_have (container, PICMAN_OBJECT (image)))
     {
       GList *list;
 
-      for (list = gimp_get_display_iter (image->gimp);
+      for (list = picman_get_display_iter (image->picman);
            list;
            list = g_list_next (list))
         {
-          GimpDisplay *display = list->data;
+          PicmanDisplay *display = list->data;
 
-          if (gimp_display_get_image (display) == image)
-            gimp_display_shell_present (gimp_display_get_shell (display));
+          if (picman_display_get_image (display) == image)
+            picman_display_shell_present (picman_display_get_shell (display));
         }
     }
 }
@@ -72,19 +72,19 @@ void
 images_new_view_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpImage           *image;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanImage           *image;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  image = gimp_context_get_image (context);
+  image = picman_context_get_image (context);
 
-  if (image && gimp_container_have (container, GIMP_OBJECT (image)))
+  if (image && picman_container_have (container, PICMAN_OBJECT (image)))
     {
-      gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      picman_create_display (image->picman, image, PICMAN_UNIT_PIXEL, 1.0);
     }
 }
 
@@ -92,19 +92,19 @@ void
 images_delete_image_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpImage           *image;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanImage           *image;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  image = gimp_context_get_image (context);
+  image = picman_context_get_image (context);
 
-  if (image && gimp_container_have (container, GIMP_OBJECT (image)))
+  if (image && picman_container_have (container, PICMAN_OBJECT (image)))
     {
-      if (gimp_image_get_display_count (image) == 0)
+      if (picman_image_get_display_count (image) == 0)
         g_object_unref (image);
     }
 }

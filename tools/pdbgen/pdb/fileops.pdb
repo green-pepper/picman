@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
 # Copyright (C) 1997 Josh MacDonald
 
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub file_load {
     $blurb = 'Loads an image file by invoking the right load handler.';
@@ -25,7 +25,7 @@ This procedure invokes the correct file load handler using magic if possible,
 and falling back on the file's extension and/or prefix if not. The name of
 the file to load is typically a full pathname, and the name entered is what
 the user actually typed before prepending a directory path. The reason for
-this is that if the user types http://www.xcf/~gimp/ he wants to fetch a URL,
+this is that if the user types http://www.xcf/~picman/ he wants to fetch a URL,
 and the full pathname will not look like a URL."
 HELP
 
@@ -33,7 +33,7 @@ HELP
 
     @inargs = (
         { name => 'run_mode',
-          type => 'enum GimpRunMode (no GIMP_RUN_WITH_LAST_VALS)',
+          type => 'enum PicmanRunMode (no PICMAN_RUN_WITH_LAST_VALS)',
           desc => 'The run mode' },
         { name => 'filename', type => 'string', allow_non_utf8 => 1,
           desc => 'The name of the file to load' },
@@ -50,60 +50,60 @@ HELP
         no_marshalling => 1,
         code => <<'CODE'
 {
-  GimpValueArray      *new_args;
-  GimpValueArray      *return_vals;
-  GimpPlugInProcedure *file_proc;
-  GimpProcedure       *proc;
+  PicmanValueArray      *new_args;
+  PicmanValueArray      *return_vals;
+  PicmanPlugInProcedure *file_proc;
+  PicmanProcedure       *proc;
   gchar               *uri;
   gint                 i;
 
-  uri = file_utils_filename_to_uri (gimp,
-                                    g_value_get_string (gimp_value_array_index (args, 1)),
+  uri = file_utils_filename_to_uri (picman,
+                                    g_value_get_string (picman_value_array_index (args, 1)),
                                     error);
 
   if (! uri)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
   file_proc =
-    file_procedure_find (gimp->plug_in_manager->load_procs, uri, error);
+    file_procedure_find (picman->plug_in_manager->load_procs, uri, error);
 
   g_free (uri);
 
   if (! file_proc)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
-  proc = GIMP_PROCEDURE (file_proc);
+  proc = PICMAN_PROCEDURE (file_proc);
 
-  new_args = gimp_procedure_get_arguments (proc);
+  new_args = picman_procedure_get_arguments (proc);
 
   for (i = 0; i < 3; i++)
-    g_value_transform (gimp_value_array_index (args, i),
-                       gimp_value_array_index (new_args, i));
+    g_value_transform (picman_value_array_index (args, i),
+                       picman_value_array_index (new_args, i));
 
   for (i = 3; i < proc->num_args; i++)
     if (G_IS_PARAM_SPEC_STRING (proc->args[i]))
-      g_value_set_static_string (gimp_value_array_index (new_args, i), "");
+      g_value_set_static_string (picman_value_array_index (new_args, i), "");
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name_args (gimp->pdb,
+    picman_pdb_execute_procedure_by_name_args (picman->pdb,
                                              context, progress, error,
-                                             gimp_object_get_name (proc),
+                                             picman_object_get_name (proc),
                                              new_args);
 
-  gimp_value_array_unref (new_args);
+  picman_value_array_unref (new_args);
 
-  if (g_value_get_enum (gimp_value_array_index (return_vals, 0)) ==
-      GIMP_PDB_SUCCESS)
+  if (g_value_get_enum (picman_value_array_index (return_vals, 0)) ==
+      PICMAN_PDB_SUCCESS)
     {
-      if (gimp_value_array_length (return_vals) > 1 &&
-          GIMP_VALUE_HOLDS_IMAGE_ID (gimp_value_array_index (return_vals, 1)))
+      if (picman_value_array_length (return_vals) > 1 &&
+          PICMAN_VALUE_HOLDS_IMAGE_ID (picman_value_array_index (return_vals, 1)))
         {
-          GimpImage *image =
-            gimp_value_get_image (gimp_value_array_index (return_vals, 1),
-                                  gimp);
-          gimp_image_set_load_proc (image, file_proc);
+          PicmanImage *image =
+            picman_value_get_image (picman_value_array_index (return_vals, 1),
+                                  picman);
+          picman_image_set_load_proc (image, file_proc);
         }
     }
 
@@ -119,14 +119,14 @@ sub file_load_layer {
     $help = <<'HELP';
 This procedure behaves like the file-load procedure but opens the specified
 image as a layer for an existing image. The returned layer needs to be
-added to the existing image with gimp_image_insert_layer().
+added to the existing image with picman_image_insert_layer().
 HELP
 
     &neo_pdb_misc('2005', '2.4');
 
     @inargs = (
         { name => 'run_mode',
-          type => 'enum GimpRunMode (no GIMP_RUN_WITH_LAST_VALS)',
+          type => 'enum PicmanRunMode (no PICMAN_RUN_WITH_LAST_VALS)',
           desc => 'The run mode' },
         { name => 'image', type => 'image',
           desc => 'Destination image' },
@@ -142,14 +142,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *uri = file_utils_filename_to_uri (gimp, filename, error);
+  gchar *uri = file_utils_filename_to_uri (picman, filename, error);
 
   if (uri)
     {
       GList             *layers;
-      GimpPDBStatusType  status;
+      PicmanPDBStatusType  status;
 
-      layers = file_open_layers (gimp, context, progress,
+      layers = file_open_layers (picman, context, progress,
                                  image, FALSE,
                                  uri, run_mode, NULL, &status, error);
 
@@ -174,14 +174,14 @@ sub file_load_layers {
     $help = <<'HELP';
 This procedure behaves like the file-load procedure but opens the specified
 image as layers for an existing image. The returned layers needs to be
-added to the existing image with gimp_image_insert_layer().
+added to the existing image with picman_image_insert_layer().
 HELP
 
     &mitch_pdb_misc('2006', '2.4');
 
     @inargs = (
         { name => 'run_mode',
-          type => 'enum GimpRunMode (no GIMP_RUN_WITH_LAST_VALS)',
+          type => 'enum PicmanRunMode (no PICMAN_RUN_WITH_LAST_VALS)',
           desc => 'The run mode' },
         { name => 'image', type => 'image',
           desc => 'Destination image' },
@@ -199,14 +199,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *uri = file_utils_filename_to_uri (gimp, filename, error);
+  gchar *uri = file_utils_filename_to_uri (picman, filename, error);
 
   if (uri)
     {
       GList             *layers;
-      GimpPDBStatusType  status;
+      PicmanPDBStatusType  status;
 
-      layers = file_open_layers (gimp, context, progress,
+      layers = file_open_layers (picman, context, progress,
                                  image, FALSE,
                                  uri, run_mode, NULL, &status, error);
 
@@ -222,7 +222,7 @@ HELP
           for (i = 0, list = layers;
                i < num_layers;
                i++, list = g_list_next (list))
-            layer_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+            layer_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
           g_list_free (layers);
         }
@@ -244,14 +244,14 @@ This procedure invokes the correct file save handler according to the file's
 extension and/or prefix. The name of the file to save is typically a full
 pathname, and the name entered is what the user actually typed before
 prepending a directory path. The reason for this is that if the user types
-http://www.xcf/~gimp/ she wants to fetch a URL, and the full pathname will not
+http://www.xcf/~picman/ she wants to fetch a URL, and the full pathname will not
 look like a URL.
 HELP
 
     &josh_pdb_misc('1997');
 
     @inargs = (
-        { name => 'run_mode', type => 'enum GimpRunMode',
+        { name => 'run_mode', type => 'enum PicmanRunMode',
           desc => 'The run mode' },
         { name => 'image', type => 'image',
           desc => 'Input image' },
@@ -268,52 +268,52 @@ HELP
         no_marshalling => 1,
         code => <<'CODE'
 {
-  GimpValueArray      *new_args;
-  GimpValueArray      *return_vals;
-  GimpPlugInProcedure *file_proc;
-  GimpProcedure       *proc;
+  PicmanValueArray      *new_args;
+  PicmanValueArray      *return_vals;
+  PicmanPlugInProcedure *file_proc;
+  PicmanProcedure       *proc;
   gchar               *uri;
   gint                 i;
 
-  uri = file_utils_filename_to_uri (gimp,
-                                    g_value_get_string (gimp_value_array_index (args, 3)),
+  uri = file_utils_filename_to_uri (picman,
+                                    g_value_get_string (picman_value_array_index (args, 3)),
                                     error);
 
   if (! uri)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
   file_proc =
-    file_procedure_find (gimp->plug_in_manager->save_procs, uri, NULL);
+    file_procedure_find (picman->plug_in_manager->save_procs, uri, NULL);
 
   if (! file_proc)
-    file_proc = file_procedure_find (gimp->plug_in_manager->export_procs, uri, error);
+    file_proc = file_procedure_find (picman->plug_in_manager->export_procs, uri, error);
 
   g_free (uri);
 
   if (! file_proc)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
-  proc = GIMP_PROCEDURE (file_proc);
+  proc = PICMAN_PROCEDURE (file_proc);
 
-  new_args = gimp_procedure_get_arguments (proc);
+  new_args = picman_procedure_get_arguments (proc);
 
   for (i = 0; i < 5; i++)
-    g_value_transform (gimp_value_array_index (args, i),
-                       gimp_value_array_index (new_args, i));
+    g_value_transform (picman_value_array_index (args, i),
+                       picman_value_array_index (new_args, i));
 
   for (i = 5; i < proc->num_args; i++)
     if (G_IS_PARAM_SPEC_STRING (proc->args[i]))
-      g_value_set_static_string (gimp_value_array_index (new_args, i), "");
+      g_value_set_static_string (picman_value_array_index (new_args, i), "");
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name_args (gimp->pdb,
+    picman_pdb_execute_procedure_by_name_args (picman->pdb,
                                              context, progress, error,
-                                             gimp_object_get_name (proc),
+                                             picman_object_get_name (proc),
                                              new_args);
 
-  gimp_value_array_unref (new_args);
+  picman_value_array_unref (new_args);
 
   return return_vals;
 }
@@ -329,7 +329,7 @@ This procedure tries to load a thumbnail that belongs to the file with
 the given filename. This name is a full pathname. The returned data is 
 an array of colordepth 3 (RGB), regardless of the image type. Width and 
 height of the thumbnail are also returned. Don't use this function if 
-you need a thumbnail of an already opened image, use gimp_image_thumbnail()
+you need a thumbnail of an already opened image, use picman_image_thumbnail()
 instead.
 HELP
 
@@ -408,7 +408,7 @@ sub temp_name {
     $blurb = 'Generates a unique filename.';
 
     $help = <<'HELP';
-Generates a unique filename using the temp path supplied in the user's gimprc.
+Generates a unique filename using the temp path supplied in the user's picmanrc.
 HELP
 
     &josh_pdb_misc('1997');
@@ -427,7 +427,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  name = gimp_get_temp_filename (gimp, extension);
+  name = picman_get_temp_filename (picman, extension);
 }
 CODE
     );
@@ -460,9 +460,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+  gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_plug_in_manager_register_load_handler (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_load_handler (picman->plug_in_manager,
                                                         canonical,
                                                         extensions, prefixes, magics);
 
@@ -497,9 +497,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+  gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_plug_in_manager_register_load_handler (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_load_handler (picman->plug_in_manager,
                                                         canonical,
                                                         extensions, prefixes, NULL);
 
@@ -533,9 +533,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+  gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_plug_in_manager_register_save_handler (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_save_handler (picman->plug_in_manager,
                                                         canonical,
                                                         extensions, prefixes);
 
@@ -550,7 +550,7 @@ sub register_file_handler_uri {
 
     $help = <<'HELP';
 Registers a file handler procedure as capable of handling URIs. This
-allows GIMP to call the procecure directly for all kinds of URIs, and
+allows PICMAN to call the procecure directly for all kinds of URIs, and
 the 'filename' traditionally passed to file procesures turns into an
 URI.
 HELP
@@ -565,9 +565,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+  gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_plug_in_manager_register_handles_uri (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_handles_uri (picman->plug_in_manager,
                                                        canonical);
 
   g_free (canonical);
@@ -580,7 +580,7 @@ sub register_file_handler_mime {
     $blurb = 'Associates a MIME type with a file handler procedure.';
 
     $help = <<'HELP';
-Registers a MIME type for a file handler procedure. This allows GIMP
+Registers a MIME type for a file handler procedure. This allows PICMAN
 to determine the MIME type of the file opened or saved using this
 procedure.
 HELP
@@ -597,9 +597,9 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+  gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_plug_in_manager_register_mime_type (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_mime_type (picman->plug_in_manager,
                                                      canonical, mime_type);
 
   g_free (canonical);
@@ -615,7 +615,7 @@ sub register_thumbnail_loader {
 Some file formats allow for embedded thumbnails, other file formats
 contain a scalable image or provide the image data in different
 resolutions. A file plug-in for such a format may register a special
-procedure that allows GIMP to load a thumbnail preview of the
+procedure that allows PICMAN to load a thumbnail preview of the
 image. This procedure is then associated with the standard load
 procedure using this function.
 HELP
@@ -631,10 +631,10 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gchar *canonical   = gimp_canonicalize_identifier (load_proc);
-  gchar *canon_thumb = gimp_canonicalize_identifier (thumb_proc);
+  gchar *canonical   = picman_canonicalize_identifier (load_proc);
+  gchar *canon_thumb = picman_canonicalize_identifier (thumb_proc);
 
-  success = gimp_plug_in_manager_register_thumb_loader (gimp->plug_in_manager,
+  success = picman_plug_in_manager_register_thumb_loader (picman->plug_in_manager,
                                                         canonical, canon_thumb);
 
   g_free (canonical);
@@ -645,12 +645,12 @@ CODE
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "libgimpconfig/gimpconfig.h"
-              "core/gimp.h"
-              "core/gimp-utils.h"
-              "plug-in/gimppluginmanager.h"
-              "plug-in/gimppluginmanager-file.h"
+@headers = qw("libpicmanbase/picmanbase.h"
+              "libpicmanconfig/picmanconfig.h"
+              "core/picman.h"
+              "core/picman-utils.h"
+              "plug-in/picmanpluginmanager.h"
+              "plug-in/picmanpluginmanager-file.h"
               "file/file-open.h"
               "file/file-save.h"
 	      "file/file-procedure.h"
@@ -673,7 +673,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs[0..3,5..12]]);
 
 $desc = 'File Operations';
-$doc_title = 'gimpfileops';
+$doc_title = 'picmanfileops';
 $doc_short_desc = 'File operations (load, save, etc.)';
 $doc_long_desc = 'File operations (load, save, etc.)';
 

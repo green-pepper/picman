@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-gfigdatadir = $(gimpdatadir)/gfig
+gfigdatadir = $(picmandatadir)/gfig
 
 gfigdata_DATA = \
 	A_star			\

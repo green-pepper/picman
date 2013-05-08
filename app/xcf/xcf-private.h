@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -88,16 +88,16 @@ typedef struct _XcfInfo  XcfInfo;
 
 struct _XcfInfo
 {
-  Gimp               *gimp;
-  GimpProgress       *progress;
+  Picman               *picman;
+  PicmanProgress       *progress;
   FILE               *fp;
   guint               cp;
   const gchar        *filename;
-  GimpTattoo          tattoo_state;
-  GimpLayer          *active_layer;
-  GimpChannel        *active_channel;
-  GimpDrawable       *floating_sel_drawable;
-  GimpLayer          *floating_sel;
+  PicmanTattoo          tattoo_state;
+  PicmanLayer          *active_layer;
+  PicmanChannel        *active_channel;
+  PicmanDrawable       *floating_sel_drawable;
+  PicmanLayer          *floating_sel;
   guint               floating_sel_offset;
   gint                swap_num;
   gint               *ref_count;

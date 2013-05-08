@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GIMP Plug-in for Windows Icon files.
+ * PICMAN Plug-in for Windows Icon files.
  * Copyright (C) 2002 Christian Kreibich <christian@whoop.org>.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 
 #include <config.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 /* #define ICO_DBG */
 
@@ -30,7 +30,7 @@
 #include "ico-dialog.h"
 #include "ico-save.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 static void   ico_dialog_bpp_changed     (GtkWidget   *combo,
                                           GObject     *hbox);
@@ -50,7 +50,7 @@ ico_dialog_new (IcoSaveInfo *info)
   GtkWidget *scrolledwindow;
   GtkWidget *warning;
 
-  dialog = gimp_export_dialog_new (_("Windows Icon"),
+  dialog = picman_export_dialog_new (_("Windows Icon"),
                                    PLUG_IN_BINARY,
                                    "plug-in-winicon");
 
@@ -66,11 +66,11 @@ ico_dialog_new (IcoSaveInfo *info)
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  frame = gimp_frame_new (_("Icon Details"));
+  frame = picman_frame_new (_("Icon Details"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -87,8 +87,8 @@ ico_dialog_new (IcoSaveInfo *info)
                                          vbox);
   gtk_widget_show (vbox);
 
-  warning = g_object_new (GIMP_TYPE_HINT_BOX,
-                          "stock-id", GIMP_STOCK_WARNING,
+  warning = g_object_new (PICMAN_TYPE_HINT_BOX,
+                          "stock-id", PICMAN_STOCK_WARNING,
                           "hint",
                           _("Large icons and compression are not supported "
                             "by all programs. Older applications may not "
@@ -107,12 +107,12 @@ ico_preview_new (gint32 layer)
 {
   GtkWidget *image;
   GdkPixbuf *pixbuf;
-  gint       width  = gimp_drawable_width (layer);
-  gint       height = gimp_drawable_height (layer);
+  gint       width  = picman_drawable_width (layer);
+  gint       height = picman_drawable_height (layer);
 
-  pixbuf = gimp_drawable_get_thumbnail (layer,
+  pixbuf = picman_drawable_get_thumbnail (layer,
                                         MIN (width, 128), MIN (height, 128),
-                                        GIMP_PIXBUF_SMALL_CHECKS);
+                                        PICMAN_PIXBUF_SMALL_CHECKS);
   image = gtk_image_new_from_pixbuf (pixbuf);
   g_object_unref (pixbuf);
 
@@ -162,13 +162,13 @@ ico_create_icon_hbox (GtkWidget   *icon_preview,
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  combo = gimp_int_combo_box_new (_("1 bpp, 1-bit alpha, 2-slot palette"),   1,
+  combo = picman_int_combo_box_new (_("1 bpp, 1-bit alpha, 2-slot palette"),   1,
                                   _("4 bpp, 1-bit alpha, 16-slot palette"),  4,
                                   _("8 bpp, 1-bit alpha, 256-slot palette"), 8,
                                   _("24 bpp, 1-bit alpha, no palette"),     24,
                                   _("32 bpp, 8-bit alpha, no palette"),     32,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  info->depths[layer_num]);
 
   g_signal_connect (combo, "changed",
@@ -227,33 +227,33 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
   GtkWidget  *preview = ico_dialog_get_layer_preview (dialog, layer);
   GdkPixbuf  *pixbuf;
   const Babl *format;
-  gint        w       = gimp_drawable_width (layer);
-  gint        h       = gimp_drawable_height (layer);
+  gint        w       = picman_drawable_width (layer);
+  gint        h       = picman_drawable_height (layer);
 
   if (! preview)
     return;
 
-  switch (gimp_drawable_type (layer))
+  switch (picman_drawable_type (layer))
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       format = babl_format ("R'G'B' u8");
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       format = babl_format ("R'G'B'A u8");
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       format = babl_format ("Y'A u8");
       break;
 
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
-      format = gimp_drawable_get_format (layer);
+    case PICMAN_INDEXED_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
+      format = picman_drawable_get_format (layer);
 
     default:
       g_return_if_reached ();
@@ -270,25 +270,25 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
       guchar     *cmap;
       gint        num_colors;
 
-      image = gimp_item_get_image (layer);
+      image = picman_item_get_image (layer);
 
-      tmp_image = gimp_image_new (w, h, gimp_image_base_type (image));
-      gimp_image_undo_disable (tmp_image);
+      tmp_image = picman_image_new (w, h, picman_image_base_type (image));
+      picman_image_undo_disable (tmp_image);
 
-      if (gimp_drawable_is_indexed (layer))
+      if (picman_drawable_is_indexed (layer))
         {
-          cmap = gimp_image_get_colormap (image, &num_colors);
-          gimp_image_set_colormap (tmp_image, cmap, num_colors);
+          cmap = picman_image_get_colormap (image, &num_colors);
+          picman_image_set_colormap (tmp_image, cmap, num_colors);
           g_free (cmap);
         }
 
-      tmp_layer = gimp_layer_new (tmp_image, "temporary", w, h,
-                                  gimp_drawable_type (layer),
-                                  100, GIMP_NORMAL_MODE);
-      gimp_image_insert_layer (tmp_image, tmp_layer, -1, 0);
+      tmp_layer = picman_layer_new (tmp_image, "temporary", w, h,
+                                  picman_drawable_type (layer),
+                                  100, PICMAN_NORMAL_MODE);
+      picman_image_insert_layer (tmp_image, tmp_layer, -1, 0);
 
-      buffer = gimp_drawable_get_buffer (layer);
-      tmp    = gimp_drawable_get_buffer (tmp_layer);
+      buffer = picman_drawable_get_buffer (layer);
+      tmp    = picman_drawable_get_buffer (tmp_layer);
 
       buf = g_malloc (w * h * 4);
 
@@ -301,14 +301,14 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
       g_object_unref (tmp);
       g_object_unref (buffer);
 
-      if (gimp_drawable_is_indexed (layer))
-        gimp_image_convert_rgb (tmp_image);
+      if (picman_drawable_is_indexed (layer))
+        picman_image_convert_rgb (tmp_image);
 
-      gimp_image_convert_indexed (tmp_image,
-                                  GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+      picman_image_convert_indexed (tmp_image,
+                                  PICMAN_FS_DITHER, PICMAN_MAKE_PALETTE,
                                   1 << bpp, TRUE, FALSE, "dummy");
 
-      cmap = gimp_image_get_colormap (tmp_image, &num_colors);
+      cmap = picman_image_get_colormap (tmp_image, &num_colors);
 
       if (num_colors == (1 << bpp) &&
           ! ico_cmap_contains_black (cmap, num_colors))
@@ -316,44 +316,44 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
           /* Windows icons with color maps need the color black.
            * We need to eliminate one more color to make room for black.
            */
-          if (gimp_drawable_is_indexed (layer))
+          if (picman_drawable_is_indexed (layer))
             {
               g_free (cmap);
-              cmap = gimp_image_get_colormap (image, &num_colors);
-              gimp_image_set_colormap (tmp_image, cmap, num_colors);
+              cmap = picman_image_get_colormap (image, &num_colors);
+              picman_image_set_colormap (tmp_image, cmap, num_colors);
             }
-          else if (gimp_drawable_is_gray (layer))
+          else if (picman_drawable_is_gray (layer))
             {
-              gimp_image_convert_grayscale (tmp_image);
+              picman_image_convert_grayscale (tmp_image);
             }
           else
             {
-              gimp_image_convert_rgb (tmp_image);
+              picman_image_convert_rgb (tmp_image);
             }
 
-          tmp = gimp_drawable_get_buffer (tmp_layer);
+          tmp = picman_drawable_get_buffer (tmp_layer);
 
           gegl_buffer_set (tmp, GEGL_RECTANGLE (0, 0, w, h), 0,
                            format, buf, GEGL_AUTO_ROWSTRIDE);
 
           g_object_unref (tmp);
 
-          if (!gimp_drawable_is_rgb (layer))
-            gimp_image_convert_rgb (tmp_image);
+          if (!picman_drawable_is_rgb (layer))
+            picman_image_convert_rgb (tmp_image);
 
-          gimp_image_convert_indexed (tmp_image,
-                                      GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+          picman_image_convert_indexed (tmp_image,
+                                      PICMAN_FS_DITHER, PICMAN_MAKE_PALETTE,
                                       (1 << bpp) - 1, TRUE, FALSE, "dummy");
         }
 
       g_free (cmap);
       g_free (buf);
 
-      pixbuf = gimp_drawable_get_thumbnail (tmp_layer,
+      pixbuf = picman_drawable_get_thumbnail (tmp_layer,
                                             MIN (w, 128), MIN (h, 128),
-                                            GIMP_PIXBUF_SMALL_CHECKS);
+                                            PICMAN_PIXBUF_SMALL_CHECKS);
 
-      gimp_image_delete (tmp_image);
+      picman_image_delete (tmp_image);
     }
   else if (bpp == 24)
     {
@@ -362,60 +362,60 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
       gint32      image;
       gint32      tmp_image;
       gint32      tmp_layer;
-      GimpParam  *return_vals;
+      PicmanParam  *return_vals;
       gint        n_return_vals;
 
-      image = gimp_item_get_image (layer);
+      image = picman_item_get_image (layer);
 
-      tmp_image = gimp_image_new (w, h, gimp_image_base_type (image));
-      gimp_image_undo_disable (tmp_image);
+      tmp_image = picman_image_new (w, h, picman_image_base_type (image));
+      picman_image_undo_disable (tmp_image);
 
-      if (gimp_drawable_is_indexed (layer))
+      if (picman_drawable_is_indexed (layer))
         {
           guchar *cmap;
           gint    num_colors;
 
-          cmap = gimp_image_get_colormap (image, &num_colors);
-          gimp_image_set_colormap (tmp_image, cmap, num_colors);
+          cmap = picman_image_get_colormap (image, &num_colors);
+          picman_image_set_colormap (tmp_image, cmap, num_colors);
           g_free (cmap);
         }
 
-      tmp_layer = gimp_layer_new (tmp_image, "temporary", w, h,
-                                  gimp_drawable_type (layer),
-                                  100, GIMP_NORMAL_MODE);
-      gimp_image_insert_layer (tmp_image, tmp_layer, -1, 0);
+      tmp_layer = picman_layer_new (tmp_image, "temporary", w, h,
+                                  picman_drawable_type (layer),
+                                  100, PICMAN_NORMAL_MODE);
+      picman_image_insert_layer (tmp_image, tmp_layer, -1, 0);
 
-      buffer = gimp_drawable_get_buffer (layer);
-      tmp    = gimp_drawable_get_buffer (tmp_layer);
+      buffer = picman_drawable_get_buffer (layer);
+      tmp    = picman_drawable_get_buffer (tmp_layer);
 
       gegl_buffer_copy (buffer, NULL, tmp, NULL);
 
       g_object_unref (tmp);
       g_object_unref (buffer);
 
-      if (gimp_drawable_is_indexed (layer))
-        gimp_image_convert_rgb (tmp_image);
+      if (picman_drawable_is_indexed (layer))
+        picman_image_convert_rgb (tmp_image);
 
       return_vals =
-        gimp_run_procedure ("plug-in-threshold-alpha", &n_return_vals,
-                            GIMP_PDB_INT32, GIMP_RUN_NONINTERACTIVE,
-                            GIMP_PDB_IMAGE, tmp_image,
-                            GIMP_PDB_DRAWABLE, tmp_layer,
-                            GIMP_PDB_INT32, ICO_ALPHA_THRESHOLD,
-                            GIMP_PDB_END);
-      gimp_destroy_params (return_vals, n_return_vals);
+        picman_run_procedure ("plug-in-threshold-alpha", &n_return_vals,
+                            PICMAN_PDB_INT32, PICMAN_RUN_NONINTERACTIVE,
+                            PICMAN_PDB_IMAGE, tmp_image,
+                            PICMAN_PDB_DRAWABLE, tmp_layer,
+                            PICMAN_PDB_INT32, ICO_ALPHA_THRESHOLD,
+                            PICMAN_PDB_END);
+      picman_destroy_params (return_vals, n_return_vals);
 
-      pixbuf = gimp_drawable_get_thumbnail (tmp_layer,
+      pixbuf = picman_drawable_get_thumbnail (tmp_layer,
                                             MIN (w, 128), MIN (h, 128),
-                                            GIMP_PIXBUF_SMALL_CHECKS);
+                                            PICMAN_PIXBUF_SMALL_CHECKS);
 
-      gimp_image_delete (tmp_image);
+      picman_image_delete (tmp_image);
     }
   else
     {
-      pixbuf = gimp_drawable_get_thumbnail (layer,
+      pixbuf = picman_drawable_get_thumbnail (layer,
                                             MIN (w, 128), MIN (h, 128),
-                                            GIMP_PIXBUF_SMALL_CHECKS);
+                                            PICMAN_PIXBUF_SMALL_CHECKS);
     }
 
   gtk_image_set_from_pixbuf (GTK_IMAGE (preview), pixbuf);
@@ -462,7 +462,7 @@ ico_dialog_bpp_changed (GtkWidget *combo,
 
   dialog = gtk_widget_get_toplevel (combo);
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (combo), &bpp);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (combo), &bpp);
 
   info = g_object_get_data (G_OBJECT (dialog), "save_info");
   g_assert (info);
@@ -507,8 +507,8 @@ ico_dialog_check_compat (GtkWidget   *dialog,
 
   for (i = 0; i < info->num_icons; i++)
     {
-      if (gimp_drawable_width (info->layers[i]) > 255  ||
-          gimp_drawable_height (info->layers[i]) > 255 ||
+      if (picman_drawable_width (info->layers[i]) > 255  ||
+          picman_drawable_height (info->layers[i]) > 255 ||
           info->compress[i])
         {
           warn = TRUE;

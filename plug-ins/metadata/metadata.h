@@ -1,6 +1,6 @@
 /* metadata.h - defines for the metadata editor
  *
- * Copyright (C) 2004-2005, Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2004-2005, Raphaël Quinet <raphael@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@
 #define IMPORT_PROC         "plug-in-metadata-import"
 #define EXPORT_PROC         "plug-in-metadata-export"
 #define PLUG_IN_BINARY      "metadata"
-#define PLUG_IN_ROLE        "gimp-metadata"
+#define PLUG_IN_ROLE        "picman-metadata"
 
 
 #endif /* __METADATA_H__ */

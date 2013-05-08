@@ -21,15 +21,15 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-unsharp-mask"
 #define PLUG_IN_BINARY  "unsharp-mask"
-#define PLUG_IN_ROLE    "gimp-unsharp-mask"
+#define PLUG_IN_ROLE    "picman-unsharp-mask"
 
 #define SCALE_WIDTH   120
 #define ENTRY_WIDTH     5
@@ -57,9 +57,9 @@ typedef struct
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
 static void      gaussian_blur_line  (const gdouble  *cmatrix,
                                       const gint      cmatrix_length,
@@ -75,8 +75,8 @@ static void      box_blur_line       (const gint      box_width,
                                       const gint      bpp);
 static gint      gen_convolve_matrix (gdouble         std_dev,
                                       gdouble       **cmatrix);
-static void      unsharp_region      (GimpPixelRgn   *srcPTR,
-                                      GimpPixelRgn   *dstPTR,
+static void      unsharp_region      (PicmanPixelRgn   *srcPTR,
+                                      PicmanPixelRgn   *dstPTR,
                                       gint            bpp,
                                       gdouble         radius,
                                       gdouble         amount,
@@ -86,12 +86,12 @@ static void      unsharp_region      (GimpPixelRgn   *srcPTR,
                                       gint            y2,
                                       gboolean        show_progress);
 
-static void      unsharp_mask        (GimpDrawable   *drawable,
+static void      unsharp_mask        (PicmanDrawable   *drawable,
                                       gdouble         radius,
                                       gdouble         amount);
 
-static gboolean  unsharp_mask_dialog (GimpDrawable   *drawable);
-static void      preview_update      (GimpPreview    *preview);
+static gboolean  unsharp_mask_dialog (PicmanDrawable   *drawable);
+static void      preview_update      (PicmanPreview    *preview);
 
 
 /* create a few globals, set default values */
@@ -103,7 +103,7 @@ static UnsharpMaskParams unsharp_params =
 };
 
 /* Setting PLUG_IN_INFO */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
   {
     NULL,  /* init_proc  */
     NULL,  /* quit_proc  */
@@ -117,17 +117,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
     {
-      { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-      { GIMP_PDB_IMAGE,    "image",     "(unused)" },
-      { GIMP_PDB_DRAWABLE, "drawable",  "Drawable to draw on" },
-      { GIMP_PDB_FLOAT,    "radius",    "Radius of gaussian blur (in pixels > 1.0)" },
-      { GIMP_PDB_FLOAT,    "amount",    "Strength of effect" },
-      { GIMP_PDB_INT32,    "threshold", "Threshold (0-255)" }
+      { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+      { PICMAN_PDB_IMAGE,    "image",     "(unused)" },
+      { PICMAN_PDB_DRAWABLE, "drawable",  "Drawable to draw on" },
+      { PICMAN_PDB_FLOAT,    "radius",    "Radius of gaussian blur (in pixels > 1.0)" },
+      { PICMAN_PDB_FLOAT,    "amount",    "Strength of effect" },
+      { PICMAN_PDB_INT32,    "threshold", "Threshold (0-255)" }
     };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("The most widely useful method for sharpening an image"),
                           "The unsharp mask is a sharpening filter that works "
                           "by comparing using the difference of the image and "
@@ -140,7 +140,7 @@ query (void)
                           "1999-2009",
                           N_("_Unsharp Mask..."),
                           "GRAY*, RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
@@ -149,14 +149,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
 #ifdef TIMER
   GTimer            *timer = g_timer_new ();
 #endif
@@ -166,7 +166,7 @@ run (const gchar      *name,
   *return_vals  = values;
   *nreturn_vals = 1;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N ();
@@ -174,14 +174,14 @@ run (const gchar      *name,
   /*
    * Get drawable information...
    */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (2 * MAX (drawable->width  / gimp_tile_width () + 1 ,
-                                   drawable->height / gimp_tile_height () + 1));
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (2 * MAX (drawable->width  / picman_tile_width () + 1 ,
+                                   drawable->height / picman_tile_height () + 1));
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &unsharp_params);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &unsharp_params);
       /* Reset default values show preview unmodified */
 
       /* initialize pixel regions and buffer */
@@ -190,10 +190,10 @@ run (const gchar      *name,
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -204,33 +204,33 @@ run (const gchar      *name,
           /* make sure there are legal values */
           if ((unsharp_params.radius < 0.0) ||
               (unsharp_params.amount < 0.0))
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &unsharp_params);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &unsharp_params);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
 
       /* here we go */
       unsharp_mask (drawable, unsharp_params.radius, unsharp_params.amount);
 
-      gimp_displays_flush ();
+      picman_displays_flush ();
 
       /* set data for next use of filter */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC,
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC,
                        &unsharp_params, sizeof (UnsharpMaskParams));
 
-      gimp_drawable_detach(drawable);
+      picman_drawable_detach(drawable);
       values[0].data.d_status = status;
     }
 
@@ -530,30 +530,30 @@ gaussian_blur_line (const gdouble *cmatrix,
 }
 
 static void
-unsharp_mask (GimpDrawable *drawable,
+unsharp_mask (PicmanDrawable *drawable,
               gdouble       radius,
               gdouble       amount)
 {
-  GimpPixelRgn srcPR, destPR;
+  PicmanPixelRgn srcPR, destPR;
   gint         x1, y1, x2, y2;
 
   /* initialize pixel regions */
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable,
+  picman_pixel_rgn_init (&destPR, drawable,
                        0, 0, drawable->width, drawable->height, TRUE, TRUE);
 
   /* Get the input */
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   unsharp_region (&srcPR, &destPR, drawable->bpp,
                   radius, amount,
                   x1, x2, y1, y2,
                   TRUE);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
 }
 
 /* Perform an unsharp mask on the region, given a source region, dest.
@@ -561,8 +561,8 @@ unsharp_mask (GimpDrawable *drawable,
  * a subregion to act upon.  Everything outside the subregion is unaffected.
  */
 static void
-unsharp_region (GimpPixelRgn *srcPR,
-                GimpPixelRgn *destPR,
+unsharp_region (PicmanPixelRgn *srcPR,
+                PicmanPixelRgn *destPR,
                 gint          bpp,
                 gdouble       radius, /* Radius, AKA standard deviation */
                 gdouble       amount,
@@ -585,7 +585,7 @@ unsharp_region (GimpPixelRgn *srcPR,
   gint        box_width = 0;
 
   if (show_progress)
-    gimp_progress_init (_("Blurring"));
+    picman_progress_init (_("Blurring"));
 
   /* If the radius is less than 10, use a true gaussian kernel.  This
    * is slower, but more accurate and allows for finer adjustments.
@@ -614,7 +614,7 @@ unsharp_region (GimpPixelRgn *srcPR,
   /* Blur the rows */
   for (row = 0; row < height; row++)
     {
-      gimp_pixel_rgn_get_row (srcPR, src, x1, y1 + row, width);
+      picman_pixel_rgn_get_row (srcPR, src, x1, y1 + row, width);
 
       if (box_blur)
         {
@@ -646,16 +646,16 @@ unsharp_region (GimpPixelRgn *srcPR,
           gaussian_blur_line (cmatrix, cmatrix_length, src, dest, width, bpp);
         }
 
-      gimp_pixel_rgn_set_row (destPR, dest, x1, y1 + row, width);
+      picman_pixel_rgn_set_row (destPR, dest, x1, y1 + row, width);
 
       if (show_progress && row % 64 == 0)
-        gimp_progress_update ((gdouble) row / (3 * height));
+        picman_progress_update ((gdouble) row / (3 * height));
     }
 
   /* Blur the cols. Essentially same as above. */
   for (col = 0; col < width; col++)
     {
-      gimp_pixel_rgn_get_col (destPR, src, x1 + col, y1, height);
+      picman_pixel_rgn_get_col (destPR, src, x1 + col, y1, height);
 
       if (box_blur)
         {
@@ -680,14 +680,14 @@ unsharp_region (GimpPixelRgn *srcPR,
           gaussian_blur_line (cmatrix, cmatrix_length, src, dest,height, bpp);
         }
 
-      gimp_pixel_rgn_set_col (destPR, dest, x1 + col, y1, height);
+      picman_pixel_rgn_set_col (destPR, dest, x1 + col, y1, height);
 
       if (show_progress && col % 64 == 0)
-        gimp_progress_update ((gdouble) col / (3 * width) + 0.33);
+        picman_progress_update ((gdouble) col / (3 * width) + 0.33);
     }
 
   if (show_progress)
-    gimp_progress_set_text (_("Merging"));
+    picman_progress_set_text (_("Merging"));
 
   /* merge the source and destination (which currently contains
      the blurred version) images */
@@ -698,10 +698,10 @@ unsharp_region (GimpPixelRgn *srcPR,
       gint          u, v;
 
       /* get source row */
-      gimp_pixel_rgn_get_row (srcPR, src, x1, y1 + row, width);
+      picman_pixel_rgn_get_row (srcPR, src, x1, y1 + row, width);
 
       /* get dest row */
-      gimp_pixel_rgn_get_row (destPR, dest, x1, y1 + row, width);
+      picman_pixel_rgn_get_row (destPR, dest, x1, y1 + row, width);
 
       /* combine the two */
       for (u = 0; u < width; u++)
@@ -721,13 +721,13 @@ unsharp_region (GimpPixelRgn *srcPR,
         }
 
       if (show_progress && row % 64 == 0)
-        gimp_progress_update ((gdouble) row / (3 * height) + 0.67);
+        picman_progress_update ((gdouble) row / (3 * height) + 0.67);
 
-      gimp_pixel_rgn_set_row (destPR, dest, x1, y1 + row, width);
+      picman_pixel_rgn_set_row (destPR, dest, x1, y1 + row, width);
     }
 
   if (show_progress)
-    gimp_progress_update (1.0);
+    picman_progress_update (1.0);
 
   g_free (dest);
   g_free (src);
@@ -820,7 +820,7 @@ gen_convolve_matrix (gdouble   radius,
 }
 
 static gboolean
-unsharp_mask_dialog (GimpDrawable *drawable)
+unsharp_mask_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -829,11 +829,11 @@ unsharp_mask_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Unsharp Mask"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Unsharp Mask"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -845,7 +845,7 @@ unsharp_mask_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -853,7 +853,7 @@ unsharp_mask_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -867,33 +867,33 @@ unsharp_mask_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Radius:"), SCALE_WIDTH, ENTRY_WIDTH,
                               unsharp_params.radius, 0.1, 500.0, 0.1, 1.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &unsharp_params.radius);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Amount:"), SCALE_WIDTH, ENTRY_WIDTH,
                               unsharp_params.amount, 0.0, 10.0, 0.01, 0.1, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &unsharp_params.amount);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Threshold:"), SCALE_WIDTH, ENTRY_WIDTH,
                               unsharp_params.threshold,
                               0.0, 255.0, 1.0, 10.0, 0,
@@ -901,15 +901,15 @@ unsharp_mask_dialog (GimpDrawable *drawable)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &unsharp_params.threshold);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -917,27 +917,27 @@ unsharp_mask_dialog (GimpDrawable *drawable)
 }
 
 static void
-preview_update (GimpPreview *preview)
+preview_update (PicmanPreview *preview)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint          x1, x2;
   gint          y1, y2;
   gint          x, y;
   gint          width, height;
   gint          border;
-  GimpPixelRgn  srcPR;
-  GimpPixelRgn  destPR;
+  PicmanPixelRgn  srcPR;
+  PicmanPixelRgn  destPR;
 
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
 
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable,
+  picman_pixel_rgn_init (&destPR, drawable,
                        0, 0, drawable->width, drawable->height, TRUE, TRUE);
 
-  gimp_preview_get_position (preview, &x, &y);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x, &y);
+  picman_preview_get_size (preview, &width, &height);
 
   /* enlarge the region to avoid artefacts at the edges of the preview */
   border = 2.0 * unsharp_params.radius + 0.5;
@@ -951,6 +951,6 @@ preview_update (GimpPreview *preview)
                   x1, x2, y1, y2,
                   FALSE);
 
-  gimp_pixel_rgn_init (&destPR, drawable, x, y, width, height, FALSE, TRUE);
-  gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview), &destPR);
+  picman_pixel_rgn_init (&destPR, drawable, x, y, width, height, FALSE, TRUE);
+  picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview), &destPR);
 }

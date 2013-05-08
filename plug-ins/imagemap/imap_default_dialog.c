@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -22,8 +22,8 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "imap_default_dialog.h"
 #include "imap_main.h"
@@ -92,9 +92,9 @@ make_default_dialog (const gchar *title)
    data->apply_cb = NULL;
    data->cancel_cb = NULL;
 
-   data->dialog = gimp_dialog_new (title, PLUG_IN_ROLE,
+   data->dialog = picman_dialog_new (title, PLUG_IN_ROLE,
                                    get_dialog(), 0,
-                                   gimp_standard_help_func, PLUG_IN_PROC,
+                                   picman_standard_help_func, PLUG_IN_PROC,
                                    NULL);
 
    data->apply = gtk_dialog_add_button (GTK_DIALOG (data->dialog),

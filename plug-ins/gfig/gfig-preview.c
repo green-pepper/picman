@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates images containing vector type drawings.
  *
@@ -23,15 +23,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "gfig.h"
 #include "gfig-grid.h"
 #include "gfig-dobject.h"
 #include "gfig-preview.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define PREVIEW_MASK  (GDK_EXPOSURE_MASK       | \
                        GDK_POINTER_MOTION_MASK | \
@@ -100,8 +100,8 @@ make_preview (void)
                     GTK_FILL , GTK_FILL , 0, 0);
   gtk_container_add (GTK_CONTAINER (frame), table);
 
-  ruler = gimp_ruler_new (GTK_ORIENTATION_HORIZONTAL);
-  gimp_ruler_set_range (GIMP_RULER (ruler), 0, preview_width, PREVIEW_SIZE);
+  ruler = picman_ruler_new (GTK_ORIENTATION_HORIZONTAL);
+  picman_ruler_set_range (PICMAN_RULER (ruler), 0, preview_width, PREVIEW_SIZE);
   g_signal_connect_swapped (gfig_context->preview, "motion-notify-event",
                             G_CALLBACK (GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (ruler))->motion_notify_event),
                             ruler);
@@ -109,8 +109,8 @@ make_preview (void)
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (ruler);
 
-  ruler = gimp_ruler_new (GTK_ORIENTATION_VERTICAL);
-  gimp_ruler_set_range (GIMP_RULER (ruler), 0, preview_height, PREVIEW_SIZE);
+  ruler = picman_ruler_new (GTK_ORIENTATION_VERTICAL);
+  picman_ruler_set_range (PICMAN_RULER (ruler), 0, preview_height, PREVIEW_SIZE);
   g_signal_connect_swapped (gfig_context->preview, "motion-notify-event",
                             G_CALLBACK (GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (ruler))->motion_notify_event),
                             ruler);
@@ -149,9 +149,9 @@ static void
 draw_background (cairo_t  *cr)
 {
   if (! back_pixbuf)
-    back_pixbuf = gimp_image_get_thumbnail (gfig_context->image_id,
+    back_pixbuf = picman_image_get_thumbnail (gfig_context->image_id,
                                             preview_width, preview_height,
-                                            GIMP_PIXBUF_LARGE_CHECKS);
+                                            PICMAN_PIXBUF_LARGE_CHECKS);
 
   if (back_pixbuf)
     {
@@ -325,7 +325,7 @@ make_pos_info (void)
   GtkWidget *hbox;
   GtkWidget *label;
 
-  frame = gimp_frame_new (_("Object Details"));
+  frame = picman_frame_new (_("Object Details"));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);

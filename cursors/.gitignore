@@ -4,5 +4,5 @@
 /.thumbnails
 /color-picker-cursors.list
 /tool-cursors.list
-/gimp-color-picker-cursors.h
-/gimp-tool-cursors.h
+/picman-color-picker-cursors.h
+/picman-tool-cursors.h

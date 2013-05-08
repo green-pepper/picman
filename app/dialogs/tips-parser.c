@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * tips-parser.c - Parse the gimp-tips.xml file.
- * Copyright (C) 2002, 2008  Sven Neumann <sven@gimp.org>
+ * tips-parser.c - Parse the picman-tips.xml file.
+ * Copyright (C) 2002, 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 #include <glib-object.h>
 
 #include "config/config-types.h"
-#include "config/gimpxmlparser.h"
+#include "config/picmanxmlparser.h"
 
 #include "tips-parser.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef enum
@@ -58,7 +58,7 @@ typedef struct
   gint                   markup_depth;
   gint                   unknown_depth;
   GString               *value;
-  GimpTip               *current_tip;
+  PicmanTip               *current_tip;
   GList                 *tips;
 } TipsParser;
 
@@ -107,12 +107,12 @@ static const GMarkupParser markup_parser =
 };
 
 
-GimpTip *
-gimp_tip_new (const gchar *title,
+PicmanTip *
+picman_tip_new (const gchar *title,
               const gchar *format,
               ...)
 {
-  GimpTip *tip = g_slice_new0 (GimpTip);
+  PicmanTip *tip = g_slice_new0 (PicmanTip);
   GString *str = g_string_new (NULL);
 
   if (title)
@@ -140,7 +140,7 @@ gimp_tip_new (const gchar *title,
 }
 
 void
-gimp_tip_free (GimpTip *tip)
+picman_tip_free (PicmanTip *tip)
 {
   if (! tip)
     return;
@@ -148,28 +148,28 @@ gimp_tip_free (GimpTip *tip)
   g_free (tip->text);
   g_free (tip->help_id);
 
-  g_slice_free (GimpTip, tip);
+  g_slice_free (PicmanTip, tip);
 }
 
 /**
- * gimp_tips_from_file:
+ * picman_tips_from_file:
  * @filename: the name of the tips file to parse
  * @error: return location for a #GError
  *
- * Reads a gimp-tips XML file, creates a new #GimpTip for
+ * Reads a picman-tips XML file, creates a new #PicmanTip for
  * each tip entry and returns a #GList of them. If a parser
  * error occurs at some point, the uncompleted list is
  * returned and @error is set (unless @error is %NULL).
  * The message set in @error contains a detailed description
  * of the problem.
  *
- * Return value: a #Glist of #GimpTips.
+ * Return value: a #Glist of #PicmanTips.
  **/
 GList *
-gimp_tips_from_file (const gchar  *filename,
+picman_tips_from_file (const gchar  *filename,
                      GError      **error)
 {
-  GimpXmlParser *xml_parser;
+  PicmanXmlParser *xml_parser;
   TipsParser     parser = { 0, };
   const gchar   *tips_locale;
   GList         *tips   = NULL;
@@ -180,8 +180,8 @@ gimp_tips_from_file (const gchar  *filename,
   parser.value = g_string_new (NULL);
 
   /* This is a special string to specify the language identifier to
-     look for in the gimp-tips.xml file. Please translate the C in it
-     according to the name of the po file used for gimp-tips.xml.
+     look for in the picman-tips.xml file. Please translate the C in it
+     according to the name of the po file used for picman-tips.xml.
      E.g. for the german translation, that would be "tips-locale:de".
    */
   tips_locale = _("tips-locale:C");
@@ -198,27 +198,27 @@ gimp_tips_from_file (const gchar  *filename,
       g_warning ("Wrong translation for 'tips-locale:', fix the translation!");
     }
 
-  xml_parser = gimp_xml_parser_new (&markup_parser, &parser);
+  xml_parser = picman_xml_parser_new (&markup_parser, &parser);
 
-  gimp_xml_parser_parse_file (xml_parser, filename, error);
+  picman_xml_parser_parse_file (xml_parser, filename, error);
 
-  gimp_xml_parser_free (xml_parser);
+  picman_xml_parser_free (xml_parser);
 
   tips = g_list_reverse (parser.tips);
 
-  gimp_tip_free (parser.current_tip);
+  picman_tip_free (parser.current_tip);
   g_string_free (parser.value, TRUE);
 
   return tips;
 }
 
 void
-gimp_tips_free (GList *tips)
+picman_tips_free (GList *tips)
 {
   GList *list;
 
   for (list = tips; list; list = list->next)
-    gimp_tip_free (list->data);
+    picman_tip_free (list->data);
 
   g_list_free (tips);
 }
@@ -236,7 +236,7 @@ tips_parser_start_element (GMarkupParseContext *context,
   switch (parser->state)
     {
     case TIPS_START:
-      if (strcmp (element_name, "gimp-tips") == 0)
+      if (strcmp (element_name, "picman-tips") == 0)
         {
           parser->state = TIPS_IN_TIPS;
         }
@@ -250,7 +250,7 @@ tips_parser_start_element (GMarkupParseContext *context,
       if (strcmp (element_name, "tip") == 0)
         {
           parser->state = TIPS_IN_TIP;
-          parser->current_tip = g_slice_new0 (GimpTip);
+          parser->current_tip = g_slice_new0 (PicmanTip);
           parser->current_tip->help_id = tips_parser_parse_help_id (parser,
                                                                     attribute_names,
                                                                     attribute_values);

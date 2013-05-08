@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Normalize 1.00 --- image filter plug-in
@@ -33,9 +33,9 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC "plug-in-normalize"
@@ -46,15 +46,15 @@
 static void   query             (void);
 static void   run               (const gchar      *name,
                                  gint              nparams,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nreturn_vals,
-                                 GimpParam       **return_vals);
+                                 PicmanParam       **return_vals);
 
-static void   normalize         (GimpDrawable     *drawable);
+static void   normalize         (PicmanDrawable     *drawable);
 static void   indexed_normalize (gint32            image_ID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -68,14 +68,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Stretch brightness values to cover the full range"),
                           "This plugin performs almost the same operation as "
                           "the 'contrast autostretch' plugin, except that it "
@@ -90,7 +90,7 @@ query (void)
                           "1997",
                           N_("_Normalize"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -98,14 +98,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
   gint32             image_ID;
 
   INIT_I18N ();
@@ -113,40 +113,40 @@ run (const gchar      *name,
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
   image_ID = param[1].data.d_image;
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Normalizing"));
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_progress_init (_("Normalizing"));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
       normalize (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
-  else if (gimp_drawable_is_indexed (drawable->drawable_id))
+  else if (picman_drawable_is_indexed (drawable->drawable_id))
     {
       indexed_normalize (image_ID);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
@@ -157,7 +157,7 @@ indexed_normalize (gint32 image_ID)  /* a.d.m. */
   gint ncols,i;
   gint hi=0,lo=255;
 
-  cmap = gimp_image_get_colormap (image_ID, &ncols);
+  cmap = picman_image_get_colormap (image_ID, &ncols);
 
   if (cmap==NULL)
     {
@@ -183,7 +183,7 @@ indexed_normalize (gint32 image_ID)  /* a.d.m. */
         cmap[i*3 +2] = (255 * (cmap[i*3 +2] - lo)) / (hi-lo);
       }
 
-  gimp_image_set_colormap (image_ID, cmap, ncols);
+  picman_image_set_colormap (image_ID, cmap, ncols);
 }
 
 typedef struct
@@ -232,7 +232,7 @@ normalize_func (const guchar *src,
 }
 
 static void
-normalize (GimpDrawable *drawable)
+normalize (PicmanDrawable *drawable)
 {
   NormalizeParam_t param;
   gint x;
@@ -240,10 +240,10 @@ normalize (GimpDrawable *drawable)
 
   param.min = 255;
   param.max = 0;
-  param.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  param.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   param.alpha = (param.has_alpha) ? drawable->bpp - 1 : drawable->bpp;
 
-  gimp_rgn_iterate1 (drawable, 0 /* unused */, find_min_max, &param);
+  picman_rgn_iterate1 (drawable, 0 /* unused */, find_min_max, &param);
 
   /* Calculate LUT */
 
@@ -255,5 +255,5 @@ normalize (GimpDrawable *drawable)
   else
     param.lut[(gint)param.min] = param.min;
 
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, normalize_func, &param);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, normalize_func, &param);
 }

@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/Texture
+## Makefile.am for picman/data/brushes/Texture
 
-brushtexturedatadir = $(gimpdatadir)/brushes/Texture
+brushtexturedatadir = $(picmandatadir)/brushes/Texture
 
 brushtexturedata_DATA = \
 	Cell-01.gbr		\

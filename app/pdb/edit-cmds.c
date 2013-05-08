@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,62 +25,62 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp-edit.h"
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpdrawable-blend.h"
-#include "core/gimpdrawable-bucket-fill.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage-new.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
-#include "core/gimpstrokeoptions.h"
-#include "vectors/gimpvectors.h"
+#include "core/picman-edit.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmandrawable-blend.h"
+#include "core/picmandrawable-bucket-fill.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage-new.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
+#include "core/picmanstrokeoptions.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-edit_cut_invoker (GimpProcedure         *procedure,
-                  Gimp                  *gimp,
-                  GimpContext           *context,
-                  GimpProgress          *progress,
-                  const GimpValueArray  *args,
+static PicmanValueArray *
+edit_cut_invoker (PicmanProcedure         *procedure,
+                  Picman                  *picman,
+                  PicmanContext           *context,
+                  PicmanProgress          *progress,
+                  const PicmanValueArray  *args,
                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean non_empty = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
           GError    *my_error = NULL;
 
-          non_empty = gimp_edit_cut (image, drawable, context, &my_error) != NULL;
+          non_empty = picman_edit_cut (image, drawable, context, &my_error) != NULL;
 
           if (! non_empty)
             {
-              gimp_message_literal (gimp,
-                                    G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+              picman_message_literal (picman,
+                                    G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                     my_error->message);
               g_clear_error (&my_error);
             }
@@ -89,43 +89,43 @@ edit_cut_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), non_empty);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), non_empty);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_copy_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+edit_copy_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean non_empty = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
         {
-          GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
           GError    *my_error = NULL;
 
-          non_empty = gimp_edit_copy (image, drawable, context, &my_error) != NULL;
+          non_empty = picman_edit_copy (image, drawable, context, &my_error) != NULL;
 
           if (! non_empty)
             {
-              gimp_message_literal (gimp,
-                                    G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+              picman_message_literal (picman,
+                                    G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                     my_error->message);
               g_clear_error (&my_error);
             }
@@ -134,80 +134,80 @@ edit_copy_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), non_empty);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), non_empty);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_copy_visible_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+edit_copy_visible_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gboolean non_empty = FALSE;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
       GError *my_error = NULL;
 
-      non_empty = gimp_edit_copy_visible (image, context, &my_error) != NULL;
+      non_empty = picman_edit_copy_visible (image, context, &my_error) != NULL;
 
       if (! non_empty)
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), non_empty);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), non_empty);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_paste_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
+static PicmanValueArray *
+edit_paste_invoker (PicmanProcedure         *procedure,
+                    Picman                  *picman,
+                    PicmanContext           *context,
+                    PicmanProgress          *progress,
+                    const PicmanValueArray  *args,
                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean paste_into;
-  GimpLayer *floating_sel = NULL;
+  PicmanLayer *floating_sel = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  paste_into = g_value_get_boolean (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  paste_into = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp->global_buffer &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman->global_buffer &&
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          floating_sel = gimp_edit_paste (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                          drawable, gimp->global_buffer,
+          floating_sel = picman_edit_paste (picman_item_get_image (PICMAN_ITEM (drawable)),
+                                          drawable, picman->global_buffer,
                                           paste_into, -1, -1, -1, -1);
 
           if (! floating_sel)
@@ -217,30 +217,30 @@ edit_paste_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), floating_sel);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), floating_sel);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_paste_as_new_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+edit_paste_as_new_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image = NULL;
+  PicmanValueArray *return_vals;
+  PicmanImage *image = NULL;
 
-  if (gimp->global_buffer)
+  if (picman->global_buffer)
     {
-      image = gimp_image_new_from_buffer (gimp, NULL, gimp->global_buffer);
+      image = picman_image_new_from_buffer (picman, NULL, picman->global_buffer);
 
       if (! image)
         success = FALSE;
@@ -250,42 +250,42 @@ edit_paste_as_new_invoker (GimpProcedure         *procedure,
       image = NULL;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_image (gimp_value_array_index (return_vals, 1), image);
+    picman_value_set_image (picman_value_array_index (return_vals, 1), image);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_named_cut_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+edit_named_cut_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   const gchar *buffer_name;
   gchar *real_name = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  buffer_name = g_value_get_string (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  buffer_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
           GError    *my_error = NULL;
 
-          real_name = (gchar *) gimp_edit_named_cut (image, buffer_name,
+          real_name = (gchar *) picman_edit_named_cut (image, buffer_name,
                                                      drawable, context, &my_error);
 
           if (real_name)
@@ -294,8 +294,8 @@ edit_named_cut_invoker (GimpProcedure         *procedure,
             }
           else
             {
-              gimp_message_literal (gimp,
-                                    G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+              picman_message_literal (picman,
+                                    G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                     my_error->message);
               g_clear_error (&my_error);
             }
@@ -304,40 +304,40 @@ edit_named_cut_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), real_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), real_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_named_copy_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+edit_named_copy_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   const gchar *buffer_name;
   gchar *real_name = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  buffer_name = g_value_get_string (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  buffer_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
         {
-          GimpImage *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image    = picman_item_get_image (PICMAN_ITEM (drawable));
           GError    *my_error = NULL;
 
-          real_name = (gchar *) gimp_edit_named_copy (image, buffer_name,
+          real_name = (gchar *) picman_edit_named_copy (image, buffer_name,
                                                       drawable, context, &my_error);
 
           if (real_name)
@@ -346,8 +346,8 @@ edit_named_copy_invoker (GimpProcedure         *procedure,
             }
           else
             {
-              gimp_message_literal (gimp,
-                                    G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+              picman_message_literal (picman,
+                                    G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                     my_error->message);
               g_clear_error (&my_error);
             }
@@ -356,37 +356,37 @@ edit_named_copy_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), real_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), real_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_named_copy_visible_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+edit_named_copy_visible_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   const gchar *buffer_name;
   gchar *real_name = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  buffer_name = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  buffer_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
       GError *my_error = NULL;
 
-      real_name = (gchar *) gimp_edit_named_copy_visible (image, buffer_name,
+      real_name = (gchar *) picman_edit_named_copy_visible (image, buffer_name,
                                                           context, &my_error);
 
       if (real_name)
@@ -395,51 +395,51 @@ edit_named_copy_visible_invoker (GimpProcedure         *procedure,
         }
       else
         {
-          gimp_message_literal (gimp,
-                                G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman,
+                                G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                                 my_error->message);
           g_clear_error (&my_error);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), real_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), real_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_named_paste_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+edit_named_paste_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   const gchar *buffer_name;
   gboolean paste_into;
-  GimpLayer *floating_sel = NULL;
+  PicmanLayer *floating_sel = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  buffer_name = g_value_get_string (gimp_value_array_index (args, 1));
-  paste_into = g_value_get_boolean (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  buffer_name = g_value_get_string (picman_value_array_index (args, 1));
+  paste_into = g_value_get_boolean (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpBuffer *buffer = gimp_pdb_get_buffer (gimp, buffer_name, error);
+      PicmanBuffer *buffer = picman_pdb_get_buffer (picman, buffer_name, error);
 
       if (buffer &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          floating_sel = gimp_edit_paste (gimp_item_get_image (GIMP_ITEM (drawable)),
+          floating_sel = picman_edit_paste (picman_item_get_image (PICMAN_ITEM (drawable)),
                                           drawable, buffer,
                                           paste_into, -1, -1, -1, -1);
           if (! floating_sel)
@@ -449,37 +449,37 @@ edit_named_paste_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), floating_sel);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), floating_sel);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_named_paste_as_new_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+edit_named_paste_as_new_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *buffer_name;
-  GimpImage *image = NULL;
+  PicmanImage *image = NULL;
 
-  buffer_name = g_value_get_string (gimp_value_array_index (args, 0));
+  buffer_name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBuffer *buffer = gimp_pdb_get_buffer (gimp, buffer_name, error);
+      PicmanBuffer *buffer = picman_pdb_get_buffer (picman, buffer_name, error);
 
       if (buffer)
         {
-          image = gimp_image_new_from_buffer (gimp, NULL, buffer);
+          image = picman_image_new_from_buffer (picman, NULL, buffer);
 
           if (! image)
             success = FALSE;
@@ -488,91 +488,91 @@ edit_named_paste_as_new_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_image (gimp_value_array_index (return_vals, 1), image);
+    picman_value_set_image (picman_value_array_index (return_vals, 1), image);
 
   return return_vals;
 }
 
-static GimpValueArray *
-edit_clear_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
+static PicmanValueArray *
+edit_clear_invoker (PicmanProcedure         *procedure,
+                    Picman                  *picman,
+                    PicmanContext           *context,
+                    PicmanProgress          *progress,
+                    const PicmanValueArray  *args,
                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-          success = gimp_edit_clear (image, drawable, context);
+          success = picman_edit_clear (image, drawable, context);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_fill_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+edit_fill_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 fill_type;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  fill_type = g_value_get_enum (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  fill_type = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-          success = gimp_edit_fill (image, drawable, context,
-                                    (GimpFillType) fill_type,
-                                    GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+          success = picman_edit_fill (image, drawable, context,
+                                    (PicmanFillType) fill_type,
+                                    PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_bucket_fill_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+edit_bucket_fill_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 fill_mode;
   gint32 paint_mode;
   gdouble opacity;
@@ -581,51 +581,51 @@ edit_bucket_fill_invoker (GimpProcedure         *procedure,
   gdouble x;
   gdouble y;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  fill_mode = g_value_get_enum (gimp_value_array_index (args, 1));
-  paint_mode = g_value_get_enum (gimp_value_array_index (args, 2));
-  opacity = g_value_get_double (gimp_value_array_index (args, 3));
-  threshold = g_value_get_double (gimp_value_array_index (args, 4));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 5));
-  x = g_value_get_double (gimp_value_array_index (args, 6));
-  y = g_value_get_double (gimp_value_array_index (args, 7));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  fill_mode = g_value_get_enum (picman_value_array_index (args, 1));
+  paint_mode = g_value_get_enum (picman_value_array_index (args, 2));
+  opacity = g_value_get_double (picman_value_array_index (args, 3));
+  threshold = g_value_get_double (picman_value_array_index (args, 4));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 5));
+  x = g_value_get_double (picman_value_array_index (args, 6));
+  y = g_value_get_double (picman_value_array_index (args, 7));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-          if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+          if (! picman_channel_is_empty (picman_image_get_mask (image)))
             {
-              GimpFillType fill_type = GIMP_FG_BUCKET_FILL;
+              PicmanFillType fill_type = PICMAN_FG_BUCKET_FILL;
 
               switch (fill_mode)
                 {
-                case GIMP_FG_BUCKET_FILL:
-                  fill_type = GIMP_FOREGROUND_FILL;
+                case PICMAN_FG_BUCKET_FILL:
+                  fill_type = PICMAN_FOREGROUND_FILL;
                   break;
 
-                case GIMP_BG_BUCKET_FILL:
-                  fill_type = GIMP_BACKGROUND_FILL;
+                case PICMAN_BG_BUCKET_FILL:
+                  fill_type = PICMAN_BACKGROUND_FILL;
                   break;
 
-                case GIMP_PATTERN_BUCKET_FILL:
-                  fill_type = GIMP_PATTERN_FILL;
+                case PICMAN_PATTERN_BUCKET_FILL:
+                  fill_type = PICMAN_PATTERN_FILL;
                   break;
                 }
 
-              success = gimp_edit_fill (image, drawable, context, fill_type,
-                                        GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+              success = picman_edit_fill (image, drawable, context, fill_type,
+                                        PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
             }
           else
             {
-              success = gimp_drawable_bucket_fill (drawable, context, fill_mode,
+              success = picman_drawable_bucket_fill (drawable, context, fill_mode,
                                                    paint_mode, opacity / 100.0,
                                                    FALSE /* don't fill transparent */,
-                                                   GIMP_SELECT_CRITERION_COMPOSITE,
+                                                   PICMAN_SELECT_CRITERION_COMPOSITE,
                                                    threshold / 255.0,
                                                    sample_merged, x, y,
                                                    error);
@@ -635,20 +635,20 @@ edit_bucket_fill_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_bucket_fill_full_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+edit_bucket_fill_full_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 fill_mode;
   gint32 paint_mode;
   gdouble opacity;
@@ -659,50 +659,50 @@ edit_bucket_fill_full_invoker (GimpProcedure         *procedure,
   gdouble x;
   gdouble y;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  fill_mode = g_value_get_enum (gimp_value_array_index (args, 1));
-  paint_mode = g_value_get_enum (gimp_value_array_index (args, 2));
-  opacity = g_value_get_double (gimp_value_array_index (args, 3));
-  threshold = g_value_get_double (gimp_value_array_index (args, 4));
-  sample_merged = g_value_get_boolean (gimp_value_array_index (args, 5));
-  fill_transparent = g_value_get_boolean (gimp_value_array_index (args, 6));
-  select_criterion = g_value_get_enum (gimp_value_array_index (args, 7));
-  x = g_value_get_double (gimp_value_array_index (args, 8));
-  y = g_value_get_double (gimp_value_array_index (args, 9));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  fill_mode = g_value_get_enum (picman_value_array_index (args, 1));
+  paint_mode = g_value_get_enum (picman_value_array_index (args, 2));
+  opacity = g_value_get_double (picman_value_array_index (args, 3));
+  threshold = g_value_get_double (picman_value_array_index (args, 4));
+  sample_merged = g_value_get_boolean (picman_value_array_index (args, 5));
+  fill_transparent = g_value_get_boolean (picman_value_array_index (args, 6));
+  select_criterion = g_value_get_enum (picman_value_array_index (args, 7));
+  x = g_value_get_double (picman_value_array_index (args, 8));
+  y = g_value_get_double (picman_value_array_index (args, 9));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-          if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+          if (! picman_channel_is_empty (picman_image_get_mask (image)))
             {
-              GimpFillType fill_type = GIMP_FG_BUCKET_FILL;
+              PicmanFillType fill_type = PICMAN_FG_BUCKET_FILL;
 
               switch (fill_mode)
                 {
-                case GIMP_FG_BUCKET_FILL:
-                  fill_type = GIMP_FOREGROUND_FILL;
+                case PICMAN_FG_BUCKET_FILL:
+                  fill_type = PICMAN_FOREGROUND_FILL;
                   break;
 
-                case GIMP_BG_BUCKET_FILL:
-                  fill_type = GIMP_BACKGROUND_FILL;
+                case PICMAN_BG_BUCKET_FILL:
+                  fill_type = PICMAN_BACKGROUND_FILL;
                   break;
 
-                case GIMP_PATTERN_BUCKET_FILL:
-                  fill_type = GIMP_PATTERN_FILL;
+                case PICMAN_PATTERN_BUCKET_FILL:
+                  fill_type = PICMAN_PATTERN_FILL;
                   break;
                 }
 
-              success = gimp_edit_fill (image, drawable, context, fill_type,
-                                        GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+              success = picman_edit_fill (image, drawable, context, fill_type,
+                                        PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
             }
           else
             {
-              success = gimp_drawable_bucket_fill (drawable, context, fill_mode,
+              success = picman_drawable_bucket_fill (drawable, context, fill_mode,
                                                    paint_mode, opacity / 100.0,
                                                    fill_transparent,
                                                    select_criterion,
@@ -715,20 +715,20 @@ edit_bucket_fill_full_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_blend_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
+static PicmanValueArray *
+edit_blend_invoker (PicmanProcedure         *procedure,
+                    Picman                  *picman,
+                    PicmanContext           *context,
+                    PicmanProgress          *progress,
+                    const PicmanValueArray  *args,
                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 blend_mode;
   gint32 paint_mode;
   gint32 gradient_type;
@@ -745,28 +745,28 @@ edit_blend_invoker (GimpProcedure         *procedure,
   gdouble x2;
   gdouble y2;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  blend_mode = g_value_get_enum (gimp_value_array_index (args, 1));
-  paint_mode = g_value_get_enum (gimp_value_array_index (args, 2));
-  gradient_type = g_value_get_enum (gimp_value_array_index (args, 3));
-  opacity = g_value_get_double (gimp_value_array_index (args, 4));
-  offset = g_value_get_double (gimp_value_array_index (args, 5));
-  repeat = g_value_get_enum (gimp_value_array_index (args, 6));
-  reverse = g_value_get_boolean (gimp_value_array_index (args, 7));
-  supersample = g_value_get_boolean (gimp_value_array_index (args, 8));
-  max_depth = g_value_get_int (gimp_value_array_index (args, 9));
-  threshold = g_value_get_double (gimp_value_array_index (args, 10));
-  dither = g_value_get_boolean (gimp_value_array_index (args, 11));
-  x1 = g_value_get_double (gimp_value_array_index (args, 12));
-  y1 = g_value_get_double (gimp_value_array_index (args, 13));
-  x2 = g_value_get_double (gimp_value_array_index (args, 14));
-  y2 = g_value_get_double (gimp_value_array_index (args, 15));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  blend_mode = g_value_get_enum (picman_value_array_index (args, 1));
+  paint_mode = g_value_get_enum (picman_value_array_index (args, 2));
+  gradient_type = g_value_get_enum (picman_value_array_index (args, 3));
+  opacity = g_value_get_double (picman_value_array_index (args, 4));
+  offset = g_value_get_double (picman_value_array_index (args, 5));
+  repeat = g_value_get_enum (picman_value_array_index (args, 6));
+  reverse = g_value_get_boolean (picman_value_array_index (args, 7));
+  supersample = g_value_get_boolean (picman_value_array_index (args, 8));
+  max_depth = g_value_get_int (picman_value_array_index (args, 9));
+  threshold = g_value_get_double (picman_value_array_index (args, 10));
+  dither = g_value_get_boolean (picman_value_array_index (args, 11));
+  x1 = g_value_get_double (picman_value_array_index (args, 12));
+  y1 = g_value_get_double (picman_value_array_index (args, 13));
+  x2 = g_value_get_double (picman_value_array_index (args, 14));
+  y2 = g_value_get_double (picman_value_array_index (args, 15));
 
   if (success)
     {
-      success = (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                            GIMP_PDB_ITEM_CONTENT, error) &&
-                 gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error));
+      success = (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                            PICMAN_PDB_ITEM_CONTENT, error) &&
+                 picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error));
 
       if (success && supersample)
         {
@@ -780,9 +780,9 @@ edit_blend_invoker (GimpProcedure         *procedure,
       if (success)
         {
           if (progress)
-            gimp_progress_start (progress, _("Blending"), FALSE);
+            picman_progress_start (progress, _("Blending"), FALSE);
 
-          gimp_drawable_blend (drawable,
+          picman_drawable_blend (drawable,
                                context,
                                blend_mode,
                                paint_mode,
@@ -795,41 +795,41 @@ edit_blend_invoker (GimpProcedure         *procedure,
                                progress);
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_stroke_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+edit_stroke_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpImage         *image   = gimp_item_get_image (GIMP_ITEM (drawable));
-          GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+          PicmanImage         *image   = picman_item_get_image (PICMAN_ITEM (drawable));
+          PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
           g_object_set (options,
-                        "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                        "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                         NULL);
 
-          success = gimp_item_stroke (GIMP_ITEM (gimp_image_get_mask (image)),
+          success = picman_item_stroke (PICMAN_ITEM (picman_image_get_mask (image)),
                                       drawable, context, options, TRUE, TRUE,
                                       progress, error);
 
@@ -839,41 +839,41 @@ edit_stroke_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-edit_stroke_vectors_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+edit_stroke_vectors_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpVectors *vectors;
+  PicmanDrawable *drawable;
+  PicmanVectors *vectors;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  vectors = gimp_value_get_vectors (gimp_value_array_index (args, 1), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  vectors = picman_value_get_vectors (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (vectors),
-                                     gimp_item_get_image (GIMP_ITEM (drawable)),
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+          picman_pdb_item_is_attached (PICMAN_ITEM (vectors),
+                                     picman_item_get_image (PICMAN_ITEM (drawable)),
                                      0, error))
         {
-          GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+          PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
           g_object_set (options,
-                        "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                        "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                         NULL);
 
-          success = gimp_item_stroke (GIMP_ITEM (vectors),
+          success = picman_item_stroke (PICMAN_ITEM (vectors),
                                       drawable, context, options, TRUE, TRUE,
                                       progress, error);
 
@@ -883,709 +883,709 @@ edit_stroke_vectors_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_edit_procs (GimpPDB *pdb)
+register_edit_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-edit-cut
+   * picman-edit-cut
    */
-  procedure = gimp_procedure_new (edit_cut_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-cut");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-cut",
+  procedure = picman_procedure_new (edit_cut_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-cut");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-cut",
                                      "Cut from the specified drawable.",
-                                     "If there is a selection in the image, then the area specified by the selection is cut from the specified drawable and placed in an internal GIMP edit buffer. It can subsequently be retrieved using the 'gimp-edit-paste' command. If there is no selection, then the specified drawable will be removed and its contents stored in the internal GIMP edit buffer. This procedure will fail if the selected area lies completely outside the bounds of the current drawable and there is nothing to copy from.",
+                                     "If there is a selection in the image, then the area specified by the selection is cut from the specified drawable and placed in an internal PICMAN edit buffer. It can subsequently be retrieved using the 'picman-edit-paste' command. If there is no selection, then the specified drawable will be removed and its contents stored in the internal PICMAN edit buffer. This procedure will fail if the selected area lies completely outside the bounds of the current drawable and there is nothing to copy from.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to cut from",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("non-empty",
                                                          "non empty",
                                                          "TRUE if the cut was successful, FALSE if there was nothing to copy from",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-copy
+   * picman-edit-copy
    */
-  procedure = gimp_procedure_new (edit_copy_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-copy");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-copy",
+  procedure = picman_procedure_new (edit_copy_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-copy");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-copy",
                                      "Copy from the specified drawable.",
-                                     "If there is a selection in the image, then the area specified by the selection is copied from the specified drawable and placed in an internal GIMP edit buffer. It can subsequently be retrieved using the 'gimp-edit-paste' command. If there is no selection, then the specified drawable's contents will be stored in the internal GIMP edit buffer. This procedure will fail if the selected area lies completely outside the bounds of the current drawable and there is nothing to copy from.",
+                                     "If there is a selection in the image, then the area specified by the selection is copied from the specified drawable and placed in an internal PICMAN edit buffer. It can subsequently be retrieved using the 'picman-edit-paste' command. If there is no selection, then the specified drawable's contents will be stored in the internal PICMAN edit buffer. This procedure will fail if the selected area lies completely outside the bounds of the current drawable and there is nothing to copy from.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to copy from",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("non-empty",
                                                          "non empty",
                                                          "TRUE if the cut was successful, FALSE if there was nothing to copy from",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-copy-visible
+   * picman-edit-copy-visible
    */
-  procedure = gimp_procedure_new (edit_copy_visible_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-copy-visible");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-copy-visible",
+  procedure = picman_procedure_new (edit_copy_visible_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-copy-visible");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-copy-visible",
                                      "Copy from the projection.",
-                                     "If there is a selection in the image, then the area specified by the selection is copied from the projection and placed in an internal GIMP edit buffer. It can subsequently be retrieved using the 'gimp-edit-paste' command. If there is no selection, then the projection's contents will be stored in the internal GIMP edit buffer.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "If there is a selection in the image, then the area specified by the selection is copied from the projection and placed in an internal PICMAN edit buffer. It can subsequently be retrieved using the 'picman-edit-paste' command. If there is no selection, then the projection's contents will be stored in the internal PICMAN edit buffer.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to copy from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("non-empty",
                                                          "non empty",
                                                          "TRUE if the copy was successful",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-paste
+   * picman-edit-paste
    */
-  procedure = gimp_procedure_new (edit_paste_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-paste");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-paste",
+  procedure = picman_procedure_new (edit_paste_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-paste");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-paste",
                                      "Paste buffer to the specified drawable.",
-                                     "This procedure pastes a copy of the internal GIMP edit buffer to the specified drawable. The GIMP edit buffer will be empty unless a call was previously made to either 'gimp-edit-cut' or 'gimp-edit-copy'. The \"paste_into\" option specifies whether to clear the current image selection, or to paste the buffer \"behind\" the selection. This allows the selection to act as a mask for the pasted buffer. Anywhere that the selection mask is non-zero, the pasted buffer will show through. The pasted buffer will be a new layer in the image which is designated as the image floating selection. If the image has a floating selection at the time of pasting, the old floating selection will be anchored to it's drawable before the new floating selection is added. This procedure returns the new floating layer. The resulting floating selection will already be attached to the specified drawable, and a subsequent call to floating_sel_attach is not needed.",
+                                     "This procedure pastes a copy of the internal PICMAN edit buffer to the specified drawable. The PICMAN edit buffer will be empty unless a call was previously made to either 'picman-edit-cut' or 'picman-edit-copy'. The \"paste_into\" option specifies whether to clear the current image selection, or to paste the buffer \"behind\" the selection. This allows the selection to act as a mask for the pasted buffer. Anywhere that the selection mask is non-zero, the pasted buffer will show through. The pasted buffer will be a new layer in the image which is designated as the image floating selection. If the image has a floating selection at the time of pasting, the old floating selection will be anchored to it's drawable before the new floating selection is added. This procedure returns the new floating layer. The resulting floating selection will already be attached to the specified drawable, and a subsequent call to floating_sel_attach is not needed.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to paste to",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("paste-into",
                                                      "paste into",
                                                      "Clear selection, or paste behind it?",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("floating-sel",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("floating-sel",
                                                              "floating sel",
                                                              "The new floating selection",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-paste-as-new
+   * picman-edit-paste-as-new
    */
-  procedure = gimp_procedure_new (edit_paste_as_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-paste-as-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-paste-as-new",
+  procedure = picman_procedure_new (edit_paste_as_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-paste-as-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-paste-as-new",
                                      "Paste buffer to a new image.",
-                                     "This procedure pastes a copy of the internal GIMP edit buffer to a new image. The GIMP edit buffer will be empty unless a call was previously made to either 'gimp-edit-cut' or 'gimp-edit-copy'. This procedure returns the new image or -1 if the edit buffer was empty.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure pastes a copy of the internal PICMAN edit buffer to a new image. The PICMAN edit buffer will be empty unless a call was previously made to either 'picman-edit-cut' or 'picman-edit-copy'. This procedure returns the new image or -1 if the edit buffer was empty.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_image_id ("image",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_image_id ("image",
                                                              "image",
                                                              "The new image",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-named-cut
+   * picman-edit-named-cut
    */
-  procedure = gimp_procedure_new (edit_named_cut_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-named-cut");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-named-cut",
+  procedure = picman_procedure_new (edit_named_cut_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-named-cut");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-named-cut",
                                      "Cut into a named buffer.",
-                                     "This procedure works like 'gimp-edit-cut', but additionally stores the cut buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure works like 'picman-edit-cut', but additionally stores the cut buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to cut from",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("buffer-name",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("buffer-name",
                                                        "buffer name",
                                                        "The name of the buffer to create",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("real-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("real-name",
                                                            "real name",
                                                            "The real name given to the buffer, or NULL if the cut failed",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-named-copy
+   * picman-edit-named-copy
    */
-  procedure = gimp_procedure_new (edit_named_copy_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-named-copy");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-named-copy",
+  procedure = picman_procedure_new (edit_named_copy_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-named-copy");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-named-copy",
                                      "Copy into a named buffer.",
-                                     "This procedure works like 'gimp-edit-copy', but additionally stores the copied buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure works like 'picman-edit-copy', but additionally stores the copied buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to copy from",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("buffer-name",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("buffer-name",
                                                        "buffer name",
                                                        "The name of the buffer to create",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("real-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("real-name",
                                                            "real name",
                                                            "The real name given to the buffer, or NULL if the copy failed",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-named-copy-visible
+   * picman-edit-named-copy-visible
    */
-  procedure = gimp_procedure_new (edit_named_copy_visible_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-named-copy-visible");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-named-copy-visible",
+  procedure = picman_procedure_new (edit_named_copy_visible_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-named-copy-visible");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-named-copy-visible",
                                      "Copy from the projection into a named buffer.",
-                                     "This procedure works like 'gimp-edit-copy-visible', but additionally stores the copied buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure works like 'picman-edit-copy-visible', but additionally stores the copied buffer into a named buffer that will stay available for later pasting, regardless of any intermediate copy or cut operations.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to copy from",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("buffer-name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("buffer-name",
                                                        "buffer name",
                                                        "The name of the buffer to create",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("real-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("real-name",
                                                            "real name",
                                                            "The real name given to the buffer, or NULL if the copy failed",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-named-paste
+   * picman-edit-named-paste
    */
-  procedure = gimp_procedure_new (edit_named_paste_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-named-paste");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-named-paste",
+  procedure = picman_procedure_new (edit_named_paste_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-named-paste");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-named-paste",
                                      "Paste named buffer to the specified drawable.",
-                                     "This procedure works like 'gimp-edit-paste' but pastes a named buffer instead of the global buffer.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure works like 'picman-edit-paste' but pastes a named buffer instead of the global buffer.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to paste to",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("buffer-name",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("buffer-name",
                                                        "buffer name",
                                                        "The name of the buffer to paste",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("paste-into",
                                                      "paste into",
                                                      "Clear selection, or paste behind it?",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("floating-sel",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("floating-sel",
                                                              "floating sel",
                                                              "The new floating selection",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-named-paste-as-new
+   * picman-edit-named-paste-as-new
    */
-  procedure = gimp_procedure_new (edit_named_paste_as_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-named-paste-as-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-named-paste-as-new",
+  procedure = picman_procedure_new (edit_named_paste_as_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-named-paste-as-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-named-paste-as-new",
                                      "Paste named buffer to a new image.",
-                                     "This procedure works like 'gimp-edit-paste-as-new' but pastes a named buffer instead of the global buffer.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure works like 'picman-edit-paste-as-new' but pastes a named buffer instead of the global buffer.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("buffer-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("buffer-name",
                                                        "buffer name",
                                                        "The name of the buffer to paste",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_image_id ("image",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_image_id ("image",
                                                              "image",
                                                              "The new image",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-clear
+   * picman-edit-clear
    */
-  procedure = gimp_procedure_new (edit_clear_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-clear");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-clear",
+  procedure = picman_procedure_new (edit_clear_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-clear");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-clear",
                                      "Clear selected area of drawable.",
                                      "This procedure clears the specified drawable. If the drawable has an alpha channel, the cleared pixels will become transparent. If the drawable does not have an alpha channel, cleared pixels will be set to the background color. This procedure only affects regions within a selection if there is a selection active.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to clear from",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-fill
+   * picman-edit-fill
    */
-  procedure = gimp_procedure_new (edit_fill_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-fill");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-fill",
+  procedure = picman_procedure_new (edit_fill_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-fill");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-fill",
                                      "Fill selected area of drawable.",
-                                     "This procedure fills the specified drawable with the fill mode. If the fill mode is foreground, the current foreground color is used. If the fill mode is background, the current background color is used. Other fill modes should not be used. This procedure only affects regions within a selection if there is a selection active. If you want to fill the whole drawable, regardless of the selection, use 'gimp-drawable-fill'.",
+                                     "This procedure fills the specified drawable with the fill mode. If the fill mode is foreground, the current foreground color is used. If the fill mode is background, the current background color is used. Other fill modes should not be used. This procedure only affects regions within a selection if there is a selection active. If you want to fill the whole drawable, regardless of the selection, use 'picman-drawable-fill'.",
                                      "Spencer Kimball & Peter Mattis & Raphael Quinet",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-2000",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to fill to",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("fill-type",
                                                   "fill type",
                                                   "The type of fill",
-                                                  GIMP_TYPE_FILL_TYPE,
-                                                  GIMP_FOREGROUND_FILL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_FILL_TYPE,
+                                                  PICMAN_FOREGROUND_FILL,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-bucket-fill
+   * picman-edit-bucket-fill
    */
-  procedure = gimp_procedure_new (edit_bucket_fill_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-bucket-fill");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-bucket-fill",
+  procedure = picman_procedure_new (edit_bucket_fill_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-bucket-fill");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-bucket-fill",
                                      "Fill the area specified either by the current selection if there is one, or by a seed fill starting at the specified coordinates.",
                                      "This tool requires information on the paint application mode, and the fill mode, which can either be in the foreground color, or in the currently active pattern. If there is no selection, a seed fill is executed at the specified coordinates and extends outward in keeping with the threshold parameter. If there is a selection in the target image, the threshold, sample merged, x, and y arguments are unused. If the sample_merged parameter is TRUE, the data of the composite image will be used instead of that for the specified drawable. This is equivalent to sampling for colors after merging all visible layers. In the case of merged sampling, the x and y coordinates are relative to the image's origin; otherwise, they are relative to the drawable's origin.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("fill-mode",
                                                   "fill mode",
                                                   "The type of fill",
-                                                  GIMP_TYPE_BUCKET_FILL_MODE,
-                                                  GIMP_FG_BUCKET_FILL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_BUCKET_FILL_MODE,
+                                                  PICMAN_FG_BUCKET_FILL,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("paint-mode",
                                                   "paint mode",
                                                   "The paint application mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The opacity of the final bucket fill",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("threshold",
                                                     "threshold",
                                                     "The threshold determines how extensive the seed fill will be. It's value is specified in terms of intensity levels. This parameter is only valid when there is no selection in the specified image.",
                                                     0, 255, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "The x coordinate of this bucket fill's application. This parameter is only valid when there is no selection in the specified image.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "The y coordinate of this bucket fill's application. This parameter is only valid when there is no selection in the specified image.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-bucket-fill-full
+   * picman-edit-bucket-fill-full
    */
-  procedure = gimp_procedure_new (edit_bucket_fill_full_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-bucket-fill-full");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-bucket-fill-full",
+  procedure = picman_procedure_new (edit_bucket_fill_full_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-bucket-fill-full");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-bucket-fill-full",
                                      "Fill the area specified either by the current selection if there is one, or by a seed fill starting at the specified coordinates.",
                                      "This tool requires information on the paint application mode, and the fill mode, which can either be in the foreground color, or in the currently active pattern. If there is no selection, a seed fill is executed at the specified coordinates and extends outward in keeping with the threshold parameter. If there is a selection in the target image, the threshold, sample merged, x, and y arguments are unused. If the sample_merged parameter is TRUE, the data of the composite image will be used instead of that for the specified drawable. This is equivalent to sampling for colors after merging all visible layers. In the case of merged sampling, the x and y coordinates are relative to the image's origin; otherwise, they are relative to the drawable's origin.",
                                      "David Gowers",
                                      "David Gowers",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("fill-mode",
                                                   "fill mode",
                                                   "The type of fill",
-                                                  GIMP_TYPE_BUCKET_FILL_MODE,
-                                                  GIMP_FG_BUCKET_FILL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_BUCKET_FILL_MODE,
+                                                  PICMAN_FG_BUCKET_FILL,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("paint-mode",
                                                   "paint mode",
                                                   "The paint application mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The opacity of the final bucket fill",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("threshold",
                                                     "threshold",
                                                     "The threshold determines how extensive the seed fill will be. It's value is specified in terms of intensity levels. This parameter is only valid when there is no selection in the specified image.",
                                                     0, 255, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("sample-merged",
                                                      "sample merged",
                                                      "Use the composite image, not the drawable",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("fill-transparent",
                                                      "fill transparent",
                                                      "Whether to consider transparent pixels for filling. If TRUE, transparency is considered as a unique fillable color.",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("select-criterion",
                                                   "select criterion",
                                                   "The criterion used to determine color similarity. SELECT_CRITERION_COMPOSITE is the standard choice.",
-                                                  GIMP_TYPE_SELECT_CRITERION,
-                                                  GIMP_SELECT_CRITERION_COMPOSITE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_SELECT_CRITERION,
+                                                  PICMAN_SELECT_CRITERION_COMPOSITE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "The x coordinate of this bucket fill's application. This parameter is only valid when there is no selection in the specified image.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "The y coordinate of this bucket fill's application. This parameter is only valid when there is no selection in the specified image.",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-blend
+   * picman-edit-blend
    */
-  procedure = gimp_procedure_new (edit_blend_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-blend");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-blend",
+  procedure = picman_procedure_new (edit_blend_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-blend");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-blend",
                                      "Blend between the starting and ending coordinates with the specified blend mode and gradient type.",
                                      "This tool requires information on the paint application mode, the blend mode, and the gradient type. It creates the specified variety of blend using the starting and ending coordinates as defined for each gradient type.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("blend-mode",
                                                   "blend mode",
                                                   "The type of blend",
-                                                  GIMP_TYPE_BLEND_MODE,
-                                                  GIMP_FG_BG_RGB_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_BLEND_MODE,
+                                                  PICMAN_FG_BG_RGB_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("paint-mode",
                                                   "paint mode",
                                                   "The paint application mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("gradient-type",
                                                   "gradient type",
                                                   "The type of gradient",
-                                                  GIMP_TYPE_GRADIENT_TYPE,
-                                                  GIMP_GRADIENT_LINEAR,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_GRADIENT_TYPE,
+                                                  PICMAN_GRADIENT_LINEAR,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The opacity of the final blend",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("offset",
                                                     "offset",
                                                     "Offset relates to the starting and ending coordinates specified for the blend. This parameter is mode dependent.",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("repeat",
                                                   "repeat",
                                                   "Repeat mode",
-                                                  GIMP_TYPE_REPEAT_MODE,
-                                                  GIMP_REPEAT_NONE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_REPEAT_MODE,
+                                                  PICMAN_REPEAT_NONE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("reverse",
                                                      "reverse",
                                                      "Use the reverse gradient",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("supersample",
                                                      "supersample",
                                                      "Do adaptive supersampling",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("max-depth",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("max-depth",
                                                       "max depth",
                                                       "Maximum recursion levels for supersampling",
                                                       1, 9, 1,
-                                                      GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("threshold",
                                                     "threshold",
                                                     "Supersampling threshold",
                                                     0, 4, 0,
-                                                    GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("dither",
                                                      "dither",
                                                      "Use dithering to reduce banding",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "The x coordinate of this blend's starting point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "The y coordinate of this blend's starting point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x2",
                                                     "x2",
                                                     "The x coordinate of this blend's ending point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y2",
                                                     "y2",
                                                     "The y coordinate of this blend's ending point",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-stroke
+   * picman-edit-stroke
    */
-  procedure = gimp_procedure_new (edit_stroke_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-stroke");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-stroke",
+  procedure = picman_procedure_new (edit_stroke_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-stroke");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-stroke",
                                      "Stroke the current selection",
                                      "This procedure strokes the current selection, painting along the selection boundary with the active brush and foreground color. The paint is applied to the specified drawable regardless of the active selection.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to stroke to",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-edit-stroke-vectors
+   * picman-edit-stroke-vectors
    */
-  procedure = gimp_procedure_new (edit_stroke_vectors_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-edit-stroke-vectors");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-edit-stroke-vectors",
+  procedure = picman_procedure_new (edit_stroke_vectors_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-edit-stroke-vectors");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-edit-stroke-vectors",
                                      "Stroke the specified vectors object",
                                      "This procedure strokes the specified vectors object, painting along the path with the active brush and foreground color.",
                                      "Simon Budig",
                                      "Simon Budig",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to stroke to",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_vectors_id ("vectors",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_vectors_id ("vectors",
                                                            "vectors",
                                                            "The vectors object",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

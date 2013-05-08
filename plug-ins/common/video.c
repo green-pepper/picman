@@ -2,7 +2,7 @@
  *  VideoRGB plug-in v1.0 by Adam D. Moss, adam@foxbox.org.  1997/3/3
  */
 
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC     "plug-in-video"
 #define PLUG_IN_BINARY   "video"
-#define PLUG_IN_ROLE     "gimp-video"
+#define PLUG_IN_ROLE     "picman-video"
 
 #define MAX_PATTERNS       9
 #define MAX_PATTERN_SIZE 108
@@ -1765,11 +1765,11 @@ static VideoValues vvals =
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static void      video  (GimpDrawable     *drawable);
+static void      video  (PicmanDrawable     *drawable);
 
 
 static gboolean  video_dialog          (void);
@@ -1780,7 +1780,7 @@ static void      video_radio_update    (GtkWidget *widget,
 
 static void      video_render_preview  (gboolean raw);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -1793,17 +1793,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",          "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable",       "Input drawable"               },
-    { GIMP_PDB_INT32,    "pattern-number", "Type of RGB pattern to use"   },
-    { GIMP_PDB_INT32,    "additive",       "Whether the function adds the result to the original image" },
-    { GIMP_PDB_INT32,    "rotated",        "Whether to rotate the RGB pattern by ninety degrees" }
+    { PICMAN_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",          "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable",       "Input drawable"               },
+    { PICMAN_PDB_INT32,    "pattern-number", "Type of RGB pattern to use"   },
+    { PICMAN_PDB_INT32,    "additive",       "Whether the function adds the result to the original image" },
+    { PICMAN_PDB_INT32,    "rotated",        "Whether to rotate the RGB pattern by ninety degrees" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate distortion produced by a fuzzy or low-res monitor"),
                           "This function simulates the degradation of "
                           "being on an old low-dotpitch RGB video monitor "
@@ -1813,24 +1813,24 @@ query (void)
                           "2nd March 1997",
                           N_("Vi_deo..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -1839,25 +1839,25 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &vvals);
+      picman_get_data (PLUG_IN_PROC, &vvals);
 
       /*  First acquire information with a dialog  */
       if (! video_dialog ())
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 6)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           vvals.pattern_number = param[3].data.d_int32;
           vvals.additive = param[4].data.d_int32;
@@ -1865,9 +1865,9 @@ run (const gchar      *name,
         }
       break;
 
-      case GIMP_RUN_WITH_LAST_VALS:
+      case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &vvals);
+      picman_get_data (PLUG_IN_PROC, &vvals);
       break;
 
     default:
@@ -1876,34 +1876,34 @@ run (const gchar      *name,
 
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
-          gimp_progress_init (_("Video"));
-          gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width ()
+          picman_progress_init (_("Video"));
+          picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width ()
                                        + 1));
           video (drawable);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store vvals data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &vvals, sizeof (VideoValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &vvals, sizeof (VideoValues));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
@@ -1950,13 +1950,13 @@ video_func (gint x,
 }
 
 static void
-video (GimpDrawable *drawable)
+video (PicmanDrawable *drawable)
 {
-  GimpRgnIterator *iter;
+  PicmanRgnIterator *iter;
 
-  iter = gimp_rgn_iterator_new (drawable, 0);
-  gimp_rgn_iterator_src_dest (iter, video_func, NULL);
-  gimp_rgn_iterator_free (iter);
+  iter = picman_rgn_iterator_new (drawable, 0);
+  picman_rgn_iterator_src_dest (iter, video_func, NULL);
+  picman_rgn_iterator_free (iter);
 }
 
 static void
@@ -1993,9 +1993,9 @@ video_render_preview (gboolean raw)
             }
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           preview_row,
                           PREVIEW_WIDTH * 3);
 }
@@ -2012,11 +2012,11 @@ video_dialog (void)
   gint       y;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dlg = gimp_dialog_new (_("Video"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Video"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -2028,7 +2028,7 @@ video_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
@@ -2037,7 +2037,7 @@ video_dialog (void)
   gtk_widget_show (hbox);
 
   /* frame for the radio buttons */
-  frame = gimp_frame_new ( _("Video Pattern"));
+  frame = picman_frame_new ( _("Video Pattern"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -2055,7 +2055,7 @@ video_dialog (void)
       gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
       gtk_widget_show (toggle);
 
-      g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+      g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                          GINT_TO_POINTER (y));
 
       g_signal_connect (toggle, "toggled",
@@ -2076,7 +2076,7 @@ video_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, PREVIEW_WIDTH, PREVIEW_HEIGHT);
   gtk_container_add (GTK_CONTAINER (frame), preview);
   gtk_widget_show (preview);
@@ -2107,7 +2107,7 @@ video_dialog (void)
 
   in_main_loop = TRUE;
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   in_main_loop = FALSE;
 
@@ -2120,7 +2120,7 @@ static void
 video_toggle_update (GtkWidget *widget,
                      gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
 
   if (in_main_loop)
     video_render_preview (FALSE);
@@ -2130,7 +2130,7 @@ static void
 video_radio_update (GtkWidget *widget,
                     gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (in_main_loop)
     video_render_preview (FALSE);

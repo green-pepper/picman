@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Bump map plug-in --- emboss an image by using another image as a bump map
  * Copyright (C) 1997 Federico Mena Quintero <federico@nuclecu.unam.mx>
- * Copyright (C) 1997-2000 Jens Lautenbacher <jtl@gimp.org>
- * Copyright (C) 2000 Sven Neumann <sven@gimp.org>
+ * Copyright (C) 1997-2000 Jens Lautenbacher <jtl@picman.org>
+ * Copyright (C) 2000 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /***** Magic numbers *****/
@@ -41,7 +41,7 @@
 #define PLUG_IN_PROC       "plug-in-bump-map"
 #define PLUG_IN_TILED_PROC "plug-in-bump-map-tiled"
 #define PLUG_IN_BINARY     "bumpmap"
-#define PLUG_IN_ROLE       "gimp-bumpmap"
+#define PLUG_IN_ROLE       "picman-bumpmap"
 #define PLUG_IN_VERSION    "April 2000, 3.0-pre1-ac2"
 
 #define SCALE_WIDTH       100
@@ -98,14 +98,14 @@ typedef struct
   guchar           **src_rows;
   guchar           **bm_rows;
 
-  GimpDrawable      *bm_drawable;
+  PicmanDrawable      *bm_drawable;
   gint               bm_width;
   gint               bm_height;
   gint               bm_bpp;
   gboolean           bm_has_alpha;
 
-  GimpPixelRgn       src_rgn;
-  GimpPixelRgn       bm_rgn;
+  PicmanPixelRgn       src_rgn;
+  PicmanPixelRgn       bm_rgn;
 
   bumpmap_params_t   params;
 } bumpmap_interface_t;
@@ -116,9 +116,9 @@ typedef struct
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
 static void bumpmap             (void);
 static void bumpmap_init_params (bumpmap_params_t *params);
@@ -143,11 +143,11 @@ static void bumpmap_convert_row (guchar           *row,
 
 static gboolean bumpmap_dialog             (void);
 static void     dialog_new_bumpmap         (gboolean       init_offsets);
-static void     dialog_update_preview      (GimpPreview   *preview);
+static void     dialog_update_preview      (PicmanPreview   *preview);
 static gboolean dialog_preview_events      (GtkWidget     *area,
                                             GdkEvent      *event,
-                                            GimpPreview   *preview);
-static void     dialog_get_rows            (GimpPixelRgn  *pr,
+                                            PicmanPreview   *preview);
+static void     dialog_get_rows            (PicmanPixelRgn  *pr,
                                             guchar       **rows,
                                             gint           x,
                                             gint           y,
@@ -163,14 +163,14 @@ static gint     dialog_constrain           (gint32         image_id,
                                             gint32         drawable_id,
                                             gpointer       data);
 static void     dialog_bumpmap_callback    (GtkWidget     *widget,
-                                            GimpPreview   *preview);
+                                            PicmanPreview   *preview);
 static void     dialog_maptype_callback    (GtkWidget     *widget,
-                                            GimpPreview   *preview);
+                                            PicmanPreview   *preview);
 
 
 /***** Variables *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -213,7 +213,7 @@ static bumpmap_interface_t bmint =
   { 0, }     /* params */
 };
 
-static GimpDrawable *drawable = NULL;
+static PicmanDrawable *drawable = NULL;
 
 static gint       sel_x1, sel_y1;
 static gint       sel_x2, sel_y2;
@@ -233,27 +233,27 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"   },
-    { GIMP_PDB_IMAGE,    "image",      "Input image"                    },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable"                 },
-    { GIMP_PDB_DRAWABLE, "bumpmap",    "Bump map drawable"              },
-    { GIMP_PDB_FLOAT,    "azimuth",    "Azimuth"                        },
-    { GIMP_PDB_FLOAT,    "elevation",  "Elevation"                      },
-    { GIMP_PDB_INT32,    "depth",      "Depth"                          },
-    { GIMP_PDB_INT32,    "xofs",       "X offset"                       },
-    { GIMP_PDB_INT32,    "yofs",       "Y offset"                       },
-    { GIMP_PDB_INT32,    "waterlevel", "Level that full transparency "
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"   },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image"                    },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable"                 },
+    { PICMAN_PDB_DRAWABLE, "bumpmap",    "Bump map drawable"              },
+    { PICMAN_PDB_FLOAT,    "azimuth",    "Azimuth"                        },
+    { PICMAN_PDB_FLOAT,    "elevation",  "Elevation"                      },
+    { PICMAN_PDB_INT32,    "depth",      "Depth"                          },
+    { PICMAN_PDB_INT32,    "xofs",       "X offset"                       },
+    { PICMAN_PDB_INT32,    "yofs",       "Y offset"                       },
+    { PICMAN_PDB_INT32,    "waterlevel", "Level that full transparency "
                                        "should represent"               },
-    { GIMP_PDB_INT32,    "ambient",    "Ambient lighting factor"        },
-    { GIMP_PDB_INT32,    "compensate", "Compensate for darkening { TRUE, FALSE }" },
-    { GIMP_PDB_INT32,    "invert",     "Invert bumpmap { TRUE, FALSE }" },
-    { GIMP_PDB_INT32,    "type",       "Type of map { LINEAR (0), "
+    { PICMAN_PDB_INT32,    "ambient",    "Ambient lighting factor"        },
+    { PICMAN_PDB_INT32,    "compensate", "Compensate for darkening { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "invert",     "Invert bumpmap { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "type",       "Type of map { LINEAR (0), "
                                        "SPHERICAL (1), SINUSOIDAL (2) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an embossing effect using a bump map"),
                           "This plug-in uses the algorithm described by John "
                           "Schlag, \"Fast Embossing Effects on Raster Image "
@@ -266,13 +266,13 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Bump Map..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
 
-  gimp_install_procedure (PLUG_IN_TILED_PROC,
+  picman_install_procedure (PLUG_IN_TILED_PROC,
                           "Create an embossing effect using a tiled image "
                           "as a bump map",
                           "This plug-in uses the algorithm described by John "
@@ -286,7 +286,7 @@ query (void)
                           PLUG_IN_VERSION,
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -294,30 +294,30 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[1];
+  static PicmanParam values[1];
 
-  GimpRunMode run_mode;
-  GimpPDBStatusType  status;
+  PicmanRunMode run_mode;
+  PicmanPDBStatusType  status;
 
   INIT_I18N ();
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
   /* Get drawable information */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &sel_x1, &sel_y1,
                                       &sel_width, &sel_height))
     {
@@ -326,15 +326,15 @@ run (const gchar      *name,
 
   sel_x2 = sel_width + sel_x1;
   sel_y2 = sel_height + sel_y1;
-  img_bpp       = gimp_drawable_bpp (drawable->drawable_id);
-  img_has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  img_bpp       = picman_drawable_bpp (drawable->drawable_id);
+  img_has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   /* See how we will run */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data (name, &bmvals);
+      picman_get_data (name, &bmvals);
 
       /* Get information from the dialog */
       if (!bumpmap_dialog ())
@@ -342,11 +342,11 @@ run (const gchar      *name,
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /* Make sure all the arguments are present */
       if (nparams != 14)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -365,9 +365,9 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
-      gimp_get_data (name, &bmvals);
+      picman_get_data (name, &bmvals);
       break;
 
     default:
@@ -376,37 +376,37 @@ run (const gchar      *name,
 
   /* Bumpmap the image */
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if ((gimp_drawable_is_rgb(drawable->drawable_id) ||
-           gimp_drawable_is_gray(drawable->drawable_id)))
+      if ((picman_drawable_is_rgb(drawable->drawable_id) ||
+           picman_drawable_is_gray(drawable->drawable_id)))
         {
           /* Run! */
           bumpmap ();
 
           /* If run mode is interactive, flush displays */
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /* Store data */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (name, &bmvals, sizeof (bumpmap_vals_t));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (name, &bmvals, sizeof (bumpmap_vals_t));
         }
     }
   else
-    status = GIMP_PDB_EXECUTION_ERROR;
+    status = PICMAN_PDB_EXECUTION_ERROR;
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
 bumpmap (void)
 {
   bumpmap_params_t  params;
-  GimpDrawable     *bm_drawable;
-  GimpPixelRgn      src_rgn, dest_rgn, bm_rgn;
+  PicmanDrawable     *bm_drawable;
+  PicmanPixelRgn      src_rgn, dest_rgn, bm_rgn;
   gint              bm_width, bm_height, bm_bpp, bm_has_alpha;
   gint              yofs1, yofs2, yofs3;
   gboolean          row_in_bumpmap;
@@ -416,11 +416,11 @@ bumpmap (void)
   gint              progress;
   gint              drawable_tiles_per_row, bm_tiles_per_row;
 
-  gimp_progress_init (_("Bump-mapping"));
+  picman_progress_init (_("Bump-mapping"));
 
   /* Get the bumpmap drawable */
   if (bmvals.bumpmap_id != -1)
-    bm_drawable = gimp_drawable_get (bmvals.bumpmap_id);
+    bm_drawable = picman_drawable_get (bmvals.bumpmap_id);
   else
     bm_drawable = drawable;
 
@@ -428,21 +428,21 @@ bumpmap (void)
     return;
 
   /* Get image information */
-  bm_width     = gimp_drawable_width (bm_drawable->drawable_id);
-  bm_height    = gimp_drawable_height (bm_drawable->drawable_id);
-  bm_bpp       = gimp_drawable_bpp (bm_drawable->drawable_id);
-  bm_has_alpha = gimp_drawable_has_alpha (bm_drawable->drawable_id);
+  bm_width     = picman_drawable_width (bm_drawable->drawable_id);
+  bm_height    = picman_drawable_height (bm_drawable->drawable_id);
+  bm_bpp       = picman_drawable_bpp (bm_drawable->drawable_id);
+  bm_has_alpha = picman_drawable_has_alpha (bm_drawable->drawable_id);
 
   /* Set the tile cache size */
   /* Compute number of tiles needed for one row of the drawable */
   drawable_tiles_per_row =
     1
-    + (sel_x2 + gimp_tile_width () - 1) / gimp_tile_width ()
-    - sel_x1 / gimp_tile_width ();
+    + (sel_x2 + picman_tile_width () - 1) / picman_tile_width ()
+    - sel_x1 / picman_tile_width ();
   /* Compute number of tiles needed for one row of the bitmap */
-  bm_tiles_per_row = (bm_width + gimp_tile_width () - 1) / gimp_tile_width ();
+  bm_tiles_per_row = (bm_width + picman_tile_width () - 1) / picman_tile_width ();
   /* Cache one row of source, destination and bitmap */
-  gimp_tile_cache_ntiles (bm_tiles_per_row + 2 * drawable_tiles_per_row);
+  picman_tile_cache_ntiles (bm_tiles_per_row + 2 * drawable_tiles_per_row);
 
   /* Initialize offsets */
 
@@ -468,20 +468,20 @@ bumpmap (void)
   dest_row = g_new (guchar, sel_width * img_bpp);
 
   /* Initialize pixel regions */
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        sel_x1, sel_y1, sel_width, sel_height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        sel_x1, sel_y1, sel_width, sel_height, TRUE, TRUE);
-  gimp_pixel_rgn_init (&bm_rgn, bm_drawable,
+  picman_pixel_rgn_init (&bm_rgn, bm_drawable,
                        0, 0, bm_width, bm_height, FALSE, FALSE);
 
   /* Bumpmap */
 
   bumpmap_init_params (&params);
 
-  gimp_pixel_rgn_get_row (&bm_rgn, bm_row1, 0, yofs1, bm_width);
-  gimp_pixel_rgn_get_row (&bm_rgn, bm_row2, 0, yofs2, bm_width);
-  gimp_pixel_rgn_get_row (&bm_rgn, bm_row3, 0, yofs3, bm_width);
+  picman_pixel_rgn_get_row (&bm_rgn, bm_row1, 0, yofs1, bm_width);
+  picman_pixel_rgn_get_row (&bm_rgn, bm_row2, 0, yofs2, bm_width);
+  picman_pixel_rgn_get_row (&bm_rgn, bm_row3, 0, yofs3, bm_width);
 
   bumpmap_convert_row (bm_row1, bm_width, bm_bpp, bm_has_alpha, params.lut);
   bumpmap_convert_row (bm_row2, bm_width, bm_bpp, bm_has_alpha, params.lut);
@@ -491,7 +491,7 @@ bumpmap (void)
     {
       row_in_bumpmap = (y >= - bmvals.yofs && y < - bmvals.yofs + bm_height);
 
-      gimp_pixel_rgn_get_row (&src_rgn, src_row, sel_x1, y, sel_width);
+      picman_pixel_rgn_get_row (&src_rgn, src_row, sel_x1, y, sel_width);
 
       bumpmap_row (src_row, dest_row, sel_width, img_bpp, img_has_alpha,
                    bm_row1, bm_row2, bm_row3, bm_width, bmvals.xofs,
@@ -499,7 +499,7 @@ bumpmap (void)
                    row_in_bumpmap,
                    &params);
 
-      gimp_pixel_rgn_set_row (&dest_rgn, dest_row, sel_x1, y, sel_width);
+      picman_pixel_rgn_set_row (&dest_rgn, dest_row, sel_x1, y, sel_width);
 
       /* Next line */
 
@@ -518,17 +518,17 @@ bumpmap (void)
           else
             yofs3 = CLAMP (yofs2 + 1, 0, bm_height - 1);
 
-          gimp_pixel_rgn_get_row (&bm_rgn, bm_row3, 0, yofs3, bm_width);
+          picman_pixel_rgn_get_row (&bm_rgn, bm_row3, 0, yofs3, bm_width);
           bumpmap_convert_row (bm_row3, bm_width, bm_bpp, bm_has_alpha,
                                params.lut);
         }
 
       if ((progress % 16) == 0)
-        gimp_progress_update ((gdouble) progress / sel_height);
+        picman_progress_update ((gdouble) progress / sel_height);
     }
 
   /* Done */
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (bm_row1);
   g_free (bm_row2);
@@ -537,11 +537,11 @@ bumpmap (void)
   g_free (dest_row);
 
   if (bm_drawable != drawable)
-    gimp_drawable_detach (bm_drawable);
+    picman_drawable_detach (bm_drawable);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id,
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id,
                         sel_x1, sel_y1, sel_width, sel_height);
 }
 
@@ -727,12 +727,12 @@ bumpmap_convert_row (guchar       *row,
       {
         if (has_alpha)
           *p++ = lut[(gint) (bmvals.waterlevel +
-                             (((gint) (GIMP_RGB_LUMINANCE (row[0],
+                             (((gint) (PICMAN_RGB_LUMINANCE (row[0],
                                                            row[1],
                                                            row[2]) + 0.5) -
                                bmvals.waterlevel) * row[3]) / 255.0)];
         else
-          *p++ = lut[(gint) (GIMP_RGB_LUMINANCE (row[0],
+          *p++ = lut[(gint) (PICMAN_RGB_LUMINANCE (row[0],
                                                  row[1],
                                                  row[2]) + 0.5)];
 
@@ -766,11 +766,11 @@ bumpmap_dialog (void)
   gboolean   run;
   gint       row = 0;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Bump Map"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Bump Map"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -782,7 +782,7 @@ bumpmap_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_set_border_width (GTK_CONTAINER (paned), 12);
@@ -799,14 +799,14 @@ bumpmap_dialog (void)
   gtk_box_pack_end (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
   g_signal_connect (preview, "invalidated",
                     G_CALLBACK (dialog_update_preview),
                     NULL);
-  g_signal_connect (GIMP_PREVIEW (preview)->area, "event",
+  g_signal_connect (PICMAN_PREVIEW (preview)->area, "event",
                     G_CALLBACK (dialog_preview_events), preview);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -829,24 +829,24 @@ bumpmap_dialog (void)
   gtk_widget_show (table);
 
   /* Bump map menu */
-  combo = gimp_drawable_combo_box_new (dialog_constrain, NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), bmvals.bumpmap_id,
+  combo = picman_drawable_combo_box_new (dialog_constrain, NULL);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), bmvals.bumpmap_id,
                               G_CALLBACK (dialog_bumpmap_callback),
                               preview);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("_Bump map:"), 0.0, 0.5, combo, 2, FALSE);
 
   /* Map type menu */
-  combo = gimp_int_combo_box_new (_("Linear"),     LINEAR,
+  combo = picman_int_combo_box_new (_("Linear"),     LINEAR,
                                   _("Spherical"),  SPHERICAL,
                                   _("Sinusoidal"), SINUSOIDAL,
                                   NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), bmvals.type,
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), bmvals.type,
                               G_CALLBACK (dialog_maptype_callback),
                               preview);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row,
                              _("_Map type:"), 0.0, 0.5, combo, 2, FALSE);
 
   gtk_table_set_row_spacing (GTK_TABLE (table), row++, 12);
@@ -859,10 +859,10 @@ bumpmap_dialog (void)
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), bmvals.compensate);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bmvals.compensate);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* Invert bumpmap */
@@ -873,10 +873,10 @@ bumpmap_dialog (void)
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), bmvals.invert);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bmvals.invert);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* Tile bumpmap */
@@ -888,100 +888,100 @@ bumpmap_dialog (void)
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), bmvals.tiled);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bmvals.tiled);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Azimuth:"), SCALE_WIDTH, 6,
                               bmvals.azimuth, 0.0, 360.0, 1.0, 15.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &bmvals.azimuth);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Elevation:"), SCALE_WIDTH, 6,
                               bmvals.elevation, 0.5, 90.0, 1.0, 5.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &bmvals.elevation);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row,
                               _("_Depth:"), SCALE_WIDTH, 6,
                               bmvals.depth, 1.0, 65.0, 1.0, 5.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bmvals.depth);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   gtk_table_set_row_spacing (GTK_TABLE (table), row++, 12);
 
   bmint.offset_adj_x = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+    picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                           _("_X offset:"), SCALE_WIDTH, 6,
                           bmvals.xofs, -1000.0, 1001.0, 1.0, 10.0, 0,
                           TRUE, 0, 0,
                           _("The offset can be adjusted by dragging the "
                             "preview using the middle mouse button."), NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bmvals.xofs);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   bmint.offset_adj_y = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, row,
+    picman_scale_entry_new (GTK_TABLE (table), 0, row,
                           _("_Y offset:"), SCALE_WIDTH, 6,
                           bmvals.yofs, -1000.0, 1001.0, 1.0, 10.0, 0,
                           TRUE, 0, 0,
                           _("The offset can be adjusted by dragging the "
                             "preview using the middle mouse button."), NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bmvals.yofs);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   gtk_table_set_row_spacing (GTK_TABLE (table), row++, 12);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Waterlevel:"), SCALE_WIDTH, 6,
                               bmvals.waterlevel, 0.0, 255.0, 1.0, 8.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bmvals.waterlevel);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("A_mbient:"), SCALE_WIDTH, 6,
                               bmvals.ambient, 0.0, 255.0, 1.0, 8.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bmvals.ambient);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* Initialise drawable
@@ -997,12 +997,12 @@ bumpmap_dialog (void)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
   if (bmint.bm_drawable != drawable)
-    gimp_drawable_detach (bmint.bm_drawable);
+    picman_drawable_detach (bmint.bm_drawable);
 
   return run;
 }
@@ -1010,7 +1010,7 @@ bumpmap_dialog (void)
 static gboolean
 dialog_preview_events (GtkWidget   *area,
                        GdkEvent    *event,
-                       GimpPreview *preview)
+                       PicmanPreview *preview)
 {
   switch (event->type)
     {
@@ -1042,7 +1042,7 @@ dialog_preview_events (GtkWidget   *area,
         {
           gtk_grab_remove (area);
           bmint.drag_mode = DRAG_NONE;
-          gimp_preview_invalidate (preview);
+          picman_preview_invalidate (preview);
 
           return TRUE;
         }
@@ -1067,22 +1067,22 @@ dialog_preview_events (GtkWidget   *area,
           case DRAG_BUMPMAP:
             bmvals.xofs = CLAMP (bmvals.xofs - dx, -1000, 1000);
             g_signal_handlers_block_by_func (bmint.offset_adj_x,
-                                             gimp_int_adjustment_update,
+                                             picman_int_adjustment_update,
                                              &bmvals.xofs);
             gtk_adjustment_set_value (GTK_ADJUSTMENT (bmint.offset_adj_x),
                                       bmvals.xofs);
             g_signal_handlers_unblock_by_func (bmint.offset_adj_x,
-                                               gimp_int_adjustment_update,
+                                               picman_int_adjustment_update,
                                                &bmvals.xofs);
 
             bmvals.yofs = CLAMP (bmvals.yofs - dy, -1000, 1000);
             g_signal_handlers_block_by_func (bmint.offset_adj_y,
-                                             gimp_int_adjustment_update,
+                                             picman_int_adjustment_update,
                                              &bmvals.yofs);
             gtk_adjustment_set_value (GTK_ADJUSTMENT (bmint.offset_adj_y),
                                       bmvals.yofs);
             g_signal_handlers_unblock_by_func (bmint.offset_adj_y,
-                                               gimp_int_adjustment_update,
+                                               picman_int_adjustment_update,
                                                &bmvals.yofs);
             break;
 
@@ -1090,7 +1090,7 @@ dialog_preview_events (GtkWidget   *area,
             return FALSE;
           }
 
-        gimp_preview_invalidate (preview);
+        picman_preview_invalidate (preview);
         return TRUE;
       }
       break;
@@ -1107,10 +1107,10 @@ dialog_new_bumpmap (gboolean init_offsets)
 {
   /* Get drawable */
   if (bmint.bm_drawable && (bmint.bm_drawable != drawable))
-    gimp_drawable_detach (bmint.bm_drawable);
+    picman_drawable_detach (bmint.bm_drawable);
 
   if (bmvals.bumpmap_id != -1)
-    bmint.bm_drawable = gimp_drawable_get (bmvals.bumpmap_id);
+    bmint.bm_drawable = picman_drawable_get (bmvals.bumpmap_id);
   else
     bmint.bm_drawable = drawable;
 
@@ -1118,10 +1118,10 @@ dialog_new_bumpmap (gboolean init_offsets)
     return;
 
   /* Get sizes */
-  bmint.bm_width     = gimp_drawable_width (bmint.bm_drawable->drawable_id);
-  bmint.bm_height    = gimp_drawable_height (bmint.bm_drawable->drawable_id);
-  bmint.bm_bpp       = gimp_drawable_bpp (bmint.bm_drawable->drawable_id);
-  bmint.bm_has_alpha = gimp_drawable_has_alpha (bmint.bm_drawable->drawable_id);
+  bmint.bm_width     = picman_drawable_width (bmint.bm_drawable->drawable_id);
+  bmint.bm_height    = picman_drawable_height (bmint.bm_drawable->drawable_id);
+  bmint.bm_bpp       = picman_drawable_bpp (bmint.bm_drawable->drawable_id);
+  bmint.bm_has_alpha = picman_drawable_has_alpha (bmint.bm_drawable->drawable_id);
 
   if (init_offsets)
     {
@@ -1131,9 +1131,9 @@ dialog_new_bumpmap (gboolean init_offsets)
       gint            draw_offset_y;
       gint            draw_offset_x;
 
-      gimp_drawable_offsets (bmint.bm_drawable->drawable_id,
+      picman_drawable_offsets (bmint.bm_drawable->drawable_id,
                              &bump_offset_x, &bump_offset_y);
-      gimp_drawable_offsets (drawable->drawable_id,
+      picman_drawable_offsets (drawable->drawable_id,
                              &draw_offset_x, &draw_offset_y);
 
       bmvals.xofs = draw_offset_x - bump_offset_x;
@@ -1143,11 +1143,11 @@ dialog_new_bumpmap (gboolean init_offsets)
       if (adj)
         {
           g_signal_handlers_block_by_func (adj,
-                                           gimp_int_adjustment_update,
+                                           picman_int_adjustment_update,
                                            &bmvals.xofs);
           gtk_adjustment_set_value (adj, bmvals.xofs);
           g_signal_handlers_unblock_by_func (adj,
-                                             gimp_int_adjustment_update,
+                                             picman_int_adjustment_update,
                                              &bmvals.xofs);
         }
 
@@ -1155,33 +1155,33 @@ dialog_new_bumpmap (gboolean init_offsets)
       if (adj)
         {
           g_signal_handlers_block_by_func (adj,
-                                           gimp_int_adjustment_update,
+                                           picman_int_adjustment_update,
                                            &bmvals.yofs);
           gtk_adjustment_set_value (adj, bmvals.yofs);
           g_signal_handlers_unblock_by_func (adj,
-                                             gimp_int_adjustment_update,
+                                             picman_int_adjustment_update,
                                              &bmvals.yofs);
         }
     }
 
   /* Initialize pixel region */
-  gimp_pixel_rgn_init (&bmint.bm_rgn, bmint.bm_drawable,
+  picman_pixel_rgn_init (&bmint.bm_rgn, bmint.bm_drawable,
                        0, 0, bmint.bm_width, bmint.bm_height, FALSE, FALSE);
 }
 
 static void
-dialog_update_preview (GimpPreview *preview)
+dialog_update_preview (PicmanPreview *preview)
 {
   guchar *dest_row;
   gint    y;
   gint    x1, y1;
   gint    width, height;
 
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &width, &height);
 
   /* Initialize source rows */
-  gimp_pixel_rgn_init (&bmint.src_rgn, drawable,
+  picman_pixel_rgn_init (&bmint.src_rgn, drawable,
                        sel_x1, sel_y1, sel_width, sel_height, FALSE, FALSE);
 
   bmint.src_rows = g_new (guchar *, height);
@@ -1225,9 +1225,9 @@ dialog_update_preview (GimpPreview *preview)
 
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview->area),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview->area),
                           0, 0, width, height,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           dest_row,
                           4 * width);
 
@@ -1243,14 +1243,14 @@ dialog_update_preview (GimpPreview *preview)
 }
 
 static void
-dialog_get_rows (GimpPixelRgn  *pr,
+dialog_get_rows (PicmanPixelRgn  *pr,
                  guchar       **rows,
                  gint           x,
                  gint           y,
                  gint           width,
                  gint           height)
 {
-  /* This is shamelessly ripped off from gimp_pixel_rgn_get_rect().
+  /* This is shamelessly ripped off from picman_pixel_rgn_get_rect().
    * Its function is exactly the same, but it can fetch an image
    * rectangle to a sparse buffer which is defined as separate
    * rows instead of one big linear region.
@@ -1263,8 +1263,8 @@ dialog_get_rows (GimpPixelRgn  *pr,
   gint xstep, ystep;
   gint b, bpp;
   gint tx, ty;
-  gint tile_width  = gimp_tile_width();
-  gint tile_height = gimp_tile_height();
+  gint tile_width  = picman_tile_width();
+  gint tile_height = picman_tile_height();
 
   bpp = pr->bpp;
 
@@ -1280,10 +1280,10 @@ dialog_get_rows (GimpPixelRgn  *pr,
 
       while (x < xend)
         {
-          GimpTile *tile;
+          PicmanTile *tile;
 
-          tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-          gimp_tile_ref (tile);
+          tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+          picman_tile_ref (tile);
 
           xstep     = tile->ewidth - (x % tile_width);
           ystep     = tile->eheight - (y % tile_height);
@@ -1307,7 +1307,7 @@ dialog_get_rows (GimpPixelRgn  *pr,
                   *dest++ = *src++;
             }
 
-          gimp_tile_unref (tile, FALSE);
+          picman_tile_unref (tile, FALSE);
 
           x += xstep;
         }
@@ -1411,38 +1411,38 @@ dialog_constrain (gint32   image_id,
                   gint32   drawable_id,
                   gpointer data)
 {
-  return (gimp_drawable_is_rgb (drawable_id) ||
-          gimp_drawable_is_gray (drawable_id));
+  return (picman_drawable_is_rgb (drawable_id) ||
+          picman_drawable_is_gray (drawable_id));
 }
 
 static void
 dialog_bumpmap_callback (GtkWidget   *widget,
-                         GimpPreview *preview)
+                         PicmanPreview *preview)
 {
   gint32  drawable_id;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &drawable_id);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &drawable_id);
 
   if (bmvals.bumpmap_id != drawable_id)
     {
       bmvals.bumpmap_id = drawable_id;
       dialog_new_bumpmap (TRUE);
-      gimp_preview_invalidate (preview);
+      picman_preview_invalidate (preview);
     }
 }
 
 static void
 dialog_maptype_callback (GtkWidget   *widget,
-                         GimpPreview *preview)
+                         PicmanPreview *preview)
 {
   gint32  maptype;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &maptype);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &maptype);
 
   if (bmvals.type != maptype)
     {
       bmvals.type = maptype;
       bumpmap_init_params (&bmint.params);
-      gimp_preview_invalidate (preview);
+      picman_preview_invalidate (preview);
     }
 }

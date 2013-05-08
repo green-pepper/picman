@@ -19,7 +19,7 @@ SCAN_OPTIONS =
 MKDB_OPTIONS = --sgml-mode --output-format=xml
 
 # Extra options to supply to gtkdoc-fixref
-FIXXREF_OPTIONS = --extra-dir=../libgimpbase/html --extra-dir=../libgimpcolor/html --extra-dir=../libgimpconfig/html --extra-dir=../libgimpmath/html --extra-dir=../libgimpwidgets/html
+FIXXREF_OPTIONS = --extra-dir=../libpicmanbase/html --extra-dir=../libpicmancolor/html --extra-dir=../libpicmanconfig/html --extra-dir=../libpicmanmath/html --extra-dir=../libpicmanwidgets/html
 
 
 # Used for dependencies
@@ -28,12 +28,12 @@ CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
 IGNORE_HFILES = \
-	gimp-intl.h			\
-	gimpdbusservice-glue.h		\
-	gimpimage-convert-data.h	\
-	gimpimage-convert-fsdither.h	\
-	gimphelp-ids.h			\
-	gimprc-blurbs.h
+	picman-intl.h			\
+	picmandbusservice-glue.h		\
+	picmanimage-convert-data.h	\
+	picmanimage-convert-fsdither.h	\
+	picmanhelp-ids.h			\
+	picmanrc-blurbs.h
 
 # Images to copy into HTML directory
 HTML_IMAGES =
@@ -54,18 +54,18 @@ GTKDOC_CFLAGS = \
 GTKDOC_LIBS = \
 	-Wl,-u,$(SYMPREFIX)xcf_init		   			     \
 	-Wl,-u,$(SYMPREFIX)internal_procs_init 				     \
-	-Wl,-u,$(SYMPREFIX)gimp_coords_mix	   			     \
-	-Wl,-u,$(SYMPREFIX)gimp_plug_in_manager_restore			     \
-	-Wl,-u,$(SYMPREFIX)gimp_lebl_dialog				     \
-	-Wl,-u,$(SYMPREFIX)gimp_param_spec_duplicate			     \
+	-Wl,-u,$(SYMPREFIX)picman_coords_mix	   			     \
+	-Wl,-u,$(SYMPREFIX)picman_plug_in_manager_restore			     \
+	-Wl,-u,$(SYMPREFIX)picman_lebl_dialog				     \
+	-Wl,-u,$(SYMPREFIX)picman_param_spec_duplicate			     \
 	$(top_builddir)/app/app.o					     \
         $(top_builddir)/app/batch.o					     \
         $(top_builddir)/app/errors.o					     \
         $(top_builddir)/app/language.o					     \
         $(top_builddir)/app/sanity.o					     \
         $(top_builddir)/app/units.o					     \
-	$(top_builddir)/app/gimp-debug.o				     \
-	$(top_builddir)/app/gimp-log.o					     \
+	$(top_builddir)/app/picman-debug.o				     \
+	$(top_builddir)/app/picman-log.o					     \
         $(top_builddir)/app/gui/libappgui.a				     \
 	$(top_builddir)/app/actions/libappactions.a			     \
         $(top_builddir)/app/dialogs/libappdialogs.a			     \
@@ -85,13 +85,13 @@ GTKDOC_LIBS = \
         $(top_builddir)/app/config/libappconfig.a			     \
         $(top_builddir)/app/gegl/libappgegl.a				     \
         $(top_builddir)/app/operations/libappoperations.a		     \
-        $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la \
-        $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la   \
-        $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la     \
-        $(top_builddir)/libgimpthumb/libgimpthumb-$(GIMP_API_VERSION).la     \
-        $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la       \
-        $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la   \
-        $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la       \
+        $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la \
+        $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la   \
+        $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la     \
+        $(top_builddir)/libpicmanthumb/libpicmanthumb-$(PICMAN_API_VERSION).la     \
+        $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la       \
+        $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la   \
+        $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la       \
         $(GTK_LIBS)                                                          \
         $(LIBART_LIBS)                                                       \
         $(PANGOFT2_LIBS)                                                     \

@@ -1,6 +1,6 @@
-# translation of gimp-script-fu.HEAD.po to Slovak
-# translation of gimp-script-fu.HEAD.sk.po to Slovak
-# gimp-script-fu sk.po
+# translation of picman-script-fu.HEAD.po to Slovak
+# translation of picman-script-fu.HEAD.sk.po to Slovak
+# picman-script-fu sk.po
 # Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 # Zdenko Podobný <zdpo@mailbox.sk>, 2002,2003, 2004.
 # Marcel Telka <marcel@telka.sk>, 2005.
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-17 22:08+0200\n"
 "PO-Revision-Date: 2005-10-17 22:08+0200\n"
@@ -201,8 +201,8 @@ msgid "_Beveled Pattern"
 msgstr "_Skosená vzorka"
 
 #: ../plug-ins/script-fu/script-fu.c:290
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:293
 msgid "Alpha to _Logo"
@@ -256,8 +256,8 @@ msgstr "Štandardné nastavenie mapy vyvýšenia"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:4
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:3
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:2
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:5
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:3
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:5
@@ -296,8 +296,8 @@ msgstr "Písmo"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:3
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:6
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:4
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:6
@@ -366,8 +366,8 @@ msgstr "Polomer rozmazania tieňa"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:13
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:16
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -406,7 +406,7 @@ msgstr "3_D Truchet..."
 #: ../plug-ins/script-fu/scripts/comic-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:1
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:1
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:1
@@ -596,8 +596,8 @@ msgstr "Výplň"
 #: ../plug-ins/script-fu/scripts/beveled-button.scm.h:9
 #: ../plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:7
 #: ../plug-ins/script-fu/scripts/blended-logo.scm.h:16
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:14
 #: ../plug-ins/script-fu/scripts/i26-gunya2.scm.h:7
 #: ../plug-ins/script-fu/scripts/news-text.scm.h:10
 #: ../plug-ins/script-fu/scripts/pupi-button.scm.h:13
@@ -680,7 +680,7 @@ msgid "H_eading..."
 msgstr "Nadp_is..."
 
 #: ../plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:1
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:4
 #: ../plug-ins/script-fu/scripts/gradient-example.scm.h:2
 #: ../plug-ins/script-fu/scripts/mkbrush.scm.h:2
 #: ../plug-ins/script-fu/scripts/swirltile.scm.h:6
@@ -740,7 +740,7 @@ msgstr "Transparentné popredie"
 #: ../plug-ins/script-fu/scripts/land.scm.h:2
 #: ../plug-ins/script-fu/scripts/lava.scm.h:1
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Prechod"
 
@@ -1087,17 +1087,17 @@ msgstr "Polomer rozostrenia"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:3
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:4
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Color"
 msgstr "Farba"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:7
 msgid "Offset X"
 msgstr "Posun X"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:8
 msgid "Offset Y"
 msgstr "Posun Y"
 
@@ -1281,65 +1281,65 @@ msgstr "Výška tieňa (%)"
 msgid "_Fuzzy Border..."
 msgstr "N_eostrý okraj..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr "Automatické orezanie"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:2
 msgid "Dark color"
 msgstr "Tmavá farba"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:5
 #: ../plug-ins/script-fu/scripts/xach-effect.scm.h:8
 msgid "Highlight color"
 msgstr "Farba zvýraznenia"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:5
 msgid "Index image"
 msgstr "Indexový obrázok"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:7
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:6
 msgid "Number of colors"
 msgstr "Počet farieb"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Remove background"
 msgstr "Odstrániť pozadie"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:10
 msgid "Select-by-color threshold"
 msgstr "Prah výberu podľa farby"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Shadow color"
 msgstr "Farba tieňa"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:13
 msgid "_Big Header..."
 msgstr "Ve_ľká hlavička..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:14
 msgid "_Small Header..."
 msgstr "_Malá hlavička..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "T_ube Sub-Button Label..."
 msgstr "Nápis podtlačítka na tr_ubici..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr "Nápis podpodtlačítka na tr_ubici..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "_General Tube Labels..."
 msgstr "_Všeobecné označenia na trubici..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:17
 msgid "_Tube Button Label..."
 msgstr "Označenie _tlačítka na trubici..."
 
@@ -1882,130 +1882,130 @@ msgstr "Točiť zľava doprava"
 msgid "_Spinning Globe..."
 msgstr "_Rotujúci glóbus..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Airbrush"
 msgstr "Rozprašovač"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Brush"
 msgstr "Štetec"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Circle"
 msgstr "Kruh"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color method"
 msgstr "Farebná metóda"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid ""
 "Draws Spirographs, Epitrochoids and Lissajous Curves. More info at http://"
-"netword.com/*spyrogimp"
+"netword.com/*spyropicman"
 msgstr ""
 "Kreslí Spirografy, Epitrochoidy a Lissajouské krivky. Viac informácií na "
-"http://netword.com/*spyrogimp"
+"http://netword.com/*spyropicman"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrochoid"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Rám"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: loop sawtooth"
 msgstr "Prechod: cyklická píla"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: loop triangle"
 msgstr "Prechod: cyklický trojuholník"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Šesťuholník"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Miera dier"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Vnútorné zuby"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajouské"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Okraj (v bodoch)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Vonkajšie zuby"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Ceruzka"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Päťuholník"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Mnohouholník: 10 strán"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Mnohouholník: 7 strán"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Mnohouholník: 8 strán"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Mnohouholník: 9 strán"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Shape"
 msgstr "Tvar"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Solid Color"
 msgstr "Jednoliata farba"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Spyrograph"
 msgstr "Spyrograf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Square"
 msgstr "Štvorec"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:6
 msgid "Start angle"
 msgstr "Počiatočný uhol"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 msgid "Tool"
 msgstr "Nástroj"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Triangle"
 msgstr "Trojuholník"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Type"
 msgstr "Typ"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
-msgid "_Spyrogimp..."
-msgstr "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
+msgid "_Spyropicman..."
+msgstr "_Spyropicman..."
 
 #: ../plug-ins/script-fu/scripts/starburst-logo.scm.h:2
 msgid "Burst color"

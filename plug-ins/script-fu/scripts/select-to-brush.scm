@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Selection-to-brush
@@ -31,8 +31,8 @@
                                       filename
                                       spacing)
   (let* (
-        (type (car (gimp-drawable-type-with-alpha drawable)))
-        (selection-bounds (gimp-selection-bounds image))
+        (type (car (picman-drawable-type-with-alpha drawable)))
+        (selection-bounds (picman-selection-bounds image))
         (select-offset-x  (cadr selection-bounds))
         (select-offset-y  (caddr selection-bounds))
         (selection-width  (- (cadr (cddr selection-bounds))  select-offset-x))
@@ -46,23 +46,23 @@
         (filename2 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-disable image)
+    (picman-image-undo-disable image)
 
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
           (set! from-selection FALSE)
         )
         (begin
           (set! from-selection TRUE)
-          (set! active-selection (car (gimp-selection-save image)))
+          (set! active-selection (car (picman-selection-save image)))
         )
     )
 
-    (gimp-edit-copy drawable)
+    (picman-edit-copy drawable)
 
     (set! brush-draw-type
           (if (= type GRAYA-IMAGE)
@@ -74,12 +74,12 @@
               GRAY
               RGB))
 
-    (set! brush-image (car (gimp-image-new selection-width
+    (set! brush-image (car (picman-image-new selection-width
                                            selection-height
                                            brush-image-type)))
 
     (set! brush-draw
-          (car (gimp-layer-new brush-image
+          (car (picman-layer-new brush-image
                                selection-width
                                selection-height
                                brush-draw-type
@@ -87,22 +87,22 @@
                                100
                                NORMAL-MODE)))
 
-    (gimp-image-insert-layer brush-image brush-draw 0 0)
+    (picman-image-insert-layer brush-image brush-draw 0 0)
 
-    (gimp-selection-none brush-image)
+    (picman-selection-none brush-image)
 
     (if (= type GRAYA-IMAGE)
         (begin
-          (gimp-context-set-background '(255 255 255))
-          (gimp-drawable-fill brush-draw BACKGROUND-FILL))
-        (gimp-drawable-fill brush-draw TRANSPARENT-FILL)
+          (picman-context-set-background '(255 255 255))
+          (picman-drawable-fill brush-draw BACKGROUND-FILL))
+        (picman-drawable-fill brush-draw TRANSPARENT-FILL)
     )
 
-    (let ((floating-sel (car (gimp-edit-paste brush-draw FALSE))))
-      (gimp-floating-sel-anchor floating-sel)
+    (let ((floating-sel (car (picman-edit-paste brush-draw FALSE))))
+      (picman-floating-sel-anchor floating-sel)
     )
 
-    (set! filename2 (string-append gimp-directory
+    (set! filename2 (string-append picman-directory
                                    "/brushes/"
                                    filename
                                    (number->string image)
@@ -112,27 +112,27 @@
 
     (if (= from-selection TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
-          (gimp-image-remove-channel image active-selection)
+          (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
+          (picman-image-remove-channel image active-selection)
         )
     )
 
-    (gimp-image-undo-enable image)
-    (gimp-image-set-active-layer image drawable)
-    (gimp-image-delete brush-image)
-    (gimp-displays-flush)
+    (picman-image-undo-enable image)
+    (picman-image-set-active-layer image drawable)
+    (picman-image-delete brush-image)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
-    (gimp-brushes-refresh)
-    (gimp-context-set-brush name)
+    (picman-brushes-refresh)
+    (picman-context-set-brush name)
   )
 )
 
 (script-fu-register "script-fu-selection-to-brush"
   _"To _Brush..."
   _"Convert a selection to a brush"
-  "Adrian Likins <adrian@gimp.org>"
+  "Adrian Likins <adrian@picman.org>"
   "Adrian Likins"
   "10/07/97"
   "RGB* GRAY*"

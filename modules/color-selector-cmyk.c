@@ -1,5 +1,5 @@
-/* GIMP CMYK ColorSelector
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+/* PICMAN CMYK ColorSelector
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /* definitions and variables */
@@ -41,35 +41,35 @@ typedef struct _ColorselCmykClass ColorselCmykClass;
 
 struct _ColorselCmyk
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
-  GimpCMYK           cmyk;
+  PicmanCMYK           cmyk;
   gdouble            pullout;
   GtkAdjustment     *adj[5];
 };
 
 struct _ColorselCmykClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
 GType         colorsel_cmyk_get_type       (void);
 
-static void   colorsel_cmyk_set_color      (GimpColorSelector *selector,
-                                            const GimpRGB     *rgb,
-                                            const GimpHSV     *hsv);
+static void   colorsel_cmyk_set_color      (PicmanColorSelector *selector,
+                                            const PicmanRGB     *rgb,
+                                            const PicmanHSV     *hsv);
 static void   colorsel_cmyk_adj_update     (GtkAdjustment     *adj,
                                             ColorselCmyk      *module);
 static void   colorsel_cmyk_pullout_update (GtkAdjustment     *adj,
                                             ColorselCmyk      *module);
 
 
-static const GimpModuleInfo colorsel_cmyk_info =
+static const PicmanModuleInfo colorsel_cmyk_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("CMYK color selector"),
-  "Sven Neumann <sven@gimp.org>",
+  "Sven Neumann <sven@picman.org>",
   "v0.2",
   "(c) 2003, released under the GPL",
   "July 2003"
@@ -77,17 +77,17 @@ static const GimpModuleInfo colorsel_cmyk_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (ColorselCmyk, colorsel_cmyk,
-                       GIMP_TYPE_COLOR_SELECTOR)
+                       PICMAN_TYPE_COLOR_SELECTOR)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &colorsel_cmyk_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   colorsel_cmyk_register_type (module);
 
@@ -97,10 +97,10 @@ gimp_module_register (GTypeModule *module)
 static void
 colorsel_cmyk_class_init (ColorselCmykClass *klass)
 {
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
   selector_class->name      = _("CMYK");
-  selector_class->help_id   = "gimp-colorselector-cmyk";
+  selector_class->help_id   = "picman-colorselector-cmyk";
   selector_class->stock_id  = GTK_STOCK_PRINT;  /* FIXME */
   selector_class->set_color = colorsel_cmyk_set_color;
 }
@@ -151,7 +151,7 @@ colorsel_cmyk_init (ColorselCmyk *module)
 
   for (i = 0; i < 4; i++)
     {
-      adj = gimp_scale_entry_new (GTK_TABLE (table), 1, i,
+      adj = picman_scale_entry_new (GTK_TABLE (table), 1, i,
                                   gettext (cmyk_labels[i]),
                                   -1, -1,
                                   0.0,
@@ -176,7 +176,7 @@ colorsel_cmyk_init (ColorselCmyk *module)
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new (&adj, module->pullout * 100.0,
+  spinbutton = picman_spin_button_new (&adj, module->pullout * 100.0,
                                      0.0, 100.0, 1.0, 10.0, 0.0,
                                      1.0, 0);
 
@@ -185,7 +185,7 @@ colorsel_cmyk_init (ColorselCmyk *module)
                     GTK_SHRINK, GTK_SHRINK, 0, 0);
   gtk_widget_show (spinbutton);
 
-  gimp_help_set_help_data (spinbutton,
+  picman_help_set_help_data (spinbutton,
                            _("The percentage of black to pull out "
                              "of the colored inks."), NULL);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), spinbutton);
@@ -200,13 +200,13 @@ colorsel_cmyk_init (ColorselCmyk *module)
 }
 
 static void
-colorsel_cmyk_set_color (GimpColorSelector *selector,
-                         const GimpRGB     *rgb,
-                         const GimpHSV     *hsv)
+colorsel_cmyk_set_color (PicmanColorSelector *selector,
+                         const PicmanRGB     *rgb,
+                         const PicmanHSV     *hsv)
 {
   ColorselCmyk *module = COLORSEL_CMYK (selector);
 
-  gimp_rgb_to_cmyk (rgb, module->pullout, &module->cmyk);
+  picman_rgb_to_cmyk (rgb, module->pullout, &module->cmyk);
 
   gtk_adjustment_set_value (module->adj[0], module->cmyk.c * 100.0);
   gtk_adjustment_set_value (module->adj[1], module->cmyk.m * 100.0);
@@ -218,7 +218,7 @@ static void
 colorsel_cmyk_adj_update (GtkAdjustment *adj,
                           ColorselCmyk  *module)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (module);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (module);
   gdouble            value;
   gint               i;
 
@@ -246,19 +246,19 @@ colorsel_cmyk_adj_update (GtkAdjustment *adj,
       return;
     }
 
-  gimp_cmyk_to_rgb (&module->cmyk, &selector->rgb);
-  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+  picman_cmyk_to_rgb (&module->cmyk, &selector->rgb);
+  picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }
 
 static void
 colorsel_cmyk_pullout_update (GtkAdjustment *adj,
                               ColorselCmyk  *module)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (module);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (module);
 
   module->pullout = gtk_adjustment_get_value (adj) / 100.0;
 
-  gimp_color_selector_set_color (selector, &selector->rgb, &selector->hsv);
+  picman_color_selector_set_color (selector, &selector->rgb, &selector->hsv);
 }

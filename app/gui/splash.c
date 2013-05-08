@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,18 +22,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "gui-types.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "splash.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  #define STARTUP_TIMER 1  */
@@ -59,23 +59,23 @@ typedef struct
   gchar          *text1;
   gchar          *text2;
 #endif
-} GimpSplash;
+} PicmanSplash;
 
-static GimpSplash *splash = NULL;
+static PicmanSplash *splash = NULL;
 
 
-static void        splash_position_layouts    (GimpSplash     *splash,
+static void        splash_position_layouts    (PicmanSplash     *splash,
                                                const gchar    *text1,
                                                const gchar    *text2,
                                                GdkRectangle   *area);
 static gboolean    splash_area_expose         (GtkWidget      *widget,
                                                GdkEventExpose *event,
-                                               GimpSplash     *splash);
+                                               PicmanSplash     *splash);
 static void        splash_rectangle_union     (GdkRectangle   *dest,
                                                PangoRectangle *pango_rect,
                                                gint            offset_x,
                                                gint            offset_y);
-static gboolean    splash_average_text_area   (GimpSplash     *splash,
+static gboolean    splash_average_text_area   (PicmanSplash     *splash,
                                                GdkPixbuf      *pixbuf,
                                                GdkColor       *color);
 
@@ -107,14 +107,14 @@ splash_create (gboolean be_verbose)
   if (! pixbuf)
     return;
 
-  splash = g_slice_new0 (GimpSplash);
+  splash = g_slice_new0 (PicmanSplash);
 
   splash->window =
     g_object_new (GTK_TYPE_WINDOW,
                   "type",            GTK_WINDOW_TOPLEVEL,
                   "type-hint",       GDK_WINDOW_TYPE_HINT_SPLASHSCREEN,
-                  "title",           _("GIMP Startup"),
-                  "role",            "gimp-startup",
+                  "title",           _("PICMAN Startup"),
+                  "role",            "picman-startup",
                   "window-position", GTK_WIN_POS_CENTER,
                   "resizable",       FALSE,
                   NULL);
@@ -148,7 +148,7 @@ splash_create (gboolean be_verbose)
   /*  create the pango layouts  */
   splash->upper = gtk_widget_create_pango_layout (splash->area, "");
   splash->lower = gtk_widget_create_pango_layout (splash->area, "");
-  gimp_pango_layout_set_scale (splash->lower, PANGO_SCALE_SMALL);
+  picman_pango_layout_set_scale (splash->lower, PANGO_SCALE_SMALL);
 
   /*  this sets the initial layout positions  */
   splash_position_layouts (splash, "", "", NULL);
@@ -192,7 +192,7 @@ splash_destroy (void)
   g_free (splash->text2);
 #endif
 
-  g_slice_free (GimpSplash, splash);
+  g_slice_free (PicmanSplash, splash);
   splash = NULL;
 }
 
@@ -232,7 +232,7 @@ splash_update (const gchar *text1,
 static gboolean
 splash_area_expose (GtkWidget      *widget,
                     GdkEventExpose *event,
-                    GimpSplash     *splash)
+                    PicmanSplash     *splash)
 {
   cairo_t *cr = gdk_cairo_create (event->window);
 
@@ -254,7 +254,7 @@ splash_area_expose (GtkWidget      *widget,
 
 /* area returns the union of the previous and new ink rectangles */
 static void
-splash_position_layouts (GimpSplash   *splash,
+splash_position_layouts (PicmanSplash   *splash,
                          const gchar  *text1,
                          const gchar  *text2,
                          GdkRectangle *area)
@@ -320,7 +320,7 @@ splash_rectangle_union (GdkRectangle   *dest,
  * the average luminance of the text area of the splash image.
  */
 static gboolean
-splash_average_text_area (GimpSplash *splash,
+splash_average_text_area (PicmanSplash *splash,
                           GdkPixbuf  *pixbuf,
                           GdkColor   *color)
 {
@@ -368,7 +368,7 @@ splash_average_text_area (GimpSplash *splash,
           pixels += rowstride;
         }
 
-      luminance = GIMP_RGB_LUMINANCE (sum[0] / count,
+      luminance = PICMAN_RGB_LUMINANCE (sum[0] / count,
                                       sum[1] / count,
                                       sum[2] / count);
 
@@ -389,7 +389,7 @@ splash_image_load (gboolean be_verbose)
   GdkPixbufAnimation *pixbuf;
   gchar              *filename;
 
-  filename = gimp_personal_rc_file ("gimp-splash.png");
+  filename = picman_personal_rc_file ("picman-splash.png");
 
   if (be_verbose)
     g_printerr ("Trying splash '%s' ... ", filename);
@@ -403,15 +403,15 @@ splash_image_load (gboolean be_verbose)
   if (pixbuf)
     return pixbuf;
 
-  filename = gimp_personal_rc_file ("splashes");
+  filename = picman_personal_rc_file ("splashes");
   pixbuf = splash_image_pick_from_dir (filename, be_verbose);
   g_free (filename);
 
   if (pixbuf)
     return pixbuf;
 
-  filename = g_build_filename (gimp_data_directory (),
-                               "images", "gimp-splash.png", NULL);
+  filename = g_build_filename (picman_data_directory (),
+                               "images", "picman-splash.png", NULL);
 
   if (be_verbose)
     g_printerr ("Trying splash '%s' ... ", filename);
@@ -425,7 +425,7 @@ splash_image_load (gboolean be_verbose)
   if (pixbuf)
     return pixbuf;
 
-  filename = g_build_filename (gimp_data_directory (), "splashes", NULL);
+  filename = g_build_filename (picman_data_directory (), "splashes", NULL);
   pixbuf = splash_image_pick_from_dir (filename, be_verbose);
   g_free (filename);
 

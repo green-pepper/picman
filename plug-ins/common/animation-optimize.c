@@ -2,10 +2,10 @@
  * Animation Optimizer plug-in version 1.1.2
  *
  * (c) Adam D. Moss, 1997-2003
- *     adam@gimp.org
+ *     adam@picman.org
  *     adam@foxbox.org
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define OPTIMIZE_PROC        "plug-in-animationoptimize"
@@ -64,11 +64,11 @@ typedef enum
 static  void query (void);
 static  void run   (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *param,
+                    const PicmanParam  *param,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals);
+                    PicmanParam       **return_vals);
 
-static  gint32      do_optimizations    (GimpRunMode  run_mode,
+static  gint32      do_optimizations    (PicmanRunMode  run_mode,
                                          gboolean     diff_only);
 
 /* tag util functions*/
@@ -88,7 +88,7 @@ static  gboolean    is_ms_tag           (const gchar *str,
                                          gint        *taglength);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -103,9 +103,9 @@ static  gint32            image_id;
 static  gint32            new_image_id;
 static  gint32            total_frames;
 static  gint32           *layers;
-static  GimpDrawable     *drawable;
-static  GimpImageBaseType imagetype;
-static  GimpImageType     drawabletype_alpha;
+static  PicmanDrawable     *drawable;
+static  PicmanImageBaseType imagetype;
+static  PicmanImageType     drawabletype_alpha;
 static  guchar            pixelstep;
 static  guchar           *palette;
 static  gint              ncolours;
@@ -117,121 +117,121 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable (unused)"      }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable (unused)"      }
   };
-  static const GimpParamDef return_args[] =
+  static const PicmanParamDef return_args[] =
   {
-    { GIMP_PDB_IMAGE, "result", "Resulting image" }
+    { PICMAN_PDB_IMAGE, "result", "Resulting image" }
   };
 
-  gimp_install_procedure (OPTIMIZE_PROC,
+  picman_install_procedure (OPTIMIZE_PROC,
                           N_("Modify image to reduce size when saved as GIF animation"),
                           "This procedure applies various optimizations to"
-                          " a GIMP layer-based animation in an attempt to"
+                          " a PICMAN layer-based animation in an attempt to"
                           " reduce the final file size.  If a frame of the"
                           " animation can use the 'combine' mode, this"
                           " procedure attempts to maximize the number of"
                           " ajdacent pixels having the same color, which"
                           " improves the compression for some image formats"
                           " such as GIF or MNG.",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "1997-2003",
                           N_("Optimize (for _GIF)"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_args),
                           args, return_args);
 
-  gimp_install_procedure (OPTIMIZE_DIFF_PROC,
+  picman_install_procedure (OPTIMIZE_DIFF_PROC,
                           N_("Reduce file size where combining layers is possible"),
                           "This procedure applies various optimizations to"
-                          " a GIMP layer-based animation in an attempt to"
+                          " a PICMAN layer-based animation in an attempt to"
                           " reduce the final file size.  If a frame of the"
                           " animation can use the 'combine' mode, this"
                           " procedure uses a simple difference between the"
                           " frames.",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "1997-2001",
                           N_("_Optimize (Difference)"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_args),
                           args, return_args);
 
-  gimp_install_procedure (UNOPTIMIZE_PROC,
+  picman_install_procedure (UNOPTIMIZE_PROC,
                           N_("Remove optimization to make editing easier"),
-                          "This procedure 'simplifies' a GIMP layer-based"
+                          "This procedure 'simplifies' a PICMAN layer-based"
                           " animation that has been optimized for animation. "
                           "This makes editing the animation much easier.",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "1997-2001",
                           N_("_Unoptimize"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_args),
                           args, return_args);
 
-  gimp_plugin_menu_register (OPTIMIZE_PROC,      "<Image>/Filters/Animation");
-  gimp_plugin_menu_register (OPTIMIZE_DIFF_PROC, "<Image>/Filters/Animation");
-  gimp_plugin_menu_register (UNOPTIMIZE_PROC,    "<Image>/Filters/Animation");
+  picman_plugin_menu_register (OPTIMIZE_PROC,      "<Image>/Filters/Animation");
+  picman_plugin_menu_register (OPTIMIZE_DIFF_PROC, "<Image>/Filters/Animation");
+  picman_plugin_menu_register (UNOPTIMIZE_PROC,    "<Image>/Filters/Animation");
 
 #ifdef EXPERIMENTAL_BACKDROP_CODE
-  gimp_install_procedure (REMOVE_BACKDROP_PROC,
+  picman_install_procedure (REMOVE_BACKDROP_PROC,
                           "This procedure attempts to remove the backdrop"
-                          " from a GIMP layer-based animation, leaving"
+                          " from a PICMAN layer-based animation, leaving"
                           " the foreground animation over transparency.",
                           "",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "2001",
                           N_("_Remove Backdrop"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_args),
                           args, return_args);
 
-  gimp_install_procedure (FIND_BACKDROP_PROC,
+  picman_install_procedure (FIND_BACKDROP_PROC,
                           "This procedure attempts to remove the foreground"
-                          " from a GIMP layer-based animation, leaving"
+                          " from a PICMAN layer-based animation, leaving"
                           " a one-layered image containing only the"
                           " constant backdrop image.",
                           "",
-                          "Adam D. Moss <adam@gimp.org>",
-                          "Adam D. Moss <adam@gimp.org>",
+                          "Adam D. Moss <adam@picman.org>",
+                          "Adam D. Moss <adam@picman.org>",
                           "2001",
                           N_("_Find Backdrop"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_args),
                           args, return_args);
 
-  gimp_plugin_menu_register (REMOVE_BACKDROP_PROC, "<Image>/Filters/Animation");
-  gimp_plugin_menu_register (FIND_BACKDROP_PROC,   "<Image>/Filters/Animation");
+  picman_plugin_menu_register (REMOVE_BACKDROP_PROC, "<Image>/Filters/Animation");
+  picman_plugin_menu_register (FIND_BACKDROP_PROC,   "<Image>/Filters/Animation");
 #endif
 }
 
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status    = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[2];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status    = PICMAN_PDB_SUCCESS;
   gboolean          diff_only = FALSE;
 
   *nreturn_vals = 2;
@@ -241,9 +241,9 @@ run (const gchar      *name,
 
   INIT_I18N ();
 
-  if (run_mode == GIMP_RUN_NONINTERACTIVE && n_params != 3)
+  if (run_mode == PICMAN_RUN_NONINTERACTIVE && n_params != 3)
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   /* Check the procedure name we were called with, to decide
@@ -264,20 +264,20 @@ run (const gchar      *name,
   else
     g_error("GAH!!!");
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       image_id = param[1].data.d_image;
 
       new_image_id = do_optimizations (run_mode, diff_only);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush();
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  values[1].type         = GIMP_PDB_IMAGE;
+  values[1].type         = PICMAN_PDB_IMAGE;
   values[1].data.d_image = new_image_id;
 }
 
@@ -303,12 +303,12 @@ compose_row (gint          frame_num,
              gint          row_num,
              guchar       *dest,
              gint          dest_width,
-             GimpDrawable *drawable,
+             PicmanDrawable *drawable,
              gboolean      cleanup)
 {
   static guchar *line_buf = NULL;
   guchar        *srcptr;
-  GimpPixelRgn   pixel_rgn;
+  PicmanPixelRgn   pixel_rgn;
   gint           rawx, rawy, rawbpp, rawwidth, rawheight;
   gint           i;
   gboolean       has_alpha;
@@ -329,20 +329,20 @@ compose_row (gint          frame_num,
       total_alpha (dest, dest_width, pixelstep);
     }
 
-  gimp_drawable_offsets (drawable->drawable_id,
+  picman_drawable_offsets (drawable->drawable_id,
                          &rawx,
                          &rawy);
 
-  rawheight = gimp_drawable_height (drawable->drawable_id);
+  rawheight = picman_drawable_height (drawable->drawable_id);
 
   /* this frame has nothing to give us for this row; return */
   if (row_num >= rawheight + rawy ||
       row_num < rawy)
     return;
 
-  rawbpp = gimp_drawable_bpp (drawable->drawable_id);
-  rawwidth = gimp_drawable_width (drawable->drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  rawbpp = picman_drawable_bpp (drawable->drawable_id);
+  rawwidth = picman_drawable_width (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   if (line_buf)
     {
@@ -353,13 +353,13 @@ compose_row (gint          frame_num,
 
   /* Initialise and fetch the raw new frame row */
 
-  gimp_pixel_rgn_init (&pixel_rgn,
+  picman_pixel_rgn_init (&pixel_rgn,
                        drawable,
                        0, row_num - rawy,
                        rawwidth, 1,
                        FALSE,
                        FALSE);
-  gimp_pixel_rgn_get_rect (&pixel_rgn,
+  picman_pixel_rgn_get_rect (&pixel_rgn,
                            line_buf,
                            0, row_num - rawy,
                            rawwidth, 1);
@@ -391,10 +391,10 @@ compose_row (gint          frame_num,
 
 
 static gint32
-do_optimizations (GimpRunMode run_mode,
+do_optimizations (PicmanRunMode run_mode,
                   gboolean    diff_only)
 {
-  GimpPixelRgn   pixel_rgn;
+  PicmanPixelRgn   pixel_rgn;
   static guchar *rawframe = NULL;
   guchar        *srcptr;
   guchar        *destptr;
@@ -423,31 +423,31 @@ do_optimizations (GimpRunMode run_mode,
   switch (opmode)
     {
     case OPUNOPTIMIZE:
-      gimp_progress_init (_("Unoptimizing animation"));
+      picman_progress_init (_("Unoptimizing animation"));
       break;
     case OPFOREGROUND:
-      gimp_progress_init (_("Removing animation background"));
+      picman_progress_init (_("Removing animation background"));
       break;
     case OPBACKGROUND:
-      gimp_progress_init (_("Finding animation background"));
+      picman_progress_init (_("Finding animation background"));
       break;
     case OPOPTIMIZE:
     default:
-      gimp_progress_init (_("Optimizing animation"));
+      picman_progress_init (_("Optimizing animation"));
       break;
     }
 
-  width     = gimp_image_width (image_id);
-  height    = gimp_image_height (image_id);
-  layers    = gimp_image_get_layers (image_id, &total_frames);
-  imagetype = gimp_image_base_type (image_id);
-  pixelstep = (imagetype == GIMP_RGB) ? 4 : 2;
+  width     = picman_image_width (image_id);
+  height    = picman_image_height (image_id);
+  layers    = picman_image_get_layers (image_id, &total_frames);
+  imagetype = picman_image_base_type (image_id);
+  pixelstep = (imagetype == PICMAN_RGB) ? 4 : 2;
 
-  /*  gimp_tile_cache_ntiles(total_frames * (width / gimp_tile_width() + 1) );*/
+  /*  picman_tile_cache_ntiles(total_frames * (width / picman_tile_width() + 1) );*/
 
 
-  drawabletype_alpha = (imagetype == GIMP_RGB) ? GIMP_RGBA_IMAGE :
-    ((imagetype == GIMP_INDEXED) ? GIMP_INDEXEDA_IMAGE : GIMP_GRAYA_IMAGE);
+  drawabletype_alpha = (imagetype == PICMAN_RGB) ? PICMAN_RGBA_IMAGE :
+    ((imagetype == PICMAN_INDEXED) ? PICMAN_INDEXEDA_IMAGE : PICMAN_GRAYA_IMAGE);
 
   frame_sizebytes = width * height * pixelstep;
 
@@ -462,13 +462,13 @@ do_optimizations (GimpRunMode run_mode,
   total_alpha (this_frame, width*height, pixelstep);
   total_alpha (last_frame, width*height, pixelstep);
 
-  new_image_id = gimp_image_new(width, height, imagetype);
-  gimp_image_undo_disable (new_image_id);
+  new_image_id = picman_image_new(width, height, imagetype);
+  picman_image_undo_disable (new_image_id);
 
-  if (imagetype == GIMP_INDEXED)
+  if (imagetype == PICMAN_INDEXED)
     {
-      palette = gimp_image_get_colormap (image_id, &ncolours);
-      gimp_image_set_colormap (new_image_id, palette, ncolours);
+      palette = picman_image_get_colormap (image_id, &ncolours);
+      picman_image_set_colormap (new_image_id, palette, ncolours);
     }
 
 #if 1
@@ -511,7 +511,7 @@ do_optimizations (GimpRunMode run_mode,
           for (this_frame_num=0; this_frame_num<total_frames; this_frame_num++)
             {
               drawable =
-                gimp_drawable_get (layers[total_frames-(this_frame_num+1)]);
+                picman_drawable_get (layers[total_frames-(this_frame_num+1)]);
 
               dispose = get_frame_disposal (this_frame_num);
 
@@ -524,7 +524,7 @@ do_optimizations (GimpRunMode run_mode,
                           FALSE
                           );
 
-              gimp_drawable_detach(drawable);
+              picman_drawable_detach(drawable);
             }
 
           for (this_frame_num=0; this_frame_num<total_frames; this_frame_num++)
@@ -637,26 +637,26 @@ do_optimizations (GimpRunMode run_mode,
 
   if (opmode == OPBACKGROUND)
     {
-      new_layer_id = gimp_layer_new(new_image_id,
+      new_layer_id = picman_layer_new(new_image_id,
                                     "Backgroundx",
                                     width, height,
                                     drawabletype_alpha,
                                     100.0,
-                                    GIMP_NORMAL_MODE);
+                                    PICMAN_NORMAL_MODE);
 
-      gimp_image_insert_layer (new_image_id, new_layer_id, -1, 0);
+      picman_image_insert_layer (new_image_id, new_layer_id, -1, 0);
 
-      drawable = gimp_drawable_get (new_layer_id);
+      drawable = picman_drawable_get (new_layer_id);
 
-      gimp_pixel_rgn_init (&pixel_rgn, drawable,
+      picman_pixel_rgn_init (&pixel_rgn, drawable,
                            0, 0,
                            width, height,
                            TRUE, FALSE);
-      gimp_pixel_rgn_set_rect (&pixel_rgn, back_frame,
+      picman_pixel_rgn_set_rect (&pixel_rgn, back_frame,
                                0, 0,
                                width, height);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_detach (drawable);
+      picman_drawable_flush (drawable);
+      picman_drawable_detach (drawable);
     }
   else
     {
@@ -667,13 +667,13 @@ do_optimizations (GimpRunMode run_mode,
            */
 
           drawable =
-            gimp_drawable_get (layers[total_frames-(this_frame_num+1)]);
+            picman_drawable_get (layers[total_frames-(this_frame_num+1)]);
 
           /* Image has been closed/etc since we got the layer list? */
-          /* FIXME - How do we tell if a gimp_drawable_get() fails? */
-          if (gimp_drawable_width (drawable->drawable_id) == 0)
+          /* FIXME - How do we tell if a picman_drawable_get() fails? */
+          if (picman_drawable_width (drawable->drawable_id) == 0)
             {
-              gimp_quit ();
+              picman_quit ();
             }
 
           this_delay = get_frame_duration (this_frame_num);
@@ -692,7 +692,7 @@ do_optimizations (GimpRunMode run_mode,
             }
 
           /* clean up */
-          gimp_drawable_detach(drawable);
+          picman_drawable_detach(drawable);
 
 
           if (opmode == OPFOREGROUND)
@@ -1004,7 +1004,7 @@ do_optimizations (GimpRunMode run_mode,
            */
 
           oldlayer_name =
-            gimp_item_get_name(layers[total_frames-(this_frame_num+1)]);
+            picman_item_get_name(layers[total_frames-(this_frame_num+1)]);
 
           buflen = strlen(oldlayer_name) + 40;
 
@@ -1032,7 +1032,7 @@ do_optimizations (GimpRunMode run_mode,
 
               g_free (newlayer_name);
 
-              oldlayer_name = gimp_item_get_name (last_true_frame);
+              oldlayer_name = picman_item_get_name (last_true_frame);
 
               buflen = strlen (oldlayer_name) + 40;
 
@@ -1050,7 +1050,7 @@ do_optimizations (GimpRunMode run_mode,
                           (this_frame_num ==  0) ? "" :
                           can_combine ? "(combine)" : "(replace)");
 
-              gimp_item_set_name (last_true_frame, newlayer_name);
+              picman_item_set_name (last_true_frame, newlayer_name);
 
               g_free (newlayer_name);
             }
@@ -1059,41 +1059,41 @@ do_optimizations (GimpRunMode run_mode,
               cumulated_delay = this_delay;
 
               last_true_frame =
-                new_layer_id = gimp_layer_new (new_image_id,
+                new_layer_id = picman_layer_new (new_image_id,
                                                newlayer_name,
                                                bbox_right-bbox_left,
                                                bbox_bottom-bbox_top,
                                                drawabletype_alpha,
                                                100.0,
-                                               GIMP_NORMAL_MODE);
+                                               PICMAN_NORMAL_MODE);
               g_free (newlayer_name);
 
-              gimp_image_insert_layer (new_image_id, new_layer_id, -1, 0);
+              picman_image_insert_layer (new_image_id, new_layer_id, -1, 0);
 
-              drawable = gimp_drawable_get (new_layer_id);
+              drawable = picman_drawable_get (new_layer_id);
 
-              gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+              picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                                    bbox_right-bbox_left,
                                    bbox_bottom-bbox_top,
                                    TRUE, FALSE);
-              gimp_pixel_rgn_set_rect (&pixel_rgn, opti_frame, 0, 0,
+              picman_pixel_rgn_set_rect (&pixel_rgn, opti_frame, 0, 0,
                                        bbox_right-bbox_left,
                                        bbox_bottom-bbox_top);
-              gimp_drawable_flush (drawable);
-              gimp_drawable_detach (drawable);
-              gimp_layer_translate (new_layer_id, bbox_left, bbox_top);
+              picman_drawable_flush (drawable);
+              picman_drawable_detach (drawable);
+              picman_layer_translate (new_layer_id, bbox_left, bbox_top);
             }
 
-          gimp_progress_update (((gdouble) this_frame_num + 1.0) /
+          picman_progress_update (((gdouble) this_frame_num + 1.0) /
                                 ((gdouble) total_frames));
         }
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
     }
 
-  gimp_image_undo_enable (new_image_id);
+  picman_image_undo_enable (new_image_id);
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_display_new (new_image_id);
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_display_new (new_image_id);
 
   g_free (rawframe);
   rawframe = NULL;
@@ -1121,7 +1121,7 @@ get_frame_disposal (guint whichframe)
   gchar       *layer_name;
   DisposeType  disposal;
 
-  layer_name = gimp_item_get_name(layers[total_frames-(whichframe+1)]);
+  layer_name = picman_item_get_name(layers[total_frames-(whichframe+1)]);
   disposal = parse_disposal_tag(layer_name);
   g_free(layer_name);
 
@@ -1134,7 +1134,7 @@ get_frame_duration (guint whichframe)
   gchar* layer_name;
   gint   duration = 0;
 
-  layer_name = gimp_item_get_name(layers[total_frames-(whichframe+1)]);
+  layer_name = picman_item_get_name(layers[total_frames-(whichframe+1)]);
   if (layer_name)
     {
       duration = parse_ms_tag(layer_name);

@@ -1,0 +1,13 @@
+/Makefile
+/Makefile.in
+/makefile.mingw
+/picmanthumb-enums.c
+/*.lo
+/_libs
+/.libs
+/.deps
+/*.la
+/*.lib
+/*.exp
+/picman-thumbnail-list
+/picman-thumbnail-list.exe

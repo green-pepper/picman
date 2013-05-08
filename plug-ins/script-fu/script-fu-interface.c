@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #ifdef GDK_WINDOWING_QUARTZ
 #import <Cocoa/Cocoa.h>
@@ -101,7 +101,7 @@ static void   script_fu_brush_callback      (gpointer              data,
                                              const gchar          *name,
                                              gdouble               opacity,
                                              gint                  spacing,
-                                             GimpLayerModeEffects  paint_mode,
+                                             PicmanLayerModeEffects  paint_mode,
                                              gint                  width,
                                              gint                  height,
                                              const guchar         *mask_data,
@@ -116,7 +116,7 @@ static SFInterface       *sf_interface = NULL;  /*  there can only be at most
                                                  *  one interactive interface
                                                  */
 
-static GimpPDBStatusType  sf_status    = GIMP_PDB_SUCCESS;
+static PicmanPDBStatusType  sf_status    = PICMAN_PDB_SUCCESS;
 
 
 /*
@@ -140,7 +140,7 @@ script_fu_interface_report_cc (const gchar *command)
     {
       sf_interface->command_count++;
 
-      if (! g_str_has_prefix (command, "gimp-progress-"))
+      if (! g_str_has_prefix (command, "picman-progress-"))
         {
           gchar *new_command;
 
@@ -158,7 +158,7 @@ script_fu_interface_report_cc (const gchar *command)
       g_free (sf_interface->last_command);
       sf_interface->last_command = g_strdup (command);
 
-      if (! g_str_has_prefix (command, "gimp-progress-"))
+      if (! g_str_has_prefix (command, "picman-progress-"))
         {
           gtk_label_set_text (GTK_LABEL (sf_interface->progress_label),
                               command);
@@ -173,7 +173,7 @@ script_fu_interface_report_cc (const gchar *command)
     gtk_main_iteration ();
 }
 
-GimpPDBStatusType
+PicmanPDBStatusType
 script_fu_interface (SFScript  *script,
                      gint       start_arg)
 {
@@ -202,7 +202,7 @@ script_fu_interface (SFScript  *script,
       g_message (message, sf_interface->title);
       g_free (message);
 
-      return GIMP_PDB_CANCEL;
+      return PICMAN_PDB_CANCEL;
     }
 
   g_return_val_if_fail (script != NULL, FALSE);
@@ -211,12 +211,12 @@ script_fu_interface (SFScript  *script,
     {
       INIT_I18N();
 
-      gimp_ui_init ("script-fu", TRUE);
+      picman_ui_init ("script-fu", TRUE);
 
       gtk_initted = TRUE;
     }
 
-  sf_status = GIMP_PDB_SUCCESS;
+  sf_status = PICMAN_PDB_SUCCESS;
 
   sf_interface = g_slice_new0 (SFInterface);
 
@@ -226,11 +226,11 @@ script_fu_interface (SFScript  *script,
   title = g_strdup_printf (_("Script-Fu: %s"), sf_interface->title);
 
   sf_interface->dialog = dialog =
-    gimp_dialog_new (title, "gimp-script-fu",
+    picman_dialog_new (title, "picman-script-fu",
                      NULL, 0,
-                     gimp_standard_help_func, script->name,
+                     picman_standard_help_func, script->name,
 
-                     GIMP_STOCK_RESET, RESPONSE_RESET,
+                     PICMAN_STOCK_RESET, RESPONSE_RESET,
                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                      GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -243,7 +243,7 @@ script_fu_interface (SFScript  *script,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (script_fu_response),
@@ -299,27 +299,27 @@ script_fu_interface (SFScript  *script,
           switch (arg->type)
             {
             case SF_IMAGE:
-              widget = gimp_image_combo_box_new (NULL, NULL);
+              widget = picman_image_combo_box_new (NULL, NULL);
               ID_ptr = &arg->value.sfa_image;
               break;
 
             case SF_DRAWABLE:
-              widget = gimp_drawable_combo_box_new (NULL, NULL);
+              widget = picman_drawable_combo_box_new (NULL, NULL);
               ID_ptr = &arg->value.sfa_drawable;
               break;
 
             case SF_LAYER:
-              widget = gimp_layer_combo_box_new (NULL, NULL);
+              widget = picman_layer_combo_box_new (NULL, NULL);
               ID_ptr = &arg->value.sfa_layer;
               break;
 
             case SF_CHANNEL:
-              widget = gimp_channel_combo_box_new (NULL, NULL);
+              widget = picman_channel_combo_box_new (NULL, NULL);
               ID_ptr = &arg->value.sfa_channel;
               break;
 
             case SF_VECTORS:
-              widget = gimp_vectors_combo_box_new (NULL, NULL);
+              widget = picman_vectors_combo_box_new (NULL, NULL);
               ID_ptr = &arg->value.sfa_vectors;
               break;
 
@@ -327,23 +327,23 @@ script_fu_interface (SFScript  *script,
               break;
             }
 
-          gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (widget), *ID_ptr,
-                                      G_CALLBACK (gimp_int_combo_box_get_active),
+          picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (widget), *ID_ptr,
+                                      G_CALLBACK (picman_int_combo_box_get_active),
                                       ID_ptr);
           break;
 
         case SF_COLOR:
           left_align = TRUE;
-          widget = gimp_color_button_new (_("Script-Fu Color Selection"),
+          widget = picman_color_button_new (_("Script-Fu Color Selection"),
                                           COLOR_SAMPLE_WIDTH,
                                           COLOR_SAMPLE_HEIGHT,
                                           &arg->value.sfa_color,
-                                          GIMP_COLOR_AREA_FLAT);
+                                          PICMAN_COLOR_AREA_FLAT);
 
-          gimp_color_button_set_update (GIMP_COLOR_BUTTON (widget), TRUE);
+          picman_color_button_set_update (PICMAN_COLOR_BUTTON (widget), TRUE);
 
           g_signal_connect (widget, "color-changed",
-                            G_CALLBACK (gimp_color_button_get_color),
+                            G_CALLBACK (picman_color_button_get_color),
                             &arg->value.sfa_color);
           break;
 
@@ -355,7 +355,7 @@ script_fu_interface (SFScript  *script,
                                         arg->value.sfa_toggle);
 
           g_signal_connect (widget, "toggled",
-                            G_CALLBACK (gimp_toggle_button_update),
+                            G_CALLBACK (picman_toggle_button_update),
                             &arg->value.sfa_toggle);
           break;
 
@@ -399,7 +399,7 @@ script_fu_interface (SFScript  *script,
             {
             case SF_SLIDER:
               arg->value.sfa_adjustment.adj = (GtkAdjustment *)
-                gimp_scale_entry_new (GTK_TABLE (sf_interface->table),
+                picman_scale_entry_new (GTK_TABLE (sf_interface->table),
                                       0, row,
                                       label_text, SLIDER_WIDTH, -1,
                                       arg->value.sfa_adjustment.value,
@@ -410,7 +410,7 @@ script_fu_interface (SFScript  *script,
                                       arg->default_value.sfa_adjustment.digits,
                                       TRUE, 0.0, 0.0,
                                       NULL, NULL);
-              gtk_entry_set_activates_default (GIMP_SCALE_ENTRY_SPINBUTTON (arg->value.sfa_adjustment.adj), TRUE);
+              gtk_entry_set_activates_default (PICMAN_SCALE_ENTRY_SPINBUTTON (arg->value.sfa_adjustment.adj), TRUE);
               break;
 
             default:
@@ -421,7 +421,7 @@ script_fu_interface (SFScript  *script,
             case SF_SPINNER:
               left_align = TRUE;
               widget =
-                gimp_spin_button_new (&adj,
+                picman_spin_button_new (&adj,
                                       arg->value.sfa_adjustment.value,
                                       arg->default_value.sfa_adjustment.lower,
                                       arg->default_value.sfa_adjustment.upper,
@@ -436,7 +436,7 @@ script_fu_interface (SFScript  *script,
 
           g_signal_connect (arg->value.sfa_adjustment.adj,
                             "value-changed",
-                            G_CALLBACK (gimp_double_adjustment_update),
+                            G_CALLBACK (picman_double_adjustment_update),
                             &arg->value.sfa_adjustment.value);
           break;
 
@@ -459,7 +459,7 @@ script_fu_interface (SFScript  *script,
           break;
 
         case SF_FONT:
-          widget = gimp_font_select_button_new (_("Script-Fu Font Selection"),
+          widget = picman_font_select_button_new (_("Script-Fu Font Selection"),
                                                 arg->value.sfa_font);
           g_signal_connect_swapped (widget, "font-set",
                                     G_CALLBACK (script_fu_font_callback),
@@ -467,7 +467,7 @@ script_fu_interface (SFScript  *script,
           break;
 
         case SF_PALETTE:
-          widget = gimp_palette_select_button_new (_("Script-Fu Palette Selection"),
+          widget = picman_palette_select_button_new (_("Script-Fu Palette Selection"),
                                                    arg->value.sfa_palette);
           g_signal_connect_swapped (widget, "palette-set",
                                     G_CALLBACK (script_fu_palette_callback),
@@ -476,7 +476,7 @@ script_fu_interface (SFScript  *script,
 
         case SF_PATTERN:
           left_align = TRUE;
-          widget = gimp_pattern_select_button_new (_("Script-Fu Pattern Selection"),
+          widget = picman_pattern_select_button_new (_("Script-Fu Pattern Selection"),
                                                    arg->value.sfa_pattern);
           g_signal_connect_swapped (widget, "pattern-set",
                                     G_CALLBACK (script_fu_pattern_callback),
@@ -485,7 +485,7 @@ script_fu_interface (SFScript  *script,
 
         case SF_GRADIENT:
           left_align = TRUE;
-          widget = gimp_gradient_select_button_new (_("Script-Fu Gradient Selection"),
+          widget = picman_gradient_select_button_new (_("Script-Fu Gradient Selection"),
                                                     arg->value.sfa_gradient);
           g_signal_connect_swapped (widget, "gradient-set",
                                     G_CALLBACK (script_fu_gradient_callback),
@@ -494,7 +494,7 @@ script_fu_interface (SFScript  *script,
 
         case SF_BRUSH:
           left_align = TRUE;
-          widget = gimp_brush_select_button_new (_("Script-Fu Brush Selection"),
+          widget = picman_brush_select_button_new (_("Script-Fu Brush Selection"),
                                                  arg->value.sfa_brush.name,
                                                  arg->value.sfa_brush.opacity,
                                                  arg->value.sfa_brush.spacing,
@@ -523,13 +523,13 @@ script_fu_interface (SFScript  *script,
           break;
 
         case SF_ENUM:
-          widget = gimp_enum_combo_box_new (g_type_from_name (arg->default_value.sfa_enum.type_name));
+          widget = picman_enum_combo_box_new (g_type_from_name (arg->default_value.sfa_enum.type_name));
 
-          gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (widget),
+          picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (widget),
                                          arg->value.sfa_enum.history);
 
           g_signal_connect (widget, "changed",
-                            G_CALLBACK (gimp_int_combo_box_get_active),
+                            G_CALLBACK (picman_int_combo_box_get_active),
                             &arg->value.sfa_enum.history);
           break;
 
@@ -541,7 +541,7 @@ script_fu_interface (SFScript  *script,
         {
           if (label_text)
             {
-              gimp_table_attach_aligned (GTK_TABLE (sf_interface->table),
+              picman_table_attach_aligned (GTK_TABLE (sf_interface->table),
                                          0, row,
                                          label_text, 0.0, label_yalign,
                                          widget, 2, left_align);
@@ -569,7 +569,7 @@ script_fu_interface (SFScript  *script,
   gtk_box_pack_end (GTK_BOX (vbox), vbox2, FALSE, FALSE, 0);
   gtk_widget_show (vbox2);
 
-  sf_interface->progress_bar = gimp_progress_bar_new ();
+  sf_interface->progress_bar = picman_progress_bar_new ();
   gtk_box_pack_start (GTK_BOX (vbox2), sf_interface->progress_bar,
                       FALSE, FALSE, 0);
   gtk_widget_show (sf_interface->progress_bar);
@@ -578,7 +578,7 @@ script_fu_interface (SFScript  *script,
   gtk_misc_set_alignment (GTK_MISC (sf_interface->progress_label), 0.0, 0.5);
   gtk_label_set_ellipsize (GTK_LABEL (sf_interface->progress_label),
                            PANGO_ELLIPSIZE_MIDDLE);
-  gimp_label_set_attributes (GTK_LABEL (sf_interface->progress_label),
+  picman_label_set_attributes (GTK_LABEL (sf_interface->progress_label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox2), sf_interface->progress_label,
@@ -610,8 +610,8 @@ script_fu_interface_quit (SFScript *script)
       case SF_PATTERN:
       case SF_GRADIENT:
       case SF_BRUSH:
-        gimp_select_button_close_popup
-          (GIMP_SELECT_BUTTON (sf_interface->widgets[i]));
+        picman_select_button_close_popup
+          (PICMAN_SELECT_BUTTON (sf_interface->widgets[i]));
         break;
 
       default:
@@ -625,7 +625,7 @@ script_fu_interface_quit (SFScript *script)
   sf_interface = NULL;
 
   /*  We do not call gtk_main_quit() earlier to reduce the possibility
-   *  that script_fu_script_proc() is called from gimp_extension_process()
+   *  that script_fu_script_proc() is called from picman_extension_process()
    *  while we are not finished with the current script. This sucks!
    */
 
@@ -702,7 +702,7 @@ script_fu_brush_callback (gpointer              data,
                           const gchar          *name,
                           gdouble               opacity,
                           gint                  spacing,
-                          GimpLayerModeEffects  paint_mode,
+                          PicmanLayerModeEffects  paint_mode,
                           gint                  width,
                           gint                  height,
                           const guchar         *mask_data,
@@ -751,7 +751,7 @@ script_fu_response (GtkWidget *widget,
       break;
 
     default:
-      sf_status = GIMP_PDB_CANCEL;
+      sf_status = PICMAN_PDB_CANCEL;
 
 #ifdef GDK_WINDOWING_QUARTZ
       [NSApp hide: nil];
@@ -833,7 +833,7 @@ script_fu_ok (SFScript *script)
   output = g_string_new (NULL);
   ts_register_output_func (ts_gstring_output_func, output);
 
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
   if (ts_interpret_string (command))
     {
@@ -844,7 +844,7 @@ script_fu_ok (SFScript *script)
       g_free (message);
     }
 
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_INTERNAL);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_INTERNAL);
 
   g_string_free (output, TRUE);
 
@@ -874,7 +874,7 @@ script_fu_reset (SFScript *script)
           break;
 
         case SF_COLOR:
-          gimp_color_button_set_color (GIMP_COLOR_BUTTON (widget),
+          picman_color_button_set_color (PICMAN_COLOR_BUTTON (widget),
                                        &value->sfa_color);
           break;
 
@@ -912,27 +912,27 @@ script_fu_reset (SFScript *script)
           break;
 
         case SF_FONT:
-          gimp_font_select_button_set_font (GIMP_FONT_SELECT_BUTTON (widget),
+          picman_font_select_button_set_font (PICMAN_FONT_SELECT_BUTTON (widget),
                                             value->sfa_font);
           break;
 
         case SF_PALETTE:
-          gimp_palette_select_button_set_palette (GIMP_PALETTE_SELECT_BUTTON (widget),
+          picman_palette_select_button_set_palette (PICMAN_PALETTE_SELECT_BUTTON (widget),
                                                   value->sfa_palette);
           break;
 
         case SF_PATTERN:
-          gimp_pattern_select_button_set_pattern (GIMP_PATTERN_SELECT_BUTTON (widget),
+          picman_pattern_select_button_set_pattern (PICMAN_PATTERN_SELECT_BUTTON (widget),
                                                   value->sfa_pattern);
           break;
 
         case SF_GRADIENT:
-          gimp_gradient_select_button_set_gradient (GIMP_GRADIENT_SELECT_BUTTON (widget),
+          picman_gradient_select_button_set_gradient (PICMAN_GRADIENT_SELECT_BUTTON (widget),
                                                     value->sfa_gradient);
           break;
 
         case SF_BRUSH:
-          gimp_brush_select_button_set_brush (GIMP_BRUSH_SELECT_BUTTON (widget),
+          picman_brush_select_button_set_brush (PICMAN_BRUSH_SELECT_BUTTON (widget),
                                               value->sfa_brush.name,
                                               value->sfa_brush.opacity,
                                               value->sfa_brush.spacing,
@@ -945,7 +945,7 @@ script_fu_reset (SFScript *script)
           break;
 
         case SF_ENUM:
-          gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (widget),
+          picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (widget),
                                          value->sfa_enum.history);
           break;
         }

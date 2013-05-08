@@ -1,4 +1,4 @@
-# Dutch translation of the GIMP's script-fu strings.
+# Dutch translation of the PICMAN's script-fu strings.
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Branko Collin <collin@xs4all.nl>, 2001-2004.
 # Tino Meinen <a.t.meinen@chello.nl>, 2004, 2005.
@@ -8,7 +8,7 @@
 # render         renderen/tekenen
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP 2.0\n"
+"Project-Id-Version: PICMAN 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-01 07:36+0000\n"
 "PO-Revision-Date: 2008-11-01 11:18+0100\n"
@@ -153,8 +153,8 @@ msgid "_Start Server..."
 msgstr "_Server opstarten..."
 
 #: ../plug-ins/script-fu/script-fu.c:302
-msgid "_GIMP Online"
-msgstr "_GIMP online"
+msgid "_PICMAN Online"
+msgstr "_PICMAN online"
 
 #: ../plug-ins/script-fu/script-fu.c:303
 msgid "_User Manual"
@@ -193,8 +193,8 @@ msgid "_Beveled Pattern"
 msgstr "_Afgeschuind patroon"
 
 #: ../plug-ins/script-fu/script-fu.c:324
-msgid "_Classic.Gimp.Org"
-msgstr "_Klassiek Gimp.org"
+msgid "_Classic.Picman.Org"
+msgstr "_Klassiek Picman.org"
 
 #: ../plug-ins/script-fu/script-fu.c:327
 msgid "Alpha to _Logo"
@@ -248,8 +248,8 @@ msgstr "Standaard bumpprojectieinstellingen"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:6
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:7
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:7
@@ -287,8 +287,8 @@ msgstr "Lettertype"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:7
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:8
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -360,8 +360,8 @@ msgstr "Vervagingsstraal van schaduw"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:10
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:7
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:13
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:17
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:18
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:10
@@ -401,7 +401,7 @@ msgstr "3_D Truchet..."
 #: ../plug-ins/script-fu/scripts/comic-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:2
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:2
@@ -622,8 +622,8 @@ msgstr "Opvulling"
 #: ../plug-ins/script-fu/scripts/beveled-button.scm.h:10
 #: ../plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:8
 #: ../plug-ins/script-fu/scripts/blended-logo.scm.h:18
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:14
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:18
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:18
 #: ../plug-ins/script-fu/scripts/i26-gunya2.scm.h:8
 #: ../plug-ins/script-fu/scripts/news-text.scm.h:11
 #: ../plug-ins/script-fu/scripts/pupi-button.scm.h:14
@@ -763,7 +763,7 @@ msgid "Create a beveled pattern hrule for webpages"
 msgstr "Een afgeschuinde horizontale lijn met patroon aanmaken voor webpagina's"
 
 #: ../plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-example.scm.h:4
 #: ../plug-ins/script-fu/scripts/mkbrush.scm.h:7
 #: ../plug-ins/script-fu/scripts/swirltile.scm.h:7
@@ -841,7 +841,7 @@ msgstr "VG-transparant"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Verloop"
 
@@ -1295,17 +1295,17 @@ msgstr "Vervagingsstraal"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Kleur"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Offset X"
 msgstr "X-verschuiving"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "Offset Y"
 msgstr "Y-verschuiving"
 
@@ -1488,146 +1488,146 @@ msgstr "Schaduwgewicht (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Vage rand..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr "Autosnijden"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:2
-msgid "Create an image of a large header using the gimp.org webpage theme"
-msgstr "Een afbeelding van een grote kop aanmaken op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:2
+msgid "Create an image of a large header using the picman.org webpage theme"
+msgstr "Een afbeelding van een grote kop aanmaken op basis van het klassieke thema van de picman.org-webpagina"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-msgid "Create an image of a small header using the gimp.org webpage theme"
-msgstr "Een afbeelding van een kleine kop aanmaken op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:3
+msgid "Create an image of a small header using the picman.org webpage theme"
+msgstr "Een afbeelding van een kleine kop aanmaken op basis van het klassieke thema van de picman.org-webpagina"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:4
 msgid "Dark color"
 msgstr "Donkere kleur"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:7
 #: ../plug-ins/script-fu/scripts/xach-effect.scm.h:9
 msgid "Highlight color"
 msgstr "Hoge-lichtenkleur"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Index image"
 msgstr "Indexafbeelding"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:10
 msgid "Number of colors"
 msgstr "Aantal kleuren"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:13
 msgid "Remove background"
 msgstr "Achtergrond verwijderen"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:14
 msgid "Select-by-color threshold"
 msgstr "Drempel selecteer-op-kleur"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Shadow color"
 msgstr "Schaduwkleur"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:15
 msgid "_Big Header..."
 msgstr "_Grote kop..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:16
 msgid "_Small Header..."
 msgstr "_Kleine kop..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:2
-msgid "Create an image of a Tube Button Label Header using the gimp.org webpage theme"
-msgstr "Een afbeelding aanmaken met de kop van een label van een buisknop op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:2
+msgid "Create an image of a Tube Button Label Header using the picman.org webpage theme"
+msgstr "Een afbeelding aanmaken met de kop van een label van een buisknop op basis van het klassieke thema van de picman.org-webpagina"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:3
-msgid "Create an image of a Tube Button Label using the gimp.org webpage theme"
-msgstr "Een afbeelding aanmaken met het label van een buisknop op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:3
+msgid "Create an image of a Tube Button Label using the picman.org webpage theme"
+msgstr "Een afbeelding aanmaken met het label van een buisknop op basis van het klassieke thema van de picman.org-webpagina"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:4
-msgid "Create an image of a second level Tube Button Label using the gimp.org webpage theme"
-msgstr "Een afbeelding aanmaken met het label van een buisknop (op het tweede niveau) op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:4
+msgid "Create an image of a second level Tube Button Label using the picman.org webpage theme"
+msgstr "Een afbeelding aanmaken met het label van een buisknop (op het tweede niveau) op basis van het klassieke thema van de picman.org-webpagina"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:5
-msgid "Create an image of a third level Tube Button Label using the gimp.org webpage theme"
-msgstr "Een afbeelding aanmaken met het label van een buisknop (op het derde niveau) op basis van het klassieke thema van de gimp.org-webpagina"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:5
+msgid "Create an image of a third level Tube Button Label using the picman.org webpage theme"
+msgstr "Een afbeelding aanmaken met het label van een buisknop (op het derde niveau) op basis van het klassieke thema van de picman.org-webpagina"
 
 # buis
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "T_ube Sub-Button Label..."
 msgstr "Label voor _buisknop (2e niveau)..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:19
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:19
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr "Label voor b_uisknop (3e niveau)..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:20
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:20
 msgid "_General Tube Labels..."
 msgstr "_Algemene buislabels..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:21
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:21
 msgid "_Tube Button Label..."
 msgstr "_Label voor buisknop..."
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:1
-msgid "Bookmark to the GIMP web site"
-msgstr "Bladwijzer naar de GIMP-website"
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:1
+msgid "Bookmark to the PICMAN web site"
+msgstr "Bladwijzer naar de PICMAN-website"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:2
 msgid "Bookmark to the user manual"
 msgstr "Bladwijzer naar de gebruikershandleiding"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:3
 msgid "Create and Use _Selections"
 msgstr "_Selecties aanmaken en gebruiken"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:4
 msgid "Create, Open and Save _Files"
 msgstr "_Bestanden aanmaken, openen en opslaan"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:5
 msgid "Drawing _Simple Objects"
 msgstr "_Eenvoudige objecten tekenen"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:6
 msgid "How to Use _Dialogs"
 msgstr "Hoe _dialoogvensters gebruiken"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:7
 msgid "Plug-in _Registry"
 msgstr "Plug-in_register"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:8
 msgid "Using _Paths"
 msgstr "_Paden gebruiken"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:9
 msgid "_Basic Concepts"
 msgstr "_Basisconcepten"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:10
 msgid "_Developer Web Site"
 msgstr "_Ontwikkelaarswebsite"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:11
 msgid "_Main Web Site"
 msgstr "_Hoofdwebsite"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:12
 msgid "_Preparing your Images for the Web"
 msgstr "_Uw afbeeldingen voorbereiden voor het web"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:13
 msgid "_User Manual Web Site"
 msgstr "_Gebruikershandleidingwebsite"
 
-#: ../plug-ins/script-fu/scripts/gimp-online.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-online.scm.h:14
 msgid "_Working with Digital Camera Photos"
 msgstr "_Werken met foto's van een digitale camera"
 
@@ -2299,131 +2299,131 @@ msgstr "Draai van links naar rechts"
 msgid "_Spinning Globe..."
 msgstr "_Draaiende bol..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "voegt spirografen, epitrochoids en Lissajous-krommen toe aan de huidige laag."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Verfspuit"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Penseel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Cirkel"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "Kleurmethode"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "Epitrochoid"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Frame"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "Verloop: lus zaagtand"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "Verloop: lus driehoek"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Zeshoek"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Gatverhouding"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Binnenste tanden"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Marge (beeldpunten)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Buitenste tanden"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Potlood"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Vijfhoek"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Veelhoek: 10 zijden"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Veelhoek: 7 zijden"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Veelhoek: 8 zijden"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Veelhoek: 9 zijden"
 
 # wat is dit precies?
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "Rendering Spyro"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Vorm"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Vaste kleur"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spyrograaf"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Vierkant"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "Beginhoek"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Gereedschap"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Driehoek"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Type"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
-msgstr "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
+msgstr "_Spyropicman..."
 
 #: ../plug-ins/script-fu/scripts/starscape-logo.scm.h:1
 msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
@@ -2911,10 +2911,10 @@ msgstr "_Xach-effect..."
 #~ msgstr "Op naam zoeken"
 #~ msgid "_Search:"
 #~ msgstr "_Zoeken:"
-#~ msgid "Internal GIMP procedure"
-#~ msgstr "Interne GIMP-procedure"
-#~ msgid "GIMP Plug-In"
-#~ msgstr "GIMP Plug-In"
+#~ msgid "Internal PICMAN procedure"
+#~ msgstr "Interne PICMAN-procedure"
+#~ msgid "PICMAN Plug-In"
+#~ msgstr "PICMAN Plug-In"
 #~ msgid "Temporary Procedure"
 #~ msgstr "Tijdelijke procedure"
 #~ msgid "_Unsharp Mask..."
@@ -2949,8 +2949,8 @@ msgstr "_Xach-effect..."
 #~ msgstr "<Image>/Script-Fu/Schaduw"
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Utils"
 #~ msgstr "<Toolbox>/Xtra/Script-Fu/Hulpprogramma's"
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
-#~ msgstr "<Toolbox>/Xtra/Script-Fu/Websitethema's/Classic.Gimp.Org"
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
+#~ msgstr "<Toolbox>/Xtra/Script-Fu/Websitethema's/Classic.Picman.Org"
 #~ msgid "<Image>/Script-Fu/Utils"
 #~ msgstr "<Image>/Script-Fu/Hulpprogramma's"
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Make Brush"
@@ -2963,8 +2963,8 @@ msgstr "_Xach-effect..."
 #~ msgstr "Geen"
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Misc"
 #~ msgstr "<Toolbox>/Xtra/Script-Fu/Overig"
-#~ msgid "<Toolbox>/Help/The GIMP Online"
-#~ msgstr "<Toolbox>/Hulp/De GIMP Online (Engels)"
+#~ msgid "<Toolbox>/Help/The PICMAN Online"
+#~ msgstr "<Toolbox>/Hulp/De PICMAN Online (Engels)"
 #~ msgid "Buffer amount (% height of text)"
 #~ msgstr "Bufferhoeveelheid (% hoogte van tekst)"
 #~ msgid "_ASCII to Image..."

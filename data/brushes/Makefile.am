@@ -1,8 +1,8 @@
-## Makefile.am for gimp/data/brushes
+## Makefile.am for picman/data/brushes
 
 SUBDIRS = \
 	Basic			\
-	gimp-obsolete-files	\
+	picman-obsolete-files	\
 	Media			\
 	Legacy			\
 	Sketch			\

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Colormap-Rotation plug-in. Exchanges two color ranges.
  *
@@ -28,7 +28,7 @@
  *
  * Version 2.0, 04 April 1999.
  *  Nearly complete rewrite, made plug-in stable.
- *  (Works with GIMP 1.1 and GTK+ 1.2)
+ *  (Works with PICMAN 1.1 and GTK+ 1.2)
  *
  * Version 1.0, 27 March 1997.
  *  Initial (unstable) release by Pavel Grinfeld
@@ -37,8 +37,8 @@
 
 #include "config.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "color-rotate.h"
 #include "color-rotate-utils.h"
@@ -314,7 +314,7 @@ rcm_combo_callback (GtkWidget *widget,
 {
   gint value;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value);
 
   Current.reduced = rcm_reduce_image (Current.drawable, Current.mask,
                                       MAX_PREVIEW_SIZE, value);

@@ -33,7 +33,7 @@
 
 #define PLUG_IN_PROC   "plug-in-maze"
 #define PLUG_IN_BINARY "maze"
-#define PLUG_IN_ROLE   "gimp-maze"
+#define PLUG_IN_ROLE   "picman-maze"
 
 typedef enum {
      DEPTH_FIRST,

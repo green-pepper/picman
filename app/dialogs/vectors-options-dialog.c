@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,29 +22,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "vectors-options-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void  vectors_options_dialog_free (VectorsOptionsDialog *dialog);
 
 
 VectorsOptionsDialog *
-vectors_options_dialog_new (GimpImage   *image,
-                            GimpVectors *vectors,
-                            GimpContext *context,
+vectors_options_dialog_new (PicmanImage   *image,
+                            PicmanVectors *vectors,
+                            PicmanContext *context,
                             GtkWidget   *parent,
                             const gchar *vectors_name,
                             const gchar *title,
@@ -54,14 +54,14 @@ vectors_options_dialog_new (GimpImage   *image,
                             const gchar *help_id)
 {
   VectorsOptionsDialog *options;
-  GimpViewable         *viewable;
+  PicmanViewable         *viewable;
   GtkWidget            *hbox;
   GtkWidget            *vbox;
   GtkWidget            *table;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (vectors == NULL || GIMP_IS_VECTORS (vectors), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (vectors == NULL || PICMAN_IS_VECTORS (vectors), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (role != NULL, NULL);
@@ -75,15 +75,15 @@ vectors_options_dialog_new (GimpImage   *image,
   options->vectors = vectors;
 
   if (vectors)
-    viewable = GIMP_VIEWABLE (vectors);
+    viewable = PICMAN_VIEWABLE (vectors);
   else
-    viewable = GIMP_VIEWABLE (image);
+    viewable = PICMAN_VIEWABLE (image);
 
   options->dialog =
-    gimp_viewable_dialog_new (viewable, context,
+    picman_viewable_dialog_new (viewable, context,
                               title, role, stock_id, desc,
                               parent,
-                              gimp_standard_help_func,
+                              picman_standard_help_func,
                               help_id,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -118,7 +118,7 @@ vectors_options_dialog_new (GimpImage   *image,
   options->name_entry = gtk_entry_new ();
   gtk_widget_set_size_request (options->name_entry, 150, -1);
   gtk_entry_set_activates_default (GTK_ENTRY (options->name_entry), TRUE);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Path name:"), 0.0, 0.5,
                              options->name_entry, 1, FALSE);
 

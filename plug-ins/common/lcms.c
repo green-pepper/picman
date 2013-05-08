@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Color management plug-in based on littleCMS
- * Copyright (C) 2006, 2007  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2006, 2007  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@
 
 #include <lcms2.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_BINARY          "lcms"
-#define PLUG_IN_ROLE            "gimp-lcms"
+#define PLUG_IN_ROLE            "picman-lcms"
 
 #define PLUG_IN_PROC_SET        "plug-in-icc-profile-set"
 #define PLUG_IN_PROC_SET_RGB    "plug-in-icc-profile-set-rgb"
@@ -73,7 +73,7 @@ typedef struct
 
 typedef struct
 {
-  GimpColorRenderingIntent intent;
+  PicmanColorRenderingIntent intent;
   gboolean                 bpc;
 } LcmsValues;
 
@@ -81,31 +81,31 @@ typedef struct
 static void  query (void);
 static void  run   (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *param,
+                    const PicmanParam  *param,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals);
+                    PicmanParam       **return_vals);
 
-static GimpPDBStatusType  lcms_icc_set       (GimpColorConfig  *config,
+static PicmanPDBStatusType  lcms_icc_set       (PicmanColorConfig  *config,
                                               gint32            image,
                                               const gchar      *filename);
-static GimpPDBStatusType  lcms_icc_apply     (GimpColorConfig  *config,
-                                              GimpRunMode       run_mode,
+static PicmanPDBStatusType  lcms_icc_apply     (PicmanColorConfig  *config,
+                                              PicmanRunMode       run_mode,
                                               gint32            image,
                                               const gchar      *filename,
-                                              GimpColorRenderingIntent intent,
+                                              PicmanColorRenderingIntent intent,
                                               gboolean          bpc,
                                               gboolean         *dont_ask);
-static GimpPDBStatusType  lcms_icc_info      (GimpColorConfig  *config,
+static PicmanPDBStatusType  lcms_icc_info      (PicmanColorConfig  *config,
                                               gint32            image,
                                               gchar           **name,
                                               gchar           **desc,
                                               gchar           **info);
-static GimpPDBStatusType  lcms_icc_file_info (const gchar      *filename,
+static PicmanPDBStatusType  lcms_icc_file_info (const gchar      *filename,
                                               gchar           **name,
                                               gchar           **desc,
                                               gchar           **info);
 
-static cmsHPROFILE  lcms_image_get_profile       (GimpColorConfig *config,
+static cmsHPROFILE  lcms_image_get_profile       (PicmanColorConfig *config,
                                                   gint32           image,
                                                   guchar          *checksum);
 static gboolean     lcms_image_set_profile       (gint32           image,
@@ -116,17 +116,17 @@ static gboolean     lcms_image_apply_profile     (gint32           image,
                                                   cmsHPROFILE      src_profile,
                                                   cmsHPROFILE      dest_profile,
                                                   const gchar     *filename,
-                                                  GimpColorRenderingIntent intent,
+                                                  PicmanColorRenderingIntent intent,
                                                   gboolean          bpc);
 static void         lcms_image_transform_rgb     (gint32           image,
                                                   cmsHPROFILE      src_profile,
                                                   cmsHPROFILE      dest_profile,
-                                                  GimpColorRenderingIntent intent,
+                                                  PicmanColorRenderingIntent intent,
                                                   gboolean          bpc);
 static void         lcms_image_transform_indexed (gint32           image,
                                                   cmsHPROFILE      src_profile,
                                                   cmsHPROFILE      dest_profile,
-                                                  GimpColorRenderingIntent intent,
+                                                  PicmanColorRenderingIntent intent,
                                                   gboolean          bpc);
 static void         lcms_sRGB_checksum           (guchar          *digest);
 
@@ -138,45 +138,45 @@ static gboolean     lcms_icc_apply_dialog        (gint32           image,
                                                   cmsHPROFILE      dest_profile,
                                                   gboolean        *dont_ask);
 
-static GimpPDBStatusType  lcms_dialog            (GimpColorConfig *config,
+static PicmanPDBStatusType  lcms_dialog            (PicmanColorConfig *config,
                                                   gint32           image,
                                                   gboolean         apply,
                                                   LcmsValues      *values);
 
 
-static const GimpParamDef set_args[] =
+static const PicmanParamDef set_args[] =
 {
-  { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
-  { GIMP_PDB_IMAGE,  "image",        "Input image"                      },
-  { GIMP_PDB_STRING, "profile",      "Filename of an ICC color profile" }
+  { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
+  { PICMAN_PDB_IMAGE,  "image",        "Input image"                      },
+  { PICMAN_PDB_STRING, "profile",      "Filename of an ICC color profile" }
 };
-static const GimpParamDef set_rgb_args[] =
+static const PicmanParamDef set_rgb_args[] =
 {
-  { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
-  { GIMP_PDB_IMAGE,  "image",        "Input image"                      },
+  { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
+  { PICMAN_PDB_IMAGE,  "image",        "Input image"                      },
 };
-static const GimpParamDef apply_args[] =
+static const PicmanParamDef apply_args[] =
 {
-  { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
-  { GIMP_PDB_IMAGE,  "image",        "Input image"                      },
-  { GIMP_PDB_STRING, "profile",      "Filename of an ICC color profile" },
-  { GIMP_PDB_INT32,  "intent",       "Rendering intent (enum GimpColorRenderingIntent)" },
-  { GIMP_PDB_INT32,  "bpc",          "Black point compensation"         }
+  { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
+  { PICMAN_PDB_IMAGE,  "image",        "Input image"                      },
+  { PICMAN_PDB_STRING, "profile",      "Filename of an ICC color profile" },
+  { PICMAN_PDB_INT32,  "intent",       "Rendering intent (enum PicmanColorRenderingIntent)" },
+  { PICMAN_PDB_INT32,  "bpc",          "Black point compensation"         }
 };
-static const GimpParamDef apply_rgb_args[] =
+static const PicmanParamDef apply_rgb_args[] =
 {
-  { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
-  { GIMP_PDB_IMAGE,  "image",        "Input image"                      },
-  { GIMP_PDB_INT32,  "intent",       "Rendering intent (enum GimpColorRenderingIntent)" },
-  { GIMP_PDB_INT32,  "bpc",          "Black point compensation"         }
+  { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
+  { PICMAN_PDB_IMAGE,  "image",        "Input image"                      },
+  { PICMAN_PDB_INT32,  "intent",       "Rendering intent (enum PicmanColorRenderingIntent)" },
+  { PICMAN_PDB_INT32,  "bpc",          "Black point compensation"         }
 };
-static const GimpParamDef info_args[] =
+static const PicmanParamDef info_args[] =
 {
-  { GIMP_PDB_IMAGE,  "image",        "Input image"                      },
+  { PICMAN_PDB_IMAGE,  "image",        "Input image"                      },
 };
-static const GimpParamDef file_info_args[] =
+static const PicmanParamDef file_info_args[] =
 {
-  { GIMP_PDB_STRING, "profile",      "Filename of an ICC color profile" }
+  { PICMAN_PDB_STRING, "profile",      "Filename of an ICC color profile" }
 };
 
 static const Procedure procedures[] =
@@ -189,7 +189,7 @@ static const Procedure procedures[] =
   { PLUG_IN_PROC_FILE_INFO, 1 }
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -202,14 +202,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef info_return_vals[] =
+  static const PicmanParamDef info_return_vals[] =
   {
-    { GIMP_PDB_STRING, "profile-name", "Name"        },
-    { GIMP_PDB_STRING, "profile-desc", "Description" },
-    { GIMP_PDB_STRING, "profile-info", "Info"        }
+    { PICMAN_PDB_STRING, "profile-name", "Name"        },
+    { PICMAN_PDB_STRING, "profile-desc", "Description" },
+    { PICMAN_PDB_STRING, "profile-info", "Info"        }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC_SET,
+  picman_install_procedure (PLUG_IN_PROC_SET,
                           N_("Set a color profile on the image"),
                           "This procedure sets an ICC color profile on an "
                           "image using the 'icc-profile' parasite. It does "
@@ -219,11 +219,11 @@ query (void)
                           "2006, 2007",
                           N_("_Assign Color Profile..."),
                           "RGB*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (set_args), 0,
                           set_args, NULL);
 
-  gimp_install_procedure (PLUG_IN_PROC_SET_RGB,
+  picman_install_procedure (PLUG_IN_PROC_SET_RGB,
                           "Set the default RGB color profile on the image",
                           "This procedure sets the user-configured RGB "
                           "profile on an image using the 'icc-profile' "
@@ -235,11 +235,11 @@ query (void)
                           "2006, 2007",
                           N_("Assign default RGB Profile"),
                           "RGB*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (set_rgb_args), 0,
                           set_rgb_args, NULL);
 
-  gimp_install_procedure (PLUG_IN_PROC_APPLY,
+  picman_install_procedure (PLUG_IN_PROC_APPLY,
                           _("Apply a color profile on the image"),
                           "This procedure transform from the image's color "
                           "profile (or the default RGB profile if none is "
@@ -252,11 +252,11 @@ query (void)
                           "2006, 2007",
                           N_("_Convert to Color Profile..."),
                           "RGB*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (apply_args), 0,
                           apply_args, NULL);
 
-  gimp_install_procedure (PLUG_IN_PROC_APPLY_RGB,
+  picman_install_procedure (PLUG_IN_PROC_APPLY_RGB,
                           "Apply default RGB color profile on the image",
                           "This procedure transform from the image's color "
                           "profile (or the default RGB profile if none is "
@@ -270,11 +270,11 @@ query (void)
                           "2006, 2007",
                           N_("Convert to default RGB Profile"),
                           "RGB*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (apply_rgb_args), 0,
                           apply_rgb_args, NULL);
 
-  gimp_install_procedure (PLUG_IN_PROC_INFO,
+  picman_install_procedure (PLUG_IN_PROC_INFO,
                           "Retrieve information about an image's color profile",
                           "This procedure returns information about the RGB "
                           "color profile attached to an image. If no RGB "
@@ -284,12 +284,12 @@ query (void)
                           "2006, 2007",
                           N_("Image Color Profile Information"),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (info_args),
                           G_N_ELEMENTS (info_return_vals),
                           info_args, info_return_vals);
 
-  gimp_install_procedure (PLUG_IN_PROC_FILE_INFO,
+  picman_install_procedure (PLUG_IN_PROC_FILE_INFO,
                           "Retrieve information about a color profile",
                           "This procedure returns information about an ICC "
                           "color profile on disk.",
@@ -298,39 +298,39 @@ query (void)
                           "2006, 2007",
                           N_("Color Profile Information"),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (file_info_args),
                           G_N_ELEMENTS (info_return_vals),
                           file_info_args, info_return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC_SET,
+  picman_plugin_menu_register (PLUG_IN_PROC_SET,
                              "<Image>/Image/Mode/Color Profile");
-  gimp_plugin_menu_register (PLUG_IN_PROC_APPLY,
+  picman_plugin_menu_register (PLUG_IN_PROC_APPLY,
                              "<Image>/Image/Mode/Color Profile");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpPDBStatusType         status   = GIMP_PDB_CALLING_ERROR;
+  PicmanPDBStatusType         status   = PICMAN_PDB_CALLING_ERROR;
   gint                      proc     = NONE;
-  GimpRunMode               run_mode = GIMP_RUN_NONINTERACTIVE;
+  PicmanRunMode               run_mode = PICMAN_RUN_NONINTERACTIVE;
   gint32                    image    = -1;
   const gchar              *filename = NULL;
-  GimpColorConfig          *config   = NULL;
+  PicmanColorConfig          *config   = NULL;
   gboolean                  dont_ask = FALSE;
-  GimpColorRenderingIntent  intent;
+  PicmanColorRenderingIntent  intent;
   gboolean                  bpc;
-  static GimpParam          values[6];
+  static PicmanParam          values[6];
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
 
   *nreturn_vals = 1;
   *return_vals  = values;
@@ -348,14 +348,14 @@ run (const gchar      *name,
     goto done;
 
   if (proc != PROC_FILE_INFO)
-    config = gimp_get_color_configuration ();
+    config = picman_get_color_configuration ();
 
   if (config)
     intent = config->display_intent;
   else
-    intent = GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL;
+    intent = PICMAN_COLOR_RENDERING_INTENT_PERCEPTUAL;
 
-  bpc = (intent == GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC);
+  bpc = (intent == PICMAN_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC);
 
   switch (proc)
     {
@@ -400,7 +400,7 @@ run (const gchar      *name,
       break;
     }
 
-  if (run_mode == GIMP_RUN_INTERACTIVE)
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
     {
       LcmsValues values = { intent, bpc };
 
@@ -411,12 +411,12 @@ run (const gchar      *name,
           goto done;
 
         case PROC_APPLY:
-          gimp_get_data (name, &values);
+          picman_get_data (name, &values);
 
           status = lcms_dialog (config, image, TRUE, &values);
 
-          if (status == GIMP_PDB_SUCCESS)
-            gimp_set_data (name, &values, sizeof (LcmsValues));
+          if (status == PICMAN_PDB_SUCCESS)
+            picman_set_data (name, &values, sizeof (LcmsValues));
           goto done;
 
         default:
@@ -437,11 +437,11 @@ run (const gchar      *name,
                                image, filename, intent, bpc,
                                &dont_ask);
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           *nreturn_vals = 2;
 
-          values[1].type         = GIMP_PDB_INT32;
+          values[1].type         = PICMAN_PDB_INT32;
           values[1].data.d_int32 = dont_ask;
         }
       break;
@@ -458,17 +458,17 @@ run (const gchar      *name,
         else
           status = lcms_icc_file_info (filename, &name, &desc, &info);
 
-        if (status == GIMP_PDB_SUCCESS)
+        if (status == PICMAN_PDB_SUCCESS)
           {
             *nreturn_vals = NUM_RETURN_VALS;
 
-            values[PROFILE_NAME].type          = GIMP_PDB_STRING;
+            values[PROFILE_NAME].type          = PICMAN_PDB_STRING;
             values[PROFILE_NAME].data.d_string = name;
 
-            values[PROFILE_DESC].type          = GIMP_PDB_STRING;
+            values[PROFILE_DESC].type          = PICMAN_PDB_STRING;
             values[PROFILE_DESC].data.d_string = desc;
 
-            values[PROFILE_INFO].type          = GIMP_PDB_STRING;
+            values[PROFILE_INFO].type          = PICMAN_PDB_STRING;
             values[PROFILE_INFO].data.d_string = info;
           }
       }
@@ -476,8 +476,8 @@ run (const gchar      *name,
     }
 
  done:
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush ();
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush ();
 
   if (config)
     g_object_unref (config);
@@ -500,7 +500,7 @@ lcms_icc_profile_get_name (cmsHPROFILE profile)
       descSize = cmsGetProfileInfoASCII (profile, cmsInfoModel,
                                          "en", "US", descData, descSize);
       if (descSize > 0)
-        name = gimp_any_to_utf8 (descData, -1, NULL);
+        name = picman_any_to_utf8 (descData, -1, NULL);
 
       g_free (descData);
     }
@@ -523,7 +523,7 @@ lcms_icc_profile_get_desc (cmsHPROFILE profile)
       descSize = cmsGetProfileInfoASCII (profile, cmsInfoDescription,
                                          "en", "US", descData, descSize);
       if (descSize > 0)
-        desc = gimp_any_to_utf8 (descData, -1, NULL);
+        desc = picman_any_to_utf8 (descData, -1, NULL);
 
       g_free (descData);
     }
@@ -546,7 +546,7 @@ lcms_icc_profile_get_info (cmsHPROFILE profile)
       descSize = cmsGetProfileInfoASCII (profile, cmsInfoModel,
                                          "en", "US", descData, descSize);
       if (descSize > 0)
-        info = gimp_any_to_utf8 (descData, -1, NULL);
+        info = picman_any_to_utf8 (descData, -1, NULL);
 
       g_free (descData);
     }
@@ -560,15 +560,15 @@ lcms_icc_profile_is_rgb (cmsHPROFILE profile)
   return (cmsGetColorSpace (profile) == cmsSigRgbData);
 }
 
-static GimpPDBStatusType
-lcms_icc_set (GimpColorConfig *config,
+static PicmanPDBStatusType
+lcms_icc_set (PicmanColorConfig *config,
               gint32           image,
               const gchar     *filename)
 {
   gboolean success;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (image != -1, GIMP_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_COLOR_CONFIG (config), PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (image != -1, PICMAN_PDB_CALLING_ERROR);
 
   if (filename)
     {
@@ -579,26 +579,26 @@ lcms_icc_set (GimpColorConfig *config,
       success = lcms_image_set_profile (image, NULL, config->rgb_profile, TRUE);
     }
 
-  return success ? GIMP_PDB_SUCCESS : GIMP_PDB_EXECUTION_ERROR;
+  return success ? PICMAN_PDB_SUCCESS : PICMAN_PDB_EXECUTION_ERROR;
 }
 
-static GimpPDBStatusType
-lcms_icc_apply (GimpColorConfig          *config,
-                GimpRunMode               run_mode,
+static PicmanPDBStatusType
+lcms_icc_apply (PicmanColorConfig          *config,
+                PicmanRunMode               run_mode,
                 gint32                    image,
                 const gchar              *filename,
-                GimpColorRenderingIntent  intent,
+                PicmanColorRenderingIntent  intent,
                 gboolean                  bpc,
                 gboolean                 *dont_ask)
 {
-  GimpPDBStatusType status       = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType status       = PICMAN_PDB_SUCCESS;
   cmsHPROFILE       src_profile  = NULL;
   cmsHPROFILE       dest_profile = NULL;
   guchar            src_md5[16];
   guchar            dest_md5[16];
 
-  g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (image != -1, GIMP_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_COLOR_CONFIG (config), PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (image != -1, PICMAN_PDB_CALLING_ERROR);
 
   if (! filename)
     filename = config->rgb_profile;
@@ -608,15 +608,15 @@ lcms_icc_apply (GimpColorConfig          *config,
       dest_profile = lcms_load_profile (filename, dest_md5);
 
       if (! dest_profile)
-        return GIMP_PDB_EXECUTION_ERROR;
+        return PICMAN_PDB_EXECUTION_ERROR;
 
       if (! lcms_icc_profile_is_rgb (dest_profile))
         {
           g_message (_("Color profile '%s' is not for RGB color space."),
-                     gimp_filename_to_utf8 (filename));
+                     picman_filename_to_utf8 (filename));
 
           cmsCloseProfile (dest_profile);
-          return GIMP_PDB_EXECUTION_ERROR;
+          return PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
@@ -632,7 +632,7 @@ lcms_icc_apply (GimpColorConfig          *config,
     }
 
   if (! src_profile && ! dest_profile)
-    return GIMP_PDB_SUCCESS;
+    return PICMAN_PDB_SUCCESS;
 
   if (! src_profile)
     {
@@ -661,21 +661,21 @@ lcms_icc_apply (GimpColorConfig          *config,
       g_free (src_desc);
       g_free (dest_desc);
 
-      return GIMP_PDB_SUCCESS;
+      return PICMAN_PDB_SUCCESS;
     }
 
-  if (run_mode == GIMP_RUN_INTERACTIVE &&
+  if (run_mode == PICMAN_RUN_INTERACTIVE &&
       ! lcms_icc_apply_dialog (image, src_profile, dest_profile, dont_ask))
     {
-      status = GIMP_PDB_CANCEL;
+      status = PICMAN_PDB_CANCEL;
     }
 
-  if (status == GIMP_PDB_SUCCESS &&
+  if (status == PICMAN_PDB_SUCCESS &&
       ! lcms_image_apply_profile (image,
                                   src_profile, dest_profile, filename,
                                   intent, bpc))
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   cmsCloseProfile (src_profile);
@@ -684,8 +684,8 @@ lcms_icc_apply (GimpColorConfig          *config,
   return status;
 }
 
-static GimpPDBStatusType
-lcms_icc_info (GimpColorConfig *config,
+static PicmanPDBStatusType
+lcms_icc_info (PicmanColorConfig *config,
                gint32           image,
                gchar          **name,
                gchar          **desc,
@@ -693,8 +693,8 @@ lcms_icc_info (GimpColorConfig *config,
 {
   cmsHPROFILE profile;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), GIMP_PDB_CALLING_ERROR);
-  g_return_val_if_fail (image != -1, GIMP_PDB_CALLING_ERROR);
+  g_return_val_if_fail (PICMAN_IS_COLOR_CONFIG (config), PICMAN_PDB_CALLING_ERROR);
+  g_return_val_if_fail (image != -1, PICMAN_PDB_CALLING_ERROR);
 
   profile = lcms_image_get_profile (config, image, NULL);
 
@@ -722,10 +722,10 @@ lcms_icc_info (GimpColorConfig *config,
       if (info) *info = g_strdup (_("Default RGB working space"));
     }
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 lcms_icc_file_info (const gchar  *filename,
                     gchar       **name,
                     gchar       **desc,
@@ -734,12 +734,12 @@ lcms_icc_file_info (const gchar  *filename,
   cmsHPROFILE profile;
 
   if (! g_file_test (filename, G_FILE_TEST_IS_REGULAR))
-    return GIMP_PDB_EXECUTION_ERROR;
+    return PICMAN_PDB_EXECUTION_ERROR;
 
   profile = cmsOpenProfileFromFile (filename, "r");
 
   if (! profile)
-    return GIMP_PDB_EXECUTION_ERROR;
+    return PICMAN_PDB_EXECUTION_ERROR;
 
   *name = lcms_icc_profile_get_name (profile);
   *desc = lcms_icc_profile_get_desc (profile);
@@ -747,7 +747,7 @@ lcms_icc_file_info (const gchar  *filename,
 
   cmsCloseProfile (profile);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 static void
@@ -791,26 +791,26 @@ lcms_calculate_checksum (const gchar *data,
 }
 
 static cmsHPROFILE
-lcms_image_get_profile (GimpColorConfig *config,
+lcms_image_get_profile (PicmanColorConfig *config,
                         gint32           image,
                         guchar          *checksum)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   cmsHPROFILE   profile = NULL;
 
   g_return_val_if_fail (image != -1, NULL);
 
-  parasite = gimp_image_get_parasite (image, "icc-profile");
+  parasite = picman_image_get_parasite (image, "icc-profile");
 
   if (parasite)
     {
-      profile = cmsOpenProfileFromMem ((gpointer) gimp_parasite_data (parasite),
-                                       gimp_parasite_data_size (parasite));
+      profile = cmsOpenProfileFromMem ((gpointer) picman_parasite_data (parasite),
+                                       picman_parasite_data_size (parasite));
 
       if (profile)
         {
-          lcms_calculate_checksum (gimp_parasite_data (parasite),
-                                   gimp_parasite_data_size (parasite),
+          lcms_calculate_checksum (picman_parasite_data (parasite),
+                                   picman_parasite_data_size (parasite),
                                    checksum);
         }
       else
@@ -819,7 +819,7 @@ lcms_image_get_profile (GimpColorConfig *config,
                        "be an ICC color profile"));
         }
 
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
   else if (config->rgb_profile)
     {
@@ -839,7 +839,7 @@ lcms_image_set_profile (gint32       image,
 
   if (filename)
     {
-      GimpParasite *parasite;
+      PicmanParasite *parasite;
       GMappedFile  *file;
       GError       *error = NULL;
 
@@ -866,37 +866,37 @@ lcms_image_set_profile (gint32       image,
           else
             {
               g_message (_("'%s' does not appear to be an ICC color profile"),
-                         gimp_filename_to_utf8 (filename));
+                         picman_filename_to_utf8 (filename));
               return FALSE;
             }
         }
 
       if (undo_group)
-        gimp_image_undo_group_start (image);
+        picman_image_undo_group_start (image);
 
-      parasite = gimp_parasite_new ("icc-profile",
-                                    GIMP_PARASITE_PERSISTENT |
-                                    GIMP_PARASITE_UNDOABLE,
+      parasite = picman_parasite_new ("icc-profile",
+                                    PICMAN_PARASITE_PERSISTENT |
+                                    PICMAN_PARASITE_UNDOABLE,
                                     g_mapped_file_get_length (file),
                                     g_mapped_file_get_contents (file));
 
       g_mapped_file_unref (file);
 
-      gimp_image_attach_parasite (image, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image, parasite);
+      picman_parasite_free (parasite);
     }
   else
     {
       if (undo_group)
-        gimp_image_undo_group_start (image);
+        picman_image_undo_group_start (image);
 
-      gimp_image_detach_parasite (image, "icc-profile");
+      picman_image_detach_parasite (image, "icc-profile");
     }
 
-  gimp_image_detach_parasite (image, "icc-profile-name");
+  picman_image_detach_parasite (image, "icc-profile-name");
 
   if (undo_group)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 
   return TRUE;
 }
@@ -906,16 +906,16 @@ lcms_image_apply_profile (gint32                    image,
                           cmsHPROFILE               src_profile,
                           cmsHPROFILE               dest_profile,
                           const gchar              *filename,
-                          GimpColorRenderingIntent  intent,
+                          PicmanColorRenderingIntent  intent,
                           gboolean                  bpc)
 {
   gint32 saved_selection = -1;
 
-  gimp_image_undo_group_start (image);
+  picman_image_undo_group_start (image);
 
   if (! lcms_image_set_profile (image, dest_profile, filename, FALSE))
     {
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
       return FALSE;
     }
@@ -925,7 +925,7 @@ lcms_image_apply_profile (gint32                    image,
     gchar  *dest = lcms_icc_profile_get_desc (dest_profile);
 
       /* ICC color profile conversion */
-      gimp_progress_init_printf (_("Converting from '%s' to '%s'"), src, dest);
+      picman_progress_init_printf (_("Converting from '%s' to '%s'"), src, dest);
 
       g_printerr ("lcms: converting from '%s' to '%s'\n", src, dest);
 
@@ -933,25 +933,25 @@ lcms_image_apply_profile (gint32                    image,
       g_free (src);
   }
 
-  if (! gimp_selection_is_empty (image))
+  if (! picman_selection_is_empty (image))
     {
-      saved_selection = gimp_selection_save (image);
-      gimp_selection_none (image);
+      saved_selection = picman_selection_save (image);
+      picman_selection_none (image);
     }
 
-  switch (gimp_image_base_type (image))
+  switch (picman_image_base_type (image))
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       lcms_image_transform_rgb (image,
                                 src_profile, dest_profile, intent, bpc);
       break;
 
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       g_warning ("colorspace conversion not implemented for "
                  "grayscale images");
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       lcms_image_transform_indexed (image,
                                     src_profile, dest_profile, intent, bpc);
       break;
@@ -959,13 +959,13 @@ lcms_image_apply_profile (gint32                    image,
 
   if (saved_selection != -1)
     {
-      gimp_image_select_item (image, GIMP_CHANNEL_OP_REPLACE, saved_selection);
-      gimp_image_remove_channel (image, saved_selection);
+      picman_image_select_item (image, PICMAN_CHANNEL_OP_REPLACE, saved_selection);
+      picman_image_remove_channel (image, saved_selection);
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return TRUE;
 }
@@ -974,7 +974,7 @@ static void
 lcms_image_transform_rgb (gint32                    image,
                           cmsHPROFILE               src_profile,
                           cmsHPROFILE               dest_profile,
-                          GimpColorRenderingIntent  intent,
+                          PicmanColorRenderingIntent  intent,
                           gboolean                  bpc)
 {
   cmsHTRANSFORM    transform   = NULL;
@@ -983,12 +983,12 @@ lcms_image_transform_rgb (gint32                    image,
   gint             num_layers;
   gint             i;
 
-  layers = gimp_image_get_layers (image, &num_layers);
+  layers = picman_image_get_layers (image, &num_layers);
 
   for (i = 0; i < num_layers; i++)
     {
       gint32          layer_id     = layers[i];
-      const Babl     *layer_format = gimp_drawable_get_format (layer_id);
+      const Babl     *layer_format = picman_drawable_get_format (layer_id);
       const gboolean  has_alpha    = babl_format_has_alpha (layer_format);
       const Babl     *type         = babl_format_get_type (layer_format, 0);
       const Babl     *iter_format  = NULL;
@@ -1076,8 +1076,8 @@ lcms_image_transform_rgb (gint32                    image,
               gint                count          = 0;
               gint                done           = 0;
 
-              src_buffer   = gimp_drawable_get_buffer (layer_id);
-              dest_buffer  = gimp_drawable_get_shadow_buffer (layer_id);
+              src_buffer   = picman_drawable_get_buffer (layer_id);
+              dest_buffer  = picman_drawable_get_shadow_buffer (layer_id);
               layer_width  = gegl_buffer_get_width (src_buffer);
               layer_height = gegl_buffer_get_height (src_buffer);
               layer_bpp    = babl_format_get_bytes_per_pixel (iter_format);
@@ -1107,12 +1107,12 @@ lcms_image_transform_rgb (gint32                    image,
               g_object_unref (src_buffer);
               g_object_unref (dest_buffer);
 
-              gimp_drawable_merge_shadow (layer_id, TRUE);
-              gimp_drawable_update (layer_id, 0, 0, layer_width, layer_height);
+              picman_drawable_merge_shadow (layer_id, TRUE);
+              picman_drawable_update (layer_id, 0, 0, layer_width, layer_height);
 
               if (count++ % 32 == 0)
                 {
-                  gimp_progress_update (progress_start +
+                  picman_progress_update (progress_start +
                                         (gdouble) done /
                                         (layer_width * layer_height) * range);
                 }
@@ -1129,7 +1129,7 @@ static void
 lcms_image_transform_indexed (gint32                    image,
                               cmsHPROFILE               src_profile,
                               cmsHPROFILE               dest_profile,
-                              GimpColorRenderingIntent  intent,
+                              PicmanColorRenderingIntent  intent,
                               gboolean                  bpc)
 {
   cmsHTRANSFORM    transform;
@@ -1137,7 +1137,7 @@ lcms_image_transform_indexed (gint32                    image,
   gint             n_cmap_bytes;
   cmsUInt32Number  format = TYPE_RGB_8;
 
-  cmap = gimp_image_get_colormap (image, &n_cmap_bytes);
+  cmap = picman_image_get_colormap (image, &n_cmap_bytes);
 
   transform = cmsCreateTransform (src_profile,  format,
                                   dest_profile, format,
@@ -1156,7 +1156,7 @@ lcms_image_transform_indexed (gint32                    image,
       g_warning ("cmsCreateTransform() failed!");
     }
 
-  gimp_image_set_colormap (image, cmap, n_cmap_bytes);
+  picman_image_set_colormap (image, cmap, n_cmap_bytes);
 }
 
 static cmsHPROFILE
@@ -1193,7 +1193,7 @@ lcms_load_profile (const gchar *filename,
   else
     {
       g_message (_("Could not load ICC profile from '%s'"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
     }
 
   g_mapped_file_unref (file);
@@ -1213,7 +1213,7 @@ lcms_icc_profile_src_label_new (gint32       image,
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 
-  name = gimp_image_get_name (image);
+  name = picman_image_get_name (image);
   text = g_strdup_printf (_("The image '%s' has an embedded color profile:"),
                           name);
   g_free (name);
@@ -1241,7 +1241,7 @@ lcms_icc_profile_src_label_new (gint32       image,
                         NULL);
   g_free (desc);
 
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
@@ -1287,12 +1287,12 @@ lcms_icc_apply_dialog (gint32       image,
   GtkWidget *toggle = NULL;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Convert to RGB working space?"),
+  dialog = picman_dialog_new (_("Convert to RGB working space?"),
                             PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC_APPLY,
+                            picman_standard_help_func, PLUG_IN_PROC_APPLY,
 
                             _("_Keep"),    GTK_RESPONSE_CANCEL,
 
@@ -1309,7 +1309,7 @@ lcms_icc_apply_dialog (gint32       image,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -1333,7 +1333,7 @@ lcms_icc_apply_dialog (gint32       image,
       gtk_widget_show (toggle);
     }
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   *dont_ask = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (toggle));
 
@@ -1343,7 +1343,7 @@ lcms_icc_apply_dialog (gint32       image,
 }
 
 static void
-lcms_icc_combo_box_set_active (GimpColorProfileComboBox *combo,
+lcms_icc_combo_box_set_active (PicmanColorProfileComboBox *combo,
                                const gchar              *filename)
 {
   cmsHPROFILE  profile = NULL;
@@ -1361,14 +1361,14 @@ lcms_icc_combo_box_set_active (GimpColorProfileComboBox *combo,
       cmsCloseProfile (profile);
     }
 
-  gimp_color_profile_combo_box_set_active (combo, filename, label);
+  picman_color_profile_combo_box_set_active (combo, filename, label);
   g_free (label);
 }
 
 static void
 lcms_icc_file_chooser_dialog_response (GtkFileChooser           *dialog,
                                        gint                      response,
-                                       GimpColorProfileComboBox *combo)
+                                       PicmanColorProfileComboBox *combo)
 {
   if (response == GTK_RESPONSE_ACCEPT)
     {
@@ -1434,7 +1434,7 @@ lcms_icc_file_chooser_dialog_new (void)
 }
 
 static GtkWidget *
-lcms_icc_combo_box_new (GimpColorConfig *config,
+lcms_icc_combo_box_new (PicmanColorConfig *config,
                         const gchar     *filename)
 {
   GtkWidget   *combo;
@@ -1445,9 +1445,9 @@ lcms_icc_combo_box_new (GimpColorConfig *config,
   cmsHPROFILE  profile;
 
   dialog = lcms_icc_file_chooser_dialog_new ();
-  history = gimp_personal_rc_file ("profilerc");
+  history = picman_personal_rc_file ("profilerc");
 
-  combo = gimp_color_profile_combo_box_new (dialog, history);
+  combo = picman_color_profile_combo_box_new (dialog, history);
 
   g_free (history);
 
@@ -1469,12 +1469,12 @@ lcms_icc_combo_box_new (GimpColorConfig *config,
   label = g_strdup_printf (_("RGB workspace (%s)"), name);
   g_free (name);
 
-  gimp_color_profile_combo_box_add (GIMP_COLOR_PROFILE_COMBO_BOX (combo),
+  picman_color_profile_combo_box_add (PICMAN_COLOR_PROFILE_COMBO_BOX (combo),
                                     config->rgb_profile, label);
   g_free (label);
 
   if (filename)
-    lcms_icc_combo_box_set_active (GIMP_COLOR_PROFILE_COMBO_BOX (combo),
+    lcms_icc_combo_box_set_active (PICMAN_COLOR_PROFILE_COMBO_BOX (combo),
                                    filename);
   else
     gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
@@ -1482,13 +1482,13 @@ lcms_icc_combo_box_new (GimpColorConfig *config,
   return combo;
 }
 
-static GimpPDBStatusType
-lcms_dialog (GimpColorConfig *config,
+static PicmanPDBStatusType
+lcms_dialog (PicmanColorConfig *config,
              gint32           image,
              gboolean         apply,
              LcmsValues      *values)
 {
-  GimpColorProfileComboBox *box;
+  PicmanColorProfileComboBox *box;
   GtkWidget                *dialog;
   GtkWidget                *main_vbox;
   GtkWidget                *frame;
@@ -1513,14 +1513,14 @@ lcms_dialog (GimpColorConfig *config,
   if (! src_profile)
     src_profile = cmsCreate_sRGBProfile ();
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (apply ?
+  dialog = picman_dialog_new (apply ?
                             _("Convert to ICC Color Profile") :
                             _("Assign ICC Color Profile"),
                             PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func,
+                            picman_standard_help_func,
                             apply ? PLUG_IN_PROC_APPLY : PLUG_IN_PROC_SET,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1535,7 +1535,7 @@ lcms_dialog (GimpColorConfig *config,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1543,7 +1543,7 @@ lcms_dialog (GimpColorConfig *config,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  frame = gimp_frame_new (_("Current Color Profile"));
+  frame = picman_frame_new (_("Current Color Profile"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1558,7 +1558,7 @@ lcms_dialog (GimpColorConfig *config,
 
   g_free (name);
 
-  frame = gimp_frame_new (apply ? _("Convert to") : _("Assign"));
+  frame = picman_frame_new (apply ? _("Convert to") : _("Assign"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1566,7 +1566,7 @@ lcms_dialog (GimpColorConfig *config,
   gtk_container_add (GTK_CONTAINER (frame), combo);
   gtk_widget_show (combo);
 
-  box = GIMP_COLOR_PROFILE_COMBO_BOX (combo);
+  box = PICMAN_COLOR_PROFILE_COMBO_BOX (combo);
 
   if (apply)
     {
@@ -1586,13 +1586,13 @@ lcms_dialog (GimpColorConfig *config,
       gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 
-      combo = gimp_enum_combo_box_new (GIMP_TYPE_COLOR_RENDERING_INTENT);
+      combo = picman_enum_combo_box_new (PICMAN_TYPE_COLOR_RENDERING_INTENT);
       gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
       gtk_widget_show (combo);
 
-      gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                   values->intent,
-                                  G_CALLBACK (gimp_int_combo_box_get_active),
+                                  G_CALLBACK (picman_int_combo_box_get_active),
                                   &values->intent);
 
       gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
@@ -1604,13 +1604,13 @@ lcms_dialog (GimpColorConfig *config,
       gtk_widget_show (toggle);
 
       g_signal_connect (toggle, "toggled",
-                        G_CALLBACK (gimp_toggle_button_update),
+                        G_CALLBACK (picman_toggle_button_update),
                         &values->bpc);
     }
 
-  while ((run = gimp_dialog_run (GIMP_DIALOG (dialog))) == GTK_RESPONSE_OK)
+  while ((run = picman_dialog_run (PICMAN_DIALOG (dialog))) == GTK_RESPONSE_OK)
     {
-      gchar       *filename = gimp_color_profile_combo_box_get_active (box);
+      gchar       *filename = picman_color_profile_combo_box_get_active (box);
       cmsHPROFILE  dest_profile;
 
       gtk_widget_set_sensitive (dialog, FALSE);
@@ -1640,7 +1640,7 @@ lcms_dialog (GimpColorConfig *config,
             }
           else
             {
-              gimp_message (_("Destination profile is not for RGB color space."));
+              picman_message (_("Destination profile is not for RGB color space."));
             }
 
           cmsCloseProfile (dest_profile);
@@ -1657,6 +1657,6 @@ lcms_dialog (GimpColorConfig *config,
   cmsCloseProfile (src_profile);
 
   return (run ?
-          (success ? GIMP_PDB_SUCCESS : GIMP_PDB_EXECUTION_ERROR) :
-          GIMP_PDB_CANCEL);
+          (success ? PICMAN_PDB_SUCCESS : PICMAN_PDB_EXECUTION_ERROR) :
+          PICMAN_PDB_CANCEL);
 }

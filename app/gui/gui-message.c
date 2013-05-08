@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,106 +21,106 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "gui-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanprogress.h"
 
-#include "plug-in/gimpplugin.h"
+#include "plug-in/picmanplugin.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdockable.h"
-#include "widgets/gimperrorconsole.h"
-#include "widgets/gimperrordialog.h"
-#include "widgets/gimpprogressdialog.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimpwidgets-utils.h"
-#include "widgets/gimpwindowstrategy.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandockable.h"
+#include "widgets/picmanerrorconsole.h"
+#include "widgets/picmanerrordialog.h"
+#include "widgets/picmanprogressdialog.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmanwidgets-utils.h"
+#include "widgets/picmanwindowstrategy.h"
 
 #include "gui-message.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean  gui_message_error_console (Gimp                *gimp,
-                                            GimpMessageSeverity  severity,
+static gboolean  gui_message_error_console (Picman                *picman,
+                                            PicmanMessageSeverity  severity,
                                             const gchar         *domain,
                                             const gchar         *message);
-static gboolean  gui_message_error_dialog  (Gimp                *gimp,
+static gboolean  gui_message_error_dialog  (Picman                *picman,
                                             GObject             *handler,
-                                            GimpMessageSeverity  severity,
+                                            PicmanMessageSeverity  severity,
                                             const gchar         *domain,
                                             const gchar         *message);
-static void      gui_message_console       (GimpMessageSeverity  severity,
+static void      gui_message_console       (PicmanMessageSeverity  severity,
                                             const gchar         *domain,
                                             const gchar         *message);
 
 
 void
-gui_message (Gimp                *gimp,
+gui_message (Picman                *picman,
              GObject             *handler,
-             GimpMessageSeverity  severity,
+             PicmanMessageSeverity  severity,
              const gchar         *domain,
              const gchar         *message)
 {
-  switch (gimp->message_handler)
+  switch (picman->message_handler)
     {
-    case GIMP_ERROR_CONSOLE:
-      if (gui_message_error_console (gimp, severity, domain, message))
+    case PICMAN_ERROR_CONSOLE:
+      if (gui_message_error_console (picman, severity, domain, message))
         return;
 
-      gimp->message_handler = GIMP_MESSAGE_BOX;
+      picman->message_handler = PICMAN_MESSAGE_BOX;
       /*  fallthru  */
 
-    case GIMP_MESSAGE_BOX:
-      if (gui_message_error_dialog (gimp, handler, severity, domain, message))
+    case PICMAN_MESSAGE_BOX:
+      if (gui_message_error_dialog (picman, handler, severity, domain, message))
         return;
 
-      gimp->message_handler = GIMP_CONSOLE;
+      picman->message_handler = PICMAN_CONSOLE;
       /*  fallthru  */
 
-    case GIMP_CONSOLE:
+    case PICMAN_CONSOLE:
       gui_message_console (severity, domain, message);
       break;
     }
 }
 
 static gboolean
-gui_message_error_console (Gimp                *gimp,
-                           GimpMessageSeverity  severity,
+gui_message_error_console (Picman                *picman,
+                           PicmanMessageSeverity  severity,
                            const gchar         *domain,
                            const gchar         *message)
 {
   GtkWidget *dockable = NULL;
 
   /* try to avoid raising the error console for not so severe messages */
-  if (severity < GIMP_MESSAGE_ERROR)
+  if (severity < PICMAN_MESSAGE_ERROR)
     {
       GtkWidget *widget =
-        gimp_dialog_factory_find_widget (gimp_dialog_factory_get_singleton (),
-                                         "gimp-error-console");
-      if (GIMP_IS_DOCKABLE (widget))
+        picman_dialog_factory_find_widget (picman_dialog_factory_get_singleton (),
+                                         "picman-error-console");
+      if (PICMAN_IS_DOCKABLE (widget))
         dockable = widget;
     }
 
   if (! dockable)
     dockable =
-      gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (gimp)),
-                                                 gimp,
-                                                 gimp_dialog_factory_get_singleton (),
+      picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (picman)),
+                                                 picman,
+                                                 picman_dialog_factory_get_singleton (),
                                                  gdk_screen_get_default (),
-                                                 "gimp-error-console");
+                                                 "picman-error-console");
 
   if (dockable)
     {
       GtkWidget *child = gtk_bin_get_child (GTK_BIN (dockable));
 
-      gimp_error_console_add (GIMP_ERROR_CONSOLE (child),
+      picman_error_console_add (PICMAN_ERROR_CONSOLE (child),
                               severity, domain, message);
 
       return TRUE;
@@ -130,25 +130,25 @@ gui_message_error_console (Gimp                *gimp,
 }
 
 static void
-progress_error_dialog_unset (GimpProgress *progress)
+progress_error_dialog_unset (PicmanProgress *progress)
 {
-  g_object_set_data (G_OBJECT (progress), "gimp-error-dialog", NULL);
+  g_object_set_data (G_OBJECT (progress), "picman-error-dialog", NULL);
 }
 
 static GtkWidget *
-progress_error_dialog (GimpProgress *progress)
+progress_error_dialog (PicmanProgress *progress)
 {
   GtkWidget *dialog;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), NULL);
 
-  dialog = g_object_get_data (G_OBJECT (progress), "gimp-error-dialog");
+  dialog = g_object_get_data (G_OBJECT (progress), "picman-error-dialog");
 
   if (! dialog)
     {
-      dialog = gimp_error_dialog_new (_("GIMP Message"));
+      dialog = picman_error_dialog_new (_("PICMAN Message"));
 
-      g_object_set_data (G_OBJECT (progress), "gimp-error-dialog", dialog);
+      g_object_set_data (G_OBJECT (progress), "picman-error-dialog", dialog);
 
       g_signal_connect_object (dialog, "destroy",
                                G_CALLBACK (progress_error_dialog_unset),
@@ -164,10 +164,10 @@ progress_error_dialog (GimpProgress *progress)
         }
       else
         {
-          guint32 window_id = gimp_progress_get_window_id (progress);
+          guint32 window_id = picman_progress_get_window_id (progress);
 
           if (window_id)
-            gimp_window_set_transient_for (GTK_WINDOW (dialog), window_id);
+            picman_window_set_transient_for (GTK_WINDOW (dialog), window_id);
         }
     }
 
@@ -177,29 +177,29 @@ progress_error_dialog (GimpProgress *progress)
 static GtkWidget *
 global_error_dialog (void)
 {
-  return gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+  return picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                          gdk_screen_get_default (),
                                          NULL /*ui_manager*/,
-                                         "gimp-error-dialog", -1,
+                                         "picman-error-dialog", -1,
                                          FALSE);
 }
 
 static gboolean
-gui_message_error_dialog (Gimp                *gimp,
+gui_message_error_dialog (Picman                *picman,
                           GObject             *handler,
-                          GimpMessageSeverity  severity,
+                          PicmanMessageSeverity  severity,
                           const gchar         *domain,
                           const gchar         *message)
 {
   GtkWidget *dialog;
 
-  if (GIMP_IS_PROGRESS (handler))
+  if (PICMAN_IS_PROGRESS (handler))
     {
       /* If there's already an error dialog associated with this
-       * progress, then continue without trying gimp_progress_message().
+       * progress, then continue without trying picman_progress_message().
        */
-      if (! g_object_get_data (handler, "gimp-error-dialog") &&
-          gimp_progress_message (GIMP_PROGRESS (handler), gimp,
+      if (! g_object_get_data (handler, "picman-error-dialog") &&
+          picman_progress_message (PICMAN_PROGRESS (handler), picman,
                                  severity, domain, message))
         {
           return TRUE;
@@ -212,9 +212,9 @@ gui_message_error_dialog (Gimp                *gimp,
 
       switch (severity)
         {
-        case GIMP_MESSAGE_INFO:    type = GTK_MESSAGE_INFO;    break;
-        case GIMP_MESSAGE_WARNING: type = GTK_MESSAGE_WARNING; break;
-        case GIMP_MESSAGE_ERROR:   type = GTK_MESSAGE_ERROR;   break;
+        case PICMAN_MESSAGE_INFO:    type = GTK_MESSAGE_INFO;    break;
+        case PICMAN_MESSAGE_WARNING: type = GTK_MESSAGE_WARNING; break;
+        case PICMAN_MESSAGE_ERROR:   type = GTK_MESSAGE_ERROR;   break;
         }
 
       dialog =
@@ -232,15 +232,15 @@ gui_message_error_dialog (Gimp                *gimp,
       return TRUE;
     }
 
-  if (GIMP_IS_PROGRESS (handler) && ! GIMP_IS_PROGRESS_DIALOG (handler))
-    dialog = progress_error_dialog (GIMP_PROGRESS (handler));
+  if (PICMAN_IS_PROGRESS (handler) && ! PICMAN_IS_PROGRESS_DIALOG (handler))
+    dialog = progress_error_dialog (PICMAN_PROGRESS (handler));
   else
     dialog = global_error_dialog ();
 
   if (dialog)
     {
-      gimp_error_dialog_add (GIMP_ERROR_DIALOG (dialog),
-                             gimp_get_message_stock_id (severity),
+      picman_error_dialog_add (PICMAN_ERROR_DIALOG (dialog),
+                             picman_get_message_stock_id (severity),
                              domain, message);
       gtk_window_present (GTK_WINDOW (dialog));
 
@@ -251,13 +251,13 @@ gui_message_error_dialog (Gimp                *gimp,
 }
 
 static void
-gui_message_console (GimpMessageSeverity  severity,
+gui_message_console (PicmanMessageSeverity  severity,
                      const gchar         *domain,
                      const gchar         *message)
 {
   const gchar *desc = "Message";
 
-  gimp_enum_get_value (GIMP_TYPE_MESSAGE_SEVERITY, severity,
+  picman_enum_get_value (PICMAN_TYPE_MESSAGE_SEVERITY, severity,
                        NULL, NULL, &desc, NULL);
   g_printerr ("%s-%s: %s\n\n", domain, desc, message);
 }

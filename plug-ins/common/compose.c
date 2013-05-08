@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Compose plug-in (C) 1997,1999 Peter Kirchgessner
@@ -33,17 +33,17 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define COMPOSE_PROC          "plug-in-compose"
 #define DRAWABLE_COMPOSE_PROC "plug-in-drawable-compose"
 #define RECOMPOSE_PROC        "plug-in-recompose"
 #define PLUG_IN_BINARY        "compose"
-#define PLUG_IN_ROLE          "gimp-compose"
+#define PLUG_IN_ROLE          "picman-compose"
 
 
 typedef struct
@@ -62,9 +62,9 @@ typedef struct
 static void      query              (void);
 static void      run                (const gchar      *name,
                                      gint              nparams,
-                                     const GimpParam  *param,
+                                     const PicmanParam  *param,
                                      gint             *nreturn_vals,
-                                     GimpParam       **return_vals);
+                                     PicmanParam       **return_vals);
 
 static gint32    compose            (const gchar      *compose_type,
                                      ComposeInput     *inputs,
@@ -73,10 +73,10 @@ static gint32    compose            (const gchar      *compose_type,
 static gint32    create_new_image   (const gchar      *filename,
                                      guint             width,
                                      guint             height,
-                                     GimpImageType     gdtype,
+                                     PicmanImageType     gdtype,
                                      gint32           *layer_ID,
-                                     GimpDrawable    **drawable,
-                                     GimpPixelRgn     *pixel_rgn);
+                                     PicmanDrawable    **drawable,
+                                     PicmanPixelRgn     *pixel_rgn);
 
 static void      compose_rgb         (guchar         **src,
                                       gint            *incr,
@@ -141,7 +141,7 @@ static gboolean  check_gray          (gint32           image_id,
                                       gint32           drawable_id,
                                       gpointer         data);
 
-static void      combo_callback      (GimpIntComboBox *cbox,
+static void      combo_callback      (PicmanIntComboBox *cbox,
                                       gpointer         data);
 
 static void      scale_callback      (GtkAdjustment   *adj,
@@ -151,7 +151,7 @@ static void      check_response      (GtkWidget       *dialog,
                                       gint             response,
                                       gpointer         data);
 
-static void      type_combo_callback (GimpIntComboBox *combo,
+static void      type_combo_callback (PicmanIntComboBox *combo,
                                       gpointer         data);
 
 
@@ -191,9 +191,9 @@ static COMPOSE_DSC compose_dsc[] =
       N_("_Green:"),
       N_("_Blue:"),
       NULL },
-    { GIMP_STOCK_CHANNEL_RED,
-      GIMP_STOCK_CHANNEL_GREEN,
-      GIMP_STOCK_CHANNEL_BLUE,
+    { PICMAN_STOCK_CHANNEL_RED,
+      PICMAN_STOCK_CHANNEL_GREEN,
+      PICMAN_STOCK_CHANNEL_BLUE,
       NULL },
     "rgb-compose",  compose_rgb },
 
@@ -202,10 +202,10 @@ static COMPOSE_DSC compose_dsc[] =
       N_("_Green:"),
       N_("_Blue:"),
       N_("_Alpha:") },
-    { GIMP_STOCK_CHANNEL_RED,
-      GIMP_STOCK_CHANNEL_GREEN,
-      GIMP_STOCK_CHANNEL_BLUE,
-      GIMP_STOCK_CHANNEL_ALPHA },
+    { PICMAN_STOCK_CHANNEL_RED,
+      PICMAN_STOCK_CHANNEL_GREEN,
+      PICMAN_STOCK_CHANNEL_BLUE,
+      PICMAN_STOCK_CHANNEL_ALPHA },
     "rgba-compose",  compose_rgba },
 
   { N_("HSV"), 3,
@@ -306,7 +306,7 @@ typedef struct
   gint          compose_idx;                              /* Compose type */
 } ComposeInterface;
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -334,7 +334,7 @@ static ComposeInterface composeint =
   0          /* Compose type */
 };
 
-static GimpRunMode run_mode;
+static PicmanRunMode run_mode;
 
 
 MAIN ()
@@ -342,43 +342,43 @@ MAIN ()
 static void
 query (void)
 {
-  static GimpParamDef args[] =
+  static PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image1",       "First input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Input drawable (not used)" },
-    { GIMP_PDB_IMAGE,    "image2",       "Second input image" },
-    { GIMP_PDB_IMAGE,    "image3",       "Third input image" },
-    { GIMP_PDB_IMAGE,    "image4",       "Fourth input image" },
-    { GIMP_PDB_STRING,   "compose-type", NULL }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image1",       "First input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Input drawable (not used)" },
+    { PICMAN_PDB_IMAGE,    "image2",       "Second input image" },
+    { PICMAN_PDB_IMAGE,    "image3",       "Third input image" },
+    { PICMAN_PDB_IMAGE,    "image4",       "Fourth input image" },
+    { PICMAN_PDB_STRING,   "compose-type", NULL }
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "new_image", "Output image" }
+    { PICMAN_PDB_IMAGE, "new_image", "Output image" }
   };
 
-  static GimpParamDef drw_args[] =
+  static PicmanParamDef drw_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image1",       "First input image (not used)" },
-    { GIMP_PDB_DRAWABLE, "drawable1",    "First input drawable" },
-    { GIMP_PDB_DRAWABLE, "drawable2",    "Second input drawable" },
-    { GIMP_PDB_DRAWABLE, "drawable3",    "Third input drawable" },
-    { GIMP_PDB_DRAWABLE, "drawable4",    "Fourth input drawable" },
-    { GIMP_PDB_STRING,   "compose-type", NULL }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image1",       "First input image (not used)" },
+    { PICMAN_PDB_DRAWABLE, "drawable1",    "First input drawable" },
+    { PICMAN_PDB_DRAWABLE, "drawable2",    "Second input drawable" },
+    { PICMAN_PDB_DRAWABLE, "drawable3",    "Third input drawable" },
+    { PICMAN_PDB_DRAWABLE, "drawable4",    "Fourth input drawable" },
+    { PICMAN_PDB_STRING,   "compose-type", NULL }
   };
 
-  static const GimpParamDef drw_return_vals[] =
+  static const PicmanParamDef drw_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "new_image", "Output image" }
+    { PICMAN_PDB_IMAGE, "new_image", "Output image" }
   };
 
-  static const GimpParamDef recompose_args[] =
+  static const PicmanParamDef recompose_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Image to recompose from" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Not used" },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Image to recompose from" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Not used" },
   };
 
   GString *type_desc;
@@ -400,7 +400,7 @@ query (void)
   args[6].description = type_desc->str;
   drw_args[6].description = type_desc->str;
 
-  gimp_install_procedure (COMPOSE_PROC,
+  picman_install_procedure (COMPOSE_PROC,
                           N_("Create an image using multiple gray images as color channels"),
                           "This function creates a new image from "
                           "multiple gray images",
@@ -409,14 +409,14 @@ query (void)
                           "1997",
                           N_("C_ompose..."),
                           "GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (COMPOSE_PROC, "<Image>/Colors/Components");
+  picman_plugin_menu_register (COMPOSE_PROC, "<Image>/Colors/Components");
 
-  gimp_install_procedure (DRAWABLE_COMPOSE_PROC,
+  picman_install_procedure (DRAWABLE_COMPOSE_PROC,
                           "Compose an image from multiple drawables of gray images",
                           "This function creates a new image from "
                           "multiple drawables of gray images",
@@ -425,12 +425,12 @@ query (void)
                           "1998",
                           NULL,   /* It is not available in interactive mode */
                           "GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (drw_args),
                           G_N_ELEMENTS (drw_return_vals),
                           drw_args, drw_return_vals);
 
-  gimp_install_procedure (RECOMPOSE_PROC,
+  picman_install_procedure (RECOMPOSE_PROC,
                           N_("Recompose an image that was previously decomposed"),
                           "This function recombines the grayscale layers produced "
                           "by Decompose into a single RGB or RGBA layer, and "
@@ -441,11 +441,11 @@ query (void)
                           "2004",
                           N_("R_ecompose"),
                           "GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (recompose_args), 0,
                           recompose_args, NULL);
 
-  gimp_plugin_menu_register (RECOMPOSE_PROC, "<Image>/Colors/Components");
+  picman_plugin_menu_register (RECOMPOSE_PROC, "<Image>/Colors/Components");
 
   g_string_free (type_desc, TRUE);
 }
@@ -454,12 +454,12 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[2];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
   gint32            image_ID;
   gint32            drawable_ID = -1;
   gint              compose_by_drawable;
@@ -473,27 +473,27 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
-  values[1].type          = GIMP_PDB_IMAGE;
+  values[1].type          = PICMAN_PDB_IMAGE;
   values[1].data.d_int32  = -1;
 
   if (strcmp (name, RECOMPOSE_PROC) == 0)
     {
-      GimpParasite *parasite = gimp_image_get_parasite (param[1].data.d_image,
+      PicmanParasite *parasite = picman_image_get_parasite (param[1].data.d_image,
                                                         "decompose-data");
 
       if (! parasite)
         {
           g_message (_("You can only run 'Recompose' if the active image "
                        "was originally produced by 'Decompose'."));
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
       else
         {
           gint nret;
 
-          nret = sscanf (gimp_parasite_data (parasite),
+          nret = sscanf (picman_parasite_data (parasite),
                          "source=%d type=%31s %d %d %d %d",
                          &composevals.source_layer_ID,
                          composevals.compose_type,
@@ -502,7 +502,7 @@ run (const gchar      *name,
                          &composevals.inputs[2].comp.ID,
                          &composevals.inputs[3].comp.ID);
 
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
 
           for (i = 0; i < MAX_COMPOSE_IMAGES; i++)
             composevals.inputs[i].is_ID = TRUE;
@@ -511,7 +511,7 @@ run (const gchar      *name,
             {
               g_message (_("Error scanning 'decompose-data' parasite: "
                            "too few layers found"));
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
           else
             {
@@ -526,9 +526,9 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*  Possibly retrieve data  */
-          gimp_get_data (name, &composevals);
+          picman_get_data (name, &composevals);
 
           compose_by_drawable = TRUE;
 
@@ -538,7 +538,7 @@ run (const gchar      *name,
               gint32 *layer_list;
               gint    nlayers;
 
-              layer_list = gimp_image_get_layers (param[1].data.d_int32,
+              layer_list = picman_image_get_layers (param[1].data.d_int32,
                                                   &nlayers);
               if ((layer_list == NULL) || (nlayers <= 0))
                 {
@@ -561,11 +561,11 @@ run (const gchar      *name,
 
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams < 7)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -595,9 +595,9 @@ run (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /*  Possibly retrieve data  */
-          gimp_get_data (name, &composevals);
+          picman_get_data (name, &composevals);
 
           compose_by_drawable = TRUE;
           break;
@@ -607,9 +607,9 @@ run (const gchar      *name,
         }
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Composing"));
+      picman_progress_init (_("Composing"));
 
       image_ID = compose (composevals.compose_type,
                           composevals.inputs,
@@ -617,7 +617,7 @@ run (const gchar      *name,
 
       if (image_ID < 0)
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
       else
         {
@@ -625,21 +625,21 @@ run (const gchar      *name,
 
           if (composevals.do_recompose)
             {
-              gimp_displays_flush ();
+              picman_displays_flush ();
             }
           else
             {
-              gimp_image_undo_enable (image_ID);
-              gimp_image_clean_all (image_ID);
+              picman_image_undo_enable (image_ID);
+              picman_image_clean_all (image_ID);
 
-              if (run_mode != GIMP_RUN_NONINTERACTIVE)
-                gimp_display_new (image_ID);
+              if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+                picman_display_new (image_ID);
             }
         }
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (name, &composevals, sizeof (ComposeVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (name, &composevals, sizeof (ComposeVals));
     }
 
   *nreturn_vals = composevals.do_recompose ? 1 : 2;
@@ -662,10 +662,10 @@ compose (const gchar  *compose_type,
   guchar        *src[MAX_COMPOSE_IMAGES];
   guchar        *dst;
   gint           first_ID;
-  GimpImageType  gdtype_dst;
-  GimpDrawable  *drawable_src[MAX_COMPOSE_IMAGES], *drawable_dst;
-  GimpPixelRgn   pixel_rgn_src[MAX_COMPOSE_IMAGES], pixel_rgn_dst;
-  GimpPixelRgn   pixel_rgn_dst_read;
+  PicmanImageType  gdtype_dst;
+  PicmanDrawable  *drawable_src[MAX_COMPOSE_IMAGES], *drawable_dst;
+  PicmanPixelRgn   pixel_rgn_src[MAX_COMPOSE_IMAGES], pixel_rgn_dst;
+  PicmanPixelRgn   pixel_rgn_dst_read;
 
   /* Search type of composing */
   compose_idx = -1;
@@ -698,34 +698,34 @@ compose (const gchar  *compose_type,
       return -1;
     }
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
 
   /* Check image sizes */
   if (compose_by_drawable)
     {
-      if (! gimp_item_is_valid (inputs[first_ID].comp.ID))
+      if (! picman_item_is_valid (inputs[first_ID].comp.ID))
         {
           g_message (_("Specified layer %d not found"),
                      inputs[first_ID].comp.ID);
           return -1;
         }
 
-      width = gimp_drawable_width (inputs[first_ID].comp.ID);
-      height = gimp_drawable_height (inputs[first_ID].comp.ID);
+      width = picman_drawable_width (inputs[first_ID].comp.ID);
+      height = picman_drawable_height (inputs[first_ID].comp.ID);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
           if (inputs[j].is_ID)
             {
-              if (! gimp_item_is_valid (inputs[j].comp.ID))
+              if (! picman_item_is_valid (inputs[j].comp.ID))
                 {
                   g_message (_("Specified layer %d not found"),
                              inputs[j].comp.ID);
                   return -1;
                 }
 
-              if ((width  != gimp_drawable_width  (inputs[j].comp.ID)) ||
-                  (height != gimp_drawable_height (inputs[j].comp.ID)))
+              if ((width  != picman_drawable_width  (inputs[j].comp.ID)) ||
+                  (height != picman_drawable_height (inputs[j].comp.ID)))
                 {
                   g_message (_("Drawables have different size"));
                   return -1;
@@ -735,22 +735,22 @@ compose (const gchar  *compose_type,
       for (j = 0; j < num_images; j++)
         {
           if (inputs[j].is_ID)
-            drawable_src[j] = gimp_drawable_get (inputs[j].comp.ID);
+            drawable_src[j] = picman_drawable_get (inputs[j].comp.ID);
           else
             drawable_src[j] = NULL;
         }
     }
   else    /* Compose by image ID */
     {
-      width  = gimp_image_width  (inputs[first_ID].comp.ID);
-      height = gimp_image_height (inputs[first_ID].comp.ID);
+      width  = picman_image_width  (inputs[first_ID].comp.ID);
+      height = picman_image_height (inputs[first_ID].comp.ID);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
           if (inputs[j].is_ID)
             {
-              if ((width  != gimp_image_width (inputs[j].comp.ID)) ||
-                  (height != gimp_image_height (inputs[j].comp.ID)))
+              if ((width  != picman_image_width (inputs[j].comp.ID)) ||
+                  (height != picman_image_height (inputs[j].comp.ID)))
                 {
                   g_message (_("Images have different size"));
                   return -1;
@@ -766,7 +766,7 @@ compose (const gchar  *compose_type,
               gint32 *layers;
 
               /* Get first layer of image */
-              layers = gimp_image_get_layers (inputs[j].comp.ID, &num_layers);
+              layers = picman_image_get_layers (inputs[j].comp.ID, &num_layers);
 
               if (! layers || (num_layers <= 0))
                 {
@@ -775,7 +775,7 @@ compose (const gchar  *compose_type,
                 }
 
               /* Get drawable for layer */
-              drawable_src[j] = gimp_drawable_get (layers[0]);
+              drawable_src[j] = picman_drawable_get (layers[0]);
               g_free (layers);
             }
         }
@@ -799,7 +799,7 @@ compose (const gchar  *compose_type,
             }
 
           /* Get pixel region */
-          gimp_pixel_rgn_init (&pixel_rgn_src[j], drawable_src[j], 0, 0,
+          picman_pixel_rgn_init (&pixel_rgn_src[j], drawable_src[j], 0, 0,
                                width, height, FALSE, FALSE);
         }
       else
@@ -819,25 +819,25 @@ compose (const gchar  *compose_type,
     {
       layer_ID_dst = composevals.source_layer_ID;
 
-      if (! gimp_item_is_valid (layer_ID_dst))
+      if (! picman_item_is_valid (layer_ID_dst))
         {
           g_message (_("Unable to recompose, source layer not found"));
           return -1;
         }
 
-      drawable_dst = gimp_drawable_get (layer_ID_dst);
-      gimp_pixel_rgn_init (&pixel_rgn_dst, drawable_dst,
+      drawable_dst = picman_drawable_get (layer_ID_dst);
+      picman_pixel_rgn_init (&pixel_rgn_dst, drawable_dst,
                            0, 0, drawable_dst->width, drawable_dst->height,
                            TRUE, TRUE);
-      gimp_pixel_rgn_init (&pixel_rgn_dst_read, drawable_dst,
+      picman_pixel_rgn_init (&pixel_rgn_dst_read, drawable_dst,
                            0, 0, drawable_dst->width, drawable_dst->height,
                            FALSE, FALSE);
-      image_ID_dst = gimp_item_get_image (layer_ID_dst);
+      image_ID_dst = picman_item_get_image (layer_ID_dst);
     }
   else
     {
       gdtype_dst = ((compose_dsc[compose_idx].compose_fun == compose_rgba) ?
-                    GIMP_RGBA_IMAGE : GIMP_RGB_IMAGE);
+                    PICMAN_RGBA_IMAGE : PICMAN_RGB_IMAGE);
 
       image_ID_dst = create_new_image (compose_dsc[compose_idx].filename,
                                        width, height, gdtype_dst,
@@ -849,8 +849,8 @@ compose (const gchar  *compose_type,
     {
       gdouble  xres, yres;
 
-      gimp_image_get_resolution (inputs[first_ID].comp.ID, &xres, &yres);
-      gimp_image_set_resolution (image_ID_dst, xres, yres);
+      picman_image_get_resolution (inputs[first_ID].comp.ID, &xres, &yres);
+      picman_image_set_resolution (image_ID_dst, xres, yres);
     }
 
   dst = g_new (guchar, tile_height * width * drawable_dst->bpp);
@@ -864,11 +864,11 @@ compose (const gchar  *compose_type,
       /* Get source pixel regions */
       for (j = 0; j < num_images; j++)
         if (inputs[j].is_ID)
-          gimp_pixel_rgn_get_rect (&(pixel_rgn_src[j]), src[j], 0, i,
+          picman_pixel_rgn_get_rect (&(pixel_rgn_src[j]), src[j], 0, i,
                                    width, scan_lines);
 
       if (composevals.do_recompose)
-        gimp_pixel_rgn_get_rect (&pixel_rgn_dst_read, dst, 0, i,
+        picman_pixel_rgn_get_rect (&pixel_rgn_dst_read, dst, 0, i,
                                  width, scan_lines);
 
       /* Do the composition */
@@ -876,33 +876,33 @@ compose (const gchar  *compose_type,
                                             incr_src,
                                             width * tile_height,
                                             dst,
-                                            gimp_drawable_has_alpha (layer_ID_dst));
+                                            picman_drawable_has_alpha (layer_ID_dst));
 
       /* Set destination pixel region */
-      gimp_pixel_rgn_set_rect (&pixel_rgn_dst, dst, 0, i, width, scan_lines);
+      picman_pixel_rgn_set_rect (&pixel_rgn_dst, dst, 0, i, width, scan_lines);
 
       i += scan_lines;
 
-      gimp_progress_update ((gdouble) i / (gdouble) height);
+      picman_progress_update ((gdouble) i / (gdouble) height);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   for (j = 0; j < num_images; j++)
     {
       g_free (src[j]);
       if (inputs[j].is_ID)
-        gimp_drawable_detach (drawable_src[j]);
+        picman_drawable_detach (drawable_src[j]);
     }
   g_free (dst);
 
-  gimp_drawable_detach (drawable_dst);
+  picman_drawable_detach (drawable_dst);
 
   if (composevals.do_recompose)
-    gimp_drawable_merge_shadow (layer_ID_dst, TRUE);
+    picman_drawable_merge_shadow (layer_ID_dst, TRUE);
 
-  gimp_drawable_update (layer_ID_dst, 0, 0,
-                        gimp_drawable_width (layer_ID_dst),
-                        gimp_drawable_height (layer_ID_dst));
+  picman_drawable_update (layer_ID_dst, 0, 0,
+                        picman_drawable_width (layer_ID_dst),
+                        picman_drawable_height (layer_ID_dst));
 
   return image_ID_dst;
 }
@@ -913,32 +913,32 @@ static gint32
 create_new_image (const gchar    *filename,
                   guint           width,
                   guint           height,
-                  GimpImageType   gdtype,
+                  PicmanImageType   gdtype,
                   gint32         *layer_ID,
-                  GimpDrawable  **drawable,
-                  GimpPixelRgn   *pixel_rgn)
+                  PicmanDrawable  **drawable,
+                  PicmanPixelRgn   *pixel_rgn)
 {
   gint32            image_ID;
-  GimpImageBaseType gitype;
+  PicmanImageBaseType gitype;
 
-  if ((gdtype == GIMP_GRAY_IMAGE) || (gdtype == GIMP_GRAYA_IMAGE))
-    gitype = GIMP_GRAY;
-  else if ((gdtype == GIMP_INDEXED_IMAGE) || (gdtype == GIMP_INDEXEDA_IMAGE))
-    gitype = GIMP_INDEXED;
+  if ((gdtype == PICMAN_GRAY_IMAGE) || (gdtype == PICMAN_GRAYA_IMAGE))
+    gitype = PICMAN_GRAY;
+  else if ((gdtype == PICMAN_INDEXED_IMAGE) || (gdtype == PICMAN_INDEXEDA_IMAGE))
+    gitype = PICMAN_INDEXED;
   else
-    gitype = GIMP_RGB;
+    gitype = PICMAN_RGB;
 
-  image_ID = gimp_image_new (width, height, gitype);
+  image_ID = picman_image_new (width, height, gitype);
 
-  gimp_image_undo_disable (image_ID);
-  gimp_image_set_filename (image_ID, filename);
+  picman_image_undo_disable (image_ID);
+  picman_image_set_filename (image_ID, filename);
 
-  *layer_ID = gimp_layer_new (image_ID, _("Background"), width, height,
-                              gdtype, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, *layer_ID, -1, 0);
+  *layer_ID = picman_layer_new (image_ID, _("Background"), width, height,
+                              gdtype, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, *layer_ID, -1, 0);
 
-  *drawable = gimp_drawable_get (*layer_ID);
-  gimp_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
+  *drawable = picman_drawable_get (*layer_ID);
+  picman_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
                        (*drawable)->height, TRUE, FALSE);
 
   return image_ID;
@@ -1045,7 +1045,7 @@ compose_hsv (guchar **src,
 
   while (count-- > 0)
     {
-      gimp_hsv_to_rgb4 (rgb_dst, (gdouble) *hue_src / 255.0,
+      picman_hsv_to_rgb4 (rgb_dst, (gdouble) *hue_src / 255.0,
                                  (gdouble) *sat_src / 255.0,
                                  (gdouble) *val_src / 255.0);
       rgb_dst += 3;
@@ -1074,8 +1074,8 @@ compose_hsl (guchar **src,
   gint    hue_incr = incr_src[0];
   gint    sat_incr = incr_src[1];
   gint    lum_incr = incr_src[2];
-  GimpHSL hsl;
-  GimpRGB rgb;
+  PicmanHSL hsl;
+  PicmanRGB rgb;
 
   while (count-- > 0)
     {
@@ -1083,8 +1083,8 @@ compose_hsl (guchar **src,
       hsl.s = (gdouble) *sat_src / 255.0;
       hsl.l = (gdouble) *lum_src / 255.0;
 
-      gimp_hsl_to_rgb (&hsl, &rgb);
-      gimp_rgb_get_uchar (&rgb, &(rgb_dst[0]), &(rgb_dst[1]), &(rgb_dst[2]));
+      picman_hsl_to_rgb (&hsl, &rgb);
+      picman_rgb_get_uchar (&rgb, &(rgb_dst[0]), &(rgb_dst[1]), &(rgb_dst[2]));
 
       rgb_dst += 3;
       hue_src += hue_incr;
@@ -1158,20 +1158,20 @@ compose_cmyk (guchar **src,
   gint    magenta_incr = incr_src[1];
   gint    yellow_incr  = incr_src[2];
   gint    black_incr   = incr_src[3];
-  GimpRGB grgb;
+  PicmanRGB grgb;
 
-  gimp_rgb_set(&grgb, 0, 0, 0);
+  picman_rgb_set(&grgb, 0, 0, 0);
 
   while (count-- > 0)
     {
-      GimpCMYK gcmyk;
+      PicmanCMYK gcmyk;
       guchar   r, g, b;
 
-      gimp_cmyk_set_uchar (&gcmyk,
+      picman_cmyk_set_uchar (&gcmyk,
                            *cyan_src, *magenta_src, *yellow_src,
                            *black_src);
-      gimp_cmyk_to_rgb (&gcmyk, &grgb);
-      gimp_rgb_get_uchar (&grgb, &r, &g, &b);
+      picman_cmyk_to_rgb (&gcmyk, &grgb);
+      picman_rgb_get_uchar (&grgb, &r, &g, &b);
 
       *rgb_dst++ = r;
       *rgb_dst++ = g;
@@ -1472,17 +1472,17 @@ compose_dialog (const gchar *compose_type,
     }
 
   /* Save original image width/height */
-  composeint.width  = gimp_drawable_width (drawable_ID);
-  composeint.height = gimp_drawable_height (drawable_ID);
+  composeint.width  = picman_drawable_width (drawable_ID);
+  composeint.height = picman_drawable_height (drawable_ID);
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  layer_list = gimp_image_get_layers (gimp_item_get_image (drawable_ID),
+  layer_list = picman_image_get_layers (picman_item_get_image (drawable_ID),
                                       &nlayers);
 
-  dialog = gimp_dialog_new (_("Compose"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Compose"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, COMPOSE_PROC,
+                            picman_standard_help_func, COMPOSE_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1498,7 +1498,7 @@ compose_dialog (const gchar *compose_type,
                     G_CALLBACK (check_response),
                     NULL);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1508,7 +1508,7 @@ compose_dialog (const gchar *compose_type,
 
   /* Compose type combo */
 
-  frame = gimp_frame_new (_("Compose Channels"));
+  frame = picman_frame_new (_("Compose Channels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1526,7 +1526,7 @@ compose_dialog (const gchar *compose_type,
   gtk_size_group_add_widget (size_group, label);
   g_object_unref (size_group);
 
-  combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
   for (j = 0; j < G_N_ELEMENTS (compose_dsc); j++)
     {
       gchar *label = g_strdup (gettext (compose_dsc[j].compose_type));
@@ -1536,9 +1536,9 @@ compose_dialog (const gchar *compose_type,
         if (*l == '-' || *l == '_')
           *l = ' ';
 
-      gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (combo),
-                                 GIMP_INT_STORE_LABEL, label,
-                                 GIMP_INT_STORE_VALUE, j,
+      picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (combo),
+                                 PICMAN_INT_STORE_LABEL, label,
+                                 PICMAN_INT_STORE_VALUE, j,
                                  -1);
       g_free (label);
     }
@@ -1550,7 +1550,7 @@ compose_dialog (const gchar *compose_type,
 
   /* Channel representation table */
 
-  frame = gimp_frame_new (_("Channel Representations"));
+  frame = picman_frame_new (_("Channel Representations"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -1603,18 +1603,18 @@ compose_dialog (const gchar *compose_type,
 
       composeint.selected[j].is_ID = TRUE;
 
-      combo = gimp_drawable_combo_box_new (check_gray, NULL);
+      combo = picman_drawable_combo_box_new (check_gray, NULL);
       composeint.channel_menu[j] = combo;
 
       ico = gtk_widget_render_icon (dialog,
-                                    GIMP_STOCK_CHANNEL_GRAY,
+                                    PICMAN_STOCK_CHANNEL_GRAY,
                                     GTK_ICON_SIZE_BUTTON, NULL);
       model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
       gtk_list_store_append (GTK_LIST_STORE (model), &iter);
       gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-                          GIMP_INT_STORE_VALUE,  -1,
-                          GIMP_INT_STORE_LABEL,  _("Mask value"),
-                          GIMP_INT_STORE_PIXBUF, ico,
+                          PICMAN_INT_STORE_VALUE,  -1,
+                          PICMAN_INT_STORE_LABEL,  _("Mask value"),
+                          PICMAN_INT_STORE_PIXBUF, ico,
                           -1);
       g_object_unref (ico);
       gtk_table_attach (GTK_TABLE (table), combo, 1, 2, j, j + 1,
@@ -1623,12 +1623,12 @@ compose_dialog (const gchar *compose_type,
 
       gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
-      scale = gimp_color_scale_entry_new (GTK_TABLE (table), 2, j, NULL,
+      scale = picman_color_scale_entry_new (GTK_TABLE (table), 2, j, NULL,
                                           100, 4,
                                           255.0, 0.0, 255.0, 1.0, 10.0, 0,
                                           NULL, NULL);
-      composeint.color_scales[j] = GIMP_SCALE_ENTRY_SCALE (scale);
-      composeint.color_spins[j]  = GIMP_SCALE_ENTRY_SPINBUTTON (scale);
+      composeint.color_scales[j] = PICMAN_SCALE_ENTRY_SCALE (scale);
+      composeint.color_spins[j]  = PICMAN_SCALE_ENTRY_SPINBUTTON (scale);
 
       gtk_widget_set_sensitive (composeint.color_scales[j], FALSE);
       gtk_widget_set_sensitive (composeint.color_spins[j],  FALSE);
@@ -1640,7 +1640,7 @@ compose_dialog (const gchar *compose_type,
       /* This has to be connected last otherwise it will emit before
        * combo_callback has any scale and spinbutton to work with
        */
-      gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                   composeint.selected[j].comp.ID,
                                   G_CALLBACK (combo_callback),
                                   GINT_TO_POINTER (j));
@@ -1649,14 +1649,14 @@ compose_dialog (const gchar *compose_type,
   g_free (layer_list);
 
   /* Calls the combo callback and sets icons, labels and sensitivity */
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               composeint.compose_idx,
                               G_CALLBACK (type_combo_callback),
                               NULL);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1689,9 +1689,9 @@ check_gray (gint32   image_id,
             gpointer data)
 
 {
-  return ((gimp_image_base_type (image_id) == GIMP_GRAY) &&
-          (gimp_image_width  (image_id) == composeint.width) &&
-          (gimp_image_height (image_id) == composeint.height));
+  return ((picman_image_base_type (image_id) == PICMAN_GRAY) &&
+          (picman_image_width  (image_id) == composeint.width) &&
+          (picman_image_height (image_id) == composeint.height));
 }
 
 static void
@@ -1742,13 +1742,13 @@ check_response (GtkWidget *dialog,
 }
 
 static void
-combo_callback (GimpIntComboBox *widget,
+combo_callback (PicmanIntComboBox *widget,
                 gpointer         data)
 {
   gint id;
   gint n;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &id);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &id);
   n = GPOINTER_TO_INT (data);
 
   if (id == -1)
@@ -1778,10 +1778,10 @@ scale_callback (GtkAdjustment *adj,
 }
 
 static void
-type_combo_callback (GimpIntComboBox *combo,
+type_combo_callback (PicmanIntComboBox *combo,
                      gpointer         data)
 {
-  if (gimp_int_combo_box_get_active (combo, &composeint.compose_idx))
+  if (picman_int_combo_box_get_active (combo, &composeint.compose_idx))
     {
       gboolean combo4;
       gboolean scale4;

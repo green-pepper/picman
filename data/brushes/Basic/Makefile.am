@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/Basic
+## Makefile.am for picman/data/brushes/Basic
 
-brushbasicdatadir = $(gimpdatadir)/brushes/Basic
+brushbasicdatadir = $(picmandatadir)/brushes/Basic
 
 brushbasicdata_DATA = \
 	1-pixel.vbr		\

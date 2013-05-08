@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,11 +29,11 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core/core-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
 #include "errors.h"
 
@@ -44,23 +44,23 @@
 
 /*  private variables  */
 
-static Gimp                *the_errors_gimp   = NULL;
+static Picman                *the_errors_picman   = NULL;
 static gboolean             use_debug_handler = FALSE;
-static GimpStackTraceMode   stack_trace_mode  = GIMP_STACK_TRACE_QUERY;
+static PicmanStackTraceMode   stack_trace_mode  = PICMAN_STACK_TRACE_QUERY;
 static gchar               *full_prog_name    = NULL;
 
 
 /*  local function prototypes  */
 
-static G_GNUC_NORETURN void  gimp_eek (const gchar *reason,
+static G_GNUC_NORETURN void  picman_eek (const gchar *reason,
                                        const gchar *message,
                                        gboolean     use_handler);
 
-static void   gimp_message_log_func (const gchar        *log_domain,
+static void   picman_message_log_func (const gchar        *log_domain,
                                      GLogLevelFlags      flags,
                                      const gchar        *message,
                                      gpointer            data);
-static void   gimp_error_log_func   (const gchar        *domain,
+static void   picman_error_log_func   (const gchar        *domain,
                                      GLogLevelFlags      flags,
                                      const gchar        *message,
                                      gpointer            data) G_GNUC_NORETURN;
@@ -70,46 +70,46 @@ static void   gimp_error_log_func   (const gchar        *domain,
 /*  public functions  */
 
 void
-errors_init (Gimp               *gimp,
+errors_init (Picman               *picman,
              const gchar        *_full_prog_name,
              gboolean            _use_debug_handler,
-             GimpStackTraceMode  _stack_trace_mode)
+             PicmanStackTraceMode  _stack_trace_mode)
 {
   const gchar * const log_domains[] =
   {
-    "Gimp",
-    "Gimp-Actions",
-    "Gimp-Base",
-    "Gimp-Composite",
-    "Gimp-Config",
-    "Gimp-Core",
-    "Gimp-Dialogs",
-    "Gimp-Display",
-    "Gimp-File",
-    "Gimp-GUI",
-    "Gimp-Menus",
-    "Gimp-PDB",
-    "Gimp-Paint",
-    "Gimp-Paint-Funcs",
-    "Gimp-Plug-In",
-    "Gimp-Text",
-    "Gimp-Tools",
-    "Gimp-Vectors",
-    "Gimp-Widgets",
-    "Gimp-XCF"
+    "Picman",
+    "Picman-Actions",
+    "Picman-Base",
+    "Picman-Composite",
+    "Picman-Config",
+    "Picman-Core",
+    "Picman-Dialogs",
+    "Picman-Display",
+    "Picman-File",
+    "Picman-GUI",
+    "Picman-Menus",
+    "Picman-PDB",
+    "Picman-Paint",
+    "Picman-Paint-Funcs",
+    "Picman-Plug-In",
+    "Picman-Text",
+    "Picman-Tools",
+    "Picman-Vectors",
+    "Picman-Widgets",
+    "Picman-XCF"
   };
   gint i;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (_full_prog_name != NULL);
   g_return_if_fail (full_prog_name == NULL);
 
-#ifdef GIMP_UNSTABLE
-  g_printerr ("This is a development version of GIMP.  "
+#ifdef PICMAN_UNSTABLE
+  g_printerr ("This is a development version of PICMAN.  "
               "Debug messages may appear here.\n\n");
-#endif /* GIMP_UNSTABLE */
+#endif /* PICMAN_UNSTABLE */
 
-  the_errors_gimp   = gimp;
+  the_errors_picman   = picman;
   use_debug_handler = _use_debug_handler ? TRUE : FALSE;
   stack_trace_mode  = _stack_trace_mode;
   full_prog_name    = g_strdup (_full_prog_name);
@@ -117,93 +117,93 @@ errors_init (Gimp               *gimp,
   for (i = 0; i < G_N_ELEMENTS (log_domains); i++)
     g_log_set_handler (log_domains[i],
                        G_LOG_LEVEL_MESSAGE,
-                       gimp_message_log_func, gimp);
+                       picman_message_log_func, picman);
 
   g_log_set_handler (NULL,
                      G_LOG_LEVEL_ERROR | G_LOG_FLAG_FATAL,
-                     gimp_error_log_func, gimp);
+                     picman_error_log_func, picman);
 }
 
 void
 errors_exit (void)
 {
-  the_errors_gimp = NULL;
+  the_errors_picman = NULL;
 }
 
 void
-gimp_fatal_error (const gchar *message)
+picman_fatal_error (const gchar *message)
 {
-  gimp_eek ("fatal error", message, TRUE);
+  picman_eek ("fatal error", message, TRUE);
 }
 
 void
-gimp_terminate (const gchar *message)
+picman_terminate (const gchar *message)
 {
-  gimp_eek ("terminated", message, use_debug_handler);
+  picman_eek ("terminated", message, use_debug_handler);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_message_log_func (const gchar    *log_domain,
+picman_message_log_func (const gchar    *log_domain,
                        GLogLevelFlags  flags,
                        const gchar    *message,
                        gpointer        data)
 {
-  Gimp *gimp = data;
+  Picman *picman = data;
 
-  if (gimp)
+  if (picman)
     {
-      gimp_show_message (gimp, NULL, GIMP_MESSAGE_WARNING, NULL, message);
+      picman_show_message (picman, NULL, PICMAN_MESSAGE_WARNING, NULL, message);
     }
   else
     {
       g_printerr ("%s: %s\n\n",
-                  gimp_filename_to_utf8 (full_prog_name), message);
+                  picman_filename_to_utf8 (full_prog_name), message);
     }
 }
 
 static void
-gimp_error_log_func (const gchar    *domain,
+picman_error_log_func (const gchar    *domain,
                      GLogLevelFlags  flags,
                      const gchar    *message,
                      gpointer        data)
 {
-  gimp_fatal_error (message);
+  picman_fatal_error (message);
 }
 
 static void
-gimp_eek (const gchar *reason,
+picman_eek (const gchar *reason,
           const gchar *message,
           gboolean     use_handler)
 {
 #ifndef G_OS_WIN32
-  g_printerr ("%s: %s: %s\n", gimp_filename_to_utf8 (full_prog_name),
+  g_printerr ("%s: %s: %s\n", picman_filename_to_utf8 (full_prog_name),
               reason, message);
 
   if (use_handler)
     {
       switch (stack_trace_mode)
         {
-        case GIMP_STACK_TRACE_NEVER:
+        case PICMAN_STACK_TRACE_NEVER:
           break;
 
-        case GIMP_STACK_TRACE_QUERY:
+        case PICMAN_STACK_TRACE_QUERY:
           {
             sigset_t sigset;
 
             sigemptyset (&sigset);
             sigprocmask (SIG_SETMASK, &sigset, NULL);
 
-            if (the_errors_gimp)
-              gimp_gui_ungrab (the_errors_gimp);
+            if (the_errors_picman)
+              picman_gui_ungrab (the_errors_picman);
 
             g_on_error_query (full_prog_name);
           }
           break;
 
-        case GIMP_STACK_TRACE_ALWAYS:
+        case PICMAN_STACK_TRACE_ALWAYS:
           {
             sigset_t sigset;
 

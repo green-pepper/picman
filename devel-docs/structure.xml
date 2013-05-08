@@ -5,7 +5,7 @@
   <article id="structure" lang="en">
   <articleinfo>
     <title>
-      Directory Structure of the <application>GIMP</application> Source Tree
+      Directory Structure of the <application>PICMAN</application> Source Tree
     </title>
     <author>
       <firstname>Sven</firstname>
@@ -15,14 +15,14 @@
     <abstract>
       <para>
 	This document outlines the directory structure of the
-	<application>GIMP</application> source tree. It should help
-	people to get started with the <application>GIMP</application> code.
+	<application>PICMAN</application> source tree. It should help
+	people to get started with the <application>PICMAN</application> code.
       </para>
     </abstract>
   </articleinfo>
   
   <para>
-    The <application>GIMP</application> source tree can be divided
+    The <application>PICMAN</application> source tree can be divided
     into the core application, libraries, plug-ins, data files and
     some stuff that doesn't fit into these categories. Here is a list
     of top-level directories:
@@ -34,21 +34,21 @@
 	<row>
 	  <entry><filename>app</filename></entry>
 	  <entry>
-            The source code of the core GIMP application.
+            The source code of the core PICMAN application.
           </entry>
 	</row>
 	<row>
 	  <entry><filename>build</filename></entry>
 	  <entry>
             This is a virtual CVS module that is only here to assist in
-            building <application>GIMP</application> for Windows.
+            building <application>PICMAN</application> for Windows.
           </entry>
 	</row>
 	<row>
 	  <entry><filename>cursors</filename></entry>
 	  <entry>
             Bitmaps that are used to construct cursors used by the various
-            <application>GIMP</application> tools.
+            <application>PICMAN</application> tools.
           </entry>
 	</row>
 	<row>
@@ -56,7 +56,7 @@
 	  <entry>
             All sorts of data files like brushes, gradients, patterns as well
             as the splash image and files to integrate
-            <application>GIMP</application> into the GNOME desktop.
+            <application>PICMAN</application> into the GNOME desktop.
           </entry>
 	</row>
  	<row>
@@ -70,7 +70,7 @@
 	  <entry><filename>docs</filename></entry>
 	  <entry>
             Documentation for users. The man-pages which get installed with
-            the <application>GIMP</application> as well as reference sheets
+            the <application>PICMAN</application> as well as reference sheets
             for keybindings and other stuff.
           </entry>
 	</row>
@@ -78,51 +78,51 @@
 	  <entry><filename>etc</filename></entry>
 	  <entry>
             Configuration files that get installed with the
-            <application>GIMP</application>.
+            <application>PICMAN</application>.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimp</filename></entry>
+	  <entry><filename>libpicman</filename></entry>
 	  <entry>
-            The main <application>GIMP</application> library. It provides the
+            The main <application>PICMAN</application> library. It provides the
             API to write plug-ins in the C programming
-            language. <application>GIMP</application> itself does not link
+            language. <application>PICMAN</application> itself does not link
             against this library.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimpbase</filename></entry>
+	  <entry><filename>libpicmanbase</filename></entry>
 	  <entry>
             Basic functions that are shared by the
-            <application>GIMP</application> application and its plug-ins.
+            <application>PICMAN</application> application and its plug-ins.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimpcolor</filename></entry>
+	  <entry><filename>libpicmancolor</filename></entry>
 	  <entry>
             Color-related functionality that is shared by the
-            <application>GIMP</application> application and its plug-ins.
+            <application>PICMAN</application> application and its plug-ins.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimpmath</filename></entry>
+	  <entry><filename>libpicmanmath</filename></entry>
 	  <entry>
             A basic set of mathematic operations useful for the the
-            <application>GIMP</application> application and its plug-ins.
+            <application>PICMAN</application> application and its plug-ins.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimpmodule</filename></entry>
+	  <entry><filename>libpicmanmodule</filename></entry>
 	  <entry>
             A small library that abstracts dynamic loading of modules. This is
             used to implement loadable color selectors and display filters.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>libgimpwidgets</filename></entry>
+	  <entry><filename>libpicmanwidgets</filename></entry>
 	  <entry>
             User interface elements (widgets) and utility functions that are
-            shared by the <application>GIMP</application> application and its
+            shared by the <application>PICMAN</application> application and its
             plug-ins.
           </entry>
 	</row>
@@ -130,7 +130,7 @@
 	  <entry><filename>m4macros</filename></entry>
 	  <entry>
             m4 macros (well, actually just one) which get installed to help
-            automake to detect a GIMP installation. Useful for plug-in
+            automake to detect a PICMAN installation. Useful for plug-in
             developers.
           </entry>
 	</row>
@@ -145,27 +145,27 @@
 	  <entry><filename>plug-ins</filename></entry>
 	  <entry>
             This directory and its sub-directories hold all the
-            <application>GIMP</application> plug-ins that are part of the main
-            <application>GIMP</application> distribution.
+            <application>PICMAN</application> plug-ins that are part of the main
+            <application>PICMAN</application> distribution.
           </entry>
 	</row>
  	<row>
 	  <entry><filename>po</filename></entry>
 	  <entry>
             Translations of strings used in the main
-            <application>GIMP</application> application.
+            <application>PICMAN</application> application.
           </entry>
 	</row>
  	<row>
-	  <entry><filename>po-libgimp</filename></entry>
+	  <entry><filename>po-libpicman</filename></entry>
 	  <entry>
-            Translations of strings used in libgimp.
+            Translations of strings used in libpicman.
           </entry>
 	</row>
  	<row>
 	  <entry><filename>po-plug-ins</filename></entry>
 	  <entry>
-            Translations of strings used in <application>GIMP</application>
+            Translations of strings used in <application>PICMAN</application>
             plug-ins.
           </entry>
 	</row>
@@ -187,7 +187,7 @@
  	<row>
 	  <entry><filename>themes</filename></entry>
 	  <entry>
-            The look of <application>GIMP</application> is themeable to some
+            The look of <application>PICMAN</application> is themeable to some
             extent. This directory at the moment only holds the default theme
             but more themes might be added in the future.
           </entry>
@@ -202,9 +202,9 @@
  	<row>
 	  <entry><filename>tools</filename></entry>
 	  <entry>
-            The source code for some <application>GIMP</application>-related
+            The source code for some <application>PICMAN</application>-related
             tools as well as tools used to build the
-            <application>GIMP</application> application.
+            <application>PICMAN</application> application.
           </entry>
 	</row>
       </tbody>
@@ -217,9 +217,9 @@
   </para>
 
   <sect1 id="app">
-    <title>The <application>GIMP</application> application</title>
+    <title>The <application>PICMAN</application> application</title>
     <para>
-      The source code of the core <application>GIMP</application>
+      The source code of the core <application>PICMAN</application>
       application is found in the <filename>app</filename> directory.
     </para>
 
@@ -249,15 +249,15 @@
 	  <row>
 	    <entry><filename>app/config</filename></entry>
 	    <entry>
-	      handling of config files, provides the GimpConfig
-	      interface and the GimpRc object which is used from
+	      handling of config files, provides the PicmanConfig
+	      interface and the PicmanRc object which is used from
 	      all over of the application; depends on GObject
 	    </entry>
 	  </row>
 	  <row>
 	    <entry><filename>app/core</filename></entry>
 	    <entry>
-	      the core of the GIMP core, makes heavy use of GObject
+	      the core of the PICMAN core, makes heavy use of GObject
               but is not GTK+-dependent
 	    </entry>
 	  </row>

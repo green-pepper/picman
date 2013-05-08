@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 ; 1.00 - initial release
 ; 1.01 - some code cleanup, no real changes
 ;
-; Copyright (C) 1997-1999 Sven Neumann <sven@gimp.org>
+; Copyright (C) 1997-1999 Sven Neumann <sven@picman.org>
 ;
 ;
 ; Rounds the corners of an image, optionally adding a drop-shadow and
@@ -49,40 +49,40 @@
   (let* ((shadow-blur (abs shadow-blur))
          (radius (abs radius))
          (diam (* 2 radius))
-         (width (car (gimp-image-width img)))
-         (height (car (gimp-image-height img)))
-         (type (car (gimp-drawable-type-with-alpha drawable)))
+         (width (car (picman-image-width img)))
+         (height (car (picman-image-height img)))
+         (type (car (picman-drawable-type-with-alpha drawable)))
          (image (cond ((= work-on-copy TRUE)
-                       (car (gimp-image-duplicate img)))
+                       (car (picman-image-duplicate img)))
                       ((= work-on-copy FALSE)
                        img)))
-         (pic-layer (car (gimp-image-get-active-drawable image))))
+         (pic-layer (car (picman-image-get-active-drawable image))))
 
-  (gimp-context-push)
-  (gimp-context-set-defaults)
+  (picman-context-push)
+  (picman-context-set-defaults)
 
   (if (= work-on-copy TRUE)
-      (gimp-image-undo-disable image)
-      (gimp-image-undo-group-start image)
+      (picman-image-undo-disable image)
+      (picman-image-undo-group-start image)
   )
 
   ; add an alpha channel to the image
-  (gimp-layer-add-alpha pic-layer)
+  (picman-layer-add-alpha pic-layer)
 
   ; round the edges
-  (gimp-selection-none image)
-  (gimp-image-select-rectangle image CHANNEL-OP-ADD 0 0 radius radius)
-  (gimp-image-select-ellipse image CHANNEL-OP-SUBTRACT  0 0 diam diam)
-  (gimp-image-select-rectangle image CHANNEL-OP-ADD (- width radius) 0 radius radius)
-  (gimp-image-select-ellipse image CHANNEL-OP-SUBTRACT (- width diam) 0 diam diam)
-  (gimp-image-select-rectangle image CHANNEL-OP-ADD 0 (- height radius) radius radius)
-  (gimp-image-select-ellipse image CHANNEL-OP-SUBTRACT 0 (- height diam) diam diam)
-  (gimp-image-select-rectangle image CHANNEL-OP-ADD (- width radius) (- height radius)
+  (picman-selection-none image)
+  (picman-image-select-rectangle image CHANNEL-OP-ADD 0 0 radius radius)
+  (picman-image-select-ellipse image CHANNEL-OP-SUBTRACT  0 0 diam diam)
+  (picman-image-select-rectangle image CHANNEL-OP-ADD (- width radius) 0 radius radius)
+  (picman-image-select-ellipse image CHANNEL-OP-SUBTRACT (- width diam) 0 diam diam)
+  (picman-image-select-rectangle image CHANNEL-OP-ADD 0 (- height radius) radius radius)
+  (picman-image-select-ellipse image CHANNEL-OP-SUBTRACT 0 (- height diam) diam diam)
+  (picman-image-select-rectangle image CHANNEL-OP-ADD (- width radius) (- height radius)
                     radius radius)
-  (gimp-image-select-ellipse image CHANNEL-OP-SUBTRACT (- width diam) (- height diam)
+  (picman-image-select-ellipse image CHANNEL-OP-SUBTRACT (- width diam) (- height diam)
                        diam diam)
-  (gimp-edit-clear pic-layer)
-  (gimp-selection-none image)
+  (picman-edit-clear pic-layer)
+  (picman-selection-none image)
 
   ; optionally add a shadow
   (if (= shadow-toggle TRUE)
@@ -95,40 +95,40 @@
                                '(0 0 0)
                                80
                                TRUE)
-        (set! width (car (gimp-image-width image)))
-        (set! height (car (gimp-image-height image)))))
+        (set! width (car (picman-image-width image)))
+        (set! height (car (picman-image-height image)))))
 
   ; optionally add a background
   (if (= background-toggle TRUE)
-      (let* ((bg-layer (car (gimp-layer-new image
+      (let* ((bg-layer (car (picman-layer-new image
                                             width
                                             height
                                             type
                                             "Background"
                                             100
                                             NORMAL-MODE))))
-        (gimp-drawable-fill bg-layer BACKGROUND-FILL)
-        (gimp-image-insert-layer image bg-layer 0 -1)
-        (gimp-image-raise-item image pic-layer)
+        (picman-drawable-fill bg-layer BACKGROUND-FILL)
+        (picman-image-insert-layer image bg-layer 0 -1)
+        (picman-image-raise-item image pic-layer)
         (if (= shadow-toggle TRUE)
-            (gimp-image-lower-item image bg-layer))))
+            (picman-image-lower-item image bg-layer))))
 
 ; clean up after the script
   (if (= work-on-copy TRUE)
-      (gimp-image-undo-enable image)
-      (gimp-image-undo-group-end image)
+      (picman-image-undo-enable image)
+      (picman-image-undo-group-end image)
   )
 
   (if (= work-on-copy TRUE)
-      (gimp-display-new image))
-  (gimp-context-pop)
-  (gimp-displays-flush))
+      (picman-display-new image))
+  (picman-context-pop)
+  (picman-displays-flush))
 )
 
 (script-fu-register "script-fu-round-corners"
   _"_Round Corners..."
   _"Round the corners of an image and optionally add a drop-shadow and background"
-  "Sven Neumann <sven@gimp.org>"
+  "Sven Neumann <sven@picman.org>"
   "Sven Neumann"
   "1999/12/21"
   "RGB GRAY"

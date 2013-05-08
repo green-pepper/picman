@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,105 +23,105 @@
  * enums that are registered with the type system
  */
 
-#define GIMP_TYPE_ACTIVE_COLOR (gimp_active_color_get_type ())
+#define PICMAN_TYPE_ACTIVE_COLOR (picman_active_color_get_type ())
 
-GType gimp_active_color_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_ACTIVE_COLOR_FOREGROUND, /*< desc="Foreground" >*/
-  GIMP_ACTIVE_COLOR_BACKGROUND  /*< desc="Background" >*/
-} GimpActiveColor;
-
-
-#define GIMP_TYPE_COLOR_DIALOG_STATE (gimp_color_dialog_state_get_type ())
-
-GType gimp_color_dialog_state_get_type (void) G_GNUC_CONST;
+GType picman_active_color_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_COLOR_DIALOG_OK,
-  GIMP_COLOR_DIALOG_CANCEL,
-  GIMP_COLOR_DIALOG_UPDATE
-} GimpColorDialogState;
+  PICMAN_ACTIVE_COLOR_FOREGROUND, /*< desc="Foreground" >*/
+  PICMAN_ACTIVE_COLOR_BACKGROUND  /*< desc="Background" >*/
+} PicmanActiveColor;
 
 
-#define GIMP_TYPE_COLOR_FRAME_MODE (gimp_color_frame_mode_get_type ())
+#define PICMAN_TYPE_COLOR_DIALOG_STATE (picman_color_dialog_state_get_type ())
 
-GType gimp_color_frame_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_COLOR_FRAME_MODE_PIXEL,  /*< desc="Pixel" >*/
-  GIMP_COLOR_FRAME_MODE_RGB,    /*< desc="RGB"   >*/
-  GIMP_COLOR_FRAME_MODE_HSV,    /*< desc="HSV"   >*/
-  GIMP_COLOR_FRAME_MODE_CMYK    /*< desc="CMYK"  >*/
-} GimpColorFrameMode;
-
-
-#define GIMP_TYPE_COLOR_PICK_MODE (gimp_color_pick_mode_get_type ())
-
-GType gimp_color_pick_mode_get_type (void) G_GNUC_CONST;
+GType picman_color_dialog_state_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_COLOR_PICK_MODE_NONE,       /*< desc="Pick only"            >*/
-  GIMP_COLOR_PICK_MODE_FOREGROUND, /*< desc="Set foreground color" >*/
-  GIMP_COLOR_PICK_MODE_BACKGROUND, /*< desc="Set background color" >*/
-  GIMP_COLOR_PICK_MODE_PALETTE     /*< desc="Add to palette"       >*/
-} GimpColorPickMode;
+  PICMAN_COLOR_DIALOG_OK,
+  PICMAN_COLOR_DIALOG_CANCEL,
+  PICMAN_COLOR_DIALOG_UPDATE
+} PicmanColorDialogState;
 
 
-#define GIMP_TYPE_COLOR_PICK_STATE (gimp_color_pick_state_get_type ())
+#define PICMAN_TYPE_COLOR_FRAME_MODE (picman_color_frame_mode_get_type ())
 
-GType gimp_color_pick_state_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_COLOR_PICK_STATE_NEW,
-  GIMP_COLOR_PICK_STATE_UPDATE
-} GimpColorPickState;
-
-
-#define GIMP_TYPE_HISTOGRAM_SCALE (gimp_histogram_scale_get_type ())
-
-GType gimp_histogram_scale_get_type (void) G_GNUC_CONST;
+GType picman_color_frame_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_HISTOGRAM_SCALE_LINEAR,       /*< desc="Linear histogram"      >*/
-  GIMP_HISTOGRAM_SCALE_LOGARITHMIC   /*< desc="Logarithmic histogram" >*/
-} GimpHistogramScale;
+  PICMAN_COLOR_FRAME_MODE_PIXEL,  /*< desc="Pixel" >*/
+  PICMAN_COLOR_FRAME_MODE_RGB,    /*< desc="RGB"   >*/
+  PICMAN_COLOR_FRAME_MODE_HSV,    /*< desc="HSV"   >*/
+  PICMAN_COLOR_FRAME_MODE_CMYK    /*< desc="CMYK"  >*/
+} PicmanColorFrameMode;
 
 
-#define GIMP_TYPE_TAB_STYLE (gimp_tab_style_get_type ())
+#define PICMAN_TYPE_COLOR_PICK_MODE (picman_color_pick_mode_get_type ())
 
-GType gimp_tab_style_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_TAB_STYLE_ICON,          /*< desc="Icon"           >*/
-  GIMP_TAB_STYLE_PREVIEW,       /*< desc="Current status" >*/
-  GIMP_TAB_STYLE_NAME,          /*< desc="Text"           >*/
-  GIMP_TAB_STYLE_BLURB,         /*< desc="Description"    >*/
-  GIMP_TAB_STYLE_ICON_NAME,     /*< desc="Icon & text"    >*/
-  GIMP_TAB_STYLE_ICON_BLURB,    /*< desc="Icon & desc"    >*/
-  GIMP_TAB_STYLE_PREVIEW_NAME,  /*< desc="Status & text"  >*/
-  GIMP_TAB_STYLE_PREVIEW_BLURB, /*< desc="Status & desc"  >*/
-  GIMP_TAB_STYLE_UNDEFINED,     /*< desc="Undefined"      >*/
-  GIMP_TAB_STYLE_AUTOMATIC      /*< desc="Automatic"      >*/
-} GimpTabStyle;
-
-
-#define GIMP_TYPE_TAG_ENTRY_MODE       (gimp_tag_entry_mode_get_type ())
-
-GType gimp_tag_entry_mode_get_type (void) G_GNUC_CONST;
+GType picman_color_pick_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TAG_ENTRY_MODE_QUERY,
-  GIMP_TAG_ENTRY_MODE_ASSIGN,
-} GimpTagEntryMode;
+  PICMAN_COLOR_PICK_MODE_NONE,       /*< desc="Pick only"            >*/
+  PICMAN_COLOR_PICK_MODE_FOREGROUND, /*< desc="Set foreground color" >*/
+  PICMAN_COLOR_PICK_MODE_BACKGROUND, /*< desc="Set background color" >*/
+  PICMAN_COLOR_PICK_MODE_PALETTE     /*< desc="Add to palette"       >*/
+} PicmanColorPickMode;
+
+
+#define PICMAN_TYPE_COLOR_PICK_STATE (picman_color_pick_state_get_type ())
+
+GType picman_color_pick_state_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_COLOR_PICK_STATE_NEW,
+  PICMAN_COLOR_PICK_STATE_UPDATE
+} PicmanColorPickState;
+
+
+#define PICMAN_TYPE_HISTOGRAM_SCALE (picman_histogram_scale_get_type ())
+
+GType picman_histogram_scale_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_HISTOGRAM_SCALE_LINEAR,       /*< desc="Linear histogram"      >*/
+  PICMAN_HISTOGRAM_SCALE_LOGARITHMIC   /*< desc="Logarithmic histogram" >*/
+} PicmanHistogramScale;
+
+
+#define PICMAN_TYPE_TAB_STYLE (picman_tab_style_get_type ())
+
+GType picman_tab_style_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TAB_STYLE_ICON,          /*< desc="Icon"           >*/
+  PICMAN_TAB_STYLE_PREVIEW,       /*< desc="Current status" >*/
+  PICMAN_TAB_STYLE_NAME,          /*< desc="Text"           >*/
+  PICMAN_TAB_STYLE_BLURB,         /*< desc="Description"    >*/
+  PICMAN_TAB_STYLE_ICON_NAME,     /*< desc="Icon & text"    >*/
+  PICMAN_TAB_STYLE_ICON_BLURB,    /*< desc="Icon & desc"    >*/
+  PICMAN_TAB_STYLE_PREVIEW_NAME,  /*< desc="Status & text"  >*/
+  PICMAN_TAB_STYLE_PREVIEW_BLURB, /*< desc="Status & desc"  >*/
+  PICMAN_TAB_STYLE_UNDEFINED,     /*< desc="Undefined"      >*/
+  PICMAN_TAB_STYLE_AUTOMATIC      /*< desc="Automatic"      >*/
+} PicmanTabStyle;
+
+
+#define PICMAN_TYPE_TAG_ENTRY_MODE       (picman_tag_entry_mode_get_type ())
+
+GType picman_tag_entry_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TAG_ENTRY_MODE_QUERY,
+  PICMAN_TAG_ENTRY_MODE_ASSIGN,
+} PicmanTagEntryMode;
 
 
 /*
@@ -130,172 +130,172 @@ typedef enum
 
 typedef enum  /*< skip >*/
 {
-  GIMP_VIEW_BG_CHECKS,
-  GIMP_VIEW_BG_WHITE
-} GimpViewBG;
+  PICMAN_VIEW_BG_CHECKS,
+  PICMAN_VIEW_BG_WHITE
+} PicmanViewBG;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_VIEW_BORDER_BLACK,
-  GIMP_VIEW_BORDER_WHITE,
-  GIMP_VIEW_BORDER_RED,
-  GIMP_VIEW_BORDER_GREEN
-} GimpViewBorderType;
+  PICMAN_VIEW_BORDER_BLACK,
+  PICMAN_VIEW_BORDER_WHITE,
+  PICMAN_VIEW_BORDER_RED,
+  PICMAN_VIEW_BORDER_GREEN
+} PicmanViewBorderType;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_DND_TYPE_NONE         = 0,
-  GIMP_DND_TYPE_URI_LIST     = 1,
-  GIMP_DND_TYPE_TEXT_PLAIN   = 2,
-  GIMP_DND_TYPE_NETSCAPE_URL = 3,
-  GIMP_DND_TYPE_XDS          = 4,
-  GIMP_DND_TYPE_COLOR        = 5,
-  GIMP_DND_TYPE_SVG          = 6,
-  GIMP_DND_TYPE_SVG_XML      = 7,
-  GIMP_DND_TYPE_PIXBUF       = 8,
-  GIMP_DND_TYPE_IMAGE        = 9,
-  GIMP_DND_TYPE_COMPONENT    = 10,
-  GIMP_DND_TYPE_LAYER        = 11,
-  GIMP_DND_TYPE_CHANNEL      = 12,
-  GIMP_DND_TYPE_LAYER_MASK   = 13,
-  GIMP_DND_TYPE_VECTORS      = 14,
-  GIMP_DND_TYPE_BRUSH        = 15,
-  GIMP_DND_TYPE_PATTERN      = 16,
-  GIMP_DND_TYPE_GRADIENT     = 17,
-  GIMP_DND_TYPE_PALETTE      = 18,
-  GIMP_DND_TYPE_FONT         = 19,
-  GIMP_DND_TYPE_BUFFER       = 20,
-  GIMP_DND_TYPE_IMAGEFILE    = 21,
-  GIMP_DND_TYPE_TEMPLATE     = 22,
-  GIMP_DND_TYPE_TOOL_INFO    = 23,
-  GIMP_DND_TYPE_DIALOG       = 24,
+  PICMAN_DND_TYPE_NONE         = 0,
+  PICMAN_DND_TYPE_URI_LIST     = 1,
+  PICMAN_DND_TYPE_TEXT_PLAIN   = 2,
+  PICMAN_DND_TYPE_NETSCAPE_URL = 3,
+  PICMAN_DND_TYPE_XDS          = 4,
+  PICMAN_DND_TYPE_COLOR        = 5,
+  PICMAN_DND_TYPE_SVG          = 6,
+  PICMAN_DND_TYPE_SVG_XML      = 7,
+  PICMAN_DND_TYPE_PIXBUF       = 8,
+  PICMAN_DND_TYPE_IMAGE        = 9,
+  PICMAN_DND_TYPE_COMPONENT    = 10,
+  PICMAN_DND_TYPE_LAYER        = 11,
+  PICMAN_DND_TYPE_CHANNEL      = 12,
+  PICMAN_DND_TYPE_LAYER_MASK   = 13,
+  PICMAN_DND_TYPE_VECTORS      = 14,
+  PICMAN_DND_TYPE_BRUSH        = 15,
+  PICMAN_DND_TYPE_PATTERN      = 16,
+  PICMAN_DND_TYPE_GRADIENT     = 17,
+  PICMAN_DND_TYPE_PALETTE      = 18,
+  PICMAN_DND_TYPE_FONT         = 19,
+  PICMAN_DND_TYPE_BUFFER       = 20,
+  PICMAN_DND_TYPE_IMAGEFILE    = 21,
+  PICMAN_DND_TYPE_TEMPLATE     = 22,
+  PICMAN_DND_TYPE_TOOL_INFO    = 23,
+  PICMAN_DND_TYPE_DIALOG       = 24,
 
-  GIMP_DND_TYPE_LAST         = GIMP_DND_TYPE_DIALOG
-} GimpDndType;
-
-typedef enum  /*< skip >*/
-{
-  GIMP_DROP_NONE,
-  GIMP_DROP_ABOVE,
-  GIMP_DROP_BELOW
-} GimpDropType;
+  PICMAN_DND_TYPE_LAST         = PICMAN_DND_TYPE_DIALOG
+} PicmanDndType;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_CURSOR_NONE = 1024,  /* (GDK_LAST_CURSOR + 2) yes, this is insane */
-  GIMP_CURSOR_MOUSE,
-  GIMP_CURSOR_CROSSHAIR,
-  GIMP_CURSOR_CROSSHAIR_SMALL,
-  GIMP_CURSOR_BAD,
-  GIMP_CURSOR_MOVE,
-  GIMP_CURSOR_ZOOM,
-  GIMP_CURSOR_COLOR_PICKER,
-  GIMP_CURSOR_CORNER_TOP,
-  GIMP_CURSOR_CORNER_TOP_RIGHT,
-  GIMP_CURSOR_CORNER_RIGHT,
-  GIMP_CURSOR_CORNER_BOTTOM_RIGHT,
-  GIMP_CURSOR_CORNER_BOTTOM,
-  GIMP_CURSOR_CORNER_BOTTOM_LEFT,
-  GIMP_CURSOR_CORNER_LEFT,
-  GIMP_CURSOR_CORNER_TOP_LEFT,
-  GIMP_CURSOR_SIDE_TOP,
-  GIMP_CURSOR_SIDE_TOP_RIGHT,
-  GIMP_CURSOR_SIDE_RIGHT,
-  GIMP_CURSOR_SIDE_BOTTOM_RIGHT,
-  GIMP_CURSOR_SIDE_BOTTOM,
-  GIMP_CURSOR_SIDE_BOTTOM_LEFT,
-  GIMP_CURSOR_SIDE_LEFT,
-  GIMP_CURSOR_SIDE_TOP_LEFT,
-  GIMP_CURSOR_LAST
-} GimpCursorType;
+  PICMAN_DROP_NONE,
+  PICMAN_DROP_ABOVE,
+  PICMAN_DROP_BELOW
+} PicmanDropType;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_TOOL_CURSOR_NONE,
-  GIMP_TOOL_CURSOR_RECT_SELECT,
-  GIMP_TOOL_CURSOR_ELLIPSE_SELECT,
-  GIMP_TOOL_CURSOR_FREE_SELECT,
-  GIMP_TOOL_CURSOR_POLYGON_SELECT,
-  GIMP_TOOL_CURSOR_FUZZY_SELECT,
-  GIMP_TOOL_CURSOR_PATHS,
-  GIMP_TOOL_CURSOR_PATHS_ANCHOR,
-  GIMP_TOOL_CURSOR_PATHS_CONTROL,
-  GIMP_TOOL_CURSOR_PATHS_SEGMENT,
-  GIMP_TOOL_CURSOR_ISCISSORS,
-  GIMP_TOOL_CURSOR_MOVE,
-  GIMP_TOOL_CURSOR_ZOOM,
-  GIMP_TOOL_CURSOR_CROP,
-  GIMP_TOOL_CURSOR_RESIZE,
-  GIMP_TOOL_CURSOR_ROTATE,
-  GIMP_TOOL_CURSOR_SHEAR,
-  GIMP_TOOL_CURSOR_PERSPECTIVE,
-  GIMP_TOOL_CURSOR_FLIP_HORIZONTAL,
-  GIMP_TOOL_CURSOR_FLIP_VERTICAL,
-  GIMP_TOOL_CURSOR_TEXT,
-  GIMP_TOOL_CURSOR_COLOR_PICKER,
-  GIMP_TOOL_CURSOR_BUCKET_FILL,
-  GIMP_TOOL_CURSOR_BLEND,
-  GIMP_TOOL_CURSOR_PENCIL,
-  GIMP_TOOL_CURSOR_PAINTBRUSH,
-  GIMP_TOOL_CURSOR_AIRBRUSH,
-  GIMP_TOOL_CURSOR_INK,
-  GIMP_TOOL_CURSOR_CLONE,
-  GIMP_TOOL_CURSOR_HEAL,
-  GIMP_TOOL_CURSOR_ERASER,
-  GIMP_TOOL_CURSOR_SMUDGE,
-  GIMP_TOOL_CURSOR_BLUR,
-  GIMP_TOOL_CURSOR_DODGE,
-  GIMP_TOOL_CURSOR_BURN,
-  GIMP_TOOL_CURSOR_MEASURE,
-  GIMP_TOOL_CURSOR_HAND,
-  GIMP_TOOL_CURSOR_LAST
-} GimpToolCursorType;
+  PICMAN_CURSOR_NONE = 1024,  /* (GDK_LAST_CURSOR + 2) yes, this is insane */
+  PICMAN_CURSOR_MOUSE,
+  PICMAN_CURSOR_CROSSHAIR,
+  PICMAN_CURSOR_CROSSHAIR_SMALL,
+  PICMAN_CURSOR_BAD,
+  PICMAN_CURSOR_MOVE,
+  PICMAN_CURSOR_ZOOM,
+  PICMAN_CURSOR_COLOR_PICKER,
+  PICMAN_CURSOR_CORNER_TOP,
+  PICMAN_CURSOR_CORNER_TOP_RIGHT,
+  PICMAN_CURSOR_CORNER_RIGHT,
+  PICMAN_CURSOR_CORNER_BOTTOM_RIGHT,
+  PICMAN_CURSOR_CORNER_BOTTOM,
+  PICMAN_CURSOR_CORNER_BOTTOM_LEFT,
+  PICMAN_CURSOR_CORNER_LEFT,
+  PICMAN_CURSOR_CORNER_TOP_LEFT,
+  PICMAN_CURSOR_SIDE_TOP,
+  PICMAN_CURSOR_SIDE_TOP_RIGHT,
+  PICMAN_CURSOR_SIDE_RIGHT,
+  PICMAN_CURSOR_SIDE_BOTTOM_RIGHT,
+  PICMAN_CURSOR_SIDE_BOTTOM,
+  PICMAN_CURSOR_SIDE_BOTTOM_LEFT,
+  PICMAN_CURSOR_SIDE_LEFT,
+  PICMAN_CURSOR_SIDE_TOP_LEFT,
+  PICMAN_CURSOR_LAST
+} PicmanCursorType;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_CURSOR_MODIFIER_NONE,
-  GIMP_CURSOR_MODIFIER_BAD,
-  GIMP_CURSOR_MODIFIER_PLUS,
-  GIMP_CURSOR_MODIFIER_MINUS,
-  GIMP_CURSOR_MODIFIER_INTERSECT,
-  GIMP_CURSOR_MODIFIER_MOVE,
-  GIMP_CURSOR_MODIFIER_RESIZE,
-  GIMP_CURSOR_MODIFIER_CONTROL,
-  GIMP_CURSOR_MODIFIER_ANCHOR,
-  GIMP_CURSOR_MODIFIER_FOREGROUND,
-  GIMP_CURSOR_MODIFIER_BACKGROUND,
-  GIMP_CURSOR_MODIFIER_PATTERN,
-  GIMP_CURSOR_MODIFIER_JOIN,
-  GIMP_CURSOR_MODIFIER_SELECT,
-  GIMP_CURSOR_MODIFIER_LAST
-} GimpCursorModifier;
+  PICMAN_TOOL_CURSOR_NONE,
+  PICMAN_TOOL_CURSOR_RECT_SELECT,
+  PICMAN_TOOL_CURSOR_ELLIPSE_SELECT,
+  PICMAN_TOOL_CURSOR_FREE_SELECT,
+  PICMAN_TOOL_CURSOR_POLYGON_SELECT,
+  PICMAN_TOOL_CURSOR_FUZZY_SELECT,
+  PICMAN_TOOL_CURSOR_PATHS,
+  PICMAN_TOOL_CURSOR_PATHS_ANCHOR,
+  PICMAN_TOOL_CURSOR_PATHS_CONTROL,
+  PICMAN_TOOL_CURSOR_PATHS_SEGMENT,
+  PICMAN_TOOL_CURSOR_ISCISSORS,
+  PICMAN_TOOL_CURSOR_MOVE,
+  PICMAN_TOOL_CURSOR_ZOOM,
+  PICMAN_TOOL_CURSOR_CROP,
+  PICMAN_TOOL_CURSOR_RESIZE,
+  PICMAN_TOOL_CURSOR_ROTATE,
+  PICMAN_TOOL_CURSOR_SHEAR,
+  PICMAN_TOOL_CURSOR_PERSPECTIVE,
+  PICMAN_TOOL_CURSOR_FLIP_HORIZONTAL,
+  PICMAN_TOOL_CURSOR_FLIP_VERTICAL,
+  PICMAN_TOOL_CURSOR_TEXT,
+  PICMAN_TOOL_CURSOR_COLOR_PICKER,
+  PICMAN_TOOL_CURSOR_BUCKET_FILL,
+  PICMAN_TOOL_CURSOR_BLEND,
+  PICMAN_TOOL_CURSOR_PENCIL,
+  PICMAN_TOOL_CURSOR_PAINTBRUSH,
+  PICMAN_TOOL_CURSOR_AIRBRUSH,
+  PICMAN_TOOL_CURSOR_INK,
+  PICMAN_TOOL_CURSOR_CLONE,
+  PICMAN_TOOL_CURSOR_HEAL,
+  PICMAN_TOOL_CURSOR_ERASER,
+  PICMAN_TOOL_CURSOR_SMUDGE,
+  PICMAN_TOOL_CURSOR_BLUR,
+  PICMAN_TOOL_CURSOR_DODGE,
+  PICMAN_TOOL_CURSOR_BURN,
+  PICMAN_TOOL_CURSOR_MEASURE,
+  PICMAN_TOOL_CURSOR_HAND,
+  PICMAN_TOOL_CURSOR_LAST
+} PicmanToolCursorType;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_DEVICE_VALUE_MODE       = 1 << 0,
-  GIMP_DEVICE_VALUE_AXES       = 1 << 1,
-  GIMP_DEVICE_VALUE_KEYS       = 1 << 2,
-  GIMP_DEVICE_VALUE_TOOL       = 1 << 3,
-  GIMP_DEVICE_VALUE_FOREGROUND = 1 << 4,
-  GIMP_DEVICE_VALUE_BACKGROUND = 1 << 5,
-  GIMP_DEVICE_VALUE_BRUSH      = 1 << 6,
-  GIMP_DEVICE_VALUE_PATTERN    = 1 << 7,
-  GIMP_DEVICE_VALUE_GRADIENT   = 1 << 8
-} GimpDeviceValues;
+  PICMAN_CURSOR_MODIFIER_NONE,
+  PICMAN_CURSOR_MODIFIER_BAD,
+  PICMAN_CURSOR_MODIFIER_PLUS,
+  PICMAN_CURSOR_MODIFIER_MINUS,
+  PICMAN_CURSOR_MODIFIER_INTERSECT,
+  PICMAN_CURSOR_MODIFIER_MOVE,
+  PICMAN_CURSOR_MODIFIER_RESIZE,
+  PICMAN_CURSOR_MODIFIER_CONTROL,
+  PICMAN_CURSOR_MODIFIER_ANCHOR,
+  PICMAN_CURSOR_MODIFIER_FOREGROUND,
+  PICMAN_CURSOR_MODIFIER_BACKGROUND,
+  PICMAN_CURSOR_MODIFIER_PATTERN,
+  PICMAN_CURSOR_MODIFIER_JOIN,
+  PICMAN_CURSOR_MODIFIER_SELECT,
+  PICMAN_CURSOR_MODIFIER_LAST
+} PicmanCursorModifier;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_FILE_CHOOSER_ACTION_OPEN,
-  GIMP_FILE_CHOOSER_ACTION_SAVE,
-  GIMP_FILE_CHOOSER_ACTION_EXPORT
-} GimpFileChooserAction;
+  PICMAN_DEVICE_VALUE_MODE       = 1 << 0,
+  PICMAN_DEVICE_VALUE_AXES       = 1 << 1,
+  PICMAN_DEVICE_VALUE_KEYS       = 1 << 2,
+  PICMAN_DEVICE_VALUE_TOOL       = 1 << 3,
+  PICMAN_DEVICE_VALUE_FOREGROUND = 1 << 4,
+  PICMAN_DEVICE_VALUE_BACKGROUND = 1 << 5,
+  PICMAN_DEVICE_VALUE_BRUSH      = 1 << 6,
+  PICMAN_DEVICE_VALUE_PATTERN    = 1 << 7,
+  PICMAN_DEVICE_VALUE_GRADIENT   = 1 << 8
+} PicmanDeviceValues;
 
 typedef enum  /*< skip >*/
 {
-  GIMP_DIALOGS_SHOWN,
-  GIMP_DIALOGS_HIDDEN_EXPLICITLY,  /* user used the Tab key to hide dialogs */
-  GIMP_DIALOGS_HIDDEN_WITH_DISPLAY /* dialogs are hidden with the display   */
-} GimpDialogsState;
+  PICMAN_FILE_CHOOSER_ACTION_OPEN,
+  PICMAN_FILE_CHOOSER_ACTION_SAVE,
+  PICMAN_FILE_CHOOSER_ACTION_EXPORT
+} PicmanFileChooserAction;
+
+typedef enum  /*< skip >*/
+{
+  PICMAN_DIALOGS_SHOWN,
+  PICMAN_DIALOGS_HIDDEN_EXPLICITLY,  /* user used the Tab key to hide dialogs */
+  PICMAN_DIALOGS_HIDDEN_WITH_DISPLAY /* dialogs are hidden with the display   */
+} PicmanDialogsState;
 
 
 #endif /* __WIDGETS_ENUMS_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Session-managment stuff
- * Copyright (C) 1998 Sven Neumann <sven@gimp.org>
+ * Copyright (C) 1998 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,29 +30,29 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "gui-types.h"
 
-#include "config/gimpconfig-file.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmanconfig-file.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpsessioninfo.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmansessioninfo.h"
 
 #include "dialogs/dialogs.h"
 
 #include "session.h"
-#include "gimp-log.h"
+#include "picman-log.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -64,7 +64,7 @@ enum
 };
 
 
-static gchar * session_filename (Gimp *gimp);
+static gchar * session_filename (Picman *picman);
 
 
 /*  private variables  */
@@ -75,27 +75,27 @@ static gboolean   sessionrc_deleted = FALSE;
 /*  public functions  */
 
 void
-session_init (Gimp *gimp)
+session_init (Picman *picman)
 {
   gchar      *filename;
   GScanner   *scanner;
   GTokenType  token;
   GError     *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  filename = session_filename (gimp);
+  filename = session_filename (picman);
 
-  scanner = gimp_scanner_new_file (filename, &error);
+  scanner = picman_scanner_new_file (filename, &error);
 
-  if (! scanner && error->code == GIMP_CONFIG_ERROR_OPEN_ENOENT)
+  if (! scanner && error->code == PICMAN_CONFIG_ERROR_OPEN_ENOENT)
     {
       g_clear_error (&error);
       g_free (filename);
 
-      filename = g_build_filename (gimp_sysconf_directory (),
+      filename = g_build_filename (picman_sysconf_directory (),
                                    "sessionrc", NULL);
-      scanner = gimp_scanner_new_file (filename, NULL);
+      scanner = picman_scanner_new_file (filename, NULL);
     }
 
   if (! scanner)
@@ -105,8 +105,8 @@ session_init (Gimp *gimp)
       return;
     }
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
   g_scanner_scope_add_symbol (scanner, 0, "session-info",
                               GINT_TO_POINTER (SESSION_INFO));
@@ -132,34 +132,34 @@ session_init (Gimp *gimp)
         case G_TOKEN_SYMBOL:
           if (scanner->value.v_symbol == GINT_TO_POINTER (SESSION_INFO))
             {
-              GimpDialogFactory      *factory      = NULL;
-              GimpSessionInfo        *info         = NULL;
+              PicmanDialogFactory      *factory      = NULL;
+              PicmanSessionInfo        *info         = NULL;
               gchar                  *factory_name = NULL;
               gchar                  *entry_name   = NULL;
-              GimpDialogFactoryEntry *entry        = NULL;
+              PicmanDialogFactoryEntry *entry        = NULL;
 
               token = G_TOKEN_STRING;
 
-              if (! gimp_scanner_parse_string (scanner, &factory_name))
+              if (! picman_scanner_parse_string (scanner, &factory_name))
                 break;
 
-              /* In versions <= GIMP 2.6 there was a "toolbox", a
+              /* In versions <= PICMAN 2.6 there was a "toolbox", a
                * "dock", a "display" and a "toplevel" factory. These
-               * are now merged to a single gimp_dialog_factory_get_singleton (). We
+               * are now merged to a single picman_dialog_factory_get_singleton (). We
                * need the legacy name though, so keep it around.
                */
-              factory = gimp_dialog_factory_get_singleton ();
+              factory = picman_dialog_factory_get_singleton ();
 
-              info = gimp_session_info_new ();
+              info = picman_session_info_new ();
 
-              /* GIMP 2.6 has the entry name as part of the
+              /* PICMAN 2.6 has the entry name as part of the
                * session-info header, so try to get it
                */
-              gimp_scanner_parse_string (scanner, &entry_name);
+              picman_scanner_parse_string (scanner, &entry_name);
               if (entry_name)
                 {
-                  /* Previously, GimpDock was a toplevel. That is why
-                   * versions <= GIMP 2.6 has "dock" as the entry name. We
+                  /* Previously, PicmanDock was a toplevel. That is why
+                   * versions <= PICMAN 2.6 has "dock" as the entry name. We
                    * want "dock" to be interpreted as 'dock window'
                    * however so have some special-casing for that. When
                    * the entry name is "dock" the factory name is either
@@ -168,14 +168,14 @@ session_init (Gimp *gimp)
                   if (strcmp (entry_name, "dock") == 0)
                     {
                       entry =
-                        gimp_dialog_factory_find_entry (factory,
+                        picman_dialog_factory_find_entry (factory,
                                                         (strcmp (factory_name, "toolbox") == 0 ?
-                                                         "gimp-toolbox-window" :
-                                                         "gimp-dock-window"));
+                                                         "picman-toolbox-window" :
+                                                         "picman-dock-window"));
                     }
                   else
                     {
-                      entry = gimp_dialog_factory_find_entry (factory,
+                      entry = picman_dialog_factory_find_entry (factory,
                                                               entry_name);
                     }
                 }
@@ -184,31 +184,31 @@ session_init (Gimp *gimp)
               g_free (factory_name);
               g_free (entry_name);
 
-              /* We can get the factory entry either now (the GIMP <=
-               * 2.6 way), or when we deserialize (the GIMP 2.8 way)
+              /* We can get the factory entry either now (the PICMAN <=
+               * 2.6 way), or when we deserialize (the PICMAN 2.8 way)
                */
               if (entry)
                 {
-                  gimp_session_info_set_factory_entry (info, entry);
+                  picman_session_info_set_factory_entry (info, entry);
                 }
 
               /* Always try to deserialize */
-              if (gimp_config_deserialize (GIMP_CONFIG (info), scanner, 1, NULL))
+              if (picman_config_deserialize (PICMAN_CONFIG (info), scanner, 1, NULL))
                 {
                   /* Make sure we got a factory entry either the 2.6
                    * or 2.8 way
                    */
-                  if (gimp_session_info_get_factory_entry (info))
+                  if (picman_session_info_get_factory_entry (info))
                     {
-                      GIMP_LOG (DIALOG_FACTORY,
+                      PICMAN_LOG (DIALOG_FACTORY,
                                 "successfully parsed and added session info %p",
                                 info);
 
-                      gimp_dialog_factory_add_session_info (factory, info);
+                      picman_dialog_factory_add_session_info (factory, info);
                     }
                   else
                     {
-                      GIMP_LOG (DIALOG_FACTORY,
+                      PICMAN_LOG (DIALOG_FACTORY,
                                 "failed to parse session info %p, not adding",
                                 info);
                     }
@@ -220,7 +220,7 @@ session_init (Gimp *gimp)
                   g_object_unref (info);
 
                   /* set token to left paren to we won't set another
-                   * error below, gimp_config_deserialize() already did
+                   * error below, picman_config_deserialize() already did
                    */
                   token = G_TOKEN_LEFT_PAREN;
                   goto error;
@@ -232,10 +232,10 @@ session_init (Gimp *gimp)
 
               token = G_TOKEN_IDENTIFIER;
 
-              if (! gimp_scanner_parse_boolean (scanner, &hide_docks))
+              if (! picman_scanner_parse_boolean (scanner, &hide_docks))
                 break;
 
-              g_object_set (gimp->config,
+              g_object_set (picman->config,
                             "hide-docks", hide_docks,
                             NULL);
             }
@@ -245,10 +245,10 @@ session_init (Gimp *gimp)
 
               token = G_TOKEN_IDENTIFIER;
 
-              if (! gimp_scanner_parse_boolean (scanner, &single_window_mode))
+              if (! picman_scanner_parse_boolean (scanner, &single_window_mode))
                 break;
 
-              g_object_set (gimp->config,
+              g_object_set (picman->config,
                             "single-window-mode", single_window_mode,
                             NULL);
             }
@@ -258,10 +258,10 @@ session_init (Gimp *gimp)
 
               token = G_TOKEN_INT;
 
-              if (! gimp_scanner_parse_int (scanner, &last_tip_shown))
+              if (! picman_scanner_parse_int (scanner, &last_tip_shown))
                 break;
 
-              g_object_set (gimp->config,
+              g_object_set (picman->config,
                             "last-tip-shown", last_tip_shown,
                             NULL);
             }
@@ -288,60 +288,60 @@ session_init (Gimp *gimp)
 
   if (error)
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
       g_clear_error (&error);
 
-      gimp_config_file_backup_on_error (filename, "sessionrc", NULL);
+      picman_config_file_backup_on_error (filename, "sessionrc", NULL);
     }
 
-  gimp_scanner_destroy (scanner);
+  picman_scanner_destroy (scanner);
   g_free (filename);
 
-  dialogs_load_recent_docks (gimp);
+  dialogs_load_recent_docks (picman);
 }
 
 void
-session_exit (Gimp *gimp)
+session_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 }
 
 void
-session_restore (Gimp *gimp)
+session_restore (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_dialog_factory_restore (gimp_dialog_factory_get_singleton ());
+  picman_dialog_factory_restore (picman_dialog_factory_get_singleton ());
 }
 
 void
-session_save (Gimp     *gimp,
+session_save (Picman     *picman,
               gboolean  always_save)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
   gchar            *filename;
   GError           *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   if (sessionrc_deleted && ! always_save)
     return;
 
-  filename = session_filename (gimp);
+  filename = session_filename (picman);
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
   writer =
-    gimp_config_writer_new_file (filename,
+    picman_config_writer_new_file (filename,
                                  TRUE,
-                                 "GIMP sessionrc\n\n"
+                                 "PICMAN sessionrc\n\n"
                                  "This file takes session-specific info "
                                  "(that is info, you want to keep between "
-                                 "two GIMP sessions).  You are not supposed "
+                                 "two PICMAN sessions).  You are not supposed "
                                  "to edit it manually, but of course you "
                                  "can do.  The sessionrc will be entirely "
-                                 "rewritten every time you quit GIMP.  "
+                                 "rewritten every time you quit PICMAN.  "
                                  "If this file isn't found, defaults are "
                                  "used.",
                                  NULL);
@@ -350,54 +350,54 @@ session_save (Gimp     *gimp,
   if (!writer)
     return;
 
-  gimp_dialog_factory_save (gimp_dialog_factory_get_singleton (), writer);
-  gimp_config_writer_linefeed (writer);
+  picman_dialog_factory_save (picman_dialog_factory_get_singleton (), writer);
+  picman_config_writer_linefeed (writer);
 
-  gimp_config_writer_open (writer, "hide-docks");
-  gimp_config_writer_identifier (writer,
-                                 GIMP_GUI_CONFIG (gimp->config)->hide_docks ?
+  picman_config_writer_open (writer, "hide-docks");
+  picman_config_writer_identifier (writer,
+                                 PICMAN_GUI_CONFIG (picman->config)->hide_docks ?
                                  "yes" : "no");
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 
-  gimp_config_writer_open (writer, "single-window-mode");
-  gimp_config_writer_identifier (writer,
-                                 GIMP_GUI_CONFIG (gimp->config)->single_window_mode ?
+  picman_config_writer_open (writer, "single-window-mode");
+  picman_config_writer_identifier (writer,
+                                 PICMAN_GUI_CONFIG (picman->config)->single_window_mode ?
                                  "yes" : "no");
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 
-  gimp_config_writer_open (writer, "last-tip-shown");
-  gimp_config_writer_printf (writer, "%d",
-                             GIMP_GUI_CONFIG (gimp->config)->last_tip_shown);
-  gimp_config_writer_close (writer);
+  picman_config_writer_open (writer, "last-tip-shown");
+  picman_config_writer_printf (writer, "%d",
+                             PICMAN_GUI_CONFIG (picman->config)->last_tip_shown);
+  picman_config_writer_close (writer);
 
-  if (! gimp_config_writer_finish (writer, "end of sessionrc", &error))
+  if (! picman_config_writer_finish (writer, "end of sessionrc", &error))
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
       g_clear_error (&error);
     }
 
-  dialogs_save_recent_docks (gimp);
+  dialogs_save_recent_docks (picman);
 
   sessionrc_deleted = FALSE;
 }
 
 gboolean
-session_clear (Gimp    *gimp,
+session_clear (Picman    *picman,
                GError **error)
 {
   gchar    *filename;
   gboolean  success = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  filename = session_filename (gimp);
+  filename = session_filename (picman);
 
   if (g_unlink (filename) != 0 && errno != ENOENT)
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
 		   _("Deleting \"%s\" failed: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       success = FALSE;
     }
   else
@@ -412,20 +412,20 @@ session_clear (Gimp    *gimp,
 
 
 static gchar *
-session_filename (Gimp *gimp)
+session_filename (Picman *picman)
 {
   const gchar *basename;
   gchar       *filename;
 
-  basename = g_getenv ("GIMP_TESTING_SESSIONRC_NAME");
+  basename = g_getenv ("PICMAN_TESTING_SESSIONRC_NAME");
   if (! basename)
     basename = "sessionrc";
 
-  filename = gimp_personal_rc_file (basename);
+  filename = picman_personal_rc_file (basename);
 
-  if (gimp->session_name)
+  if (picman->session_name)
     {
-      gchar *tmp = g_strconcat (filename, ".", gimp->session_name, NULL);
+      gchar *tmp = g_strconcat (filename, ".", picman->session_name, NULL);
 
       g_free (filename);
       filename = tmp;

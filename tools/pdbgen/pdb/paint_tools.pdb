@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub stroke_arg () {
     { name => 'strokes', type => 'floatarray',
@@ -52,22 +52,22 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-airbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-airbrush");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "pressure", pressure,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -86,7 +86,7 @@ time-dependent.
 BLURB
 
     $help = <<'HELP';
-This tool simulates the use of an airbrush. It is similar to gimp_airbrush()
+This tool simulates the use of an airbrush. It is similar to picman_airbrush()
 except that the pressure is derived from the airbrush tools options box.
 It the option has not been set the default for the option will be used.
 HELP
@@ -102,18 +102,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-airbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-airbrush");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -151,7 +151,7 @@ HELP
 	  desc => 'The affected drawable' },
 	{ name => 'src_drawable', type => 'drawable',
 	  desc => 'The source drawable' },
-	{ name => 'clone_type', type => 'enum GimpCloneType',
+	{ name => 'clone_type', type => 'enum PicmanCloneType',
 	  desc => 'The type of clone' },
 	{ name => 'src_x', type => 'float',
 	  desc => 'The x coordinate in the source image' },
@@ -163,22 +163,22 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-clone");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-clone");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "clone-type", clone_type,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
                                     "undo-desc",    options->paint_info->blurb,
                                     "src-drawable", src_drawable,
@@ -201,7 +201,7 @@ BLURB
     $help = <<'HELP';
 This tool clones (copies) from the source drawable starting at the specified
 source coordinates to the dest drawable. This function performs exactly
-the same as the gimp_clone() function except that the tools arguments are
+the same as the picman_clone() function except that the tools arguments are
 obtained from the clones option dialog. It this dialog has not been activated
 then the dialogs default values will be used.
 HELP
@@ -217,18 +217,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-clone");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-clone");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -246,7 +246,7 @@ sub convolve_default {
 
     $help = <<'HELP';
 This tool convolves the specified drawable with either a sharpening or blurring
-kernel. This function performs exactly the same as the gimp_convolve()
+kernel. This function performs exactly the same as the picman_convolve()
 function except that the tools arguments are obtained from the convolve
 option dialog. It this dialog has not been activated then the dialogs
 default values will be used.
@@ -263,18 +263,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-convolve");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-convolve");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -303,7 +303,7 @@ HELP
 	  desc => 'The affected drawable' },
 	{ name => 'pressure', type => '0 <= float <= 100',
 	  desc => 'The pressure' },
-	{ name => 'convolve_type', type => 'enum GimpConvolveType',
+	{ name => 'convolve_type', type => 'enum PicmanConvolveType',
 	  desc => 'Convolve type' },
 	&stroke_arg
     );
@@ -311,23 +311,23 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-convolve");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-convolve");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "type", convolve_type,
                     "rate", pressure,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -344,7 +344,7 @@ sub eraser_default {
 
     $help = <<'HELP';
 This tool erases using the current brush mask. This function performs exactly
-the same as the gimp_eraser() function except that the tools arguments are
+the same as the picman_eraser() function except that the tools arguments are
 obtained from the eraser option dialog. It this dialog has not been activated
 then the dialogs default values will be used.
 HELP
@@ -360,18 +360,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-eraser");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-eraser");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -400,32 +400,32 @@ HELP
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The affected drawable' },
 	&stroke_arg,
-	{ name => 'hardness', type => 'enum GimpBrushApplicationMode',
+	{ name => 'hardness', type => 'enum PicmanBrushApplicationMode',
 	  desc => 'How to apply the brush' },
-	{ name => 'method', type => 'enum GimpPaintApplicationMode',
+	{ name => 'method', type => 'enum PicmanPaintApplicationMode',
 	  desc => 'The paint method to use' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-eraser");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-eraser");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "application-mode", method,
                     "hard",             hardness,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -454,25 +454,25 @@ HELP
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The affected drawable' },
 	&stroke_arg,
-	{ name => 'hardness', type => 'enum GimpBrushApplicationMode',
+	{ name => 'hardness', type => 'enum PicmanBrushApplicationMode',
 	  desc => 'How to apply the brush' },
-	{ name => 'method', type => 'enum GimpPaintApplicationMode',
+	{ name => 'method', type => 'enum PicmanPaintApplicationMode',
 	  desc => 'The paint method to use' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-eraser");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-eraser");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "application-mode", method,
@@ -480,7 +480,7 @@ HELP
                     "anti-erase",       TRUE,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -522,18 +522,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-heal");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-heal");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc",    options->paint_info->blurb,
                                     "src-drawable", src_drawable,
@@ -556,7 +556,7 @@ BLURB
     $help = <<'HELP';
 This tool heals from the source drawable starting at the specified
 source coordinates to the dest drawable. This function performs exactly
-the same as the gimp_heal() function except that the tools arguments are
+the same as the picman_heal() function except that the tools arguments are
 obtained from the healing option dialog. It this dialog has not been activated
 then the dialogs default values will be used.
 HELP
@@ -572,18 +572,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-heal");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-heal");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -620,7 +620,7 @@ HELP
 	{ name => 'fade_out', type => '0 <= float',
 	  desc => 'Fade out parameter' },
 	  &stroke_arg,
-	{ name => 'method', type => 'enum GimpPaintApplicationMode',
+	{ name => 'method', type => 'enum PicmanPaintApplicationMode',
 	  desc => 'The paint method to use' },
 	{ name => 'gradient_length', type => '0 <= float',
 	  desc => 'Length of gradient to draw' }
@@ -629,19 +629,19 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-paintbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-paintbrush");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpDynamics *pdb_dynamics  = GIMP_DYNAMICS (gimp_dynamics_new (context, "pdb"));
-      GimpDynamics *user_dynamics = gimp_context_get_dynamics (context);
+      PicmanDynamics *pdb_dynamics  = PICMAN_DYNAMICS (picman_dynamics_new (context, "pdb"));
+      PicmanDynamics *user_dynamics = picman_context_get_dynamics (context);
 
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "application-mode", method,
@@ -650,9 +650,9 @@ HELP
 
       if (fade_out > 0)
         {
-           GimpDynamicsOutput *opacity_output =
-             gimp_dynamics_get_output (pdb_dynamics,
-                                       GIMP_DYNAMICS_OUTPUT_OPACITY);
+           PicmanDynamicsOutput *opacity_output =
+             picman_dynamics_get_output (pdb_dynamics,
+                                       PICMAN_DYNAMICS_OUTPUT_OPACITY);
 
            g_object_set (opacity_output,
                          "use-fade", TRUE,
@@ -661,23 +661,23 @@ HELP
 
       if (gradient_length > 0)
         {
-          GimpDynamicsOutput *color_output =
-            gimp_dynamics_get_output (pdb_dynamics,
-                                      GIMP_DYNAMICS_OUTPUT_COLOR);
+          PicmanDynamicsOutput *color_output =
+            picman_dynamics_get_output (pdb_dynamics,
+                                      PICMAN_DYNAMICS_OUTPUT_COLOR);
 
           g_object_set (color_output,
                         "use-fade", TRUE,
                         NULL);
         }
 
-      gimp_context_set_dynamics (context, pdb_dynamics);
+      picman_context_set_dynamics (context, pdb_dynamics);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
 
-      gimp_context_set_dynamics (context, user_dynamics);
+      picman_context_set_dynamics (context, user_dynamics);
 
       g_object_unref (pdb_dynamics);
     }
@@ -719,18 +719,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-paintbrush");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-paintbrush");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -764,18 +764,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-pencil");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-pencil");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -808,22 +808,22 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-smudge");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-smudge");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "rate", pressure,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -842,7 +842,7 @@ BLURB
 
     $help = <<'HELP';
 This tool simulates a smudge using the current brush. It behaves exactly
-the same as gimp_smudge() except that the pressure value is taken from the
+the same as picman_smudge() except that the pressure value is taken from the
 smudge tool options or the options default if the tools option dialog has
 not been activated.
 HELP
@@ -858,18 +858,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-smudge");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-smudge");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -897,9 +897,9 @@ HELP
 	  desc => 'The affected drawable' },
 	 { name => 'exposure', type => '0 <= float <= 100',
 	   desc => 'The exposure of the  strokes' },
-        { name => 'dodgeburn_type', type => 'enum GimpDodgeBurnType',
+        { name => 'dodgeburn_type', type => 'enum PicmanDodgeBurnType',
 	  desc => 'The type either dodge or burn' },
-        { name => 'dodgeburn_mode', type => 'enum GimpTransferMode',
+        { name => 'dodgeburn_mode', type => 'enum PicmanTransferMode',
 	  desc => 'The mode' },
 	&stroke_arg
     );
@@ -907,16 +907,16 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-dodge-burn");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-dodge-burn");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
       g_object_set (options,
                     "type",     dodgeburn_type,
@@ -924,7 +924,7 @@ HELP
                     "exposure", exposure,
                     NULL);
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -939,7 +939,7 @@ CODE
 sub dodgeburn_default {
     $blurb  = <<'BLURB';
 Dodgeburn image with varying exposure. This is the same as the
-gimp_dodgeburn() function except that the exposure, type and mode are
+picman_dodgeburn() function except that the exposure, type and mode are
 taken from the tools option dialog. If the dialog has not been
 activated then the defaults as used by the dialog will be used.
 BLURB
@@ -959,18 +959,18 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPaintOptions *options =
-    gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                        "gimp-dodge-burn");
+  PicmanPaintOptions *options =
+    picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                        "picman-dodge-burn");
 
   if (options &&
-      gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      options = gimp_config_duplicate (GIMP_CONFIG (options));
+      options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-      success = paint_tools_stroke (gimp, context, options, drawable,
+      success = paint_tools_stroke (picman, context, options, drawable,
                                     num_strokes, strokes, error,
 				    "undo-desc", options->paint_info->blurb,
 				    NULL);
@@ -984,22 +984,22 @@ CODE
 
 
 $extra{app}->{code} = <<'CODE';
-static const GimpCoords default_coords = GIMP_COORDS_DEFAULT_VALUES;
+static const PicmanCoords default_coords = PICMAN_COORDS_DEFAULT_VALUES;
 
 static gboolean
-paint_tools_stroke (Gimp              *gimp,
-                    GimpContext       *context,
-                    GimpPaintOptions  *options,
-                    GimpDrawable      *drawable,
+paint_tools_stroke (Picman              *picman,
+                    PicmanContext       *context,
+                    PicmanPaintOptions  *options,
+                    PicmanDrawable      *drawable,
                     gint               n_strokes,
                     const gdouble     *strokes,
                     GError           **error,
                     const gchar       *first_property_name,
                     ...)
 {
-  GimpPaintCore *core;
-  GimpCoords    *coords;
-  GimpBrush     *brush;
+  PicmanPaintCore *core;
+  PicmanCoords    *coords;
+  PicmanBrush     *brush;
   gboolean       retval;
   gdouble        brush_size;
   gint           height, width;
@@ -1008,8 +1008,8 @@ paint_tools_stroke (Gimp              *gimp,
 
   n_strokes /= 2;  /* #doubles -> #points */
 
-  brush = gimp_context_get_brush (context);
-  gimp_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
+  brush = picman_context_get_brush (context);
+  picman_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
   brush_size = MAX (height, width);
 
   g_object_set (options,
@@ -1019,17 +1019,17 @@ paint_tools_stroke (Gimp              *gimp,
   /*  undefine the paint-relevant context properties and get them
    *  from the current context
    */
-  gimp_context_define_properties (GIMP_CONTEXT (options),
-                                  GIMP_CONTEXT_PAINT_PROPS_MASK,
+  picman_context_define_properties (PICMAN_CONTEXT (options),
+                                  PICMAN_CONTEXT_PAINT_PROPS_MASK,
                                   FALSE);
-  gimp_context_set_parent (GIMP_CONTEXT (options), context);
+  picman_context_set_parent (PICMAN_CONTEXT (options), context);
 
   va_start (args, first_property_name);
-  core = GIMP_PAINT_CORE (g_object_new_valist (options->paint_info->paint_type,
+  core = PICMAN_PAINT_CORE (g_object_new_valist (options->paint_info->paint_type,
                                                first_property_name, args));
   va_end (args);
 
-  coords = g_new (GimpCoords, n_strokes);
+  coords = g_new (PicmanCoords, n_strokes);
 
   for (i = 0; i < n_strokes; i++)
     {
@@ -1038,7 +1038,7 @@ paint_tools_stroke (Gimp              *gimp,
       coords[i].y = strokes[2 * i + 1];
     }
 
-  retval = gimp_paint_core_stroke (core, drawable, options,
+  retval = picman_paint_core_stroke (core, drawable, options,
                                    coords, n_strokes, TRUE,
                                    error);
 
@@ -1052,16 +1052,16 @@ paint_tools_stroke (Gimp              *gimp,
 CODE
 
 
-@headers = qw("libgimpmath/gimpmath.h"
-              "libgimpconfig/gimpconfig.h"
-              "core/gimpbrush.h"
-              "core/gimpdynamics.h"
-              "core/gimppaintinfo.h"
-              "paint/gimppaintcore.h"
-              "paint/gimppaintcore-stroke.h"
-              "paint/gimppaintoptions.h"
-              "gimppdbcontext.h"
-              "gimppdb-utils.h");
+@headers = qw("libpicmanmath/picmanmath.h"
+              "libpicmanconfig/picmanconfig.h"
+              "core/picmanbrush.h"
+              "core/picmandynamics.h"
+              "core/picmanpaintinfo.h"
+              "paint/picmanpaintcore.h"
+              "paint/picmanpaintcore-stroke.h"
+              "paint/picmanpaintoptions.h"
+              "picmanpdbcontext.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(airbrush airbrush_default
             clone clone_default
@@ -1076,7 +1076,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Paint Tool procedures';
-$doc_title = 'gimppainttools';
+$doc_title = 'picmanpainttools';
 $doc_short_desc = 'Access to toolbox paint tools.';
 $doc_long_desc = 'Functions giving access to toolbox paint tools.';
 

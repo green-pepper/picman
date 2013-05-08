@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub pattern_get_info {
     $blurb = 'Retrieve information about the specified pattern.';
@@ -43,13 +43,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPattern *pattern = gimp_pdb_get_pattern (gimp, name, error);
+  PicmanPattern *pattern = picman_pdb_get_pattern (picman, name, error);
 
   if (pattern)
     {
-      width  = gimp_temp_buf_get_width  (pattern->mask);
-      height = gimp_temp_buf_get_height (pattern->mask);
-      bpp    = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask));
+      width  = picman_temp_buf_get_width  (pattern->mask);
+      height = picman_temp_buf_get_height (pattern->mask);
+      bpp    = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask));
     }
   else
     success = FALSE;
@@ -91,15 +91,15 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPattern *pattern = gimp_pdb_get_pattern (gimp, name, error);
+  PicmanPattern *pattern = picman_pdb_get_pattern (picman, name, error);
 
   if (pattern)
     {
-      width           = gimp_temp_buf_get_width  (pattern->mask);
-      height          = gimp_temp_buf_get_height (pattern->mask);
-      bpp             = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask));
-      num_color_bytes = gimp_temp_buf_get_data_size (pattern->mask);
-      color_bytes     = g_memdup (gimp_temp_buf_get_data (pattern->mask),
+      width           = picman_temp_buf_get_width  (pattern->mask);
+      height          = picman_temp_buf_get_height (pattern->mask);
+      bpp             = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask));
+      num_color_bytes = picman_temp_buf_get_data_size (pattern->mask);
+      color_bytes     = g_memdup (picman_temp_buf_get_data (pattern->mask),
                                   num_color_bytes);
     }
   else
@@ -111,11 +111,11 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimpcontext.h"
-              "core/gimpdatafactory.h"
-              "core/gimppattern.h"
-              "core/gimptempbuf.h"
-              "gimppdb-utils.h");
+              "core/picmancontext.h"
+              "core/picmandatafactory.h"
+              "core/picmanpattern.h"
+              "core/picmantempbuf.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(pattern_get_info
             pattern_get_pixels);
@@ -123,7 +123,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Pattern';
-$doc_title = 'gimppattern';
+$doc_title = 'picmanpattern';
 $doc_short_desc = 'Functions operating on a single pattern.';
 $doc_long_desc = 'Functions operating on a single pattern.';
 

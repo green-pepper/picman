@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,25 +23,25 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-patterns_popup_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+patterns_popup_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
@@ -49,175 +49,175 @@ patterns_popup_invoker (GimpProcedure         *procedure,
   const gchar *popup_title;
   const gchar *initial_pattern;
 
-  pattern_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  popup_title = g_value_get_string (gimp_value_array_index (args, 1));
-  initial_pattern = g_value_get_string (gimp_value_array_index (args, 2));
+  pattern_callback = g_value_get_string (picman_value_array_index (args, 0));
+  popup_title = g_value_get_string (picman_value_array_index (args, 1));
+  initial_pattern = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, pattern_callback) ||
-          ! gimp_pdb_dialog_new (gimp, context, progress,
-                                 gimp_data_factory_get_container (gimp->pattern_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, pattern_callback) ||
+          ! picman_pdb_dialog_new (picman, context, progress,
+                                 picman_data_factory_get_container (picman->pattern_factory),
                                  popup_title, pattern_callback, initial_pattern,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-patterns_close_popup_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+patterns_close_popup_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
   const gchar *pattern_callback;
 
-  pattern_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  pattern_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, pattern_callback) ||
-          ! gimp_pdb_dialog_close (gimp, gimp_data_factory_get_container (gimp->pattern_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, pattern_callback) ||
+          ! picman_pdb_dialog_close (picman, picman_data_factory_get_container (picman->pattern_factory),
                                    pattern_callback))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-patterns_set_popup_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+patterns_set_popup_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   const gchar *pattern_callback;
   const gchar *pattern_name;
 
-  pattern_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  pattern_name = g_value_get_string (gimp_value_array_index (args, 1));
+  pattern_callback = g_value_get_string (picman_value_array_index (args, 0));
+  pattern_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, pattern_callback) ||
-          ! gimp_pdb_dialog_set (gimp, gimp_data_factory_get_container (gimp->pattern_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, pattern_callback) ||
+          ! picman_pdb_dialog_set (picman, picman_data_factory_get_container (picman->pattern_factory),
                                  pattern_callback, pattern_name,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_pattern_select_procs (GimpPDB *pdb)
+register_pattern_select_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-patterns-popup
+   * picman-patterns-popup
    */
-  procedure = gimp_procedure_new (patterns_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-patterns-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-patterns-popup",
-                                     "Invokes the Gimp pattern selection.",
+  procedure = picman_procedure_new (patterns_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-patterns-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-patterns-popup",
+                                     "Invokes the Picman pattern selection.",
                                      "This procedure opens the pattern selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("pattern-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("pattern-callback",
                                                        "pattern callback",
                                                        "The callback PDB proc to call when pattern selection is made",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("popup-title",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("popup-title",
                                                        "popup title",
                                                        "Title of the pattern selection dialog",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("initial-pattern",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("initial-pattern",
                                                        "initial pattern",
                                                        "The name of the pattern to set as the first selected",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-patterns-close-popup
+   * picman-patterns-close-popup
    */
-  procedure = gimp_procedure_new (patterns_close_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-patterns-close-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-patterns-close-popup",
+  procedure = picman_procedure_new (patterns_close_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-patterns-close-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-patterns-close-popup",
                                      "Close the pattern selection dialog.",
                                      "This procedure closes an opened pattern selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("pattern-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("pattern-callback",
                                                        "pattern callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-patterns-set-popup
+   * picman-patterns-set-popup
    */
-  procedure = gimp_procedure_new (patterns_set_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-patterns-set-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-patterns-set-popup",
+  procedure = picman_procedure_new (patterns_set_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-patterns-set-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-patterns-set-popup",
                                      "Sets the current pattern in a pattern selection dialog.",
                                      "Sets the current pattern in a pattern selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("pattern-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("pattern-callback",
                                                        "pattern callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("pattern-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("pattern-name",
                                                        "pattern name",
                                                        "The name of the pattern to set as selected",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

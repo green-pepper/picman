@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,57 +22,57 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-scale.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-scale.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
 #include "scale-dialog.h"
 
 #include "image-scale-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
 {
   GtkWidget             *dialog;
 
-  GimpImage             *image;
+  PicmanImage             *image;
 
   gint                   width;
   gint                   height;
-  GimpUnit               unit;
-  GimpInterpolationType  interpolation;
+  PicmanUnit               unit;
+  PicmanInterpolationType  interpolation;
   gdouble                xresolution;
   gdouble                yresolution;
-  GimpUnit               resolution_unit;
+  PicmanUnit               resolution_unit;
 
-  GimpScaleCallback      callback;
+  PicmanScaleCallback      callback;
   gpointer               user_data;
 } ImageScaleDialog;
 
 
 static void        image_scale_callback (GtkWidget             *widget,
-                                         GimpViewable          *viewable,
+                                         PicmanViewable          *viewable,
                                          gint                   width,
                                          gint                   height,
-                                         GimpUnit               unit,
-                                         GimpInterpolationType  interpolation,
+                                         PicmanUnit               unit,
+                                         PicmanInterpolationType  interpolation,
                                          gdouble                xresolution,
                                          gdouble                yresolution,
-                                         GimpUnit               resolution_unit,
+                                         PicmanUnit               resolution_unit,
                                          gpointer               data);
 
 static void        image_scale_dialog_free      (ImageScaleDialog *dialog);
@@ -90,29 +90,29 @@ static void        image_scale_confirm_response (GtkWidget        *widget,
 /*  public functions  */
 
 GtkWidget *
-image_scale_dialog_new (GimpImage             *image,
-                        GimpContext           *context,
+image_scale_dialog_new (PicmanImage             *image,
+                        PicmanContext           *context,
                         GtkWidget             *parent,
-                        GimpUnit               unit,
-                        GimpInterpolationType  interpolation,
-                        GimpScaleCallback      callback,
+                        PicmanUnit               unit,
+                        PicmanInterpolationType  interpolation,
+                        PicmanScaleCallback      callback,
                         gpointer               user_data)
 {
   ImageScaleDialog *dialog;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
   dialog = g_slice_new0 (ImageScaleDialog);
 
   dialog->image  = image;
-  dialog->dialog = scale_dialog_new (GIMP_VIEWABLE (image), context,
+  dialog->dialog = scale_dialog_new (PICMAN_VIEWABLE (image), context,
                                      C_("dialog-title", "Scale Image"),
-                                     "gimp-image-scale",
+                                     "picman-image-scale",
                                      parent,
-                                     gimp_standard_help_func,
-                                     GIMP_HELP_IMAGE_SCALE,
+                                     picman_standard_help_func,
+                                     PICMAN_HELP_IMAGE_SCALE,
                                      unit,
                                      interpolation,
                                      image_scale_callback,
@@ -129,19 +129,19 @@ image_scale_dialog_new (GimpImage             *image,
 
 static void
 image_scale_callback (GtkWidget             *widget,
-                      GimpViewable          *viewable,
+                      PicmanViewable          *viewable,
                       gint                   width,
                       gint                   height,
-                      GimpUnit               unit,
-                      GimpInterpolationType  interpolation,
+                      PicmanUnit               unit,
+                      PicmanInterpolationType  interpolation,
                       gdouble                xresolution,
                       gdouble                yresolution,
-                      GimpUnit               resolution_unit,
+                      PicmanUnit               resolution_unit,
                       gpointer               data)
 {
   ImageScaleDialog        *dialog = data;
-  GimpImage               *image  = GIMP_IMAGE (viewable);
-  GimpImageScaleCheckType  scale_check;
+  PicmanImage               *image  = PICMAN_IMAGE (viewable);
+  PicmanImageScaleCheckType  scale_check;
   gint64                   max_memsize;
   gint64                   new_memsize;
 
@@ -155,25 +155,25 @@ image_scale_callback (GtkWidget             *widget,
 
   gtk_widget_set_sensitive (widget, FALSE);
 
-  max_memsize = GIMP_GUI_CONFIG (image->gimp->config)->max_new_image_size;
+  max_memsize = PICMAN_GUI_CONFIG (image->picman->config)->max_new_image_size;
 
-  scale_check = gimp_image_scale_check (image,
+  scale_check = picman_image_scale_check (image,
                                         width, height, max_memsize,
                                         &new_memsize);
   switch (scale_check)
     {
-    case GIMP_IMAGE_SCALE_TOO_BIG:
+    case PICMAN_IMAGE_SCALE_TOO_BIG:
       image_scale_confirm_large (dialog, new_memsize, max_memsize);
       break;
 
-    case GIMP_IMAGE_SCALE_TOO_SMALL:
+    case PICMAN_IMAGE_SCALE_TOO_SMALL:
       image_scale_confirm_small (dialog);
       break;
 
-    case GIMP_IMAGE_SCALE_OK:
+    case PICMAN_IMAGE_SCALE_OK:
       gtk_widget_hide (widget);
       dialog->callback (dialog->dialog,
-                        GIMP_VIEWABLE (dialog->image),
+                        PICMAN_VIEWABLE (dialog->image),
                         dialog->width,
                         dialog->height,
                         dialog->unit,
@@ -202,15 +202,15 @@ image_scale_confirm_dialog (ImageScaleDialog *dialog)
 {
   GtkWidget *widget;
 
-  widget = gimp_message_dialog_new (_("Confirm Scaling"),
-                                    GIMP_STOCK_WARNING,
+  widget = picman_message_dialog_new (_("Confirm Scaling"),
+                                    PICMAN_STOCK_WARNING,
                                     dialog->dialog,
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func,
-                                    GIMP_HELP_IMAGE_SCALE_WARNING,
+                                    picman_standard_help_func,
+                                    PICMAN_HELP_IMAGE_SCALE_WARNING,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                    GIMP_STOCK_SCALE, GTK_RESPONSE_OK,
+                                    PICMAN_STOCK_SCALE, GTK_RESPONSE_OK,
 
                                     NULL);
 
@@ -235,13 +235,13 @@ image_scale_confirm_large (ImageScaleDialog *dialog,
   gchar     *size;
 
   size = g_format_size (new_memsize);
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (widget)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (widget)->box,
                                      _("You are trying to create an image "
                                        "with a size of %s."), size);
   g_free (size);
 
   size = g_format_size (max_memsize);
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (widget)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (widget)->box,
                              _("Scaling the image to the chosen size will "
                                "make it use more memory than what is "
                                "configured as \"Maximum Image Size\" in the "
@@ -256,11 +256,11 @@ image_scale_confirm_small (ImageScaleDialog *dialog)
 {
   GtkWidget *widget = image_scale_confirm_dialog (dialog);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (widget)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (widget)->box,
                                      _("Scaling the image to the chosen size "
                                        "will shrink some layers completely "
                                        "away."));
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (widget)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (widget)->box,
                              _("Is this what you want to do?"));
 
   gtk_widget_show (widget);
@@ -277,7 +277,7 @@ image_scale_confirm_response (GtkWidget        *widget,
     {
       gtk_widget_hide (dialog->dialog);
       dialog->callback (dialog->dialog,
-                        GIMP_VIEWABLE (dialog->image),
+                        PICMAN_VIEWABLE (dialog->image),
                         dialog->width,
                         dialog->height,
                         dialog->unit,

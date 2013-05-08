@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,41 +22,41 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimprc.h"
+#include "config/picmanrc.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmantemplate.h"
 
-#include "widgets/gimpcolorpanel.h"
-#include "widgets/gimpcontainercombobox.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpcontrollerlist.h"
-#include "widgets/gimpdevices.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpgrideditor.h"
-#include "widgets/gimphelp.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
-#include "widgets/gimpprefsbox.h"
-#include "widgets/gimpprofilechooserdialog.h"
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimptemplateeditor.h"
-#include "widgets/gimptooleditor.h"
-#include "widgets/gimpwidgets-constructors.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmancolorpanel.h"
+#include "widgets/picmancontainercombobox.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmancontrollerlist.h"
+#include "widgets/picmandevices.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmangrideditor.h"
+#include "widgets/picmanhelp.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
+#include "widgets/picmanprefsbox.h"
+#include "widgets/picmanprofilechooserdialog.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmantemplateeditor.h"
+#include "widgets/picmantooleditor.h"
+#include "widgets/picmanwidgets-constructors.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "menus/menus.h"
 
-#include "tools/gimp-tools.h"
+#include "tools/picman-tools.h"
 
 #include "gui/session.h"
 #include "gui/themes.h"
@@ -64,7 +64,7 @@
 #include "preferences-dialog.h"
 #include "resolution-calibrate-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -75,8 +75,8 @@
 
 /*  preferences local functions  */
 
-static GtkWidget * prefs_dialog_new               (Gimp       *gimp,
-                                                   GimpConfig *config);
+static GtkWidget * prefs_dialog_new               (Picman       *picman,
+                                                   PicmanConfig *config);
 static void        prefs_config_notify            (GObject    *config,
                                                    GParamSpec *param_spec,
                                                    GObject    *config_copy);
@@ -96,27 +96,27 @@ static void   prefs_resolution_source_callback    (GtkWidget  *widget,
 static void   prefs_resolution_calibrate_callback (GtkWidget  *widget,
                                                    GtkWidget  *entry);
 static void   prefs_input_devices_dialog          (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_keyboard_shortcuts_dialog     (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_menus_save_callback           (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_menus_clear_callback          (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_menus_remove_callback         (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_session_save_callback         (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_session_clear_callback        (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_devices_save_callback         (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_devices_clear_callback        (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_tool_options_save_callback    (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 static void   prefs_tool_options_clear_callback   (GtkWidget  *widget,
-                                                   Gimp       *gimp);
+                                                   Picman       *picman);
 
 
 /*  private variables  */
@@ -128,23 +128,23 @@ static GtkWidget *tool_editor  = NULL;
 /*  public function  */
 
 GtkWidget *
-preferences_dialog_create (Gimp *gimp)
+preferences_dialog_create (Picman *picman)
 {
-  GimpConfig *config;
-  GimpConfig *config_copy;
-  GimpConfig *config_orig;
+  PicmanConfig *config;
+  PicmanConfig *config_copy;
+  PicmanConfig *config_orig;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   if (prefs_dialog)
     return prefs_dialog;
 
   /*  turn off autosaving while the prefs dialog is open  */
-  gimp_rc_set_autosave (GIMP_RC (gimp->edit_config), FALSE);
+  picman_rc_set_autosave (PICMAN_RC (picman->edit_config), FALSE);
 
-  config       = GIMP_CONFIG (gimp->edit_config);
-  config_copy  = gimp_config_duplicate (config);
-  config_orig  = gimp_config_duplicate (config);
+  config       = PICMAN_CONFIG (picman->edit_config);
+  config_copy  = picman_config_duplicate (config);
+  config_orig  = picman_config_duplicate (config);
 
   g_signal_connect_object (config, "notify",
                            G_CALLBACK (prefs_config_notify),
@@ -153,12 +153,12 @@ preferences_dialog_create (Gimp *gimp)
                            G_CALLBACK (prefs_config_copy_notify),
                            config, 0);
 
-  prefs_dialog = prefs_dialog_new (gimp, config_copy);
+  prefs_dialog = prefs_dialog_new (picman, config_copy);
 
   g_object_add_weak_pointer (G_OBJECT (prefs_dialog),
                              (gpointer) &prefs_dialog);
 
-  g_object_set_data (G_OBJECT (prefs_dialog), "gimp", gimp);
+  g_object_set_data (G_OBJECT (prefs_dialog), "picman", picman);
 
   g_object_set_data_full (G_OBJECT (prefs_dialog), "config-copy", config_copy,
                           (GDestroyNotify) g_object_unref);
@@ -218,9 +218,9 @@ prefs_config_copy_notify (GObject    *config_copy,
 
   if (g_param_values_cmp (param_spec, &copy_value, &global_value))
     {
-      if (param_spec->flags & GIMP_CONFIG_PARAM_CONFIRM)
+      if (param_spec->flags & PICMAN_CONFIG_PARAM_CONFIRM)
         {
-#ifdef GIMP_CONFIG_DEBUG
+#ifdef PICMAN_CONFIG_DEBUG
           g_print ("NOT Applying prefs change of '%s' to edit_config "
                    "because it needs confirmation\n",
                    param_spec->name);
@@ -228,7 +228,7 @@ prefs_config_copy_notify (GObject    *config_copy,
         }
       else
         {
-#ifdef GIMP_CONFIG_DEBUG
+#ifdef PICMAN_CONFIG_DEBUG
           g_print ("Applying prefs change of '%s' to edit_config\n",
                    param_spec->name);
 #endif
@@ -253,7 +253,7 @@ prefs_response (GtkWidget *widget,
                 gint       response_id,
                 GtkWidget *dialog)
 {
-  Gimp *gimp = g_object_get_data (G_OBJECT (dialog), "gimp");
+  Picman *picman = g_object_get_data (G_OBJECT (dialog), "picman");
 
   switch (response_id)
     {
@@ -261,15 +261,15 @@ prefs_response (GtkWidget *widget,
       {
         GtkWidget *confirm;
 
-        confirm = gimp_message_dialog_new (_("Reset All Preferences"),
-                                           GIMP_STOCK_QUESTION,
+        confirm = picman_message_dialog_new (_("Reset All Preferences"),
+                                           PICMAN_STOCK_QUESTION,
                                            dialog,
                                            GTK_DIALOG_MODAL |
                                            GTK_DIALOG_DESTROY_WITH_PARENT,
-                                           gimp_standard_help_func, NULL,
+                                           picman_standard_help_func, NULL,
 
                                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                           GIMP_STOCK_RESET, GTK_RESPONSE_OK,
+                                           PICMAN_STOCK_RESET, GTK_RESPONSE_OK,
 
                                            NULL);
 
@@ -278,17 +278,17 @@ prefs_response (GtkWidget *widget,
                                                  GTK_RESPONSE_CANCEL,
                                                  -1);
 
-        gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (confirm)->box,
+        picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (confirm)->box,
                                            _("Do you really want to reset all "
                                              "preferences to default values?"));
 
-        if (gimp_dialog_run (GIMP_DIALOG (confirm)) == GTK_RESPONSE_OK)
+        if (picman_dialog_run (PICMAN_DIALOG (confirm)) == GTK_RESPONSE_OK)
           {
-            GimpConfig *config_copy;
+            PicmanConfig *config_copy;
 
             config_copy = g_object_get_data (G_OBJECT (dialog), "config-copy");
 
-            gimp_config_reset (config_copy);
+            picman_config_reset (config_copy);
           }
 
         gtk_widget_destroy (confirm);
@@ -311,11 +311,11 @@ prefs_response (GtkWidget *widget,
 
         gtk_widget_set_sensitive (GTK_WIDGET (dialog), FALSE);
 
-        confirm_diff = gimp_config_diff (G_OBJECT (gimp->edit_config),
+        confirm_diff = picman_config_diff (G_OBJECT (picman->edit_config),
                                          config_copy,
-                                         GIMP_CONFIG_PARAM_CONFIRM);
+                                         PICMAN_CONFIG_PARAM_CONFIRM);
 
-        g_object_freeze_notify (G_OBJECT (gimp->edit_config));
+        g_object_freeze_notify (G_OBJECT (picman->edit_config));
 
         for (list = confirm_diff; list; list = g_list_next (list))
           {
@@ -326,30 +326,30 @@ prefs_response (GtkWidget *widget,
 
             g_object_get_property (config_copy,
                                    param_spec->name, &value);
-            g_object_set_property (G_OBJECT (gimp->edit_config),
+            g_object_set_property (G_OBJECT (picman->edit_config),
                                    param_spec->name, &value);
 
             g_value_unset (&value);
           }
 
-        g_object_thaw_notify (G_OBJECT (gimp->edit_config));
+        g_object_thaw_notify (G_OBJECT (picman->edit_config));
 
         g_list_free (confirm_diff);
 
-        gimp_rc_save (GIMP_RC (gimp->edit_config));
+        picman_rc_save (PICMAN_RC (picman->edit_config));
 
         /*  spit out a solely informational warning about changed values
          *  which need restart
          */
-        restart_diff = gimp_config_diff (G_OBJECT (gimp->edit_config),
-                                         G_OBJECT (gimp->config),
-                                         GIMP_CONFIG_PARAM_RESTART);
+        restart_diff = picman_config_diff (G_OBJECT (picman->edit_config),
+                                         G_OBJECT (picman->config),
+                                         PICMAN_CONFIG_PARAM_RESTART);
 
         if (restart_diff)
           {
             GString *string;
 
-            string = g_string_new (_("You will have to restart GIMP for "
+            string = g_string_new (_("You will have to restart PICMAN for "
                                      "the following changes to take effect:"));
             g_string_append (string, "\n\n");
 
@@ -382,11 +382,11 @@ prefs_response (GtkWidget *widget,
 
         gtk_widget_set_sensitive (GTK_WIDGET (dialog), FALSE);
 
-        diff = gimp_config_diff (G_OBJECT (gimp->edit_config),
+        diff = picman_config_diff (G_OBJECT (picman->edit_config),
                                  config_orig,
-                                 GIMP_CONFIG_PARAM_SERIALIZE);
+                                 PICMAN_CONFIG_PARAM_SERIALIZE);
 
-        g_object_freeze_notify (G_OBJECT (gimp->edit_config));
+        g_object_freeze_notify (G_OBJECT (picman->edit_config));
 
         for (list = diff; list; list = g_list_next (list))
           {
@@ -397,15 +397,15 @@ prefs_response (GtkWidget *widget,
 
             g_object_get_property (config_orig,
                                    param_spec->name, &value);
-            g_object_set_property (G_OBJECT (gimp->edit_config),
+            g_object_set_property (G_OBJECT (picman->edit_config),
                                    param_spec->name, &value);
 
             g_value_unset (&value);
           }
 
-        gimp_tool_editor_revert_changes (GIMP_TOOL_EDITOR (tool_editor));
+        picman_tool_editor_revert_changes (PICMAN_TOOL_EDITOR (tool_editor));
 
-        g_object_thaw_notify (G_OBJECT (gimp->edit_config));
+        g_object_thaw_notify (G_OBJECT (picman->edit_config));
 
         g_list_free (diff);
       }
@@ -414,23 +414,23 @@ prefs_response (GtkWidget *widget,
     }
 
   /*  enable autosaving again  */
-  gimp_rc_set_autosave (GIMP_RC (gimp->edit_config), TRUE);
+  picman_rc_set_autosave (PICMAN_RC (picman->edit_config), TRUE);
 
   gtk_widget_destroy (dialog);
 }
 
 static void
-prefs_template_select_callback (GimpContainerView *view,
-                                GimpTemplate      *template,
+prefs_template_select_callback (PicmanContainerView *view,
+                                PicmanTemplate      *template,
                                 gpointer           insert_data,
-                                GimpTemplate      *edit_template)
+                                PicmanTemplate      *edit_template)
 {
   if (template)
     {
       /*  make sure the resolution values are copied first (see bug #546924)  */
-      gimp_config_sync (G_OBJECT (template), G_OBJECT (edit_template),
-                        GIMP_TEMPLATE_PARAM_COPY_FIRST);
-      gimp_config_sync (G_OBJECT (template), G_OBJECT (edit_template),
+      picman_config_sync (G_OBJECT (template), G_OBJECT (edit_template),
+                        PICMAN_TEMPLATE_PARAM_COPY_FIRST);
+      picman_config_sync (G_OBJECT (template), G_OBJECT (edit_template),
                         0);
     }
 }
@@ -447,17 +447,17 @@ prefs_resolution_source_callback (GtkWidget *widget,
 
   if (from_gdk)
     {
-      gimp_get_screen_resolution (NULL, &xres, &yres);
+      picman_get_screen_resolution (NULL, &xres, &yres);
     }
   else
     {
-      GimpSizeEntry *entry = g_object_get_data (G_OBJECT (widget),
+      PicmanSizeEntry *entry = g_object_get_data (G_OBJECT (widget),
                                                 "monitor_resolution_sizeentry");
 
-      g_return_if_fail (GIMP_IS_SIZE_ENTRY (entry));
+      g_return_if_fail (PICMAN_IS_SIZE_ENTRY (entry));
 
-      xres = gimp_size_entry_get_refval (entry, 0);
-      yres = gimp_size_entry_get_refval (entry, 1);
+      xres = picman_size_entry_get_refval (entry, 0);
+      yres = picman_size_entry_get_refval (entry, 1);
     }
 
   g_object_set (config,
@@ -478,36 +478,36 @@ prefs_resolution_calibrate_callback (GtkWidget *widget,
   dialog = gtk_widget_get_toplevel (entry);
 
   prefs_box = g_object_get_data (G_OBJECT (dialog), "prefs-box");
-  image     = gimp_prefs_box_get_image (GIMP_PREFS_BOX (prefs_box));
+  image     = picman_prefs_box_get_image (PICMAN_PREFS_BOX (prefs_box));
 
   resolution_calibrate_dialog (entry, gtk_image_get_pixbuf (GTK_IMAGE (image)));
 }
 
 static void
 prefs_input_devices_dialog (GtkWidget *widget,
-                            Gimp      *gimp)
+                            Picman      *picman)
 {
-  gimp_dialog_factory_dialog_raise (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_dialog_raise (picman_dialog_factory_get_singleton (),
                                     gtk_widget_get_screen (widget),
-                                    "gimp-input-devices-dialog", 0);
+                                    "picman-input-devices-dialog", 0);
 }
 
 static void
 prefs_keyboard_shortcuts_dialog (GtkWidget *widget,
-                                 Gimp      *gimp)
+                                 Picman      *picman)
 {
-  gimp_dialog_factory_dialog_raise (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_dialog_raise (picman_dialog_factory_get_singleton (),
                                     gtk_widget_get_screen (widget),
-                                    "gimp-keyboard-shortcuts-dialog", 0);
+                                    "picman-keyboard-shortcuts-dialog", 0);
 }
 
 static void
 prefs_menus_save_callback (GtkWidget *widget,
-                           Gimp      *gimp)
+                           Picman      *picman)
 {
   GtkWidget *clear_button;
 
-  menus_save (gimp, TRUE);
+  menus_save (picman, TRUE);
 
   clear_button = g_object_get_data (G_OBJECT (widget), "clear-button");
 
@@ -517,11 +517,11 @@ prefs_menus_save_callback (GtkWidget *widget,
 
 static void
 prefs_menus_clear_callback (GtkWidget *widget,
-                            Gimp      *gimp)
+                            Picman      *picman)
 {
   GError *error = NULL;
 
-  if (! menus_clear (gimp, &error))
+  if (! menus_clear (picman, &error))
     {
       prefs_message (GTK_MESSAGE_ERROR, TRUE, error->message);
       g_clear_error (&error);
@@ -532,22 +532,22 @@ prefs_menus_clear_callback (GtkWidget *widget,
 
       prefs_message (GTK_MESSAGE_INFO, TRUE,
                      _("Your keyboard shortcuts will be reset to "
-                       "default values the next time you start GIMP."));
+                       "default values the next time you start PICMAN."));
     }
 }
 
 static void
 prefs_menus_remove_callback (GtkWidget *widget,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
   GtkWidget *dialog;
 
-  dialog = gimp_message_dialog_new (_("Remove all Keyboard Shortcuts"),
-                                    GIMP_STOCK_QUESTION,
+  dialog = picman_message_dialog_new (_("Remove all Keyboard Shortcuts"),
+                                    PICMAN_STOCK_QUESTION,
                                     gtk_widget_get_toplevel (widget),
                                     GTK_DIALOG_MODAL |
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_CLEAR,  GTK_RESPONSE_OK,
@@ -563,13 +563,13 @@ prefs_menus_remove_callback (GtkWidget *widget,
                            G_CALLBACK (gtk_widget_destroy),
                            dialog, G_CONNECT_SWAPPED);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("Do you really want to remove all "
                                        "keyboard shortcuts from all menus?"));
 
-  if (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
-      menus_remove (gimp);
+      menus_remove (picman);
     }
 
   gtk_widget_destroy (dialog);
@@ -577,11 +577,11 @@ prefs_menus_remove_callback (GtkWidget *widget,
 
 static void
 prefs_session_save_callback (GtkWidget *widget,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
   GtkWidget *clear_button;
 
-  session_save (gimp, TRUE);
+  session_save (picman, TRUE);
 
   clear_button = g_object_get_data (G_OBJECT (widget), "clear-button");
 
@@ -591,11 +591,11 @@ prefs_session_save_callback (GtkWidget *widget,
 
 static void
 prefs_session_clear_callback (GtkWidget *widget,
-                              Gimp      *gimp)
+                              Picman      *picman)
 {
   GError *error = NULL;
 
-  if (! session_clear (gimp, &error))
+  if (! session_clear (picman, &error))
     {
       prefs_message (GTK_MESSAGE_ERROR, TRUE, error->message);
       g_clear_error (&error);
@@ -606,17 +606,17 @@ prefs_session_clear_callback (GtkWidget *widget,
 
       prefs_message (GTK_MESSAGE_INFO, TRUE,
                      _("Your window setup will be reset to "
-                       "default values the next time you start GIMP."));
+                       "default values the next time you start PICMAN."));
     }
 }
 
 static void
 prefs_devices_save_callback (GtkWidget *widget,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
   GtkWidget *clear_button;
 
-  gimp_devices_save (gimp, TRUE);
+  picman_devices_save (picman, TRUE);
 
   clear_button = g_object_get_data (G_OBJECT (widget), "clear-button");
 
@@ -626,11 +626,11 @@ prefs_devices_save_callback (GtkWidget *widget,
 
 static void
 prefs_devices_clear_callback (GtkWidget *widget,
-                              Gimp      *gimp)
+                              Picman      *picman)
 {
   GError *error = NULL;
 
-  if (! gimp_devices_clear (gimp, &error))
+  if (! picman_devices_clear (picman, &error))
     {
       prefs_message (GTK_MESSAGE_ERROR, TRUE, error->message);
       g_clear_error (&error);
@@ -641,17 +641,17 @@ prefs_devices_clear_callback (GtkWidget *widget,
 
       prefs_message (GTK_MESSAGE_INFO, TRUE,
                      _("Your input device settings will be reset to "
-                       "default values the next time you start GIMP."));
+                       "default values the next time you start PICMAN."));
     }
 }
 
 static void
 prefs_tool_options_save_callback (GtkWidget *widget,
-                                  Gimp      *gimp)
+                                  Picman      *picman)
 {
   GtkWidget *clear_button;
 
-  gimp_tools_save (gimp, TRUE, TRUE);
+  picman_tools_save (picman, TRUE, TRUE);
 
   clear_button = g_object_get_data (G_OBJECT (widget), "clear-button");
 
@@ -661,11 +661,11 @@ prefs_tool_options_save_callback (GtkWidget *widget,
 
 static void
 prefs_tool_options_clear_callback (GtkWidget *widget,
-                                   Gimp      *gimp)
+                                   Picman      *picman)
 {
   GError *error = NULL;
 
-  if (! gimp_tools_clear (gimp, &error))
+  if (! picman_tools_clear (picman, &error))
     {
       prefs_message (GTK_MESSAGE_ERROR, TRUE, error->message);
       g_clear_error (&error);
@@ -676,7 +676,7 @@ prefs_tool_options_clear_callback (GtkWidget *widget,
 
       prefs_message (GTK_MESSAGE_INFO, TRUE,
                      _("Your tool options will be reset to "
-                       "default values the next time you start GIMP."));
+                       "default values the next time you start PICMAN."));
     }
 }
 
@@ -699,7 +699,7 @@ prefs_format_string_select_callback (GtkTreeSelection *sel,
 
 static void
 prefs_theme_select_callback (GtkTreeSelection *sel,
-                             Gimp             *gimp)
+                             Picman             *picman)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -709,16 +709,16 @@ prefs_theme_select_callback (GtkTreeSelection *sel,
       GValue val = { 0, };
 
       gtk_tree_model_get_value (model, &iter, 0, &val);
-      g_object_set (gimp->config, "theme", g_value_get_string (&val), NULL);
+      g_object_set (picman->config, "theme", g_value_get_string (&val), NULL);
       g_value_unset (&val);
     }
 }
 
 static void
 prefs_theme_reload_callback (GtkWidget *button,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
-  g_object_notify (G_OBJECT (gimp->config), "theme");
+  g_object_notify (G_OBJECT (picman->config), "theme");
 }
 
 static GtkWidget *
@@ -729,7 +729,7 @@ prefs_frame_new (const gchar  *label,
   GtkWidget *frame;
   GtkWidget *vbox;
 
-  frame = gimp_frame_new (label);
+  frame = picman_frame_new (label);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
@@ -767,9 +767,9 @@ prefs_table_new (gint          rows,
 }
 
 static void
-prefs_profile_combo_dialog_response (GimpProfileChooserDialog *dialog,
+prefs_profile_combo_dialog_response (PicmanProfileChooserDialog *dialog,
                                      gint                      response,
-                                     GimpColorProfileComboBox *combo)
+                                     PicmanColorProfileComboBox *combo)
 {
   if (response == GTK_RESPONSE_ACCEPT)
     {
@@ -779,10 +779,10 @@ prefs_profile_combo_dialog_response (GimpProfileChooserDialog *dialog,
 
       if (filename)
         {
-          gchar *label = gimp_profile_chooser_dialog_get_desc (dialog,
+          gchar *label = picman_profile_chooser_dialog_get_desc (dialog,
                                                                filename);
 
-          gimp_color_profile_combo_box_set_active (combo, filename, label);
+          picman_color_profile_combo_box_set_active (combo, filename, label);
 
           g_free (label);
         }
@@ -792,10 +792,10 @@ prefs_profile_combo_dialog_response (GimpProfileChooserDialog *dialog,
 }
 
 static void
-prefs_profile_combo_changed (GimpColorProfileComboBox *combo,
+prefs_profile_combo_changed (PicmanColorProfileComboBox *combo,
                              GObject                  *config)
 {
-  gchar *filename = gimp_color_profile_combo_box_get_active (combo);
+  gchar *filename = picman_color_profile_combo_box_get_active (combo);
 
   g_object_set (config,
                 g_object_get_data (G_OBJECT (combo), "property-name"), filename,
@@ -818,33 +818,33 @@ prefs_profile_combo_add_tooltip (GtkWidget   *combo,
   blurb = g_param_spec_get_blurb (param_spec);
 
   if (blurb)
-    gimp_help_set_help_data (combo,
-                             dgettext (GETTEXT_PACKAGE "-libgimp", blurb),
+    picman_help_set_help_data (combo,
+                             dgettext (GETTEXT_PACKAGE "-libpicman", blurb),
                              NULL);
 
   return combo;
 }
 
 static GtkWidget *
-prefs_profile_combo_box_new (Gimp         *gimp,
+prefs_profile_combo_box_new (Picman         *picman,
                              GObject      *config,
                              GtkListStore *store,
                              const gchar  *label,
                              const gchar  *property_name)
 {
-  GtkWidget *dialog = gimp_profile_chooser_dialog_new (gimp, label);
+  GtkWidget *dialog = picman_profile_chooser_dialog_new (picman, label);
   GtkWidget *combo;
   gchar     *filename;
 
   g_object_get (config, property_name, &filename, NULL);
 
-  combo = gimp_color_profile_combo_box_new_with_model (dialog,
+  combo = picman_color_profile_combo_box_new_with_model (dialog,
                                                        GTK_TREE_MODEL (store));
 
   g_object_set_data (G_OBJECT (combo),
                      "property-name", (gpointer) property_name);
 
-  gimp_color_profile_combo_box_set_active (GIMP_COLOR_PROFILE_COMBO_BOX (combo),
+  picman_color_profile_combo_box_set_active (PICMAN_COLOR_PROFILE_COMBO_BOX (combo),
                                            filename, NULL);
 
   g_signal_connect (dialog, "response",
@@ -865,7 +865,7 @@ prefs_button_add (const gchar *stock_id,
 {
   GtkWidget *button;
 
-  button = gimp_stock_button_new (stock_id, label);
+  button = picman_stock_button_new (stock_id, label);
   gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
@@ -880,7 +880,7 @@ prefs_check_button_add (GObject     *config,
 {
   GtkWidget *button;
 
-  button = gimp_prop_check_button_new (config, property_name, label);
+  button = picman_prop_check_button_new (config, property_name, label);
 
   if (button)
     {
@@ -903,7 +903,7 @@ prefs_check_button_add_with_icon (GObject      *config,
   GtkWidget *hbox;
   GtkWidget *image;
 
-  button = gimp_prop_check_button_new (config, property_name, label);
+  button = picman_prop_check_button_new (config, property_name, label);
   if (!button)
     return NULL;
 
@@ -933,7 +933,7 @@ prefs_widget_add_aligned (GtkWidget    *widget,
                           gboolean      left_align,
                           GtkSizeGroup *group)
 {
-  GtkWidget *label = gimp_table_attach_aligned (table, 0, table_row,
+  GtkWidget *label = picman_table_attach_aligned (table, 0, table_row,
                                                 text, 0.0, 0.5,
                                                 widget, 1, left_align);
   if (group)
@@ -951,11 +951,11 @@ prefs_color_button_add (GObject      *config,
                         gint          table_row,
                         GtkSizeGroup *group)
 {
-  GtkWidget *button = gimp_prop_color_button_new (config, property_name,
+  GtkWidget *button = picman_prop_color_button_new (config, property_name,
                                                   title,
                                                   COLOR_BUTTON_WIDTH,
                                                   COLOR_BUTTON_HEIGHT,
-                                                  GIMP_COLOR_AREA_FLAT);
+                                                  PICMAN_COLOR_AREA_FLAT);
 
   if (button)
     prefs_widget_add_aligned (button, label, table, table_row, TRUE, group);
@@ -973,7 +973,7 @@ prefs_enum_combo_box_add (GObject      *config,
                           gint          table_row,
                           GtkSizeGroup *group)
 {
-  GtkWidget *combo = gimp_prop_enum_combo_box_new (config, property_name,
+  GtkWidget *combo = picman_prop_enum_combo_box_new (config, property_name,
                                                    minimum, maximum);
 
   if (combo)
@@ -992,7 +992,7 @@ prefs_boolean_combo_box_add (GObject      *config,
                              gint          table_row,
                              GtkSizeGroup *group)
 {
-  GtkWidget *combo = gimp_prop_boolean_combo_box_new (config, property_name,
+  GtkWidget *combo = picman_prop_boolean_combo_box_new (config, property_name,
                                                       true_text, false_text);
 
   if (combo)
@@ -1007,7 +1007,7 @@ prefs_language_combo_box_add (GObject      *config,
                               const gchar  *property_name,
                               GtkBox       *vbox)
 {
-  GtkWidget *combo = gimp_prop_language_combo_box_new (config, property_name);
+  GtkWidget *combo = picman_prop_language_combo_box_new (config, property_name);
 
   if (combo)
     {
@@ -1030,7 +1030,7 @@ prefs_spin_button_add (GObject      *config,
                        gint          table_row,
                        GtkSizeGroup *group)
 {
-  GtkWidget *button = gimp_prop_spin_button_new (config, property_name,
+  GtkWidget *button = picman_prop_spin_button_new (config, property_name,
                                                  step_increment,
                                                  page_increment,
                                                  digits);
@@ -1049,7 +1049,7 @@ prefs_memsize_entry_add (GObject      *config,
                          gint          table_row,
                          GtkSizeGroup *group)
 {
-  GtkWidget *entry = gimp_prop_memsize_entry_new (config, property_name);
+  GtkWidget *entry = picman_prop_memsize_entry_new (config, property_name);
 
   if (entry)
     prefs_widget_add_aligned (entry, label, table, table_row, TRUE, group);
@@ -1061,12 +1061,12 @@ static void
 prefs_canvas_padding_color_changed (GtkWidget *button,
                                     GtkWidget *combo)
 {
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
-                                 GIMP_CANVAS_PADDING_MODE_CUSTOM);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
+                                 PICMAN_CANVAS_PADDING_MODE_CUSTOM);
 }
 
 static void
-prefs_display_options_frame_add (Gimp         *gimp,
+prefs_display_options_frame_add (Picman         *picman,
                                  GObject      *object,
                                  const gchar  *label,
                                  GtkContainer *parent)
@@ -1131,8 +1131,8 @@ prefs_display_options_frame_add (Gimp         *gimp,
                                    _("Custom p_adding color:"),
                                    _("Select Custom Canvas Padding Color"),
                                    GTK_TABLE (table), 1, NULL);
-  gimp_color_panel_set_context (GIMP_COLOR_PANEL (button),
-                                gimp_get_user_context (gimp));
+  picman_color_panel_set_context (PICMAN_COLOR_PANEL (button),
+                                picman_get_user_context (picman));
 
   g_signal_connect (button, "color-changed",
                     G_CALLBACK (prefs_canvas_padding_color_changed),
@@ -1149,12 +1149,12 @@ prefs_help_func (const gchar *help_id,
   gint       page_num;
 
   prefs_box = g_object_get_data (G_OBJECT (help_data), "prefs-box");
-  notebook  = gimp_prefs_box_get_notebook (GIMP_PREFS_BOX (prefs_box));
+  notebook  = picman_prefs_box_get_notebook (PICMAN_PREFS_BOX (prefs_box));
   page_num  = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
   event_box = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), page_num);
 
-  help_id = g_object_get_data (G_OBJECT (event_box), "gimp-help-id");
-  gimp_standard_help_func (help_id, NULL);
+  help_id = g_object_get_data (G_OBJECT (event_box), "picman-help-id");
+  picman_standard_help_func (help_id, NULL);
 }
 
 static void
@@ -1185,7 +1185,7 @@ prefs_idle_unref (gpointer data)
 }
 
 static GdkPixbuf *
-prefs_get_pixbufs (Gimp         *gimp,
+prefs_get_pixbufs (Picman         *picman,
                    const gchar  *name,
                    GdkPixbuf   **small_pixbuf)
 {
@@ -1196,7 +1196,7 @@ prefs_get_pixbufs (Gimp         *gimp,
   *small_pixbuf = NULL;
 
   basename = g_strconcat (name, ".png", NULL);
-  filename = themes_get_theme_file (gimp, "images", "preferences",
+  filename = themes_get_theme_file (picman, "images", "preferences",
                                     basename, NULL);
 
   if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
@@ -1206,7 +1206,7 @@ prefs_get_pixbufs (Gimp         *gimp,
   g_free (basename);
 
   basename = g_strconcat (name, "-22.png", NULL);
-  filename = themes_get_theme_file (gimp, "images", "preferences",
+  filename = themes_get_theme_file (picman, "images", "preferences",
                                     basename, NULL);
 
   if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
@@ -1228,8 +1228,8 @@ prefs_get_pixbufs (Gimp         *gimp,
 }
 
 static GtkWidget *
-prefs_dialog_new (Gimp       *gimp,
-                  GimpConfig *config)
+prefs_dialog_new (Picman       *picman,
+                  PicmanConfig *config)
 {
   GtkWidget         *dialog;
   GtkTreeIter        top_iter;
@@ -1253,22 +1253,22 @@ prefs_dialog_new (Gimp       *gimp,
   gint               i;
 
   GObject           *object;
-  GimpCoreConfig    *core_config;
-  GimpDisplayConfig *display_config;
+  PicmanCoreConfig    *core_config;
+  PicmanDisplayConfig *display_config;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONFIG (config), NULL);
 
   object         = G_OBJECT (config);
-  core_config    = GIMP_CORE_CONFIG (config);
-  display_config = GIMP_DISPLAY_CONFIG (config);
+  core_config    = PICMAN_CORE_CONFIG (config);
+  display_config = PICMAN_DISPLAY_CONFIG (config);
 
-  dialog = gimp_dialog_new (_("Preferences"), "gimp-preferences",
+  dialog = picman_dialog_new (_("Preferences"), "picman-preferences",
                             NULL, 0,
                             prefs_help_func,
-                            GIMP_HELP_PREFS_DIALOG,
+                            PICMAN_HELP_PREFS_DIALOG,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -1285,7 +1285,7 @@ prefs_dialog_new (Gimp       *gimp,
                     dialog);
 
   /* The prefs box */
-  prefs_box = gimp_prefs_box_new ();
+  prefs_box = picman_prefs_box_new ();
   gtk_container_set_border_width (GTK_CONTAINER (prefs_box), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                       prefs_box, TRUE, TRUE, 0);
@@ -1297,13 +1297,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*****************/
   /*  Environment  */
   /*****************/
-  pixbuf = prefs_get_pixbufs (gimp, "environment", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "environment", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Environment"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_ENVIRONMENT,
+                                  PICMAN_HELP_PREFS_ENVIRONMENT,
                                   NULL,
                                   &top_iter);
 
@@ -1364,13 +1364,13 @@ prefs_dialog_new (Gimp       *gimp,
   /***************/
   /*  Interface  */
   /***************/
-  pixbuf = prefs_get_pixbufs (gimp, "interface", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "interface", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("User Interface"),
                                   pixbuf,
                                   _("Interface"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_INTERFACE,
+                                  PICMAN_HELP_PREFS_INTERFACE,
                                   NULL,
                                   &top_iter);
 
@@ -1412,7 +1412,7 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_keyboard_shortcuts_dialog),
-                    gimp);
+                    picman);
 
   prefs_check_button_add (object, "save-accels",
                           _("_Save keyboard shortcuts on exit"),
@@ -1423,14 +1423,14 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_menus_save_callback),
-                    gimp);
+                    picman);
 
-  button2 = prefs_button_add (GIMP_STOCK_RESET,
+  button2 = prefs_button_add (PICMAN_STOCK_RESET,
                               _("_Reset Keyboard Shortcuts to Default Values"),
                               GTK_BOX (vbox2));
   g_signal_connect (button2, "clicked",
                     G_CALLBACK (prefs_menus_clear_callback),
-                    gimp);
+                    picman);
 
   g_object_set_data (G_OBJECT (button), "clear-button", button2);
 
@@ -1439,19 +1439,19 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_menus_remove_callback),
-                    gimp);
+                    picman);
 
 
   /***********/
   /*  Theme  */
   /***********/
-  pixbuf = prefs_get_pixbufs (gimp, "theme", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "theme", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Theme"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_THEME,
+                                  PICMAN_HELP_PREFS_THEME,
                                   NULL,
                                   &top_iter);
 
@@ -1497,7 +1497,7 @@ prefs_dialog_new (Gimp       *gimp,
 
     sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
-    themes = themes_list_themes (gimp, &n_themes);
+    themes = themes_list_themes (picman, &n_themes);
 
     for (i = 0; i < n_themes; i++)
       {
@@ -1506,11 +1506,11 @@ prefs_dialog_new (Gimp       *gimp,
         gtk_list_store_append (list_store, &iter);
         gtk_list_store_set (list_store, &iter,
                             0, themes[i],
-                            1, themes_get_theme_dir (gimp, themes[i]),
+                            1, themes_get_theme_dir (picman, themes[i]),
                             -1);
 
-        if (GIMP_GUI_CONFIG (object)->theme &&
-            ! strcmp (GIMP_GUI_CONFIG (object)->theme, themes[i]))
+        if (PICMAN_GUI_CONFIG (object)->theme &&
+            ! strcmp (PICMAN_GUI_CONFIG (object)->theme, themes[i]))
           {
             GtkTreePath *path;
 
@@ -1529,7 +1529,7 @@ prefs_dialog_new (Gimp       *gimp,
 
     g_signal_connect (sel, "changed",
                       G_CALLBACK (prefs_theme_select_callback),
-                      gimp);
+                      picman);
   }
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -1541,19 +1541,19 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (hbox));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_theme_reload_callback),
-                    gimp);
+                    picman);
 
 
   /*****************/
   /*  Help System  */
   /*****************/
-  pixbuf = prefs_get_pixbufs (gimp, "help-system", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "help-system", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Help System"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_HELP,
+                                  PICMAN_HELP_PREFS_HELP,
                                   NULL,
                                   &top_iter);
 
@@ -1583,16 +1583,16 @@ prefs_dialog_new (Gimp       *gimp,
                                          _("Use a locally installed copy"),
                                          _("User manual:"),
                                          GTK_TABLE (table), 0, size_group);
-    gimp_help_set_help_data (combo, NULL, NULL);
+    picman_help_set_help_data (combo, NULL, NULL);
 
-    if (gimp_help_user_manual_is_installed (gimp))
+    if (picman_help_user_manual_is_installed (picman))
       {
-        icon = GIMP_STOCK_INFO;
+        icon = PICMAN_STOCK_INFO;
         text = _("There's a local installation of the user manual.");
       }
     else
       {
-        icon = GIMP_STOCK_WARNING;
+        icon = PICMAN_STOCK_WARNING;
         text = _("The user manual is not installed locally.");
       }
 
@@ -1605,7 +1605,7 @@ prefs_dialog_new (Gimp       *gimp,
     gtk_widget_show (image);
 
     label = gtk_label_new (text);
-    gimp_label_set_attributes (GTK_LABEL (label),
+    picman_label_set_attributes (GTK_LABEL (label),
                                PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                                -1);
     gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
@@ -1630,13 +1630,13 @@ prefs_dialog_new (Gimp       *gimp,
   /******************/
   /*  Tool Options  */
   /******************/
-  pixbuf = prefs_get_pixbufs (gimp, "tool-options", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "tool-options", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   C_("preferences", "Tool Options"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_TOOL_OPTIONS,
+                                  PICMAN_HELP_PREFS_TOOL_OPTIONS,
                                   NULL,
                                   &top_iter);
 
@@ -1654,15 +1654,15 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_tool_options_save_callback),
-                    gimp);
+                    picman);
 
-  button2 = prefs_button_add (GIMP_STOCK_RESET,
+  button2 = prefs_button_add (PICMAN_STOCK_RESET,
                               _("_Reset Saved Tool Options to "
                                 "Default Values"),
                               GTK_BOX (vbox2));
   g_signal_connect (button2, "clicked",
                     G_CALLBACK (prefs_tool_options_clear_callback),
-                    gimp);
+                    picman);
 
   g_object_set_data (G_OBJECT (button), "clear-button", button2);
 
@@ -1691,16 +1691,16 @@ prefs_dialog_new (Gimp       *gimp,
                            GTK_CONTAINER (vbox), FALSE);
 
   prefs_check_button_add_with_icon (object, "global-brush",
-                                    _("_Brush"),    GIMP_STOCK_BRUSH,
+                                    _("_Brush"),    PICMAN_STOCK_BRUSH,
                                     GTK_BOX (vbox2), size_group);
   prefs_check_button_add_with_icon (object, "global-dynamics",
-                                    _("_Dynamics"), GIMP_STOCK_DYNAMICS,
+                                    _("_Dynamics"), PICMAN_STOCK_DYNAMICS,
                                     GTK_BOX (vbox2), size_group);
   prefs_check_button_add_with_icon (object, "global-pattern",
-                                    _("_Pattern"),  GIMP_STOCK_PATTERN,
+                                    _("_Pattern"),  PICMAN_STOCK_PATTERN,
                                     GTK_BOX (vbox2), size_group);
   prefs_check_button_add_with_icon (object, "global-gradient",
-                                    _("_Gradient"), GIMP_STOCK_GRADIENT,
+                                    _("_Gradient"), PICMAN_STOCK_GRADIENT,
                                     GTK_BOX (vbox2), size_group);
 
   /*  Move Tool */
@@ -1709,7 +1709,7 @@ prefs_dialog_new (Gimp       *gimp,
 
   prefs_check_button_add_with_icon (object, "move-tool-changes-active",
                                     _("Set layer or path as active"),
-                                    GIMP_STOCK_TOOL_MOVE,
+                                    PICMAN_STOCK_TOOL_MOVE,
                                     GTK_BOX (vbox2), size_group);
 
   g_object_unref (size_group);
@@ -1719,13 +1719,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*************/
   /*  Toolbox  */
   /*************/
-  pixbuf = prefs_get_pixbufs (gimp, "toolbox", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "toolbox", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Toolbox"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_TOOLBOX,
+                                  PICMAN_HELP_PREFS_TOOLBOX,
                                   NULL,
                                   &top_iter);
 
@@ -1737,15 +1737,15 @@ prefs_dialog_new (Gimp       *gimp,
 
   prefs_check_button_add_with_icon (object, "toolbox-color-area",
                                     _("Show _foreground & background color"),
-                                    GIMP_STOCK_DEFAULT_COLORS,
+                                    PICMAN_STOCK_DEFAULT_COLORS,
                                     GTK_BOX (vbox2), size_group);
   prefs_check_button_add_with_icon (object, "toolbox-foo-area",
                                     _("Show active _brush, pattern & gradient"),
-                                    GIMP_STOCK_BRUSH,
+                                    PICMAN_STOCK_BRUSH,
                                     GTK_BOX (vbox2), size_group);
   prefs_check_button_add_with_icon (object, "toolbox-image-area",
                                     _("Show active _image"),
-                                    GIMP_STOCK_IMAGE,
+                                    PICMAN_STOCK_IMAGE,
                                     GTK_BOX (vbox2), size_group);
 
   g_object_unref (size_group);
@@ -1754,9 +1754,9 @@ prefs_dialog_new (Gimp       *gimp,
   /* Tool Editor */
   vbox2 = prefs_frame_new (_("Tools configuration"),
                            GTK_CONTAINER (vbox), TRUE);
-  tool_editor = gimp_tool_editor_new (gimp->tool_info_list, gimp->user_context,
-                                      gimp_tools_get_default_order (gimp),
-                                      GIMP_VIEW_SIZE_SMALL, 1);
+  tool_editor = picman_tool_editor_new (picman->tool_info_list, picman->user_context,
+                                      picman_tools_get_default_order (picman),
+                                      PICMAN_VIEW_SIZE_SMALL, 1);
 
   gtk_box_pack_start (GTK_BOX (vbox2), tool_editor, TRUE, TRUE, 0);
   gtk_widget_show (tool_editor);
@@ -1765,13 +1765,13 @@ prefs_dialog_new (Gimp       *gimp,
   /***********************/
   /*  Default New Image  */
   /***********************/
-  pixbuf = prefs_get_pixbufs (gimp, "new-image", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "new-image", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Default New Image"),
                                   pixbuf,
                                   _("Default Image"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_NEW_IMAGE,
+                                  PICMAN_HELP_PREFS_NEW_IMAGE,
                                   NULL,
                                   &top_iter);
 
@@ -1780,35 +1780,35 @@ prefs_dialog_new (Gimp       *gimp,
   {
     GtkWidget *combo;
 
-    combo = gimp_container_combo_box_new (gimp->templates,
-                                          gimp_get_user_context (gimp),
+    combo = picman_container_combo_box_new (picman->templates,
+                                          picman_get_user_context (picman),
                                           16, 0);
-    gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+    picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                _("_Template:"),  0.0, 0.5,
                                combo, 1, FALSE);
 
-    gimp_container_view_select_item (GIMP_CONTAINER_VIEW (combo), NULL);
+    picman_container_view_select_item (PICMAN_CONTAINER_VIEW (combo), NULL);
 
     g_signal_connect (combo, "select-item",
                       G_CALLBACK (prefs_template_select_callback),
                       core_config->default_image);
   }
 
-  editor = gimp_template_editor_new (core_config->default_image, gimp, FALSE);
-  gimp_template_editor_show_advanced (GIMP_TEMPLATE_EDITOR (editor), TRUE);
+  editor = picman_template_editor_new (core_config->default_image, picman, FALSE);
+  picman_template_editor_show_advanced (PICMAN_TEMPLATE_EDITOR (editor), TRUE);
   gtk_box_pack_start (GTK_BOX (vbox), editor, FALSE, FALSE, 0);
   gtk_widget_show (editor);
 
   /*  Quick Mask Color */
   vbox2 = prefs_frame_new (_("Quick Mask"), GTK_CONTAINER (vbox), FALSE);
   table = prefs_table_new (1, GTK_CONTAINER (vbox2));
-  button = gimp_prop_color_button_new (object, "quick-mask-color",
+  button = picman_prop_color_button_new (object, "quick-mask-color",
                                        _("Set the default Quick Mask color"),
                                        COLOR_BUTTON_WIDTH,
                                        COLOR_BUTTON_HEIGHT,
-                                       GIMP_COLOR_AREA_SMALL_CHECKS);
-  gimp_color_panel_set_context (GIMP_COLOR_PANEL (button),
-                                gimp_get_user_context (gimp));
+                                       PICMAN_COLOR_AREA_SMALL_CHECKS);
+  picman_color_panel_set_context (PICMAN_COLOR_PANEL (button),
+                                picman_get_user_context (picman));
   prefs_widget_add_aligned (button, _("Quick Mask color:"),
                             GTK_TABLE (table), 0, TRUE, NULL);
 
@@ -1817,21 +1817,21 @@ prefs_dialog_new (Gimp       *gimp,
   /******************/
   /*  Default Grid  */
   /******************/
-  pixbuf = prefs_get_pixbufs (gimp, "default-grid", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "default-grid", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Default Image Grid"),
                                   pixbuf,
                                   _("Default Grid"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_DEFAULT_GRID,
+                                  PICMAN_HELP_PREFS_DEFAULT_GRID,
                                   NULL,
                                   &top_iter);
 
   /*  Grid  */
-  editor = gimp_grid_editor_new (core_config->default_grid,
-                                 gimp_get_user_context (gimp),
-                                 gimp_template_get_resolution_x (core_config->default_image),
-                                 gimp_template_get_resolution_y (core_config->default_image));
+  editor = picman_grid_editor_new (core_config->default_grid,
+                                 picman_get_user_context (picman),
+                                 picman_template_get_resolution_x (core_config->default_image),
+                                 picman_template_get_resolution_y (core_config->default_image));
   gtk_box_pack_start (GTK_BOX (vbox), editor, TRUE, TRUE, 0);
   gtk_widget_show (editor);
 
@@ -1839,13 +1839,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*******************/
   /*  Image Windows  */
   /*******************/
-  pixbuf = prefs_get_pixbufs (gimp, "image-windows", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "image-windows", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Image Windows"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_IMAGE_WINDOW,
+                                  PICMAN_HELP_PREFS_IMAGE_WINDOW,
                                   NULL,
                                   &top_iter);
 
@@ -1920,22 +1920,22 @@ prefs_dialog_new (Gimp       *gimp,
   /********************************/
   /*  Image Windows / Appearance  */
   /********************************/
-  pixbuf = prefs_get_pixbufs (gimp, "image-windows", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "image-windows", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Image Window Appearance"),
                                   pixbuf,
                                   _("Appearance"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_IMAGE_WINDOW_APPEARANCE,
+                                  PICMAN_HELP_PREFS_IMAGE_WINDOW_APPEARANCE,
                                   &top_iter,
                                   &child_iter);
 
-  prefs_display_options_frame_add (gimp,
+  prefs_display_options_frame_add (picman,
                                    G_OBJECT (display_config->default_view),
                                    _("Default Appearance in Normal Mode"),
                                    GTK_CONTAINER (vbox));
 
-  prefs_display_options_frame_add (gimp,
+  prefs_display_options_frame_add (picman,
                                    G_OBJECT (display_config->default_fullscreen_view),
                                    _("Default Appearance in Fullscreen Mode"),
                                    GTK_CONTAINER (vbox));
@@ -1944,13 +1944,13 @@ prefs_dialog_new (Gimp       *gimp,
   /****************************************************/
   /*  Image Windows / Image Title & Statusbar Format  */
   /****************************************************/
-  pixbuf = prefs_get_pixbufs (gimp, "image-title", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "image-title", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Image Title & Statusbar Format"),
                                   pixbuf,
                                   _("Title & Status"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_IMAGE_WINDOW_TITLE,
+                                  PICMAN_HELP_PREFS_IMAGE_WINDOW_TITLE,
                                   &top_iter,
                                   &child_iter);
 
@@ -1982,9 +1982,9 @@ prefs_dialog_new (Gimp       *gimp,
     }
     formats[] =
     {
-      { NULL, GIMP_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT,
+      { NULL, PICMAN_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT,
         N_("Image Title Format"),     "image-title-format"  },
-      { NULL, GIMP_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT,
+      { NULL, PICMAN_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT,
         N_("Image Statusbar Format"), "image-status-format" }
     };
 
@@ -2009,7 +2009,7 @@ prefs_dialog_new (Gimp       *gimp,
         vbox2 = prefs_frame_new (gettext (formats[format].title),
                                  GTK_CONTAINER (vbox), TRUE);
 
-        entry = gimp_prop_entry_new (object, formats[format].property_name, 0);
+        entry = picman_prop_entry_new (object, formats[format].property_name, 0);
         gtk_box_pack_start (GTK_BOX (vbox2), entry, FALSE, FALSE, 0);
         gtk_widget_show (entry);
 
@@ -2068,13 +2068,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*************/
   /*  Display  */
   /*************/
-  pixbuf = prefs_get_pixbufs (gimp, "display", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "display", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Display"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_DISPLAY,
+                                  PICMAN_HELP_PREFS_DISPLAY,
                                   NULL,
                                   &top_iter);
 
@@ -2097,12 +2097,12 @@ prefs_dialog_new (Gimp       *gimp,
   {
     gchar *pixels_per_unit = g_strconcat (_("Pixels"), "/%s", NULL);
 
-    entry = gimp_prop_coordinates_new (object,
+    entry = picman_prop_coordinates_new (object,
                                        "monitor-xresolution",
                                        "monitor-yresolution",
                                        NULL,
                                        pixels_per_unit,
-                                       GIMP_SIZE_ENTRY_UPDATE_RESOLUTION,
+                                       PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION,
                                        0.0, 0.0,
                                        TRUE);
 
@@ -2112,11 +2112,11 @@ prefs_dialog_new (Gimp       *gimp,
   gtk_table_set_col_spacings (GTK_TABLE (entry), 2);
   gtk_table_set_row_spacings (GTK_TABLE (entry), 2);
 
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("Horizontal"), 0, 1, 0.0);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("Vertical"), 0, 2, 0.0);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("ppi"), 1, 4, 0.0);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -2131,7 +2131,7 @@ prefs_dialog_new (Gimp       *gimp,
     gdouble  xres, yres;
     gchar   *str;
 
-    gimp_get_screen_resolution (NULL, &xres, &yres);
+    picman_get_screen_resolution (NULL, &xres, &yres);
 
     str = g_strdup_printf (_("_Detect automatically (currently %d × %d ppi)"),
                            ROUND (xres), ROUND (yres));
@@ -2192,13 +2192,13 @@ prefs_dialog_new (Gimp       *gimp,
   /**********************/
   /*  Color Management  */
   /**********************/
-  pixbuf = prefs_get_pixbufs (gimp, "color-management", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "color-management", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Color Management"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_COLOR_MANAGEMENT,
+                                  PICMAN_HELP_PREFS_COLOR_MANAGEMENT,
                                   NULL,
                                   &top_iter);
 
@@ -2235,21 +2235,21 @@ prefs_dialog_new (Gimp       *gimp,
                               GTK_TABLE (table), row++, NULL);
     gtk_table_set_row_spacing (GTK_TABLE (table), row - 1, 12);
 
-    filename = gimp_personal_rc_file ("profilerc");
-    store = gimp_color_profile_store_new (filename);
+    filename = picman_personal_rc_file ("profilerc");
+    store = picman_color_profile_store_new (filename);
     g_free (filename);
 
-    gimp_color_profile_store_add (GIMP_COLOR_PROFILE_STORE (store), NULL, NULL);
+    picman_color_profile_store_add (PICMAN_COLOR_PROFILE_STORE (store), NULL, NULL);
 
     for (i = 0; i < G_N_ELEMENTS (profiles); i++)
       {
-        button = prefs_profile_combo_box_new (gimp,
+        button = prefs_profile_combo_box_new (picman,
                                               color_config,
                                               store,
                                               gettext (profiles[i].fs_label),
                                               profiles[i].property_name);
 
-        gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+        picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                                    gettext (profiles[i].label), 0.0, 0.5,
                                    button, 1, FALSE);
 
@@ -2259,7 +2259,7 @@ prefs_dialog_new (Gimp       *gimp,
             gtk_table_set_row_spacing (GTK_TABLE (table), row - 2, 12);
 
             button =
-              gimp_prop_check_button_new (color_config,
+              picman_prop_check_button_new (color_config,
                                           "display-profile-from-gdk",
                                           _("_Try to use the system monitor "
                                             "profile"));
@@ -2292,21 +2292,21 @@ prefs_dialog_new (Gimp       *gimp,
     gtk_widget_show (hbox);
     row++;
 
-    button = gimp_prop_check_button_new (color_config, "simulation-gamut-check",
+    button = picman_prop_check_button_new (color_config, "simulation-gamut-check",
                                          _("Mark out of gamut colors"));
     gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
     gtk_widget_show (button);
 
-    button = gimp_prop_color_button_new (color_config, "out-of-gamut-color",
+    button = picman_prop_color_button_new (color_config, "out-of-gamut-color",
                                          _("Select Warning Color"),
                                          COLOR_BUTTON_WIDTH,
                                          COLOR_BUTTON_HEIGHT,
-                                         GIMP_COLOR_AREA_FLAT);
+                                         PICMAN_COLOR_AREA_FLAT);
     gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
     gtk_widget_show (button);
 
-    gimp_color_panel_set_context (GIMP_COLOR_PANEL (button),
-                                  gimp_get_user_context (gimp));
+    picman_color_panel_set_context (PICMAN_COLOR_PANEL (button),
+                                  picman_get_user_context (picman));
 
     gtk_table_set_row_spacing (GTK_TABLE (table), row - 1, 12);
 
@@ -2321,13 +2321,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*******************/
   /*  Input Devices  */
   /*******************/
-  pixbuf = prefs_get_pixbufs (gimp, "input-devices", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "input-devices", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Input Devices"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_INPUT_DEVICES,
+                                  PICMAN_HELP_PREFS_INPUT_DEVICES,
                                   NULL,
                                   &top_iter);
 
@@ -2340,7 +2340,7 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_input_devices_dialog),
-                    gimp);
+                    picman);
 
   prefs_check_button_add (object, "save-device-status",
                           _("_Save input device settings on exit"),
@@ -2351,15 +2351,15 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_devices_save_callback),
-                    gimp);
+                    picman);
 
-  button2 = prefs_button_add (GIMP_STOCK_RESET,
+  button2 = prefs_button_add (PICMAN_STOCK_RESET,
                               _("_Reset Saved Input Device Settings to "
                                 "Default Values"),
                               GTK_BOX (vbox2));
   g_signal_connect (button2, "clicked",
                     G_CALLBACK (prefs_devices_clear_callback),
-                    gimp);
+                    picman);
 
   g_object_set_data (G_OBJECT (button), "clear-button", button2);
 
@@ -2367,17 +2367,17 @@ prefs_dialog_new (Gimp       *gimp,
   /****************************/
   /*  Additional Controllers  */
   /****************************/
-  pixbuf = prefs_get_pixbufs (gimp, "controllers", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "controllers", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Additional Input Controllers"),
                                   pixbuf,
                                   _("Input Controllers"),
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_INPUT_CONTROLLERS,
+                                  PICMAN_HELP_PREFS_INPUT_CONTROLLERS,
                                   &top_iter,
                                   &child_iter);
 
-  vbox2 = gimp_controller_list_new (gimp);
+  vbox2 = picman_controller_list_new (picman);
   gtk_box_pack_start (GTK_BOX (vbox), vbox2, TRUE, TRUE, 0);
   gtk_widget_show (vbox2);
 
@@ -2385,13 +2385,13 @@ prefs_dialog_new (Gimp       *gimp,
   /***********************/
   /*  Window Management  */
   /***********************/
-  pixbuf = prefs_get_pixbufs (gimp, "window-management", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "window-management", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Window Management"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_WINDOW_MANAGEMENT,
+                                  PICMAN_HELP_PREFS_WINDOW_MANAGEMENT,
                                   NULL,
                                   &top_iter);
 
@@ -2423,15 +2423,15 @@ prefs_dialog_new (Gimp       *gimp,
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_session_save_callback),
-                    gimp);
+                    picman);
 
-  button2 = prefs_button_add (GIMP_STOCK_RESET,
+  button2 = prefs_button_add (PICMAN_STOCK_RESET,
                               _("_Reset Saved Window Positions to "
                                 "Default Values"),
                               GTK_BOX (vbox2));
   g_signal_connect (button2, "clicked",
                     G_CALLBACK (prefs_session_clear_callback),
-                    gimp);
+                    picman);
 
   g_object_set_data (G_OBJECT (button), "clear-button", button2);
 
@@ -2439,13 +2439,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*************/
   /*  Folders  */
   /*************/
-  pixbuf = prefs_get_pixbufs (gimp, "folders", &small_pixbuf);
-  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+  pixbuf = prefs_get_pixbufs (picman, "folders", &small_pixbuf);
+  vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                   _("Folders"),
                                   pixbuf,
                                   NULL,
                                   small_pixbuf,
-                                  GIMP_HELP_PREFS_FOLDERS,
+                                  PICMAN_HELP_PREFS_FOLDERS,
                                   NULL,
                                   &top_iter);
 
@@ -2474,11 +2474,11 @@ prefs_dialog_new (Gimp       *gimp,
 
     for (i = 0; i < G_N_ELEMENTS (dirs); i++)
       {
-        button = gimp_prop_file_chooser_button_new (object,
+        button = picman_prop_file_chooser_button_new (object,
                                                     dirs[i].property_name,
                                                     gettext (dirs[i].fs_label),
                                                     GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-        gimp_table_attach_aligned (GTK_TABLE (table), 0, i,
+        picman_table_attach_aligned (GTK_TABLE (table), 0, i,
                                    gettext (dirs[i].label), 0.0, 0.5,
                                    button, 1, FALSE);
       }
@@ -2502,55 +2502,55 @@ prefs_dialog_new (Gimp       *gimp,
     paths[] =
     {
       { N_("Brushes"), N_("Brush Folders"), "folders-brushes",
-        GIMP_HELP_PREFS_FOLDERS_BRUSHES,
+        PICMAN_HELP_PREFS_FOLDERS_BRUSHES,
         N_("Select Brush Folders"),
         "brush-path", "brush-path-writable" },
       { N_("Dynamics"), N_("Dynamics Folders"), "folders-dynamics",
-        GIMP_HELP_PREFS_FOLDERS_DYNAMICS,
+        PICMAN_HELP_PREFS_FOLDERS_DYNAMICS,
         N_("Select Dynamics Folders"),
         "dynamics-path", "dynamics-path-writable" },
       { N_("Patterns"), N_("Pattern Folders"), "folders-patterns",
-        GIMP_HELP_PREFS_FOLDERS_PATTERNS,
+        PICMAN_HELP_PREFS_FOLDERS_PATTERNS,
         N_("Select Pattern Folders"),
         "pattern-path", "pattern-path-writable" },
       { N_("Palettes"), N_("Palette Folders"), "folders-palettes",
-        GIMP_HELP_PREFS_FOLDERS_PALETTES,
+        PICMAN_HELP_PREFS_FOLDERS_PALETTES,
         N_("Select Palette Folders"),
         "palette-path", "palette-path-writable" },
       { N_("Gradients"), N_("Gradient Folders"), "folders-gradients",
-        GIMP_HELP_PREFS_FOLDERS_GRADIENTS,
+        PICMAN_HELP_PREFS_FOLDERS_GRADIENTS,
         N_("Select Gradient Folders"),
         "gradient-path", "gradient-path-writable" },
       { N_("Fonts"), N_("Font Folders"), "folders-fonts",
-        GIMP_HELP_PREFS_FOLDERS_FONTS,
+        PICMAN_HELP_PREFS_FOLDERS_FONTS,
         N_("Select Font Folders"),
         "font-path", NULL },
       { N_("Tool Presets"), N_("Tool Preset Folders"), "folders-tool-presets",
-        GIMP_HELP_PREFS_FOLDERS_TOOL_PRESETS,
+        PICMAN_HELP_PREFS_FOLDERS_TOOL_PRESETS,
         N_("Select Tool Preset Folders"),
         "tool-preset-path", "tool-preset-path-writable" },
       { N_("Plug-Ins"), N_("Plug-In Folders"), "folders-plug-ins",
-        GIMP_HELP_PREFS_FOLDERS_PLUG_INS,
+        PICMAN_HELP_PREFS_FOLDERS_PLUG_INS,
         N_("Select Plug-In Folders"),
         "plug-in-path", NULL },
       { N_("Scripts"), N_("Script-Fu Folders"), "folders-scripts",
-        GIMP_HELP_PREFS_FOLDERS_SCRIPTS,
+        PICMAN_HELP_PREFS_FOLDERS_SCRIPTS,
         N_("Select Script-Fu Folders"),
         "script-fu-path", NULL },
       { N_("Modules"), N_("Module Folders"), "folders-modules",
-        GIMP_HELP_PREFS_FOLDERS_MODULES,
+        PICMAN_HELP_PREFS_FOLDERS_MODULES,
         N_("Select Module Folders"),
         "module-path", NULL },
       { N_("Interpreters"), N_("Interpreter Folders"), "folders-interp",
-        GIMP_HELP_PREFS_FOLDERS_INTERPRETERS,
+        PICMAN_HELP_PREFS_FOLDERS_INTERPRETERS,
         N_("Select Interpreter Folders"),
         "interpreter-path", NULL },
       { N_("Environment"), N_("Environment Folders"), "folders-environ",
-        GIMP_HELP_PREFS_FOLDERS_ENVIRONMENT,
+        PICMAN_HELP_PREFS_FOLDERS_ENVIRONMENT,
         N_("Select Environment Folders"),
         "environ-path", NULL },
       { N_("Themes"), N_("Theme Folders"), "folders-themes",
-        GIMP_HELP_PREFS_FOLDERS_THEMES,
+        PICMAN_HELP_PREFS_FOLDERS_THEMES,
         N_("Select Theme Folders"),
         "theme-path", NULL }
     };
@@ -2559,8 +2559,8 @@ prefs_dialog_new (Gimp       *gimp,
       {
         GtkWidget *editor;
 
-        pixbuf = prefs_get_pixbufs (gimp, paths[i].icon, &small_pixbuf);
-        vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+        pixbuf = prefs_get_pixbufs (picman, paths[i].icon, &small_pixbuf);
+        vbox = picman_prefs_box_add_page (PICMAN_PREFS_BOX (prefs_box),
                                         gettext (paths[i].label),
                                         pixbuf,
                                         gettext (paths[i].tree_label),
@@ -2569,7 +2569,7 @@ prefs_dialog_new (Gimp       *gimp,
                                         &top_iter,
                                         &child_iter);
 
-        editor = gimp_prop_path_editor_new (object,
+        editor = picman_prop_path_editor_new (object,
                                             paths[i].path_property_name,
                                             paths[i].writable_property_name,
                                             gettext (paths[i].fs_label));
@@ -2583,7 +2583,7 @@ prefs_dialog_new (Gimp       *gimp,
     GtkTreeModel *model;
     GtkTreePath  *path;
 
-    tv = gimp_prefs_box_get_tree_view (GIMP_PREFS_BOX (prefs_box));
+    tv = picman_prefs_box_get_tree_view (PICMAN_PREFS_BOX (prefs_box));
     gtk_tree_view_expand_all (GTK_TREE_VIEW (tv));
 
     /*  collapse the Folders subtree */

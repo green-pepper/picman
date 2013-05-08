@@ -1,0 +1,237 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman-libpicman\n"
+"POT-Creation-Date: 2001-09-23 20:11-0400\n"
+"PO-Revision-Date: 2001-11-28 16:53GMT+0200\n"
+"Last-Translator: Vasif İsmayıloğlu MD <azerb_linux@hotmail.com>\n"
+"Language-Team: Azerbaijani Turkic <linuxaz@azerimail.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
+#: libpicman/picmancolorbutton.c:121
+msgid "/Use Foreground Color"
+msgstr "/Ön plan Rəngini İşlət"
+
+#: libpicman/picmancolorbutton.c:122
+msgid "/Use Background Color"
+msgstr "/Arxa plan Rəngini İşlət"
+
+#: libpicman/picmanexport.c:160 libpicman/picmanexport.c:187
+msgid "can't handle layers"
+msgstr "laylar dəstəklənmir"
+
+#: libpicman/picmanexport.c:161 libpicman/picmanexport.c:170
+msgid "Merge Visible Layers"
+msgstr "Görünən Layları Birləşdir"
+
+#: libpicman/picmanexport.c:169 libpicman/picmanexport.c:178
+msgid "can only handle layers as animation frames"
+msgstr "layları təkcə animasiya çərçivələri olaraq dəstəkləyir"
+
+#: libpicman/picmanexport.c:170 libpicman/picmanexport.c:179
+msgid "Save as Animation"
+msgstr "Animasiya olaraq qeyd et"
+
+#: libpicman/picmanexport.c:179 libpicman/picmanexport.c:188 libpicman/picmanexport.c:197
+msgid "Flatten Image"
+msgstr "Rəsmi Sər"
+
+#: libpicman/picmanexport.c:196
+msgid "can't handle transparency"
+msgstr "şəffaflığı dəstəklımir"
+
+#: libpicman/picmanexport.c:205
+msgid "can only handle RGB images"
+msgstr "təkcə RGB rəsmləri dəstəkləyir"
+
+#: libpicman/picmanexport.c:206 libpicman/picmanexport.c:234 libpicman/picmanexport.c:243
+msgid "Convert to RGB"
+msgstr "RGB-yə dönüşdür"
+
+#: libpicman/picmanexport.c:214
+msgid "can only handle grayscale images"
+msgstr "təkcə ağ-qara rəsmləri dəstəkləyir"
+
+#: libpicman/picmanexport.c:215 libpicman/picmanexport.c:234 libpicman/picmanexport.c:255
+msgid "Convert to Grayscale"
+msgstr "Ağ-qaraya Dönüşdür"
+
+#: libpicman/picmanexport.c:223
+msgid "can only handle indexed images"
+msgstr "təkcə indeksli rəsmləri dəstəkləyir"
+
+#: libpicman/picmanexport.c:224 libpicman/picmanexport.c:243 libpicman/picmanexport.c:253
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Əsas qurğular işlədilərək İndeksliyə çevir\n"
+"(Nəticələri yaxşılaşdırmaq üçün əllə aparın)"
+
+#: libpicman/picmanexport.c:233
+msgid "can only handle RGB or grayscale images"
+msgstr "təkcə RGB və ağ-qara rəsmlər dəstəklənir"
+
+#: libpicman/picmanexport.c:242
+msgid "can only handle RGB or indexed images"
+msgstr "təkcə RGB və indeksli rəsmlər dəstəklənir"
+
+#: libpicman/picmanexport.c:252
+msgid "can only handle grayscale or indexed images"
+msgstr "təkcə ağ-qara və indeksli rəsmlər dəstəklənir"
+
+#: libpicman/picmanexport.c:263
+msgid "needs an alpha channel"
+msgstr "alfa kanlına ehtiyacı var"
+
+#: libpicman/picmanexport.c:264
+msgid "Add Alpha Channel"
+msgstr "Alfa Kanalı Əlavə Et"
+
+#.
+#. *  Plug-ins have called gtk_init () before calling picman_export ().
+#. *  Otherwise bad things will happen now!!
+#.
+#. the dialog
+#: libpicman/picmanexport.c:333
+msgid "Export File"
+msgstr "Fayl İxrac Et"
+
+#: libpicman/picmanexport.c:338
+msgid "Export"
+msgstr "İxrac Et"
+
+#: libpicman/picmanexport.c:340
+msgid "Ignore"
+msgstr "Nəzərə Alma"
+
+#: libpicman/picmanexport.c:342 libpicman/picmanquerybox.c:204
+#: libpicman/picmanquerybox.c:260 libpicman/picmanquerybox.c:318
+#: libpicman/picmanquerybox.c:383 libpicman/picmanunitmenu.c:505
+msgid "Cancel"
+msgstr "Ləğv Et"
+
+#: libpicman/picmanexport.c:357
+msgid ""
+"Your image should be exported before it can be saved for the following "
+"reasons:"
+msgstr ""
+"Aşağıdakı səbəblərdən ötrü sizin şəkliniz qeyd edilmədən əvvəl "
+"göndərilməlidir:"
+
+#. the footline
+#: libpicman/picmanexport.c:420
+msgid "The export conversion won't modify your original image."
+msgstr "Göndərmə dialoqu sizin əsl rəsminiz üstündə oynamayacaqdır."
+
+#: libpicman/picmanfileselection.c:388
+msgid "Select File"
+msgstr "Fayl Seç"
+
+#: libpicman/picmanquerybox.c:204 libpicman/picmanquerybox.c:260
+#: libpicman/picmanquerybox.c:318 libpicman/picmanquerybox.c:383
+#: libpicman/picmanunitmenu.c:503
+msgid "OK"
+msgstr "Oldu"
+
+#: libpicman/picmanunitmenu.c:241
+msgid "More..."
+msgstr "Ətraflı..."
+
+#: libpicman/picmanunitmenu.c:498
+msgid "Unit Selection"
+msgstr "Vahid Seçkisi"
+
+#: libpicman/picmanunitmenu.c:535
+msgid "Unit"
+msgstr "Vahid"
+
+#: libpicman/picmanunitmenu.c:536
+msgid "Factor"
+msgstr "Faktor"
+
+#. pseudo unit
+#: libpicman/picmanunit.c:49
+msgid "pixel"
+msgstr "piksel"
+
+#: libpicman/picmanunit.c:49
+msgid "pixels"
+msgstr "piksel"
+
+#. standard units
+#: libpicman/picmanunit.c:52
+msgid "inch"
+msgstr "inç"
+
+#: libpicman/picmanunit.c:52
+msgid "inches"
+msgstr "inç"
+
+#: libpicman/picmanunit.c:53
+msgid "millimeter"
+msgstr "milimetr"
+
+#: libpicman/picmanunit.c:53
+msgid "millimeters"
+msgstr "milimetr"
+
+#. professional units
+#: libpicman/picmanunit.c:56
+msgid "point"
+msgstr "nöqtə"
+
+#: libpicman/picmanunit.c:56
+msgid "points"
+msgstr "nöqtə"
+
+#: libpicman/picmanunit.c:57
+msgid "pica"
+msgstr "pica"
+
+#: libpicman/picmanunit.c:57
+msgid "picas"
+msgstr "pica"
+
+#: libpicman/picmanunit.c:64
+msgid "percent"
+msgstr "faiz"
+
+#: libpicman/picmanwidgets.c:715
+msgid ""
+"If the \"Time\" button is not pressed, use this value for random number "
+"generator seed - this allows you to repeat a given \"random\" operation"
+msgstr ""
+"\"Vaxt\" düyməsi basılı deyilsə, təsadüfə rəqəm yaradıcısının qiymətini "
+"işlət - bununla verilən \"təsadüfi\" əməliyyatı təkrarlaya bilərsiniz"
+
+#: libpicman/picmanwidgets.c:720
+msgid "Time"
+msgstr "Vaxt"
+
+#: libpicman/picmanwidgets.c:729
+msgid ""
+"Seed random number generator from the current time - this guarantees a "
+"reasonable randomization"
+msgstr ""
+"Cari vaxtdan təsadüfi rəqəm yaradıcısı ək - bu, uyğun təsadüfləşdirmə "
+"vəd edir"
+
+#: libpicman/picmanwidgets.c:1042
+msgid "Bytes"
+msgstr "Bayt"
+
+#: libpicman/picmanwidgets.c:1043
+msgid "KiloBytes"
+msgstr "Kilobayt"
+
+#: libpicman/picmanwidgets.c:1044
+msgid "MegaBytes"
+msgstr "Meqabayt"
+

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -75,8 +75,8 @@ gchar                 * encode_packbits        (const gchar    *src,
                                                 const guint32   unpacked_len,
                                                 guint16        *packed_len);
 
-GimpLayerModeEffects    psd_to_gimp_blend_mode (const gchar    *psd_mode);
+PicmanLayerModeEffects    psd_to_picman_blend_mode (const gchar    *psd_mode);
 
-gchar *                 gimp_to_psd_blend_mode (const GimpLayerModeEffects gimp_layer_mode);
+gchar *                 picman_to_psd_blend_mode (const PicmanLayerModeEffects picman_layer_mode);
 
 #endif /* __PSD_UTIL_H__ */

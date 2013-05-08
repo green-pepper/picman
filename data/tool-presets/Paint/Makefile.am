@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/tool-presets/Paint
+## Makefile.am for picman/data/tool-presets/Paint
 
-toolpresetspaintdatadir = $(gimpdatadir)/tool-presets/Paint
+toolpresetspaintdatadir = $(picmandatadir)/tool-presets/Paint
 
 toolpresetspaintdata_DATA = \
 	Airbrush.gtp		\

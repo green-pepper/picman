@@ -26,15 +26,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-waves"
 #define PLUG_IN_BINARY "waves"
-#define PLUG_IN_ROLE   "gimp-waves"
+#define PLUG_IN_ROLE   "picman-waves"
 
 typedef enum
 {
@@ -63,17 +63,17 @@ static piArgs wvals =
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparam,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nretvals,
-                   GimpParam       **retvals);
+                   PicmanParam       **retvals);
 
 
-static void     waves         (GimpDrawable *drawable);
+static void     waves         (PicmanDrawable *drawable);
 
-static gboolean waves_dialog  (GimpDrawable *drawable);
+static gboolean waves_dialog  (PicmanDrawable *drawable);
 
-static void     waves_preview (GimpDrawable *drawable,
-                               GimpPreview  *preview);
+static void     waves_preview (PicmanDrawable *drawable,
+                               PicmanPreview  *preview);
 
 static void     wave          (guchar    *src,
                                guchar    *dest,
@@ -92,7 +92,7 @@ static void     wave          (guchar    *src,
 
 #define WITHIN(a, b, c) ((((a) <= (b)) && ((b) <= (c))) ? TRUE : FALSE)
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -105,19 +105,19 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "The Image"                    },
-    { GIMP_PDB_DRAWABLE, "drawable",   "The Drawable"                 },
-    { GIMP_PDB_FLOAT,    "amplitude",  "The Amplitude of the Waves"   },
-    { GIMP_PDB_FLOAT,    "phase",      "The Phase of the Waves"       },
-    { GIMP_PDB_FLOAT,    "wavelength", "The Wavelength of the Waves"  },
-    { GIMP_PDB_INT32,    "type",       "Type of waves, black/smeared" },
-    { GIMP_PDB_INT32,    "reflective", "Use Reflection"               }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "The Image"                    },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "The Drawable"                 },
+    { PICMAN_PDB_FLOAT,    "amplitude",  "The Amplitude of the Waves"   },
+    { PICMAN_PDB_FLOAT,    "phase",      "The Phase of the Waves"       },
+    { PICMAN_PDB_FLOAT,    "wavelength", "The Wavelength of the Waves"  },
+    { PICMAN_PDB_INT32,    "type",       "Type of waves, black/smeared" },
+    { PICMAN_PDB_INT32,    "reflective", "Use Reflection"               }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Distort the image with waves"),
                           "none yet",
                           "Eric L. Hernes, Stephen Norris",
@@ -125,49 +125,49 @@ query (void)
                           "1997",
                           N_("_Waves..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N ();
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (param[0].data.d_int32)
     {
 
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &wvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &wvals);
 
       if (! waves_dialog (drawable))
         return;
 
     break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 8)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -179,59 +179,59 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &wvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &wvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       waves (drawable);
 
-      gimp_set_data (PLUG_IN_PROC, &wvals, sizeof (piArgs));
+      picman_set_data (PLUG_IN_PROC, &wvals, sizeof (piArgs));
       values[0].data.d_status = status;
     }
 }
 
 static void
-waves (GimpDrawable *drawable)
+waves (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  srcPr, dstPr;
+  PicmanPixelRgn  srcPr, dstPr;
   guchar       *src, *dst;
   guint         width, height, bpp, has_alpha;
 
   width     = drawable->width;
   height    = drawable->height;
   bpp       = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   src = g_new (guchar, width * height * bpp);
   dst = g_new (guchar, width * height * bpp);
-  gimp_pixel_rgn_init (&srcPr, drawable, 0, 0, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dstPr, drawable, 0, 0, width, height, TRUE, TRUE);
-  gimp_pixel_rgn_get_rect (&srcPr, src, 0, 0, width, height);
+  picman_pixel_rgn_init (&srcPr, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&dstPr, drawable, 0, 0, width, height, TRUE, TRUE);
+  picman_pixel_rgn_get_rect (&srcPr, src, 0, 0, width, height);
 
   wave (src, dst, width, height, bpp, has_alpha,
         width / 2.0, height / 2.0,
         wvals.amplitude, wvals.wavelength, wvals.phase,
         wvals.type == MODE_SMEAR, wvals.reflective, TRUE);
-  gimp_pixel_rgn_set_rect (&dstPr, dst, 0, 0, width, height);
+  picman_pixel_rgn_set_rect (&dstPr, dst, 0, 0, width, height);
 
   g_free (src);
   g_free (dst);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, 0, 0, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, 0, 0, width, height);
 
-  gimp_displays_flush ();
+  picman_displays_flush ();
 }
 
 static gboolean
-waves_dialog (GimpDrawable *drawable)
+waves_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -244,11 +244,11 @@ waves_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Waves"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Waves"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -260,7 +260,7 @@ waves_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -268,7 +268,7 @@ waves_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -276,8 +276,8 @@ waves_dialog (GimpDrawable *drawable)
                             G_CALLBACK (waves_preview),
                             drawable);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Mode"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Mode"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &wvals.type, wvals.type,
 
                                     _("_Smear"),   MODE_SMEAR,   &smear,
@@ -287,10 +287,10 @@ waves_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
   g_signal_connect_swapped (smear, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (blacken, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic ( _("_Reflective"));
@@ -299,10 +299,10 @@ waves_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &wvals.reflective);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   table = gtk_table_new (3, 3, FALSE);
@@ -311,45 +311,45 @@ waves_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Amplitude:"), 140, 6,
                               wvals.amplitude, 0.0, 101.0, 1.0, 5.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &wvals.amplitude);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Phase:"), 140, 6,
                               wvals.phase, 0.0, 360.0, 2.0, 5.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &wvals.phase);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Wavelength:"), 140, 6,
                               wvals.wavelength, 0.1, 50.0, 1.0, 5.0, 2,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &wvals.wavelength);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -357,8 +357,8 @@ waves_dialog (GimpDrawable *drawable)
 }
 
 static void
-waves_preview (GimpDrawable *drawable,
-               GimpPreview  *preview)
+waves_preview (PicmanDrawable *drawable,
+               PicmanPreview  *preview)
 {
   guchar *src, *dest;
   gint    width, height;
@@ -366,12 +366,12 @@ waves_preview (GimpDrawable *drawable,
   gdouble zoom;
   gint    xc, yc;
 
-  src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                       &width, &height, &bpp);
 
-  zoom = gimp_zoom_preview_get_factor (GIMP_ZOOM_PREVIEW (preview));
+  zoom = picman_zoom_preview_get_factor (PICMAN_ZOOM_PREVIEW (preview));
 
-  gimp_preview_transform (preview,
+  picman_preview_transform (preview,
                           drawable->width / 2.0, drawable->height / 2.0,
                           &xc, &yc);
 
@@ -384,7 +384,7 @@ waves_preview (GimpDrawable *drawable,
         wvals.wavelength * height / drawable->height * zoom,
         wvals.phase, wvals.type == MODE_SMEAR, wvals.reflective, FALSE);
 
-  gimp_preview_draw_buffer (preview, dest, width * bpp);
+  picman_preview_draw_buffer (preview, dest, width * bpp);
 
   g_free (src);
   g_free (dest);
@@ -446,7 +446,7 @@ wave (guchar  *src,
 
   if (verbose)
     {
-      gimp_progress_init (_("Waving"));
+      picman_progress_init (_("Waving"));
       prog_interval = height / 10;
     }
 
@@ -488,7 +488,7 @@ wave (guchar  *src,
       dest = dst;
 
       if (verbose && (y % prog_interval == 0))
-        gimp_progress_update ((double) y / (double) height);
+        picman_progress_update ((double) y / (double) height);
 
       for (x = x1; x < x2; x++)
         {
@@ -566,7 +566,7 @@ wave (guchar  *src,
           else
             values[3] = zeroes;
 
-          gimp_bilinear_pixels_8 (dest, needx, needy, bypp, has_alpha, values);
+          picman_bilinear_pixels_8 (dest, needx, needy, bypp, has_alpha, values);
           dest += bypp;
         }
 
@@ -574,6 +574,6 @@ wave (guchar  *src,
     }
 
   if (verbose)
-    gimp_progress_update (1.0);
+    picman_progress_update (1.0);
 }
 

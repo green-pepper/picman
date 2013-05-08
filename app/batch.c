@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,35 +22,35 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core/core-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
 
 #include "batch.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimpprocedure.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define BATCH_DEFAULT_EVAL_PROC   "plug-in-script-fu-eval"
 
 
-static void  batch_exit_after_callback (Gimp          *gimp) G_GNUC_NORETURN;
+static void  batch_exit_after_callback (Picman          *picman) G_GNUC_NORETURN;
 
-static void  batch_run_cmd             (Gimp          *gimp,
+static void  batch_run_cmd             (Picman          *picman,
                                         const gchar   *proc_name,
-                                        GimpProcedure *procedure,
-                                        GimpRunMode    run_mode,
+                                        PicmanProcedure *procedure,
+                                        PicmanRunMode    run_mode,
                                         const gchar   *cmd);
 
 
 void
-batch_run (Gimp         *gimp,
+batch_run (Picman         *picman,
            const gchar  *batch_interpreter,
            const gchar **batch_commands)
 {
@@ -59,19 +59,19 @@ batch_run (Gimp         *gimp,
   if (! batch_commands || ! batch_commands[0])
     return;
 
-  exit_id = g_signal_connect_after (gimp, "exit",
+  exit_id = g_signal_connect_after (picman, "exit",
                                     G_CALLBACK (batch_exit_after_callback),
                                     NULL);
 
   if (! batch_interpreter)
     {
-      batch_interpreter = g_getenv ("GIMP_BATCH_INTERPRETER");
+      batch_interpreter = g_getenv ("PICMAN_BATCH_INTERPRETER");
 
       if (! batch_interpreter)
         {
           batch_interpreter = BATCH_DEFAULT_EVAL_PROC;
 
-          if (gimp->be_verbose)
+          if (picman->be_verbose)
             g_printerr (_("No batch interpreter specified, using the default "
                           "'%s'.\n"), batch_interpreter);
         }
@@ -83,19 +83,19 @@ batch_run (Gimp         *gimp,
       strcmp (batch_commands[0], "-") == 0)
     {
       const gchar   *proc_name = "plug-in-script-fu-text-console";
-      GimpProcedure *procedure = gimp_pdb_lookup_procedure (gimp->pdb,
+      PicmanProcedure *procedure = picman_pdb_lookup_procedure (picman->pdb,
                                                             proc_name);
 
       if (procedure)
-        batch_run_cmd (gimp, proc_name, procedure,
-                       GIMP_RUN_NONINTERACTIVE, NULL);
+        batch_run_cmd (picman, proc_name, procedure,
+                       PICMAN_RUN_NONINTERACTIVE, NULL);
       else
         g_message (_("The batch interpreter '%s' is not available. "
                      "Batch mode disabled."), proc_name);
     }
   else
     {
-      GimpProcedure *eval_proc = gimp_pdb_lookup_procedure (gimp->pdb,
+      PicmanProcedure *eval_proc = picman_pdb_lookup_procedure (picman->pdb,
                                                             batch_interpreter);
 
       if (eval_proc)
@@ -103,8 +103,8 @@ batch_run (Gimp         *gimp,
           gint i;
 
           for (i = 0; batch_commands[i]; i++)
-            batch_run_cmd (gimp, batch_interpreter, eval_proc,
-                           GIMP_RUN_NONINTERACTIVE, batch_commands[i]);
+            batch_run_cmd (picman, batch_interpreter, eval_proc,
+                           PICMAN_RUN_NONINTERACTIVE, batch_commands[i]);
         }
       else
         {
@@ -113,20 +113,20 @@ batch_run (Gimp         *gimp,
         }
     }
 
-  g_signal_handler_disconnect (gimp, exit_id);
+  g_signal_handler_disconnect (picman, exit_id);
 }
 
 
 /*
- * The purpose of this handler is to exit GIMP cleanly when the batch
- * procedure calls the gimp-exit procedure. Without this callback, the
+ * The purpose of this handler is to exit PICMAN cleanly when the batch
+ * procedure calls the picman-exit procedure. Without this callback, the
  * message "batch command experienced an execution error" would appear
- * and gimp would hang forever.
+ * and picman would hang forever.
  */
 static void
-batch_exit_after_callback (Gimp *gimp)
+batch_exit_after_callback (Picman *picman)
 {
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("EXIT: %s\n", G_STRFUNC);
 
   gegl_exit ();
@@ -135,36 +135,36 @@ batch_exit_after_callback (Gimp *gimp)
 }
 
 static void
-batch_run_cmd (Gimp          *gimp,
+batch_run_cmd (Picman          *picman,
                const gchar   *proc_name,
-               GimpProcedure *procedure,
-               GimpRunMode    run_mode,
+               PicmanProcedure *procedure,
+               PicmanRunMode    run_mode,
                const gchar   *cmd)
 {
-  GimpValueArray *args;
-  GimpValueArray *return_vals;
+  PicmanValueArray *args;
+  PicmanValueArray *return_vals;
   GError         *error = NULL;
   gint            i     = 0;
 
-  args = gimp_procedure_get_arguments (procedure);
+  args = picman_procedure_get_arguments (procedure);
 
   if (procedure->num_args > i &&
-      GIMP_IS_PARAM_SPEC_INT32 (procedure->args[i]))
-    g_value_set_int (gimp_value_array_index (args, i++), run_mode);
+      PICMAN_IS_PARAM_SPEC_INT32 (procedure->args[i]))
+    g_value_set_int (picman_value_array_index (args, i++), run_mode);
 
   if (procedure->num_args > i &&
-      GIMP_IS_PARAM_SPEC_STRING (procedure->args[i]))
-    g_value_set_static_string (gimp_value_array_index (args, i++), cmd);
+      PICMAN_IS_PARAM_SPEC_STRING (procedure->args[i]))
+    g_value_set_static_string (picman_value_array_index (args, i++), cmd);
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name_args (gimp->pdb,
-                                             gimp_get_user_context (gimp),
+    picman_pdb_execute_procedure_by_name_args (picman->pdb,
+                                             picman_get_user_context (picman),
                                              NULL, &error,
                                              proc_name, args);
 
-  switch (g_value_get_enum (gimp_value_array_index (return_vals, 0)))
+  switch (g_value_get_enum (picman_value_array_index (return_vals, 0)))
     {
-    case GIMP_PDB_EXECUTION_ERROR:
+    case PICMAN_PDB_EXECUTION_ERROR:
       if (error)
         {
           g_printerr ("batch command experienced an execution error:\n"
@@ -176,7 +176,7 @@ batch_run_cmd (Gimp          *gimp,
         }
       break;
 
-    case GIMP_PDB_CALLING_ERROR:
+    case PICMAN_PDB_CALLING_ERROR:
       if (error)
         {
           g_printerr ("batch command experienced a calling error:\n"
@@ -188,13 +188,13 @@ batch_run_cmd (Gimp          *gimp,
         }
       break;
 
-    case GIMP_PDB_SUCCESS:
+    case PICMAN_PDB_SUCCESS:
       g_printerr ("batch command executed successfully\n");
       break;
     }
 
-  gimp_value_array_unref (return_vals);
-  gimp_value_array_unref (args);
+  picman_value_array_unref (return_vals);
+  picman_value_array_unref (args);
 
   if (error)
     g_error_free (error);

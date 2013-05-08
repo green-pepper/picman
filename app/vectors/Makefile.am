@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-Vectors\"
+	-DG_LOG_DOMAIN=\"Picman-Vectors\"
 
 INCLUDES = \
 	-I$(top_builddir)	\
@@ -18,29 +18,29 @@ noinst_LIBRARIES = libappvectors.a
 libappvectors_a_SOURCES = \
 	vectors-enums.h		\
 	vectors-types.h		\
-	gimpanchor.c		\
-	gimpanchor.h		\
-	gimpbezierstroke.h	\
-	gimpbezierstroke.c	\
-	gimpstroke.h		\
-	gimpstroke.c		\
-	gimpstroke-new.h	\
-	gimpstroke-new.c	\
-	gimpvectors.c		\
-	gimpvectors.h		\
-	gimpvectors-compat.c	\
-	gimpvectors-compat.h	\
-	gimpvectors-export.c	\
-	gimpvectors-export.h	\
-	gimpvectors-import.c	\
-	gimpvectors-import.h	\
-	gimpvectors-preview.c	\
-	gimpvectors-preview.h	\
-	gimpvectors-warp.c	\
-	gimpvectors-warp.h	\
-	gimpvectorsmodundo.c	\
-	gimpvectorsmodundo.h	\
-	gimpvectorspropundo.c	\
-	gimpvectorspropundo.h	\
-	gimpvectorsundo.c	\
-	gimpvectorsundo.h
+	picmananchor.c		\
+	picmananchor.h		\
+	picmanbezierstroke.h	\
+	picmanbezierstroke.c	\
+	picmanstroke.h		\
+	picmanstroke.c		\
+	picmanstroke-new.h	\
+	picmanstroke-new.c	\
+	picmanvectors.c		\
+	picmanvectors.h		\
+	picmanvectors-compat.c	\
+	picmanvectors-compat.h	\
+	picmanvectors-export.c	\
+	picmanvectors-export.h	\
+	picmanvectors-import.c	\
+	picmanvectors-import.h	\
+	picmanvectors-preview.c	\
+	picmanvectors-preview.h	\
+	picmanvectors-warp.c	\
+	picmanvectors-warp.h	\
+	picmanvectorsmodundo.c	\
+	picmanvectorsmodundo.h	\
+	picmanvectorspropundo.c	\
+	picmanvectorspropundo.h	\
+	picmanvectorsundo.c	\
+	picmanvectorsundo.h

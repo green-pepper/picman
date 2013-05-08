@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,8 +26,8 @@
 #include <windows.h>
 #endif
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "tinyscheme/scheme-private.h"
 
@@ -56,7 +56,7 @@ typedef struct
 
 static gboolean  script_fu_run_command    (const gchar             *command,
                                            GError                 **error);
-static void      script_fu_load_script    (const GimpDatafileData  *file_data,
+static void      script_fu_load_script    (const PicmanDatafileData  *file_data,
                                            gpointer                 user_data);
 static gboolean  script_fu_install_script (gpointer                 foo,
                                            GList                   *scripts,
@@ -67,9 +67,9 @@ static gboolean  script_fu_remove_script  (gpointer                 foo,
                                            gpointer                 bar);
 static void      script_fu_script_proc    (const gchar             *name,
                                            gint                     nparams,
-                                           const GimpParam         *params,
+                                           const PicmanParam         *params,
                                            gint                    *nreturn_vals,
-                                           GimpParam              **return_vals);
+                                           PicmanParam              **return_vals);
 
 static SFScript *script_fu_find_script    (const gchar             *name);
 
@@ -107,11 +107,11 @@ script_fu_find_scripts (const gchar *path)
 
   script_tree = g_tree_new ((GCompareFunc) g_utf8_collate);
 
-  gimp_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
+  picman_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
                                    script_fu_load_script,
                                    NULL);
 
-  /*  Now that all scripts are read in and sorted, tell gimp about them  */
+  /*  Now that all scripts are read in and sorted, tell picman about them  */
   g_tree_foreach (script_tree,
                   (GTraverseFunc) script_fu_install_script,
                   NULL);
@@ -242,12 +242,12 @@ script_fu_add_script (scheme  *sc,
             case SF_COLOR:
               if (sc->vptr->is_string (sc->vptr->pair_car (a)))
                 {
-                  if (! gimp_rgb_parse_css (&arg->default_value.sfa_color,
+                  if (! picman_rgb_parse_css (&arg->default_value.sfa_color,
                                             sc->vptr->string_value (sc->vptr->pair_car (a)),
                                             -1))
                     return foreign_error (sc, "script-fu-register: invalid default color name", 0);
 
-                  gimp_rgb_set_alpha (&arg->default_value.sfa_color, 1.0);
+                  picman_rgb_set_alpha (&arg->default_value.sfa_color, 1.0);
                 }
               else if (sc->vptr->is_list (sc, sc->vptr->pair_car (a)) &&
                        sc->vptr->list_length(sc, sc->vptr->pair_car (a)) == 3)
@@ -262,7 +262,7 @@ script_fu_add_script (scheme  *sc,
                   color_list = sc->vptr->pair_cdr (color_list);
                   b = CLAMP (sc->vptr->ivalue (sc->vptr->pair_car (color_list)), 0, 255);
 
-                  gimp_rgb_set_uchar (&arg->default_value.sfa_color, r, g, b);
+                  picman_rgb_set_uchar (&arg->default_value.sfa_color, r, g, b);
                 }
               else
                 {
@@ -456,10 +456,10 @@ script_fu_add_script (scheme  *sc,
 
                 val = sc->vptr->string_value (sc->vptr->pair_car (option_list));
 
-                if (g_str_has_prefix (val, "Gimp"))
+                if (g_str_has_prefix (val, "Picman"))
                   type_name = g_strdup (val);
                 else
-                  type_name = g_strconcat ("Gimp", val, NULL);
+                  type_name = g_strconcat ("Picman", val, NULL);
 
                 enum_type = g_type_from_name (type_name);
                 if (! G_TYPE_IS_ENUM (enum_type))
@@ -587,10 +587,10 @@ script_fu_run_command (const gchar  *command,
 }
 
 static void
-script_fu_load_script (const GimpDatafileData *file_data,
+script_fu_load_script (const PicmanDatafileData *file_data,
                        gpointer                user_data)
 {
-  if (gimp_datafiles_check_extension (file_data->filename, ".scm"))
+  if (picman_datafiles_check_extension (file_data->filename, ".scm"))
     {
       gchar  *escaped = script_fu_strescape (file_data->filename);
       gchar  *command;
@@ -646,7 +646,7 @@ script_fu_install_script (gpointer  foo G_GNUC_UNUSED,
 static void
 script_fu_install_menu (SFMenu *menu)
 {
-  gimp_plugin_menu_register (menu->script->name, menu->menu_path);
+  picman_plugin_menu_register (menu->script->name, menu->menu_path);
 
   g_free (menu->menu_path);
   g_slice_free (SFMenu, menu);
@@ -678,16 +678,16 @@ script_fu_remove_script (gpointer  foo G_GNUC_UNUSED,
 static void
 script_fu_script_proc (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *params,
+                       const PicmanParam  *params,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals)
+                       PicmanParam       **return_vals)
 {
-  static GimpParam   values[2] = { { 0, }, { 0, } };
-  GimpPDBStatusType  status    = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2] = { { 0, }, { 0, } };
+  PicmanPDBStatusType  status    = PICMAN_PDB_SUCCESS;
   SFScript          *script;
   GError            *error     = NULL;
 
-  if (values[1].type == GIMP_PDB_STRING && values[1].data.d_string)
+  if (values[1].type == PICMAN_PDB_STRING && values[1].data.d_string)
     {
       g_free (values[1].data.d_string);
       values[1].data.d_string = NULL;
@@ -696,22 +696,22 @@ script_fu_script_proc (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
 
   script = script_fu_find_script (name);
 
   if (! script)
-    status = GIMP_PDB_CALLING_ERROR;
+    status = PICMAN_PDB_CALLING_ERROR;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      GimpRunMode run_mode = params[0].data.d_int32;
+      PicmanRunMode run_mode = params[0].data.d_int32;
 
       ts_set_run_mode (run_mode);
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           {
             gint min_args = 0;
 
@@ -730,12 +730,12 @@ script_fu_script_proc (const gchar      *name,
              */
           }
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there  */
           if (nparams != (script->n_args + 1))
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
 
-          if (status == GIMP_PDB_SUCCESS)
+          if (status == PICMAN_PDB_SUCCESS)
             {
               gchar *command;
 
@@ -745,9 +745,9 @@ script_fu_script_proc (const gchar      *name,
               /*  run the command through the interpreter  */
               if (! script_fu_run_command (command, &error))
                 {
-                  status                  = GIMP_PDB_EXECUTION_ERROR;
+                  status                  = PICMAN_PDB_EXECUTION_ERROR;
                   *nreturn_vals           = 2;
-                  values[1].type          = GIMP_PDB_STRING;
+                  values[1].type          = PICMAN_PDB_STRING;
                   values[1].data.d_string = error->message;
 
                   error->message = NULL;
@@ -758,7 +758,7 @@ script_fu_script_proc (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           {
             gchar *command;
 
@@ -770,9 +770,9 @@ script_fu_script_proc (const gchar      *name,
             /*  run the command through the interpreter  */
             if (! script_fu_run_command (command, &error))
               {
-                status                  = GIMP_PDB_EXECUTION_ERROR;
+                status                  = PICMAN_PDB_EXECUTION_ERROR;
                 *nreturn_vals           = 2;
-                values[1].type          = GIMP_PDB_STRING;
+                values[1].type          = PICMAN_PDB_STRING;
                 values[1].data.d_string = error->message;
 
                 error->message = NULL;

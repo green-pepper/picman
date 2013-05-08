@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpthumb/gimpthumb.h"
+#include "libpicmanthumb/picmanthumb.h"
 
 #include "menus-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmanviewable.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmanuimanager.h"
 
 #include "file-menu.h"
 
@@ -40,11 +40,11 @@ static gboolean file_menu_open_recent_query_tooltip (GtkWidget  *widget,
                                                      gint        y,
                                                      gboolean    keyboard_mode,
                                                      GtkTooltip *tooltip,
-                                                     GimpAction *action);
+                                                     PicmanAction *action);
 
 
 void
-file_menu_setup (GimpUIManager *manager,
+file_menu_setup (PicmanUIManager *manager,
                  const gchar   *ui_path)
 {
   GtkUIManager *ui_manager;
@@ -52,12 +52,12 @@ file_menu_setup (GimpUIManager *manager,
   guint         merge_id;
   gint          i;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
 
   ui_manager = GTK_UI_MANAGER (manager);
 
-  n_entries = GIMP_GUI_CONFIG (manager->gimp->config)->last_opened_size;
+  n_entries = PICMAN_GUI_CONFIG (manager->picman->config)->last_opened_size;
 
   merge_id = gtk_ui_manager_new_merge_id (ui_manager);
 
@@ -84,7 +84,7 @@ file_menu_setup (GimpUIManager *manager,
         {
           GtkAction *action;
 
-          action = gimp_ui_manager_find_action (manager, "file", action_name);
+          action = picman_ui_manager_find_action (manager, "file", action_name);
 
           g_signal_connect_object (widget, "query-tooltip",
                                    G_CALLBACK (file_menu_open_recent_query_tooltip),
@@ -103,7 +103,7 @@ file_menu_open_recent_query_tooltip (GtkWidget  *widget,
                                      gint        y,
                                      gboolean    keyboard_mode,
                                      GtkTooltip *tooltip,
-                                     GimpAction *action)
+                                     PicmanAction *action)
 {
   gchar *text;
 
@@ -112,10 +112,10 @@ file_menu_open_recent_query_tooltip (GtkWidget  *widget,
   g_free (text);
 
   gtk_tooltip_set_icon (tooltip,
-                        gimp_viewable_get_pixbuf (action->viewable,
+                        picman_viewable_get_pixbuf (action->viewable,
                                                   action->context,
-                                                  GIMP_THUMB_SIZE_NORMAL,
-                                                  GIMP_THUMB_SIZE_NORMAL));
+                                                  PICMAN_THUMB_SIZE_NORMAL,
+                                                  PICMAN_THUMB_SIZE_NORMAL));
 
   return TRUE;
 }

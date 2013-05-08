@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,47 +26,47 @@
 #include <gdk/gdkx.h>
 #endif
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "gui-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpbrush.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpgradient.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagefile.h"
-#include "core/gimplist.h"
-#include "core/gimppalette.h"
-#include "core/gimppattern.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanbrush.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmangradient.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagefile.h"
+#include "core/picmanlist.h"
+#include "core/picmanpalette.h"
+#include "core/picmanpattern.h"
+#include "core/picmanprogress.h"
 
-#include "text/gimpfont.h"
+#include "text/picmanfont.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpbrushselect.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdocked.h"
-#include "widgets/gimpfontselect.h"
-#include "widgets/gimpgradientselect.h"
-#include "widgets/gimphelp.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmenufactory.h"
-#include "widgets/gimppaletteselect.h"
-#include "widgets/gimppatternselect.h"
-#include "widgets/gimpprogressdialog.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanbrushselect.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandocked.h"
+#include "widgets/picmanfontselect.h"
+#include "widgets/picmangradientselect.h"
+#include "widgets/picmanhelp.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmenufactory.h"
+#include "widgets/picmanpaletteselect.h"
+#include "widgets/picmanpatternselect.h"
+#include "widgets/picmanprogressdialog.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplay-foreach.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpsinglewindowstrategy.h"
-#include "display/gimpmultiwindowstrategy.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplay-foreach.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmansinglewindowstrategy.h"
+#include "display/picmanmultiwindowstrategy.h"
 
 #include "actions/plug-in-actions.h"
 
@@ -79,102 +79,102 @@
 
 /*  local function prototypes  */
 
-static void           gui_ungrab                (Gimp                *gimp);
+static void           gui_ungrab                (Picman                *picman);
 
-static void           gui_threads_enter         (Gimp                *gimp);
-static void           gui_threads_leave         (Gimp                *gimp);
-static void           gui_set_busy              (Gimp                *gimp);
-static void           gui_unset_busy            (Gimp                *gimp);
-static void           gui_help                  (Gimp                *gimp,
-                                                 GimpProgress        *progress,
+static void           gui_threads_enter         (Picman                *picman);
+static void           gui_threads_leave         (Picman                *picman);
+static void           gui_set_busy              (Picman                *picman);
+static void           gui_unset_busy            (Picman                *picman);
+static void           gui_help                  (Picman                *picman,
+                                                 PicmanProgress        *progress,
                                                  const gchar         *help_domain,
                                                  const gchar         *help_id);
-static const gchar  * gui_get_program_class     (Gimp                *gimp);
-static gchar        * gui_get_display_name      (Gimp                *gimp,
+static const gchar  * gui_get_program_class     (Picman                *picman);
+static gchar        * gui_get_display_name      (Picman                *picman,
                                                  gint                 display_ID,
                                                  gint                *monitor_number);
-static guint32        gui_get_user_time         (Gimp                *gimp);
-static const gchar  * gui_get_theme_dir         (Gimp                *gimp);
-static GimpObject   * gui_get_window_strategy   (Gimp                *gimp);
-static GimpObject   * gui_get_empty_display     (Gimp                *gimp);
-static GimpObject   * gui_display_get_by_ID     (Gimp                *gimp,
+static guint32        gui_get_user_time         (Picman                *picman);
+static const gchar  * gui_get_theme_dir         (Picman                *picman);
+static PicmanObject   * gui_get_window_strategy   (Picman                *picman);
+static PicmanObject   * gui_get_empty_display     (Picman                *picman);
+static PicmanObject   * gui_display_get_by_ID     (Picman                *picman,
                                                  gint                 ID);
-static gint           gui_display_get_ID        (GimpObject          *display);
-static guint32        gui_display_get_window_id (GimpObject          *display);
-static GimpObject   * gui_display_create        (Gimp                *gimp,
-                                                 GimpImage           *image,
-                                                 GimpUnit             unit,
+static gint           gui_display_get_ID        (PicmanObject          *display);
+static guint32        gui_display_get_window_id (PicmanObject          *display);
+static PicmanObject   * gui_display_create        (Picman                *picman,
+                                                 PicmanImage           *image,
+                                                 PicmanUnit             unit,
                                                  gdouble              scale);
-static void           gui_display_delete        (GimpObject          *display);
-static void           gui_displays_reconnect    (Gimp                *gimp,
-                                                 GimpImage           *old_image,
-                                                 GimpImage           *new_image);
-static GimpProgress * gui_new_progress          (Gimp                *gimp,
-                                                 GimpObject          *display);
-static void           gui_free_progress         (Gimp                *gimp,
-                                                 GimpProgress        *progress);
-static gboolean       gui_pdb_dialog_new        (Gimp                *gimp,
-                                                 GimpContext         *context,
-                                                 GimpProgress        *progress,
-                                                 GimpContainer       *container,
+static void           gui_display_delete        (PicmanObject          *display);
+static void           gui_displays_reconnect    (Picman                *picman,
+                                                 PicmanImage           *old_image,
+                                                 PicmanImage           *new_image);
+static PicmanProgress * gui_new_progress          (Picman                *picman,
+                                                 PicmanObject          *display);
+static void           gui_free_progress         (Picman                *picman,
+                                                 PicmanProgress        *progress);
+static gboolean       gui_pdb_dialog_new        (Picman                *picman,
+                                                 PicmanContext         *context,
+                                                 PicmanProgress        *progress,
+                                                 PicmanContainer       *container,
                                                  const gchar         *title,
                                                  const gchar         *callback_name,
                                                  const gchar         *object_name,
                                                  va_list              args);
-static gboolean       gui_pdb_dialog_set        (Gimp                *gimp,
-                                                 GimpContainer       *container,
+static gboolean       gui_pdb_dialog_set        (Picman                *picman,
+                                                 PicmanContainer       *container,
                                                  const gchar         *callback_name,
                                                  const gchar         *object_name,
                                                  va_list              args);
-static gboolean       gui_pdb_dialog_close      (Gimp                *gimp,
-                                                 GimpContainer       *container,
+static gboolean       gui_pdb_dialog_close      (Picman                *picman,
+                                                 PicmanContainer       *container,
                                                  const gchar         *callback_name);
-static gboolean       gui_recent_list_add_uri   (Gimp                *gimp,
+static gboolean       gui_recent_list_add_uri   (Picman                *picman,
                                                  const gchar         *uri,
                                                  const gchar         *mime_type);
-static void           gui_recent_list_load      (Gimp                *gimp);
+static void           gui_recent_list_load      (Picman                *picman);
 
 
 /*  public functions  */
 
 void
-gui_vtable_init (Gimp *gimp)
+gui_vtable_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp->gui.ungrab                = gui_ungrab;
-  gimp->gui.threads_enter         = gui_threads_enter;
-  gimp->gui.threads_leave         = gui_threads_leave;
-  gimp->gui.set_busy              = gui_set_busy;
-  gimp->gui.unset_busy            = gui_unset_busy;
-  gimp->gui.show_message          = gui_message;
-  gimp->gui.help                  = gui_help;
-  gimp->gui.get_program_class     = gui_get_program_class;
-  gimp->gui.get_display_name      = gui_get_display_name;
-  gimp->gui.get_user_time         = gui_get_user_time;
-  gimp->gui.get_theme_dir         = gui_get_theme_dir;
-  gimp->gui.get_window_strategy   = gui_get_window_strategy;
-  gimp->gui.get_empty_display     = gui_get_empty_display;
-  gimp->gui.display_get_by_id     = gui_display_get_by_ID;
-  gimp->gui.display_get_id        = gui_display_get_ID;
-  gimp->gui.display_get_window_id = gui_display_get_window_id;
-  gimp->gui.display_create        = gui_display_create;
-  gimp->gui.display_delete        = gui_display_delete;
-  gimp->gui.displays_reconnect    = gui_displays_reconnect;
-  gimp->gui.progress_new          = gui_new_progress;
-  gimp->gui.progress_free         = gui_free_progress;
-  gimp->gui.pdb_dialog_new        = gui_pdb_dialog_new;
-  gimp->gui.pdb_dialog_set        = gui_pdb_dialog_set;
-  gimp->gui.pdb_dialog_close      = gui_pdb_dialog_close;
-  gimp->gui.recent_list_add_uri   = gui_recent_list_add_uri;
-  gimp->gui.recent_list_load      = gui_recent_list_load;
+  picman->gui.ungrab                = gui_ungrab;
+  picman->gui.threads_enter         = gui_threads_enter;
+  picman->gui.threads_leave         = gui_threads_leave;
+  picman->gui.set_busy              = gui_set_busy;
+  picman->gui.unset_busy            = gui_unset_busy;
+  picman->gui.show_message          = gui_message;
+  picman->gui.help                  = gui_help;
+  picman->gui.get_program_class     = gui_get_program_class;
+  picman->gui.get_display_name      = gui_get_display_name;
+  picman->gui.get_user_time         = gui_get_user_time;
+  picman->gui.get_theme_dir         = gui_get_theme_dir;
+  picman->gui.get_window_strategy   = gui_get_window_strategy;
+  picman->gui.get_empty_display     = gui_get_empty_display;
+  picman->gui.display_get_by_id     = gui_display_get_by_ID;
+  picman->gui.display_get_id        = gui_display_get_ID;
+  picman->gui.display_get_window_id = gui_display_get_window_id;
+  picman->gui.display_create        = gui_display_create;
+  picman->gui.display_delete        = gui_display_delete;
+  picman->gui.displays_reconnect    = gui_displays_reconnect;
+  picman->gui.progress_new          = gui_new_progress;
+  picman->gui.progress_free         = gui_free_progress;
+  picman->gui.pdb_dialog_new        = gui_pdb_dialog_new;
+  picman->gui.pdb_dialog_set        = gui_pdb_dialog_set;
+  picman->gui.pdb_dialog_close      = gui_pdb_dialog_close;
+  picman->gui.recent_list_add_uri   = gui_recent_list_add_uri;
+  picman->gui.recent_list_load      = gui_recent_list_load;
 }
 
 
 /*  private functions  */
 
 static void
-gui_ungrab (Gimp *gimp)
+gui_ungrab (Picman *picman)
 {
   GdkDisplay *display = gdk_display_get_default ();
 
@@ -186,65 +186,65 @@ gui_ungrab (Gimp *gimp)
 }
 
 static void
-gui_threads_enter (Gimp *gimp)
+gui_threads_enter (Picman *picman)
 {
   GDK_THREADS_ENTER ();
 }
 
 static void
-gui_threads_leave (Gimp *gimp)
+gui_threads_leave (Picman *picman)
 {
   GDK_THREADS_LEAVE ();
 }
 
 static void
-gui_set_busy (Gimp *gimp)
+gui_set_busy (Picman *picman)
 {
-  gimp_displays_set_busy (gimp);
-  gimp_dialog_factory_set_busy (gimp_dialog_factory_get_singleton ());
+  picman_displays_set_busy (picman);
+  picman_dialog_factory_set_busy (picman_dialog_factory_get_singleton ());
 
   gdk_flush ();
 }
 
 static void
-gui_unset_busy (Gimp *gimp)
+gui_unset_busy (Picman *picman)
 {
-  gimp_displays_unset_busy (gimp);
-  gimp_dialog_factory_unset_busy (gimp_dialog_factory_get_singleton ());
+  picman_displays_unset_busy (picman);
+  picman_dialog_factory_unset_busy (picman_dialog_factory_get_singleton ());
 
   gdk_flush ();
 }
 
 static void
-gui_help (Gimp         *gimp,
-          GimpProgress *progress,
+gui_help (Picman         *picman,
+          PicmanProgress *progress,
           const gchar  *help_domain,
           const gchar  *help_id)
 {
-  gimp_help_show (gimp, progress, help_domain, help_id);
+  picman_help_show (picman, progress, help_domain, help_id);
 }
 
 static const gchar *
-gui_get_program_class (Gimp *gimp)
+gui_get_program_class (Picman *picman)
 {
   return gdk_get_program_class ();
 }
 
 static gchar *
-gui_get_display_name (Gimp *gimp,
+gui_get_display_name (Picman *picman,
                       gint  display_ID,
                       gint *monitor_number)
 {
-  GimpDisplay *display = NULL;
+  PicmanDisplay *display = NULL;
   GdkScreen   *screen;
   gint         monitor;
 
   if (display_ID > 0)
-    display = gimp_display_get_by_ID (gimp, display_ID);
+    display = picman_display_get_by_ID (picman, display_ID);
 
   if (display)
     {
-      GimpDisplayShell *shell  = gimp_display_get_shell (display);
+      PicmanDisplayShell *shell  = picman_display_get_shell (display);
       GdkWindow        *window = gtk_widget_get_window (GTK_WIDGET (shell));
 
       screen  = gtk_widget_get_screen (GTK_WIDGET (shell));
@@ -268,7 +268,7 @@ gui_get_display_name (Gimp *gimp,
 }
 
 static guint32
-gui_get_user_time (Gimp *gimp)
+gui_get_user_time (Picman *picman)
 {
 #ifdef GDK_WINDOWING_X11
   return gdk_x11_display_get_user_time (gdk_display_get_default ());
@@ -277,30 +277,30 @@ gui_get_user_time (Gimp *gimp)
 }
 
 static const gchar *
-gui_get_theme_dir (Gimp *gimp)
+gui_get_theme_dir (Picman *picman)
 {
-  return themes_get_theme_dir (gimp, GIMP_GUI_CONFIG (gimp->config)->theme);
+  return themes_get_theme_dir (picman, PICMAN_GUI_CONFIG (picman->config)->theme);
 }
 
-static GimpObject *
-gui_get_window_strategy (Gimp *gimp)
+static PicmanObject *
+gui_get_window_strategy (Picman *picman)
 {
-  if (GIMP_GUI_CONFIG (gimp->config)->single_window_mode)
-    return gimp_single_window_strategy_get_singleton ();
+  if (PICMAN_GUI_CONFIG (picman->config)->single_window_mode)
+    return picman_single_window_strategy_get_singleton ();
   else
-    return gimp_multi_window_strategy_get_singleton ();
+    return picman_multi_window_strategy_get_singleton ();
 }
 
-static GimpObject *
-gui_get_empty_display (Gimp *gimp)
+static PicmanObject *
+gui_get_empty_display (Picman *picman)
 {
-  GimpObject *display = NULL;
+  PicmanObject *display = NULL;
 
-  if (gimp_container_get_n_children (gimp->displays) == 1)
+  if (picman_container_get_n_children (picman->displays) == 1)
     {
-      display = gimp_container_get_first_child (gimp->displays);
+      display = picman_container_get_first_child (picman->displays);
 
-      if (gimp_display_get_image (GIMP_DISPLAY (display)))
+      if (picman_display_get_image (PICMAN_DISPLAY (display)))
         {
           /* The display was not empty */
           display = NULL;
@@ -310,107 +310,107 @@ gui_get_empty_display (Gimp *gimp)
   return display;
 }
 
-static GimpObject *
-gui_display_get_by_ID (Gimp *gimp,
+static PicmanObject *
+gui_display_get_by_ID (Picman *picman,
                        gint  ID)
 {
-  return (GimpObject *) gimp_display_get_by_ID (gimp, ID);
+  return (PicmanObject *) picman_display_get_by_ID (picman, ID);
 }
 
 static gint
-gui_display_get_ID (GimpObject *display)
+gui_display_get_ID (PicmanObject *display)
 {
-  return gimp_display_get_ID (GIMP_DISPLAY (display));
+  return picman_display_get_ID (PICMAN_DISPLAY (display));
 }
 
 static guint32
-gui_display_get_window_id (GimpObject *display)
+gui_display_get_window_id (PicmanObject *display)
 {
-  GimpDisplay      *disp  = GIMP_DISPLAY (display);
-  GimpDisplayShell *shell = gimp_display_get_shell (disp);
+  PicmanDisplay      *disp  = PICMAN_DISPLAY (display);
+  PicmanDisplayShell *shell = picman_display_get_shell (disp);
 
   if (shell)
     {
       GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (shell));
 
       if (GTK_IS_WINDOW (toplevel))
-        return gimp_window_get_native_id (GTK_WINDOW (toplevel));
+        return picman_window_get_native_id (GTK_WINDOW (toplevel));
     }
 
   return 0;
 }
 
-static GimpObject *
-gui_display_create (Gimp      *gimp,
-                    GimpImage *image,
-                    GimpUnit   unit,
+static PicmanObject *
+gui_display_create (Picman      *picman,
+                    PicmanImage *image,
+                    PicmanUnit   unit,
                     gdouble    scale)
 {
-  GimpContext *context = gimp_get_user_context (gimp);
-  GimpDisplay *display = GIMP_DISPLAY (gui_get_empty_display (gimp));
+  PicmanContext *context = picman_get_user_context (picman);
+  PicmanDisplay *display = PICMAN_DISPLAY (gui_get_empty_display (picman));
 
   if (display)
     {
-      gimp_display_fill (display, image, unit, scale);
+      picman_display_fill (display, image, unit, scale);
     }
   else
     {
-      GList *image_managers = gimp_ui_managers_from_name ("<Image>");
+      GList *image_managers = picman_ui_managers_from_name ("<Image>");
 
       g_return_val_if_fail (image_managers != NULL, NULL);
 
-      display = gimp_display_new (gimp, image, unit, scale,
+      display = picman_display_new (picman, image, unit, scale,
                                   global_menu_factory,
                                   image_managers->data,
-                                  gimp_dialog_factory_get_singleton ());
+                                  picman_dialog_factory_get_singleton ());
    }
 
-  if (gimp_context_get_display (context) == display)
+  if (picman_context_get_display (context) == display)
     {
-      gimp_context_set_image (context, image);
-      gimp_context_display_changed (context);
+      picman_context_set_image (context, image);
+      picman_context_display_changed (context);
     }
   else
     {
-      gimp_context_set_display (context, display);
+      picman_context_set_display (context, display);
     }
 
-  return GIMP_OBJECT (display);
+  return PICMAN_OBJECT (display);
 }
 
 static void
-gui_display_delete (GimpObject *display)
+gui_display_delete (PicmanObject *display)
 {
-  gimp_display_close (GIMP_DISPLAY (display));
+  picman_display_close (PICMAN_DISPLAY (display));
 }
 
 static void
-gui_displays_reconnect (Gimp      *gimp,
-                        GimpImage *old_image,
-                        GimpImage *new_image)
+gui_displays_reconnect (Picman      *picman,
+                        PicmanImage *old_image,
+                        PicmanImage *new_image)
 {
-  gimp_displays_reconnect (gimp, old_image, new_image);
+  picman_displays_reconnect (picman, old_image, new_image);
 }
 
-static GimpProgress *
-gui_new_progress (Gimp       *gimp,
-                  GimpObject *display)
+static PicmanProgress *
+gui_new_progress (Picman       *picman,
+                  PicmanObject *display)
 {
-  g_return_val_if_fail (display == NULL || GIMP_IS_DISPLAY (display), NULL);
+  g_return_val_if_fail (display == NULL || PICMAN_IS_DISPLAY (display), NULL);
 
   if (display)
-    return GIMP_PROGRESS (display);
+    return PICMAN_PROGRESS (display);
 
-  return GIMP_PROGRESS (gimp_progress_dialog_new ());
+  return PICMAN_PROGRESS (picman_progress_dialog_new ());
 }
 
 static void
-gui_free_progress (Gimp          *gimp,
-                   GimpProgress  *progress)
+gui_free_progress (Picman          *picman,
+                   PicmanProgress  *progress)
 {
-  g_return_if_fail (GIMP_IS_PROGRESS_DIALOG (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS_DIALOG (progress));
 
-  if (GIMP_IS_PROGRESS_DIALOG (progress))
+  if (PICMAN_IS_PROGRESS_DIALOG (progress))
     gtk_widget_destroy (GTK_WIDGET (progress));
 }
 
@@ -423,10 +423,10 @@ gui_pdb_dialog_present (GtkWindow *window)
 }
 
 static gboolean
-gui_pdb_dialog_new (Gimp          *gimp,
-                    GimpContext   *context,
-                    GimpProgress  *progress,
-                    GimpContainer *container,
+gui_pdb_dialog_new (Picman          *picman,
+                    PicmanContext   *context,
+                    PicmanProgress  *progress,
+                    PicmanContainer *container,
                     const gchar   *title,
                     const gchar   *callback_name,
                     const gchar   *object_name,
@@ -436,47 +436,47 @@ gui_pdb_dialog_new (Gimp          *gimp,
   const gchar *dialog_role = NULL;
   const gchar *help_id     = NULL;
 
-  if (gimp_container_get_children_type (container) == GIMP_TYPE_BRUSH)
+  if (picman_container_get_children_type (container) == PICMAN_TYPE_BRUSH)
     {
-      dialog_type = GIMP_TYPE_BRUSH_SELECT;
-      dialog_role = "gimp-brush-selection";
-      help_id     = GIMP_HELP_BRUSH_DIALOG;
+      dialog_type = PICMAN_TYPE_BRUSH_SELECT;
+      dialog_role = "picman-brush-selection";
+      help_id     = PICMAN_HELP_BRUSH_DIALOG;
     }
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_FONT)
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_FONT)
     {
-      dialog_type = GIMP_TYPE_FONT_SELECT;
-      dialog_role = "gimp-font-selection";
-      help_id     = GIMP_HELP_FONT_DIALOG;
+      dialog_type = PICMAN_TYPE_FONT_SELECT;
+      dialog_role = "picman-font-selection";
+      help_id     = PICMAN_HELP_FONT_DIALOG;
     }
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_GRADIENT)
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_GRADIENT)
     {
-      dialog_type = GIMP_TYPE_GRADIENT_SELECT;
-      dialog_role = "gimp-gradient-selection";
-      help_id     = GIMP_HELP_GRADIENT_DIALOG;
+      dialog_type = PICMAN_TYPE_GRADIENT_SELECT;
+      dialog_role = "picman-gradient-selection";
+      help_id     = PICMAN_HELP_GRADIENT_DIALOG;
     }
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PALETTE)
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PALETTE)
     {
-      dialog_type = GIMP_TYPE_PALETTE_SELECT;
-      dialog_role = "gimp-palette-selection";
-      help_id     = GIMP_HELP_PALETTE_DIALOG;
+      dialog_type = PICMAN_TYPE_PALETTE_SELECT;
+      dialog_role = "picman-palette-selection";
+      help_id     = PICMAN_HELP_PALETTE_DIALOG;
     }
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PATTERN)
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PATTERN)
     {
-      dialog_type = GIMP_TYPE_PATTERN_SELECT;
-      dialog_role = "gimp-pattern-selection";
-      help_id     = GIMP_HELP_PATTERN_DIALOG;
+      dialog_type = PICMAN_TYPE_PATTERN_SELECT;
+      dialog_role = "picman-pattern-selection";
+      help_id     = PICMAN_HELP_PATTERN_DIALOG;
     }
 
   if (dialog_type != G_TYPE_NONE)
     {
-      GimpObject *object = NULL;
+      PicmanObject *object = NULL;
 
       if (object_name && strlen (object_name))
-        object = gimp_container_get_child_by_name (container, object_name);
+        object = picman_container_get_child_by_name (container, object_name);
 
       if (! object)
-        object = gimp_context_get_by_type (context,
-                                           gimp_container_get_children_type (container));
+        object = picman_context_get_by_type (context,
+                                           picman_container_get_children_type (container));
 
       if (object)
         {
@@ -485,37 +485,37 @@ gui_pdb_dialog_new (Gimp          *gimp,
           GtkWidget  *dialog;
           GtkWidget  *view;
 
-          params = gimp_parameters_append (dialog_type, params, &n_params,
+          params = picman_parameters_append (dialog_type, params, &n_params,
                                            "title",          title,
                                            "role",           dialog_role,
-                                           "help-func",      gimp_standard_help_func,
+                                           "help-func",      picman_standard_help_func,
                                            "help-id",        help_id,
-                                           "pdb",            gimp->pdb,
+                                           "pdb",            picman->pdb,
                                            "context",        context,
-                                           "select-type",    gimp_container_get_children_type (container),
+                                           "select-type",    picman_container_get_children_type (container),
                                            "initial-object", object,
                                            "callback-name",  callback_name,
                                            "menu-factory",   global_menu_factory,
                                            NULL);
 
-          params = gimp_parameters_append_valist (dialog_type,
+          params = picman_parameters_append_valist (dialog_type,
                                                   params, &n_params,
                                                   args);
 
           dialog = g_object_newv (dialog_type, n_params, params);
 
-          gimp_parameters_free (params, n_params);
+          picman_parameters_free (params, n_params);
 
-          view = GIMP_PDB_DIALOG (dialog)->view;
+          view = PICMAN_PDB_DIALOG (dialog)->view;
           if (view)
-            gimp_docked_set_show_button_bar (GIMP_DOCKED (view), FALSE);
+            picman_docked_set_show_button_bar (PICMAN_DOCKED (view), FALSE);
 
           if (progress)
             {
-              guint32 window_id = gimp_progress_get_window_id (progress);
+              guint32 window_id = picman_progress_get_window_id (progress);
 
               if (window_id)
-                gimp_window_set_transient_for (GTK_WINDOW (dialog), window_id);
+                picman_window_set_transient_for (GTK_WINDOW (dialog), window_id);
             }
 
           gtk_widget_show (dialog);
@@ -541,42 +541,42 @@ gui_pdb_dialog_new (Gimp          *gimp,
 }
 
 static gboolean
-gui_pdb_dialog_set (Gimp          *gimp,
-                    GimpContainer *container,
+gui_pdb_dialog_set (Picman          *picman,
+                    PicmanContainer *container,
                     const gchar   *callback_name,
                     const gchar   *object_name,
                     va_list        args)
 {
-  GimpPdbDialogClass *klass = NULL;
+  PicmanPdbDialogClass *klass = NULL;
 
-  if (gimp_container_get_children_type (container) == GIMP_TYPE_BRUSH)
-    klass = g_type_class_peek (GIMP_TYPE_BRUSH_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_FONT)
-    klass = g_type_class_peek (GIMP_TYPE_FONT_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_GRADIENT)
-    klass = g_type_class_peek (GIMP_TYPE_GRADIENT_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PALETTE)
-    klass = g_type_class_peek (GIMP_TYPE_PALETTE_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PATTERN)
-    klass = g_type_class_peek (GIMP_TYPE_PATTERN_SELECT);
+  if (picman_container_get_children_type (container) == PICMAN_TYPE_BRUSH)
+    klass = g_type_class_peek (PICMAN_TYPE_BRUSH_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_FONT)
+    klass = g_type_class_peek (PICMAN_TYPE_FONT_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_GRADIENT)
+    klass = g_type_class_peek (PICMAN_TYPE_GRADIENT_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PALETTE)
+    klass = g_type_class_peek (PICMAN_TYPE_PALETTE_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PATTERN)
+    klass = g_type_class_peek (PICMAN_TYPE_PATTERN_SELECT);
 
   if (klass)
     {
-      GimpPdbDialog *dialog;
+      PicmanPdbDialog *dialog;
 
-      dialog = gimp_pdb_dialog_get_by_callback (klass, callback_name);
+      dialog = picman_pdb_dialog_get_by_callback (klass, callback_name);
 
-      if (dialog && dialog->select_type == gimp_container_get_children_type (container))
+      if (dialog && dialog->select_type == picman_container_get_children_type (container))
         {
-          GimpObject *object;
+          PicmanObject *object;
 
-          object = gimp_container_get_child_by_name (container, object_name);
+          object = picman_container_get_child_by_name (container, object_name);
 
           if (object)
             {
               const gchar *prop_name = va_arg (args, const gchar *);
 
-              gimp_context_set_by_type (dialog->context, dialog->select_type,
+              picman_context_set_by_type (dialog->context, dialog->select_type,
                                         object);
 
               if (prop_name)
@@ -593,30 +593,30 @@ gui_pdb_dialog_set (Gimp          *gimp,
 }
 
 static gboolean
-gui_pdb_dialog_close (Gimp          *gimp,
-                      GimpContainer *container,
+gui_pdb_dialog_close (Picman          *picman,
+                      PicmanContainer *container,
                       const gchar   *callback_name)
 {
-  GimpPdbDialogClass *klass = NULL;
+  PicmanPdbDialogClass *klass = NULL;
 
-  if (gimp_container_get_children_type (container) == GIMP_TYPE_BRUSH)
-    klass = g_type_class_peek (GIMP_TYPE_BRUSH_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_FONT)
-    klass = g_type_class_peek (GIMP_TYPE_FONT_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_GRADIENT)
-    klass = g_type_class_peek (GIMP_TYPE_GRADIENT_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PALETTE)
-    klass = g_type_class_peek (GIMP_TYPE_PALETTE_SELECT);
-  else if (gimp_container_get_children_type (container) == GIMP_TYPE_PATTERN)
-    klass = g_type_class_peek (GIMP_TYPE_PATTERN_SELECT);
+  if (picman_container_get_children_type (container) == PICMAN_TYPE_BRUSH)
+    klass = g_type_class_peek (PICMAN_TYPE_BRUSH_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_FONT)
+    klass = g_type_class_peek (PICMAN_TYPE_FONT_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_GRADIENT)
+    klass = g_type_class_peek (PICMAN_TYPE_GRADIENT_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PALETTE)
+    klass = g_type_class_peek (PICMAN_TYPE_PALETTE_SELECT);
+  else if (picman_container_get_children_type (container) == PICMAN_TYPE_PATTERN)
+    klass = g_type_class_peek (PICMAN_TYPE_PATTERN_SELECT);
 
   if (klass)
     {
-      GimpPdbDialog *dialog;
+      PicmanPdbDialog *dialog;
 
-      dialog = gimp_pdb_dialog_get_by_callback (klass, callback_name);
+      dialog = picman_pdb_dialog_get_by_callback (klass, callback_name);
 
-      if (dialog && dialog->select_type == gimp_container_get_children_type (container))
+      if (dialog && dialog->select_type == picman_container_get_children_type (container))
         {
           gtk_widget_destroy (GTK_WIDGET (dialog));
           return TRUE;
@@ -627,14 +627,14 @@ gui_pdb_dialog_close (Gimp          *gimp,
 }
 
 static gboolean
-gui_recent_list_add_uri (Gimp        *gimp,
+gui_recent_list_add_uri (Picman        *picman,
                          const gchar *uri,
                          const gchar *mime_type)
 {
   GtkRecentData  recent;
   const gchar   *groups[2] = { "Graphics", NULL };
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (uri != NULL, FALSE);
 
   /* use last part of the URI */
@@ -645,7 +645,7 @@ gui_recent_list_add_uri (Gimp        *gimp,
   recent.mime_type    = (mime_type ?
                          (gchar *) mime_type : "application/octet-stream");
   recent.app_name     = "GNU Image Manipulation Program";
-  recent.app_exec     = GIMP_COMMAND " %u";
+  recent.app_exec     = PICMAN_COMMAND " %u";
   recent.groups       = (gchar **) groups;
   recent.is_private   = FALSE;
 
@@ -662,15 +662,15 @@ gui_recent_list_compare (gconstpointer a,
 }
 
 static void
-gui_recent_list_load (Gimp *gimp)
+gui_recent_list_load (Picman *picman)
 {
   GList *items;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_container_freeze (gimp->documents);
-  gimp_container_clear (gimp->documents);
+  picman_container_freeze (picman->documents);
+  picman_container_clear (picman->documents);
 
   items = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
 
@@ -683,15 +683,15 @@ gui_recent_list_load (Gimp *gimp)
       if (gtk_recent_info_has_application (info,
                                            "GNU Image Manipulation Program"))
         {
-          GimpImagefile *imagefile;
+          PicmanImagefile *imagefile;
 
-          imagefile = gimp_imagefile_new (gimp,
+          imagefile = picman_imagefile_new (picman,
                                           gtk_recent_info_get_uri (info));
 
-          gimp_imagefile_set_mime_type (imagefile,
+          picman_imagefile_set_mime_type (imagefile,
                                         gtk_recent_info_get_mime_type (info));
 
-          gimp_container_add (gimp->documents, GIMP_OBJECT (imagefile));
+          picman_container_add (picman->documents, PICMAN_OBJECT (imagefile));
           g_object_unref (imagefile);
         }
 
@@ -700,5 +700,5 @@ gui_recent_list_load (Gimp *gimp)
 
   g_list_free (items);
 
-  gimp_container_thaw (gimp->documents);
+  picman_container_thaw (picman->documents);
 }

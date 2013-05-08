@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Andy Thomas <alt@gimp.org>
+# "Perlized" from C source by Andy Thomas <alt@picman.org>
 
 sub path_list {
-    &std_pdb_deprecated('gimp-image-get-vectors');
+    &std_pdb_deprecated('picman-image-get-vectors');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -34,7 +34,7 @@ sub path_list {
     %invoke = (
 	code => <<'CODE'
 {
-  path_list = gimp_container_get_name_array (gimp_image_get_vectors (image),
+  path_list = picman_container_get_name_array (picman_image_get_vectors (image),
                                              &num_paths);
 }
 CODE
@@ -42,7 +42,7 @@ CODE
 }
 
 sub path_get_points {
-    &std_pdb_deprecated('gimp-vectors-stroke-get-points');
+    &std_pdb_deprecated('picman-vectors-stroke-get-points');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -73,16 +73,16 @@ sub path_get_points {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
     {
-      GimpVectorsCompatPoint *points;
+      PicmanVectorsCompatPoint *points;
       gint num_points;
 
       path_type = 1; /* BEZIER (1.2 compat) */
 
-      points = gimp_vectors_compat_get_points (vectors, &num_points,
+      points = picman_vectors_compat_get_points (vectors, &num_points,
                                                &path_closed);
 
       num_path_point_details = num_points * 3;
@@ -116,7 +116,7 @@ CODE
 }
 
 sub path_get_current {
-    &std_pdb_deprecated('gimp-image-get-active-vectors');
+    &std_pdb_deprecated('picman-image-get-active-vectors');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -131,10 +131,10 @@ sub path_get_current {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_active_vectors (image);
+  PicmanVectors *vectors = picman_image_get_active_vectors (image);
 
   if (vectors)
-    name = g_strdup (gimp_object_get_name (vectors));
+    name = g_strdup (picman_object_get_name (vectors));
   else
     success = FALSE;
 }
@@ -143,7 +143,7 @@ CODE
 }
 
 sub path_set_current {
-    &std_pdb_deprecated('gimp-image-set-active-vectors');
+    &std_pdb_deprecated('picman-image-set-active-vectors');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -155,10 +155,10 @@ sub path_set_current {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    gimp_image_set_active_vectors (image, vectors);
+    picman_image_set_active_vectors (image, vectors);
   else
     success = FALSE;
 }
@@ -167,7 +167,7 @@ CODE
 }
 
 sub path_set_points {
-    &std_pdb_deprecated('gimp-vectors-stroke-new-from-points');
+    &std_pdb_deprecated('picman-vectors-stroke-new-from-points');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -217,15 +217,15 @@ sub path_set_points {
 
   if (success)
     {
-      GimpVectors            *vectors;
+      PicmanVectors            *vectors;
       const gdouble          *curr_point_pair;
-      GimpVectorsCompatPoint *points;
+      PicmanVectorsCompatPoint *points;
       gint                    n_points;
       gint                    i;
 
       n_points = num_path_points / 3;
 
-      points = g_new0 (GimpVectorsCompatPoint, n_points);
+      points = g_new0 (PicmanVectorsCompatPoint, n_points);
 
       for (i = 0, curr_point_pair = points_pairs;
            i < n_points;
@@ -236,13 +236,13 @@ sub path_set_points {
           points[i].type = curr_point_pair[2];
         }
 
-      vectors = gimp_vectors_compat_new (image, name, points, n_points,
+      vectors = picman_vectors_compat_new (image, name, points, n_points,
                                          closed);
 
       g_free (points);
 
       if (vectors)
-        success = gimp_image_add_vectors (image, vectors, NULL, 0, TRUE);
+        success = picman_image_add_vectors (image, vectors, NULL, 0, TRUE);
       else
         success = FALSE;
     }
@@ -252,7 +252,7 @@ CODE
 }
 
 sub path_stroke_current {
-    &std_pdb_deprecated('gimp-edit-stroke-vectors');
+    &std_pdb_deprecated('picman-edit-stroke-vectors');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -260,24 +260,24 @@ sub path_stroke_current {
     );
 
     %invoke = (
-	headers => [ qw("core/gimpstrokeoptions.h") ],
+	headers => [ qw("core/picmanstrokeoptions.h") ],
 	code    => <<'CODE'
 {
-  GimpVectors  *vectors  = gimp_image_get_active_vectors (image);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanVectors  *vectors  = picman_image_get_active_vectors (image);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
   if (vectors && drawable &&
-      gimp_pdb_item_is_modifyable (GIMP_ITEM (drawable),
-                                   GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      picman_pdb_item_is_modifyable (PICMAN_ITEM (drawable),
+                                   PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GimpStrokeOptions *options = gimp_stroke_options_new (gimp, context, TRUE);
+      PicmanStrokeOptions *options = picman_stroke_options_new (picman, context, TRUE);
 
       g_object_set (options,
-                    "method", GIMP_STROKE_METHOD_PAINT_CORE,
+                    "method", PICMAN_STROKE_METHOD_PAINT_CORE,
                     NULL);
 
-      success = gimp_item_stroke (GIMP_ITEM (vectors),
+      success = picman_item_stroke (PICMAN_ITEM (vectors),
                                   drawable, context, options, TRUE, TRUE,
                                   progress, error);
 
@@ -291,7 +291,7 @@ CODE
 }
 
 sub path_get_point_at_dist {
-    &std_pdb_deprecated('gimp-vectors-stroke-get-point-at-dist');
+    &std_pdb_deprecated('picman-vectors-stroke-get-point-at-dist');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -312,23 +312,23 @@ sub path_get_point_at_dist {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors;
-  GimpStroke  *stroke;
+  PicmanVectors *vectors;
+  PicmanStroke  *stroke;
   gdouble      distance_along;
   gdouble      stroke_length;
   gdouble      stroke_distance;
-  GimpCoords   position;
+  PicmanCoords   position;
 
-  vectors = gimp_image_get_active_vectors (image);
+  vectors = picman_image_get_active_vectors (image);
 
   if (vectors)
     {
       distance_along = 0.0;
-      stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+      stroke = picman_vectors_stroke_get_next (vectors, NULL);
 
       while (stroke != NULL )
         {
-          stroke_length = gimp_stroke_get_length (stroke, 0.5);
+          stroke_length = picman_stroke_get_length (stroke, 0.5);
 
           if (distance_along + stroke_length < distance)
             {
@@ -339,7 +339,7 @@ sub path_get_point_at_dist {
               stroke_distance = distance - distance_along;
               stroke_distance = stroke_distance < 0 ? 0: stroke_distance;
 
-              if (!gimp_stroke_get_point_at_dist (stroke, stroke_distance, 0.5,
+              if (!picman_stroke_get_point_at_dist (stroke, stroke_distance, 0.5,
 	                                          &position, &slope))
                 {
                   success = FALSE;
@@ -354,7 +354,7 @@ sub path_get_point_at_dist {
                 }
             }
 
-          stroke = gimp_vectors_stroke_get_next (vectors, stroke);
+          stroke = picman_vectors_stroke_get_next (vectors, stroke);
         }
     }
   else
@@ -367,7 +367,7 @@ CODE
 }
 
 sub path_get_tattoo {
-    &std_pdb_deprecated('gimp-vectors-get-tattoo');
+    &std_pdb_deprecated('picman-vectors-get-tattoo');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -384,10 +384,10 @@ sub path_get_tattoo {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    tattoo = gimp_item_get_tattoo (GIMP_ITEM (vectors));
+    tattoo = picman_item_get_tattoo (PICMAN_ITEM (vectors));
   else
     success = FALSE;
 }
@@ -396,7 +396,7 @@ CODE
 }
 
 sub path_set_tattoo {
-    &std_pdb_deprecated('gimp-vectors-set-tattoo');
+    &std_pdb_deprecated('picman-vectors-set-tattoo');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -411,10 +411,10 @@ sub path_set_tattoo {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    gimp_item_set_tattoo (GIMP_ITEM (vectors), tattovalue);
+    picman_item_set_tattoo (PICMAN_ITEM (vectors), tattovalue);
   else
     success = FALSE;
 }
@@ -423,7 +423,7 @@ CODE
 }
 
 sub get_path_by_tattoo {
-    &std_pdb_deprecated('gimp-image-get-vectors-by-tattoo');
+    &std_pdb_deprecated('picman-image-get-vectors-by-tattoo');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -440,10 +440,10 @@ sub get_path_by_tattoo {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_tattoo (image, tattoo);
+  PicmanVectors *vectors = picman_image_get_vectors_by_tattoo (image, tattoo);
 
   if (vectors)
-    name = g_strdup (gimp_object_get_name (vectors));
+    name = g_strdup (picman_object_get_name (vectors));
   else
     success = FALSE;
 }
@@ -452,7 +452,7 @@ CODE
 }
 
 sub path_delete {
-    &std_pdb_deprecated('gimp-image-remove-vectors');
+    &std_pdb_deprecated('picman-image-remove-vectors');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -464,10 +464,10 @@ sub path_delete {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    gimp_image_remove_vectors (image, vectors, TRUE, NULL);
+    picman_image_remove_vectors (image, vectors, TRUE, NULL);
   else
     success = FALSE;
 }
@@ -476,7 +476,7 @@ CODE
 }
 
 sub path_get_locked {
-    &std_pdb_deprecated('gimp-vectors-get-linked');
+    &std_pdb_deprecated('picman-vectors-get-linked');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -494,10 +494,10 @@ sub path_get_locked {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    locked = gimp_item_get_linked (GIMP_ITEM (vectors));
+    locked = picman_item_get_linked (PICMAN_ITEM (vectors));
   else
     success = FALSE;
 }
@@ -506,7 +506,7 @@ CODE
 }
 
 sub path_set_locked {
-    &std_pdb_deprecated('gimp-vectors-set-linked');
+    &std_pdb_deprecated('picman-vectors-set-linked');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -520,10 +520,10 @@ sub path_set_locked {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    gimp_item_set_linked (GIMP_ITEM (vectors), locked, TRUE);
+    picman_item_set_linked (PICMAN_ITEM (vectors), locked, TRUE);
   else
     success = FALSE;
 }
@@ -532,14 +532,14 @@ CODE
 }
 
 sub path_to_selection {
-    &std_pdb_deprecated('gimp-vectors-to-selection');
+    &std_pdb_deprecated('picman-vectors-to-selection');
 
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image' },
 	{ name => 'name', type => 'string',
 	  desc => 'The name of the path which should be made into selection.' },
-        { name => 'op', type => 'enum GimpChannelOps',
+        { name => 'op', type => 'enum PicmanChannelOps',
 	  desc => 'The desired operation with current selection' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialias selection.' },
@@ -554,10 +554,10 @@ sub path_to_selection {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpVectors *vectors = gimp_image_get_vectors_by_name (image, name);
+  PicmanVectors *vectors = picman_image_get_vectors_by_name (image, name);
 
   if (vectors)
-    gimp_item_to_selection (GIMP_ITEM (vectors),
+    picman_item_to_selection (PICMAN_ITEM (vectors),
                             op,
                             antialias,
                             feather,
@@ -571,7 +571,7 @@ CODE
 }
 
 sub path_import {
-    &std_pdb_deprecated('gimp-vectors-import-from-file');
+    &std_pdb_deprecated('picman-vectors-import-from-file');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -585,10 +585,10 @@ sub path_import {
     );
 
     %invoke = (
-        headers => [ qw("vectors/gimpvectors-import.h") ],
+        headers => [ qw("vectors/picmanvectors-import.h") ],
 	code    => <<'CODE'
 {
-  success = gimp_vectors_import_file (image, filename,
+  success = picman_vectors_import_file (image, filename,
                                       merge, scale, NULL, -1, NULL, NULL);
 }
 CODE
@@ -597,14 +597,14 @@ CODE
 
 
 @headers = qw(<string.h>
-              "libgimpmath/gimpmath.h"
-              "core/gimplist.h"
-              "vectors/gimpanchor.h"
-              "vectors/gimpbezierstroke.h"
-              "vectors/gimpvectors.h"
-              "vectors/gimpvectors-compat.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+              "libpicmanmath/picmanmath.h"
+              "core/picmanlist.h"
+              "vectors/picmananchor.h"
+              "vectors/picmanbezierstroke.h"
+              "vectors/picmanvectors.h"
+              "vectors/picmanvectors-compat.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(path_list path_get_current path_set_current path_delete
 	    path_get_points path_set_points
@@ -616,7 +616,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Paths';
-$doc_title = 'gimppaths';
+$doc_title = 'picmanpaths';
 $doc_short_desc = 'Deprecated operations related to paths.';
 $doc_long_desc = 'Deprecated operations related to paths.';
 

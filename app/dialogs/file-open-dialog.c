@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -23,69 +23,69 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimplayer.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanlayer.h"
+#include "core/picmanprogress.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
-#include "file/gimp-file.h"
+#include "file/picman-file.h"
 
-#include "widgets/gimpfiledialog.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanfiledialog.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "file-open-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void       file_open_dialog_response    (GtkWidget           *open_dialog,
                                                 gint                 response_id,
-                                                Gimp                *gimp);
-static GimpImage *file_open_dialog_open_image  (GtkWidget           *open_dialog,
-                                                Gimp                *gimp,
+                                                Picman                *picman);
+static PicmanImage *file_open_dialog_open_image  (GtkWidget           *open_dialog,
+                                                Picman                *picman,
                                                 const gchar         *uri,
-                                                GimpPlugInProcedure *load_proc);
+                                                PicmanPlugInProcedure *load_proc);
 static gboolean   file_open_dialog_open_layers (GtkWidget           *open_dialog,
-                                                GimpImage           *image,
+                                                PicmanImage           *image,
                                                 const gchar         *uri,
-                                                GimpPlugInProcedure *load_proc);
+                                                PicmanPlugInProcedure *load_proc);
 
 
 /*  public functions  */
 
 GtkWidget *
-file_open_dialog_new (Gimp *gimp)
+file_open_dialog_new (Picman *picman)
 {
   GtkWidget           *dialog;
-  GimpFileDialogState *state;
+  PicmanFileDialogState *state;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  dialog = gimp_file_dialog_new (gimp,
-                                 GIMP_FILE_CHOOSER_ACTION_OPEN,
-                                 _("Open Image"), "gimp-file-open",
+  dialog = picman_file_dialog_new (picman,
+                                 PICMAN_FILE_CHOOSER_ACTION_OPEN,
+                                 _("Open Image"), "picman-file-open",
                                  GTK_STOCK_OPEN,
-                                 GIMP_HELP_FILE_OPEN);
+                                 PICMAN_HELP_FILE_OPEN);
 
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), TRUE);
 
-  state = g_object_get_data (G_OBJECT (gimp), "gimp-file-open-dialog-state");
+  state = g_object_get_data (G_OBJECT (picman), "picman-file-open-dialog-state");
 
   if (state)
-    gimp_file_dialog_set_state (GIMP_FILE_DIALOG (dialog), state);
+    picman_file_dialog_set_state (PICMAN_FILE_DIALOG (dialog), state);
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (file_open_dialog_response),
-                    gimp);
+                    picman);
 
   return dialog;
 }
@@ -96,16 +96,16 @@ file_open_dialog_new (Gimp *gimp)
 static void
 file_open_dialog_response (GtkWidget *open_dialog,
                            gint       response_id,
-                           Gimp      *gimp)
+                           Picman      *picman)
 {
-  GimpFileDialog *dialog  = GIMP_FILE_DIALOG (open_dialog);
+  PicmanFileDialog *dialog  = PICMAN_FILE_DIALOG (open_dialog);
   GSList         *uris;
   GSList         *list;
   gboolean        success = FALSE;
 
-  g_object_set_data_full (G_OBJECT (gimp), "gimp-file-open-dialog-state",
-                          gimp_file_dialog_get_state (dialog),
-                          (GDestroyNotify) gimp_file_dialog_state_destroy);
+  g_object_set_data_full (G_OBJECT (picman), "picman-file-open-dialog-state",
+                          picman_file_dialog_get_state (dialog),
+                          (GDestroyNotify) picman_file_dialog_state_destroy);
 
   if (response_id != GTK_RESPONSE_OK)
     {
@@ -118,10 +118,10 @@ file_open_dialog_response (GtkWidget *open_dialog,
   uris = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER (open_dialog));
 
   if (uris)
-    g_object_set_data_full (G_OBJECT (gimp), GIMP_FILE_OPEN_LAST_URI_KEY,
+    g_object_set_data_full (G_OBJECT (picman), PICMAN_FILE_OPEN_LAST_URI_KEY,
                             g_strdup (uris->data), (GDestroyNotify) g_free);
 
-  gimp_file_dialog_set_sensitive (dialog, FALSE);
+  picman_file_dialog_set_sensitive (dialog, FALSE);
 
   /* When we are going to open new image windows, unset the transient
    * window. We don't need it since we will use gdk_window_raise() to
@@ -151,7 +151,7 @@ file_open_dialog_response (GtkWidget *open_dialog,
           if (! dialog->image)
             {
               dialog->image = file_open_dialog_open_image (open_dialog,
-                                                           gimp,
+                                                           picman,
                                                            list->data,
                                                            dialog->file_proc);
 
@@ -169,7 +169,7 @@ file_open_dialog_response (GtkWidget *open_dialog,
       else
         {
           if (file_open_dialog_open_image (open_dialog,
-                                           gimp,
+                                           picman,
                                            list->data,
                                            dialog->file_proc))
             {
@@ -189,40 +189,40 @@ file_open_dialog_response (GtkWidget *open_dialog,
   if (success)
     {
       if (dialog->open_as_layers && dialog->image)
-        gimp_image_flush (dialog->image);
+        picman_image_flush (dialog->image);
 
       gtk_widget_destroy (open_dialog);
     }
   else
     {
-      gimp_file_dialog_set_sensitive (dialog, TRUE);
+      picman_file_dialog_set_sensitive (dialog, TRUE);
     }
 
   g_slist_free_full (uris, (GDestroyNotify) g_free);
 }
 
-static GimpImage *
+static PicmanImage *
 file_open_dialog_open_image (GtkWidget           *open_dialog,
-                             Gimp                *gimp,
+                             Picman                *picman,
                              const gchar         *uri,
-                             GimpPlugInProcedure *load_proc)
+                             PicmanPlugInProcedure *load_proc)
 {
-  GimpImage         *image;
-  GimpPDBStatusType  status;
+  PicmanImage         *image;
+  PicmanPDBStatusType  status;
   GError            *error = NULL;
 
-  image = file_open_with_proc_and_display (gimp,
-                                           gimp_get_user_context (gimp),
-                                           GIMP_PROGRESS (open_dialog),
+  image = file_open_with_proc_and_display (picman,
+                                           picman_get_user_context (picman),
+                                           PICMAN_PROGRESS (open_dialog),
                                            uri, uri, FALSE,
                                            load_proc,
                                            &status, &error);
 
-  if (! image && status != GIMP_PDB_CANCEL)
+  if (! image && status != PICMAN_PDB_CANCEL)
     {
       gchar *filename = file_utils_uri_display_name (uri);
 
-      gimp_message (gimp, G_OBJECT (open_dialog), GIMP_MESSAGE_ERROR,
+      picman_message (picman, G_OBJECT (open_dialog), PICMAN_MESSAGE_ERROR,
                     _("Opening '%s' failed:\n\n%s"), filename, error->message);
       g_clear_error (&error);
 
@@ -234,39 +234,39 @@ file_open_dialog_open_image (GtkWidget           *open_dialog,
 
 static gboolean
 file_open_dialog_open_layers (GtkWidget           *open_dialog,
-                              GimpImage           *image,
+                              PicmanImage           *image,
                               const gchar         *uri,
-                              GimpPlugInProcedure *load_proc)
+                              PicmanPlugInProcedure *load_proc)
 {
   GList             *new_layers;
-  GimpPDBStatusType  status;
+  PicmanPDBStatusType  status;
   GError            *error = NULL;
 
-  new_layers = file_open_layers (image->gimp,
-                                 gimp_get_user_context (image->gimp),
-                                 GIMP_PROGRESS (open_dialog),
+  new_layers = file_open_layers (image->picman,
+                                 picman_get_user_context (image->picman),
+                                 PICMAN_PROGRESS (open_dialog),
                                  image, FALSE,
-                                 uri, GIMP_RUN_INTERACTIVE, load_proc,
+                                 uri, PICMAN_RUN_INTERACTIVE, load_proc,
                                  &status, &error);
 
   if (new_layers)
     {
-      gimp_image_add_layers (image, new_layers,
-                             GIMP_IMAGE_ACTIVE_PARENT, -1,
+      picman_image_add_layers (image, new_layers,
+                             PICMAN_IMAGE_ACTIVE_PARENT, -1,
                              0, 0,
-                             gimp_image_get_width (image),
-                             gimp_image_get_height (image),
+                             picman_image_get_width (image),
+                             picman_image_get_height (image),
                              _("Open layers"));
 
       g_list_free (new_layers);
 
       return TRUE;
     }
-  else if (status != GIMP_PDB_CANCEL)
+  else if (status != PICMAN_PDB_CANCEL)
     {
       gchar *filename = file_utils_uri_display_name (uri);
 
-      gimp_message (image->gimp, G_OBJECT (open_dialog), GIMP_MESSAGE_ERROR,
+      picman_message (image->picman, G_OBJECT (open_dialog), PICMAN_MESSAGE_ERROR,
                     _("Opening '%s' failed:\n\n%s"), filename, error->message);
       g_clear_error (&error);
 

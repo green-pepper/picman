@@ -1,10 +1,10 @@
-/* Color Enhance 0.10 --- image filter plug-in for GIMP
+/* Color Enhance 0.10 --- image filter plug-in for PICMAN
  *
  * Copyright (C) 1999 Martin Weber
  * Copyright (C) 1996 Federico Mena Quintero
  *
  * You can contact me at martweb@gmx.net
- * You can contact the original GIMP authors at gimp@xcf.berkeley.edu
+ * You can contact the original PICMAN authors at picman@xcf.berkeley.edu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC "plug-in-color-enhance"
@@ -35,15 +35,15 @@
 static void   query                 (void);
 static void   run                   (const gchar      *name,
                                      gint              nparams,
-                                     const GimpParam  *param,
+                                     const PicmanParam  *param,
                                      gint             *nreturn_vals,
-                                     GimpParam       **return_vals);
+                                     PicmanParam       **return_vals);
 
-static void   Color_Enhance         (GimpDrawable     *drawable);
+static void   Color_Enhance         (PicmanDrawable     *drawable);
 static void   indexed_Color_Enhance (gint32            image_ID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -57,14 +57,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Stretch color saturation to cover maximum possible range"),
                           "This simple plug-in does an automatic saturation "
                           "stretch.  For each channel in the image, it finds "
@@ -79,24 +79,24 @@ query (void)
                           "1997",
                           N_("_Color Enhance"),
                           "RGB*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Auto");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Auto");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
   gint32             image_ID;
 
   INIT_I18N();
@@ -104,39 +104,39 @@ run (const gchar      *name,
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
   image_ID = param[1].data.d_image;
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Color Enhance"));
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_progress_init (_("Color Enhance"));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
       Color_Enhance (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
-  else if (gimp_drawable_is_indexed (drawable->drawable_id))
+  else if (picman_drawable_is_indexed (drawable->drawable_id))
     {
       indexed_Color_Enhance (image_ID);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gdouble
@@ -159,7 +159,7 @@ get_v (const guchar *src)
   map[1] = m - k;
   map[2] = y - k;
 
-  gimp_rgb_to_hsv4(map, &h, &z, &v);
+  picman_rgb_to_hsv4(map, &h, &z, &v);
 
   return v;
 }
@@ -184,12 +184,12 @@ enhance_it (const guchar *src, guchar *dest, gdouble vlo, gdouble vhi)
   map[1] = m - k;
   map[2] = y - k;
 
-  gimp_rgb_to_hsv4 (map, &h, &z, &v);
+  picman_rgb_to_hsv4 (map, &h, &z, &v);
 
   if (vhi != vlo)
     v = (v - vlo) / (vhi - vlo);
 
-  gimp_hsv_to_rgb4 (map, h, z, v);
+  picman_hsv_to_rgb4 (map, h, z, v);
 
   c = map[0];
   m = map[1];
@@ -214,12 +214,12 @@ indexed_Color_Enhance (gint32 image_ID)
   gint    ncols,i;
   gdouble vhi = 0.0, vlo = 1.0;
 
-  cmap = gimp_image_get_colormap (image_ID, &ncols);
+  cmap = picman_image_get_colormap (image_ID, &ncols);
 
   if (!cmap)
     {
       g_message ("colormap was NULL!  Quitting.");
-      gimp_quit();
+      picman_quit();
     }
 
   for (i = 0; i < ncols; i++)
@@ -235,7 +235,7 @@ indexed_Color_Enhance (gint32 image_ID)
       enhance_it (&cmap[3 * i], &cmap[3 * i], vlo, vhi);
     }
 
-  gimp_image_set_colormap (image_ID, cmap, ncols);
+  picman_image_set_colormap (image_ID, cmap, ncols);
 }
 
 typedef struct
@@ -276,14 +276,14 @@ color_enhance_func (const guchar *src,
 }
 
 static void
-Color_Enhance (GimpDrawable *drawable)
+Color_Enhance (PicmanDrawable *drawable)
 {
   ColorEnhanceParam_t param;
 
-  param.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  param.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   param.vhi = 0.0;
   param.vlo = 1.0;
 
-  gimp_rgn_iterate1 (drawable, 0 /* unused */, find_vhi_vlo, &param);
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, color_enhance_func, &param);
+  picman_rgn_iterate1 (drawable, 0 /* unused */, find_vhi_vlo, &param);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, color_enhance_func, &param);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,23 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpdisplayconfig.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmandisplayconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
 #include "dialogs/dialogs.h"
 
@@ -45,7 +45,7 @@
 #include "dialogs-actions.h"
 #include "windows-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
@@ -53,13 +53,13 @@ windows_hide_docks_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
   gboolean  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-  Gimp     *gimp;
-  return_if_no_gimp (gimp, data);
+  Picman     *picman;
+  return_if_no_picman (picman, data);
 
-  if (GIMP_GUI_CONFIG (gimp->config)->hide_docks == active)
+  if (PICMAN_GUI_CONFIG (picman->config)->hide_docks == active)
     return;
 
-  g_object_set (gimp->config,
+  g_object_set (picman->config,
                 "hide-docks", active,
                 NULL);
 }
@@ -69,13 +69,13 @@ windows_use_single_window_mode_cmd_callback (GtkAction *action,
                                              gpointer   data)
 {
   gboolean  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-  Gimp     *gimp;
-  return_if_no_gimp (gimp, data);
+  Picman     *picman;
+  return_if_no_picman (picman, data);
 
-  if (GIMP_GUI_CONFIG (gimp->config)->single_window_mode == active)
+  if (PICMAN_GUI_CONFIG (picman->config)->single_window_mode == active)
     return;
 
-  g_object_set (gimp->config,
+  g_object_set (picman->config,
                 "single-window-mode", active,
                 NULL);
 }
@@ -84,53 +84,53 @@ void
 windows_show_display_next_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpDisplay *display;
-  Gimp        *gimp;
+  PicmanDisplay *display;
+  Picman        *picman;
   gint         index;
   return_if_no_display (display, data);
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
 
-  index = gimp_container_get_child_index (gimp->displays,
-                                          GIMP_OBJECT (display));
+  index = picman_container_get_child_index (picman->displays,
+                                          PICMAN_OBJECT (display));
   index++;
 
-  if (index >= gimp_container_get_n_children (gimp->displays))
+  if (index >= picman_container_get_n_children (picman->displays))
     index = 0;
 
-  display = GIMP_DISPLAY (gimp_container_get_child_by_index (gimp->displays,
+  display = PICMAN_DISPLAY (picman_container_get_child_by_index (picman->displays,
                                                              index));
-  gimp_display_shell_present (gimp_display_get_shell (display));
+  picman_display_shell_present (picman_display_get_shell (display));
 }
 
 void
 windows_show_display_previous_cmd_callback (GtkAction *action,
                                             gpointer   data)
 {
-  GimpDisplay *display;
-  Gimp        *gimp;
+  PicmanDisplay *display;
+  Picman        *picman;
   gint         index;
   return_if_no_display (display, data);
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
 
-  index = gimp_container_get_child_index (gimp->displays,
-                                          GIMP_OBJECT (display));
+  index = picman_container_get_child_index (picman->displays,
+                                          PICMAN_OBJECT (display));
   index--;
 
   if (index < 0)
-    index = gimp_container_get_n_children (gimp->displays) - 1;
+    index = picman_container_get_n_children (picman->displays) - 1;
 
-  display = GIMP_DISPLAY (gimp_container_get_child_by_index (gimp->displays,
+  display = PICMAN_DISPLAY (picman_container_get_child_by_index (picman->displays,
                                                              index));
-  gimp_display_shell_present (gimp_display_get_shell (display));
+  picman_display_shell_present (picman_display_get_shell (display));
 }
 
 void
 windows_show_display_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpDisplay *display = g_object_get_data (G_OBJECT (action), "display");
+  PicmanDisplay *display = g_object_get_data (G_OBJECT (action), "display");
 
-  gimp_display_shell_present (gimp_display_get_shell (display));
+  picman_display_shell_present (picman_display_get_shell (display));
 }
 
 void
@@ -146,20 +146,20 @@ void
 windows_open_recent_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpSessionInfo        *info;
-  GimpDialogFactoryEntry *entry;
-  Gimp                   *gimp;
-  return_if_no_gimp (gimp, data);
+  PicmanSessionInfo        *info;
+  PicmanDialogFactoryEntry *entry;
+  Picman                   *picman;
+  return_if_no_picman (picman, data);
 
   info  = g_object_get_data (G_OBJECT (action), "info");
-  entry = gimp_session_info_get_factory_entry (info);
+  entry = picman_session_info_get_factory_entry (info);
 
-  if (entry && strcmp ("gimp-toolbox-window", entry->identifier) == 0 &&
-      dialogs_actions_toolbox_exists (gimp))
+  if (entry && strcmp ("picman-toolbox-window", entry->identifier) == 0 &&
+      dialogs_actions_toolbox_exists (picman))
     {
-      gimp_message (gimp,
+      picman_message (picman,
                     G_OBJECT (action_data_get_widget (data)),
-                    GIMP_MESSAGE_WARNING,
+                    PICMAN_MESSAGE_WARNING,
                     _("The chosen recent dock contains a toolbox. Please "
                       "close the currently open toolbox and try again."));
       return;
@@ -167,12 +167,12 @@ windows_open_recent_cmd_callback (GtkAction *action,
 
   g_object_ref (info);
 
-  gimp_container_remove (global_recent_docks, GIMP_OBJECT (info));
+  picman_container_remove (global_recent_docks, PICMAN_OBJECT (info));
 
-  gimp_dialog_factory_add_session_info (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_add_session_info (picman_dialog_factory_get_singleton (),
                                         info);
 
-  gimp_session_info_restore (info, gimp_dialog_factory_get_singleton ());
+  picman_session_info_restore (info, picman_dialog_factory_get_singleton ());
 
   g_object_unref (info);
 }

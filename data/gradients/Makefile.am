@@ -1,7 +1,7 @@
-## Makefile.am for gimp/data/gradients
+## Makefile.am for picman/data/gradients
 
-gradientdatadir = $(gimpdatadir)/gradients
-obsoletegradientdatadir = $(gimpdatadir)/gradients/gimp-obsolete-files
+gradientdatadir = $(picmandatadir)/gradients
+obsoletegradientdatadir = $(picmandatadir)/gradients/picman-obsolete-files
 
 gradientdata_DATA = \
 	Abstract_1.ggr				\

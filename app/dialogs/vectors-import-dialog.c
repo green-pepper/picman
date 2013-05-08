@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
 #include "vectors-import-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void  vectors_import_dialog_free (VectorsImportDialog *dialog);
 
 
 VectorsImportDialog *
-vectors_import_dialog_new (GimpImage *image,
+vectors_import_dialog_new (PicmanImage *image,
                            GtkWidget *parent,
                            gboolean   merge_vectors,
                            gboolean   scale_vectors)
@@ -45,7 +45,7 @@ vectors_import_dialog_new (GimpImage *image,
   GtkWidget           *button;
   GtkFileFilter       *filter;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
 
   dialog = g_slice_new0 (VectorsImportDialog);
@@ -71,7 +71,7 @@ vectors_import_dialog_new (GimpImage *image,
   gtk_window_set_screen (GTK_WINDOW (dialog->dialog),
                          gtk_widget_get_screen (parent));
 
-  gtk_window_set_role (GTK_WINDOW (dialog->dialog), "gimp-vectors-import");
+  gtk_window_set_role (GTK_WINDOW (dialog->dialog), "picman-vectors-import");
   gtk_window_set_position (GTK_WINDOW (dialog->dialog), GTK_WIN_POS_MOUSE);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog->dialog),
@@ -112,7 +112,7 @@ vectors_import_dialog_new (GimpImage *image,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dialog->merge_vectors);
 
   button = gtk_check_button_new_with_mnemonic (_("_Scale imported paths "
@@ -123,7 +123,7 @@ vectors_import_dialog_new (GimpImage *image,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &dialog->scale_vectors);
 
   return dialog;

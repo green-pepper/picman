@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "print-utils.h"
 
@@ -30,7 +30,7 @@ print_utils_key_file_load_from_rcfile (const gchar *basename)
 
   g_return_val_if_fail (basename != NULL, NULL);
 
-  filename = g_build_filename (gimp_directory (), basename, NULL);
+  filename = g_build_filename (picman_directory (), basename, NULL);
 
   key_file = g_key_file_new ();
 
@@ -49,13 +49,13 @@ GKeyFile *
 print_utils_key_file_load_from_parasite (gint32       image_ID,
                                          const gchar *parasite_name)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   GKeyFile     *key_file;
   GError       *error = NULL;
 
   g_return_val_if_fail (parasite_name != NULL, NULL);
 
-  parasite = gimp_image_get_parasite (image_ID, parasite_name);
+  parasite = picman_image_get_parasite (image_ID, parasite_name);
 
   if (! parasite)
     return NULL;
@@ -63,12 +63,12 @@ print_utils_key_file_load_from_parasite (gint32       image_ID,
   key_file = g_key_file_new ();
 
   if (! g_key_file_load_from_data (key_file,
-                                   gimp_parasite_data (parasite),
-                                   gimp_parasite_data_size (parasite),
+                                   picman_parasite_data (parasite),
+                                   picman_parasite_data_size (parasite),
                                    G_KEY_FILE_NONE, &error))
     {
       g_key_file_free (key_file);
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
 
       g_warning ("Unable to create key file from image parasite '%s': %s",
                  parasite_name, error->message);
@@ -76,7 +76,7 @@ print_utils_key_file_load_from_parasite (gint32       image_ID,
       return NULL;
     }
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
 
   return key_file;
 }
@@ -102,12 +102,12 @@ print_utils_key_file_save_as_rcfile (GKeyFile    *key_file,
       return;
     }
 
-  filename = g_build_filename (gimp_directory (), basename, NULL);
+  filename = g_build_filename (picman_directory (), basename, NULL);
 
   if (! g_file_set_contents (filename, contents, length, &error))
     {
       g_warning ("Unable to write settings to '%s': %s",
-                 gimp_filename_to_utf8 (filename), error->message);
+                 picman_filename_to_utf8 (filename), error->message);
       g_error_free (error);
     }
 
@@ -120,7 +120,7 @@ print_utils_key_file_save_as_parasite (GKeyFile    *key_file,
                                        gint32       image_ID,
                                        const gchar *parasite_name)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *contents;
   gsize         length;
   GError       *error = NULL;
@@ -137,9 +137,9 @@ print_utils_key_file_save_as_parasite (GKeyFile    *key_file,
       return;
     }
 
-  parasite = gimp_parasite_new (parasite_name, 0, length, contents);
+  parasite = picman_parasite_new (parasite_name, 0, length, contents);
   g_free (contents);
 
-  gimp_image_attach_parasite (image_ID, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (image_ID, parasite);
+  picman_parasite_free (parasite);
 }

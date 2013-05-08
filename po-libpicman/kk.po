@@ -1,0 +1,1853 @@
+# Kazakh translation for picman.
+# Copyright (C) 2010 picman's COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman package.
+# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman picman-2-6\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&component=general\n"
+"POT-Creation-Date: 2010-10-04 18:11+0000\n"
+"PO-Revision-Date: 2010-10-08 09:43+0600\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
+"Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
+"Language: kk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-Language: Kazakh\n"
+"X-Poedit-Country: KAZAKHSTAN\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1068
+msgid "success"
+msgstr "сәтті"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1072
+msgid "execution error"
+msgstr ""
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1076
+msgid "calling error"
+msgstr ""
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1080
+msgid "cancelled"
+msgstr "бас тартылған"
+
+#: ../libpicman/picmanbrushselectbutton.c:170
+msgid "Brush Selection"
+msgstr ""
+
+#: ../libpicman/picmanbrushselectbutton.c:913
+#: ../libpicman/picmanpatternselectbutton.c:714
+msgid "_Browse..."
+msgstr "Қара_п шығу..."
+
+#: ../libpicman/picmanexport.c:217
+#: ../libpicman/picmanexport.c:253
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:218
+#: ../libpicman/picmanexport.c:227
+#: ../libpicman/picmanexport.c:236
+#: ../libpicman/picmanexport.c:254
+msgid "Merge Visible Layers"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:226
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:235
+#: ../libpicman/picmanexport.c:244
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:236
+#: ../libpicman/picmanexport.c:245
+msgid "Save as Animation"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:245
+#: ../libpicman/picmanexport.c:254
+#: ../libpicman/picmanexport.c:263
+msgid "Flatten Image"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:262
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:271
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:272
+msgid "Apply Layer Masks"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:280
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:281
+#: ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:328
+msgid "Convert to RGB"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:289
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:290
+#: ../libpicman/picmanexport.c:319
+#: ../libpicman/picmanexport.c:340
+msgid "Convert to Grayscale"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:298
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:299
+#: ../libpicman/picmanexport.c:328
+#: ../libpicman/picmanexport.c:338
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:308
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:309
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:318
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:327
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:337
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:348
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:349
+msgid "Add Alpha Channel"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:383
+msgid "Confirm Save"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:389
+msgid "Confirm"
+msgstr "Растау"
+
+#: ../libpicman/picmanexport.c:464
+msgid "Export File"
+msgstr ""
+
+#: ../libpicman/picmanexport.c:468
+msgid "_Ignore"
+msgstr "_Елемеу"
+
+#: ../libpicman/picmanexport.c:470
+msgid "_Export"
+msgstr "Э_кспорт"
+
+#. the headline
+#: ../libpicman/picmanexport.c:499
+#, c-format
+msgid "Your image should be exported before it can be saved as %s for the following reasons:"
+msgstr ""
+
+#. the footline
+#: ../libpicman/picmanexport.c:573
+msgid "The export conversion won't modify your original image."
+msgstr ""
+
+#: ../libpicman/picmanexport.c:673
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+
+#: ../libpicman/picmanexport.c:679
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+
+#: ../libpicman/picmanfontselectbutton.c:130
+msgid "Font Selection"
+msgstr "Қаріпті таңдау"
+
+#: ../libpicman/picmanfontselectbutton.c:145
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:148
+msgid "Gradient Selection"
+msgstr ""
+
+#: ../libpicman/picmanmenu.c:450
+#: ../libpicmanwidgets/picmanintstore.c:239
+msgid "(Empty)"
+msgstr "(Бос)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:130
+msgid "Palette Selection"
+msgstr ""
+
+#: ../libpicman/picmanpatternselectbutton.c:156
+msgid "Pattern Selection"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:140
+msgid "by name"
+msgstr "аты бойынша"
+
+#: ../libpicman/picmanprocbrowserdialog.c:141
+msgid "by description"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:142
+msgid "by help"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:143
+msgid "by author"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:144
+msgid "by copyright"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:145
+msgid "by date"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:146
+msgid "by type"
+msgstr "түрі бойынша"
+
+#: ../libpicman/picmanprocbrowserdialog.c:377
+msgid "Searching"
+msgstr "Іздеу"
+
+#: ../libpicman/picmanprocbrowserdialog.c:388
+msgid "Searching by name"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:409
+msgid "Searching by description"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:416
+msgid "Searching by help"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:423
+msgid "Searching by author"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:430
+msgid "Searching by copyright"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:437
+msgid "Searching by date"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:444
+msgid "Searching by type"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:454
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:463
+msgid "No matches for your query"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:467
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] ""
+msgstr[1] ""
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:516
+#: ../libpicmanwidgets/picmanbrowser.c:114
+msgid "No matches"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:143
+msgid "Parameters"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:156
+msgid "Return Values"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:169
+msgid "Additional Information"
+msgstr ""
+
+#: ../libpicman/picmanprocview.c:209
+msgid "Author:"
+msgstr "Авторы:"
+
+#: ../libpicman/picmanprocview.c:221
+msgid "Date:"
+msgstr "Күні:"
+
+#: ../libpicman/picmanprocview.c:233
+msgid "Copyright:"
+msgstr "Copyright:"
+
+#: ../libpicman/picmanunitcache.c:57
+msgid "percent"
+msgstr "пайыз"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgid "_White (full opacity)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgid "_Black (full transparency)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgid "Layer's _alpha channel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgid "_Transfer layer's alpha channel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgid "_Selection"
+msgstr "Таң_далған"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgid "_Grayscale copy of layer"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgid "C_hannel"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:64
+msgid "FG to BG (RGB)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgid "FG to BG (HSV)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgid "FG to transparent"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgid "Custom gradient"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:96
+msgid "FG color fill"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:97
+msgid "BG color fill"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgid "Pattern fill"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:128
+msgid "Add to the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:129
+msgid "Subtract from the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:130
+msgid "Replace the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgid "Intersect with the current selection"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:163
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Red"
+msgstr "Қызыл"
+
+#: ../libpicmanbase/picmanbaseenums.c:164
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Green"
+msgstr "Жасыл"
+
+#: ../libpicmanbase/picmanbaseenums.c:165
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Blue"
+msgstr "Көк"
+
+#: ../libpicmanbase/picmanbaseenums.c:166
+msgid "Gray"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#: ../libpicmanbase/picmanbaseenums.c:532
+msgid "Indexed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Alpha"
+msgstr "Альфа"
+
+#: ../libpicmanbase/picmanbaseenums.c:197
+msgid "Small"
+msgstr "Кішкентай"
+
+#: ../libpicmanbase/picmanbaseenums.c:198
+msgid "Medium"
+msgstr "Орташа"
+
+#: ../libpicmanbase/picmanbaseenums.c:199
+msgid "Large"
+msgstr "Үлкен"
+
+#: ../libpicmanbase/picmanbaseenums.c:231
+msgid "Light checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:232
+msgid "Mid-tone checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:233
+msgid "Dark checks"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:234
+msgid "White only"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:235
+msgid "Gray only"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:236
+msgid "Black only"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:264
+msgid "Image"
+msgstr "Сурет"
+
+#: ../libpicmanbase/picmanbaseenums.c:265
+msgid "Pattern"
+msgstr "Шаблон"
+
+#: ../libpicmanbase/picmanbaseenums.c:294
+msgid "Lightness"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:295
+msgid "Luminosity"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:296
+msgid "Average"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:324
+msgid "Dodge"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:325
+msgid "Burn"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:389
+msgid "gradient|Linear"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:390
+msgid "Bi-linear"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:391
+msgid "Radial"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:392
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+#, fuzzy
+msgid "Square"
+msgstr "Өз өзіне көбейту"
+
+#: ../libpicmanbase/picmanbaseenums.c:393
+msgid "Conical (sym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:394
+msgid "Conical (asym)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:395
+msgid "Shaped (angular)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:396
+msgid "Shaped (spherical)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:397
+msgid "Shaped (dimpled)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:398
+msgid "Spiral (cw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:399
+msgid "Spiral (ccw)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:430
+msgid "Intersections (dots)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:431
+msgid "Intersections (crosshairs)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:432
+msgid "Dashed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:433
+msgid "Double dashed"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:434
+msgid "Solid"
+msgstr "Бүтін"
+
+#: ../libpicmanbase/picmanbaseenums.c:463
+msgid "Stock ID"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:464
+msgid "Inline pixbuf"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:465
+msgid "Image file"
+msgstr "Сурет файлы"
+
+#: ../libpicmanbase/picmanbaseenums.c:494
+msgid "RGB color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:495
+#: ../libpicmanbase/picmanbaseenums.c:530
+msgid "Grayscale"
+msgstr "Сұр түсті"
+
+#: ../libpicmanbase/picmanbaseenums.c:496
+msgid "Indexed color"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:528
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:529
+msgid "RGB-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:531
+msgid "Grayscale-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:533
+msgid "Indexed-alpha"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:563
+msgid "interpolation|None"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:564
+msgid "interpolation|Linear"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:565
+msgid "Cubic"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:566
+msgid "Sinc (Lanczos3)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:594
+msgid "Constant"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:595
+msgid "Incremental"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:624
+#: ../modules/display-filter-lcms.c:191
+msgid "None"
+msgstr "Ешнәрсе"
+
+#: ../libpicmanbase/picmanbaseenums.c:625
+msgid "Sawtooth wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:626
+msgid "Triangular wave"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:655
+msgid "Run interactively"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:656
+msgid "Run non-interactively"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:657
+msgid "Run with last used values"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:685
+msgid "Pixels"
+msgstr "Пиксель"
+
+#: ../libpicmanbase/picmanbaseenums.c:686
+msgid "Points"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:715
+msgid "Shadows"
+msgstr "Көлеңкелер"
+
+#: ../libpicmanbase/picmanbaseenums.c:716
+msgid "Midtones"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:717
+msgid "Highlights"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:745
+msgid "Normal (Forward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:746
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:776
+msgid "Adjust"
+msgstr "Келтіру"
+
+#: ../libpicmanbase/picmanbaseenums.c:777
+msgid "Clip"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:778
+msgid "Crop to result"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:779
+msgid "Crop with aspect"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:909
+msgid "Internal PICMAN procedure"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:910
+msgid "PICMAN Plug-In"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:911
+msgid "PICMAN Extension"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:912
+msgid "Temporary Procedure"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1074
+msgid "From left to right"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1075
+msgid "From right to left"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgid "Left justified"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgid "Right justified"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:1107
+msgid "Centered"
+msgstr "Ортасына қарай"
+
+#: ../libpicmanbase/picmanbaseenums.c:1108
+msgid "Filled"
+msgstr ""
+
+#: ../libpicmanbase/picmanutils.c:170
+#: ../libpicmanbase/picmanutils.c:175
+#: ../modules/display-filter-lcms.c:183
+#: ../modules/color-selector-cmyk-lcms.c:422
+#: ../modules/color-selector-cmyk-lcms.c:428
+msgid "(invalid UTF-8 string)"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:42
+msgid "Mode of operation for color management."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:44
+msgid "The color profile of your (primary) monitor."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:46
+msgid "When enabled, PICMAN will try to use the display color profile from the windowing system.  The configured monitor profile is then only used as a fallback."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:50
+msgid "The default RGB working space color profile."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid "Sets how colors are mapped for your display."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:58
+msgid "Sets how colors are converted from RGB working space to the print simulation device."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:61
+msgid "When enabled, the print simulation will mark colors which can not be represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgid "No color management"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgid "Color managed display"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgid "Print simulation"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:56
+msgid "Perceptual"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgid "Relative colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgid "intent|Saturation"
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgid "Absolute colorimetric"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:97
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr ""
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:436
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:510
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:525
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:594
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-iface.c:474
+#: ../libpicmanconfig/picmanconfig-iface.c:487
+#: ../libpicmanconfig/picmanscanner.c:498
+#: ../libpicmanconfig/picmanscanner.c:579
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfig-path.c:377
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:78
+#: ../libpicmanconfig/picmanconfigwriter.c:718
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:136
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:149
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:679
+#: ../libpicmanconfig/picmanconfigwriter.c:699
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:707
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+
+#: ../libpicmanconfig/picmanconfigwriter.c:731
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:255
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr ""
+
+#: ../libpicmanconfig/picmanscanner.c:606
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:153
+#: ../libpicmanmodule/picmanmodule.c:171
+#: ../libpicmanmodule/picmanmodule.c:280
+#: ../libpicmanmodule/picmanmodule.c:307
+#: ../libpicmanmodule/picmanmodule.c:418
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:375
+msgid "Module error"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:376
+msgid "Loaded"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:377
+msgid "Load failed"
+msgstr ""
+
+#: ../libpicmanmodule/picmanmodule.c:378
+msgid "Not loaded"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:123
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumb-utils.c:247
+#: ../libpicmanthumb/picmanthumb-utils.c:315
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:498
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:898
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanbrowser.c:98
+msgid "_Search:"
+msgstr "І_здеу:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:118
+msgid "_Foreground Color"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:122
+msgid "_Background Color"
+msgstr "_Фон түсі"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:126
+msgid "Blac_k"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorbutton.c:130
+msgid "_White"
+msgstr "_Ақ"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:144
+msgid "Select color profile from disk..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Ешнәрсе"
+
+#: ../libpicmanwidgets/picmancolorscales.c:98
+msgid "Scales"
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:210
+msgid "Current:"
+msgstr "Ағымдағы:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:232
+msgid "Old:"
+msgstr "Ескі:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:286
+msgid "Hexadecimal color notation as used in HTML and CSS.  This entry also accepts CSS color names."
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorselection.c:292
+msgid "HTML _notation:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanhelpui.c:420
+msgid "Press F1 for more help"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:174
+msgid "Open a file selector to browse your folders"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:175
+msgid "Open a file selector to browse your files"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanfileentry.c:335
+msgid "Select Folder"
+msgstr "Буманы таңдау"
+
+#: ../libpicmanwidgets/picmanfileentry.c:337
+msgid "Select File"
+msgstr "Файлды таңдау"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:204
+msgid "Kilobytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:205
+msgid "Megabytes"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:206
+msgid "Gigabytes"
+msgstr ""
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:269
+#: ../libpicmanwidgets/picmanpageselector.c:1166
+msgid "Nothing selected"
+msgstr "Ешнәрсе таңдалмады"
+
+#: ../libpicmanwidgets/picmanpageselector.c:287
+msgid "Select _All"
+msgstr "Б_арлығын таңдау"
+
+#: ../libpicmanwidgets/picmanpageselector.c:307
+msgid "Select _range:"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:319
+msgid "Open _pages as"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:420
+msgid "Page 000"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:508
+#: ../libpicmanwidgets/picmanpageselector.c:744
+#, c-format
+msgid "Page %d"
+msgstr "Парақ %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1171
+msgid "One page selected"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+#: ../libpicmanwidgets/picmanpageselector.c:1182
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicmanwidgets/picmanpatheditor.c:214
+msgid "Writable"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpatheditor.c:223
+msgid "Folder"
+msgstr "Бума"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:107
+msgid "Click the eyedropper, then click a color anywhere on your screen to select that color."
+msgstr "Түс алушыны шертіп, экранның кез-келген аймағының түсін таңдау үшін жай ғана ол түске шертіңіз."
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:94
+msgid "Check Size"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:101
+msgid "Check Style"
+msgstr ""
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:277
+msgid "_Preview"
+msgstr "А_лдын-ала қарау"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1860
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libpicmanwidgets/picmanstock.c:112
+msgid "Anchor"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:113
+#, fuzzy
+msgid "C_enter"
+msgstr "Есептеу"
+
+#: ../libpicmanwidgets/picmanstock.c:114
+msgid "_Duplicate"
+msgstr "Кө_шірмесін жасау"
+
+#: ../libpicmanwidgets/picmanstock.c:115
+msgid "_Edit"
+msgstr "Тү_зету"
+
+#: ../libpicmanwidgets/picmanstock.c:116
+msgid "Linked"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:117
+msgid "Paste as New"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:118
+msgid "Paste Into"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:119
+msgid "_Reset"
+msgstr "_Нөлдеу"
+
+#: ../libpicmanwidgets/picmanstock.c:120
+msgid "Visible"
+msgstr "Көрінетін"
+
+#: ../libpicmanwidgets/picmanstock.c:156
+#: ../libpicmanwidgets/picmanstock.c:160
+msgid "_Stroke"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:172
+msgid "L_etter Spacing"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:173
+msgid "L_ine Spacing"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:189
+msgid "_Resize"
+msgstr "Ө_лшемін өзгерту"
+
+#: ../libpicmanwidgets/picmanstock.c:190
+#: ../libpicmanwidgets/picmanstock.c:320
+msgid "_Scale"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:296
+msgid "Cr_op"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "_Transform"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanstock.c:319
+msgid "_Rotate"
+msgstr "Бұ_ру"
+
+#: ../libpicmanwidgets/picmanstock.c:321
+msgid "_Shear"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:266
+msgid "More..."
+msgstr "Көбірек білу..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:581
+msgid "Unit Selection"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:629
+msgid "Unit"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanunitmenu.c:633
+msgid "Factor"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:511
+msgid "Use this value for random number generator seed - this allows you to repeat a given \"random\" operation"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:515
+msgid "_New Seed"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:528
+msgid "Seed random number generator with a generated random number"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgets.c:532
+msgid "_Randomize"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgid "Portrait"
+msgstr "Тік"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgid "Landscape"
+msgstr "Жатық"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "_H"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:123
+msgid "Hue"
+msgstr "Реңі"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "_S"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:124
+msgid "Saturation"
+msgstr "Қаңықтылығы"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "_V"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:125
+msgid "Value"
+msgstr "Мәні"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "_R"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "_G"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "_B"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "_A"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:157
+msgid "Layers"
+msgstr "Қабаттар"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:158
+msgid "Images"
+msgstr "Суреттер"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:217
+msgid "Zoom in"
+msgstr "Үлкейту"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:218
+msgid "Zoom out"
+msgstr "Кішірейту"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:198
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:261
+msgid "Color Deficient Vision"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:483
+msgid "Color _deficiency type:"
+msgstr ""
+
+#: ../modules/display-filter-gamma.c:90
+msgid "Gamma color display filter"
+msgstr ""
+
+#: ../modules/display-filter-gamma.c:129
+msgid "Gamma"
+msgstr "Гамма"
+
+#: ../modules/display-filter-gamma.c:232
+msgid "_Gamma:"
+msgstr "Га_мма:"
+
+#: ../modules/display-filter-high-contrast.c:90
+msgid "High Contrast color display filter"
+msgstr ""
+
+#: ../modules/display-filter-high-contrast.c:129
+msgid "Contrast"
+msgstr ""
+
+#: ../modules/display-filter-high-contrast.c:232
+msgid "Contrast c_ycles:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:102
+msgid "Color management display filter using ICC color profiles"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:134
+msgid "Color Management"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:212
+msgid "This filter takes its configuration from the Color Management section in the Preferences dialog."
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:226
+msgid "Mode of operation:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:233
+msgid "Image profile:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:241
+msgid "Monitor profile:"
+msgstr ""
+
+#: ../modules/display-filter-lcms.c:249
+msgid "Print simulation profile:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:97
+msgid "Color proof filter using ICC color profile"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:145
+msgid "Color Proof"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:311
+msgid "Choose an ICC Color Profile"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:338
+msgid "All files (*.*)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:343
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:401
+msgid "_Profile:"
+msgstr "Профа_йл:"
+
+#: ../modules/display-filter-proof.c:407
+msgid "_Intent:"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:412
+msgid "_Black Point Compensation"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:71
+msgid "CMYK color selector"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:102
+#: ../modules/color-selector-cmyk-lcms.c:150
+msgid "CMYK"
+msgstr ""
+
+#. Cyan
+#: ../modules/color-selector-cmyk.c:125
+#: ../modules/color-selector-cmyk-lcms.c:169
+msgid "_C"
+msgstr ""
+
+#. Magenta
+#: ../modules/color-selector-cmyk.c:127
+#: ../modules/color-selector-cmyk-lcms.c:171
+msgid "_M"
+msgstr ""
+
+#. Yellow
+#: ../modules/color-selector-cmyk.c:129
+#: ../modules/color-selector-cmyk-lcms.c:173
+msgid "_Y"
+msgstr ""
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk.c:131
+#: ../modules/color-selector-cmyk-lcms.c:175
+msgid "_K"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:135
+#: ../modules/color-selector-cmyk-lcms.c:179
+#, fuzzy
+msgid "Cyan"
+msgstr "көгілдір"
+
+#: ../modules/color-selector-cmyk.c:136
+#: ../modules/color-selector-cmyk-lcms.c:180
+msgid "Magenta"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:137
+#: ../modules/color-selector-cmyk-lcms.c:181
+#, fuzzy
+msgid "Yellow"
+msgstr "Сары"
+
+#: ../modules/color-selector-cmyk.c:138
+#: ../modules/color-selector-cmyk-lcms.c:182
+#, fuzzy
+msgid "Black"
+msgstr "қара"
+
+#: ../modules/color-selector-cmyk.c:172
+msgid "Black _pullout:"
+msgstr ""
+
+#: ../modules/color-selector-cmyk.c:189
+msgid "The percentage of black to pull out of the colored inks."
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:87
+msgid "CMYK color selector (using color profile)"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:410
+msgid "Profile: (none)"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:431
+#, fuzzy, c-format
+msgid "Profile: %s"
+msgstr "Профайл"
+
+#: ../modules/color-selector-water.c:82
+msgid "Watercolor style color selector"
+msgstr ""
+
+#: ../modules/color-selector-water.c:118
+msgid "Watercolor"
+msgstr ""
+
+#: ../modules/color-selector-water.c:186
+#, fuzzy
+msgid "Pressure"
+msgstr "Қ_ысым:"
+
+#: ../modules/color-selector-wheel.c:103
+msgid "HSV color wheel"
+msgstr ""
+
+#: ../modules/color-selector-wheel.c:134
+#, fuzzy
+msgid "Wheel"
+msgstr "_Шеңбер:"
+
+#: ../modules/controller-linux-input.c:58
+#, fuzzy
+msgid "Button 0"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:59
+#, fuzzy
+msgid "Button 1"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:60
+#, fuzzy
+msgid "Button 2"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:61
+#, fuzzy
+msgid "Button 3"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:62
+#, fuzzy
+msgid "Button 4"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:63
+#, fuzzy
+msgid "Button 5"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:64
+#, fuzzy
+msgid "Button 6"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:65
+#, fuzzy
+msgid "Button 7"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:66
+#, fuzzy
+msgid "Button 8"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:67
+#, fuzzy
+msgid "Button 9"
+msgstr "Батырма"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Mouse"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Middle"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Side"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Extra"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:76
+msgid "Button Task"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:78
+msgid "Button Wheel"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:81
+msgid "Button Gear Down"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:84
+msgid "Button Gear Up"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:90
+#: ../modules/controller-dx-dinput.c:443
+msgid "X Move Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:91
+#: ../modules/controller-dx-dinput.c:446
+msgid "X Move Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:93
+msgid "Y Move Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:94
+#: ../modules/controller-dx-dinput.c:461
+#, fuzzy
+msgid "Z Move Up"
+msgstr "Жоғары жылжыту"
+
+#: ../modules/controller-linux-input.c:95
+#: ../modules/controller-dx-dinput.c:464
+#, fuzzy
+msgid "Z Move Down"
+msgstr "Төмен жылжыту"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:98
+msgid "X Axis Tilt Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:99
+#: ../modules/controller-dx-dinput.c:479
+msgid "Y Axis Tilt Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:100
+#: ../modules/controller-dx-dinput.c:482
+msgid "Y Axis Tilt Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:101
+#: ../modules/controller-dx-dinput.c:488
+msgid "Z Axis Turn Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:102
+#: ../modules/controller-dx-dinput.c:491
+msgid "Z Axis Turn Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:105
+msgid "Horiz. Wheel Turn Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:107
+msgid "Dial Turn Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Left"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:109
+msgid "Wheel Turn Right"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:178
+msgid "Linux input event controller"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:218
+#: ../modules/controller-dx-dinput.c:196
+#: ../modules/controller-midi.c:212
+msgid "Device:"
+msgstr "Құрылғы:"
+
+#: ../modules/controller-linux-input.c:219
+msgid "The name of the device to read Linux Input events from."
+msgstr ""
+
+#: ../modules/controller-linux-input.c:230
+msgid "Linux Input"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:513
+msgid "Linux Input Events"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:525
+#: ../modules/controller-dx-dinput.c:1095
+#: ../modules/controller-midi.c:505
+msgid "No device configured"
+msgstr "Құрылғылар бапталмады"
+
+#: ../modules/controller-linux-input.c:551
+#: ../modules/controller-midi.c:454
+#: ../modules/controller-midi.c:480
+#, c-format
+msgid "Reading from %s"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:569
+#: ../modules/controller-linux-input.c:623
+#: ../modules/controller-midi.c:436
+#: ../modules/controller-midi.c:497
+#: ../modules/controller-midi.c:568
+#, c-format
+msgid "Device not available: %s"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:588
+#: ../modules/controller-dx-dinput.c:1120
+msgid "Device not available"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:632
+#: ../modules/controller-midi.c:577
+msgid "End of file"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:156
+msgid "DirectX DirectInput event controller"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:197
+msgid "The device to read DirectInput events from."
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:206
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:420
+#, fuzzy, c-format
+msgid "Button %d"
+msgstr "Батырма"
+
+#: ../modules/controller-dx-dinput.c:423
+#, c-format
+msgid "Button %d Press"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:426
+#, c-format
+msgid "Button %d Release"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:452
+msgid "Y Move Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:455
+msgid "Y Move Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:470
+msgid "X Axis Tilt Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:473
+msgid "X Axis Tilt Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:502
+#, c-format
+msgid "Slider %d Increase"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:505
+#, c-format
+msgid "Slider %d Decrease"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:515
+#, c-format
+msgid "POV %d X View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:518
+#, c-format
+msgid "POV %d Y View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:521
+#, c-format
+msgid "POV %d Return"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1084
+msgid "DirectInput Events"
+msgstr ""
+
+#: ../modules/controller-midi.c:164
+msgid "MIDI event controller"
+msgstr ""
+
+#: ../modules/controller-midi.c:203
+msgid "The name of the device to read MIDI events from."
+msgstr ""
+
+#: ../modules/controller-midi.c:206
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr ""
+
+#: ../modules/controller-midi.c:221
+msgid "Channel:"
+msgstr "Арна:"
+
+#: ../modules/controller-midi.c:222
+msgid "The MIDI channel to read events from. Set to -1 for reading from all MIDI channels."
+msgstr ""
+
+#: ../modules/controller-midi.c:226
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:355
+#, c-format
+msgid "Note %02x on"
+msgstr ""
+
+#: ../modules/controller-midi.c:358
+#, c-format
+msgid "Note %02x off"
+msgstr ""
+
+#: ../modules/controller-midi.c:361
+#, c-format
+msgid "Controller %03d"
+msgstr ""
+
+#: ../modules/controller-midi.c:408
+msgid "MIDI Events"
+msgstr "MIDI оқиғалары"
+
+#: ../modules/controller-midi.c:426
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:428
+msgid "PICMAN MIDI Input Controller"
+msgstr ""
+

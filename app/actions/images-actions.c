@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,28 +20,28 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "images-actions.h"
 #include "images-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry images_actions[] =
+static const PicmanActionEntry images_actions[] =
 {
-  { "images-popup", GIMP_STOCK_IMAGES,
+  { "images-popup", PICMAN_STOCK_IMAGES,
     NC_("images-action", "Images Menu"), NULL, NULL, NULL,
-    GIMP_HELP_IMAGE_DIALOG },
+    PICMAN_HELP_IMAGE_DIALOG },
 
   { "images-raise-views", GTK_STOCK_GOTO_TOP,
     NC_("images-action", "_Raise Views"), "",
@@ -64,31 +64,31 @@ static const GimpActionEntry images_actions[] =
 
 
 void
-images_actions_setup (GimpActionGroup *group)
+images_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "images-action",
+  picman_action_group_add_actions (group, "images-action",
                                  images_actions,
                                  G_N_ELEMENTS (images_actions));
 }
 
 void
-images_actions_update (GimpActionGroup *group,
+images_actions_update (PicmanActionGroup *group,
                        gpointer         data)
 {
-  GimpContext *context    = action_data_get_context (data);
-  GimpImage   *image      = NULL;
+  PicmanContext *context    = action_data_get_context (data);
+  PicmanImage   *image      = NULL;
   gint         disp_count = 0;
 
   if (context)
     {
-      image = gimp_context_get_image (context);
+      image = picman_context_get_image (context);
 
       if (image)
-        disp_count = gimp_image_get_display_count (image);
+        disp_count = picman_image_get_display_count (image);
     }
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("images-raise-views", image);
   SET_SENSITIVE ("images-new-view",    image);

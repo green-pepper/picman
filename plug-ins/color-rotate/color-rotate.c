@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Colormap-Rotation plug-in. Exchanges two color ranges.
  *
@@ -28,7 +28,7 @@
  *
  * Version 2.0, 04 April 1999.
  *  Nearly complete rewrite, made plug-in stable.
- *  (Works with GIMP 1.1 and GTK+ 1.2)
+ *  (Works with PICMAN 1.1 and GTK+ 1.2)
  *
  * Version 1.0, 27 March 1997.
  *  Initial (unstable) release by Pavel Grinfeld
@@ -37,15 +37,15 @@
 
 #include "config.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "color-rotate.h"
 #include "color-rotate-utils.h"
 #include "color-rotate-dialog.h"
 #include "color-rotate-callbacks.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Forward declarations */
@@ -53,11 +53,11 @@
 static void  query        (void);
 static void  run          (const gchar      *name,
                            gint              nparams,
-                           const GimpParam  *param,
+                           const PicmanParam  *param,
                            gint             *nreturn_vals,
-                           GimpParam       **return_vals);
+                           PicmanParam       **return_vals);
 
-static void  color_rotate (GimpDrawable     *drawable);
+static void  color_rotate (PicmanDrawable     *drawable);
 
 
 /* Global variables */
@@ -70,7 +70,7 @@ RcmParams Current =
   GRAY_TO
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -87,14 +87,14 @@ MAIN()
 static void
 query (void)
 {
-  GimpParamDef args[] =
+  PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (used for indexed images)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                        },
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"          },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (used for indexed images)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                        },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
 			  N_("Replace a range of colors with another"),
 			  "Exchanges two color ranges. "
                           "Based on code from Pavel Grinfeld (pavel@ml.com). "
@@ -104,59 +104,59 @@ query (void)
 			  "04th April 1999",
 			  N_("_Rotate Colors..."),
 			  "RGB*",
-			  GIMP_PLUGIN,
+			  PICMAN_PLUGIN,
 			  G_N_ELEMENTS (args), 0,
 			  args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[1];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
   INIT_I18N ();
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  Current.drawable = gimp_drawable_get (param[2].data.d_drawable);
-  Current.mask = gimp_drawable_get (gimp_image_get_selection (param[1].data.d_image));
+  Current.drawable = picman_drawable_get (param[2].data.d_drawable);
+  Current.mask = picman_drawable_get (picman_image_get_selection (param[1].data.d_image));
 
-  if (gimp_drawable_is_rgb (Current.drawable->drawable_id))
+  if (picman_drawable_is_rgb (Current.drawable->drawable_id))
     {
       if (color_rotate_dialog ())
         {
-          gimp_progress_init (_("Rotating the colors"));
+          picman_progress_init (_("Rotating the colors"));
 
-          gimp_tile_cache_ntiles (2 * (Current.drawable->width /
-                                       gimp_tile_width () + 1));
+          picman_tile_cache_ntiles (2 * (Current.drawable->width /
+                                       picman_tile_width () + 1));
           color_rotate (Current.drawable);
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
       else
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  if (status == GIMP_PDB_SUCCESS)
-    gimp_drawable_detach (Current.drawable);
+  if (status == PICMAN_PDB_SUCCESS)
+    picman_drawable_detach (Current.drawable);
 }
 
 
@@ -181,7 +181,7 @@ color_rotate_row (const guchar *src_row,
       rgb[1] = src_row[col * bytes + 1];
       rgb[2] = src_row[col * bytes + 2];
 
-      gimp_rgb_to_hsv4 (rgb, &H, &S, &V);
+      picman_rgb_to_hsv4 (rgb, &H, &S, &V);
 
       if (rcm_is_gray (S))
         {
@@ -201,7 +201,7 @@ color_rotate_row (const guchar *src_row,
           else
             {
               skip = TRUE;
-              gimp_hsv_to_rgb4 (rgb, Current.Gray->hue / TP,
+              picman_hsv_to_rgb4 (rgb, Current.Gray->hue / TP,
                                 Current.Gray->satur, V);
             }
         }
@@ -215,7 +215,7 @@ color_rotate_row (const guchar *src_row,
                           H * TP);
 
           H = angle_mod_2PI (H) / TP;
-          gimp_hsv_to_rgb4 (rgb, H, S, V);
+          picman_hsv_to_rgb4 (rgb, H, S, V);
         }
 
       dest_row[col * bytes + 0] = rgb[0];
@@ -234,16 +234,16 @@ color_rotate_row (const guchar *src_row,
 /* Rotate colors row by row ... */
 
 static void
-color_rotate (GimpDrawable *drawable)
+color_rotate (PicmanDrawable *drawable)
 {
-  GimpPixelRgn srcPR, destPR;
+  PicmanPixelRgn srcPR, destPR;
   gint         width, height;
   gint         bytes;
   guchar      *src_row, *dest_row;
   gint         row;
   gint         x, y;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x, &y, &width, &height))
     {
       return;
@@ -254,31 +254,31 @@ color_rotate (GimpDrawable *drawable)
   src_row  = g_new (guchar, width * bytes);
   dest_row = g_new (guchar, width * bytes);
 
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0,
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0,
                        drawable->width,
                        drawable->height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable, 0, 0,
+  picman_pixel_rgn_init (&destPR, drawable, 0, 0,
                        drawable->width,
                        drawable->height, TRUE, TRUE);
 
   for (row = y; row < (y + height); row++)
     {
-      gimp_pixel_rgn_get_row (&srcPR, src_row, x, row, width);
+      picman_pixel_rgn_get_row (&srcPR, src_row, x, row, width);
 
       color_rotate_row (src_row, dest_row, row, width, bytes);
 
-      gimp_pixel_rgn_set_row (&destPR, dest_row, x, row, width);
+      picman_pixel_rgn_set_row (&destPR, dest_row, x, row, width);
 
       if ((row % 10) == 0)
-        gimp_progress_update ((double) row / (double) height);
+        picman_progress_update ((double) row / (double) height);
     }
 
   /*  update the processed region  */
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x, y, width, height);
 
   g_free (src_row);
   g_free (dest_row);

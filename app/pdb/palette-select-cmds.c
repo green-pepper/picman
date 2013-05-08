@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,25 +23,25 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-palettes_popup_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_popup_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
@@ -49,175 +49,175 @@ palettes_popup_invoker (GimpProcedure         *procedure,
   const gchar *popup_title;
   const gchar *initial_palette;
 
-  palette_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  popup_title = g_value_get_string (gimp_value_array_index (args, 1));
-  initial_palette = g_value_get_string (gimp_value_array_index (args, 2));
+  palette_callback = g_value_get_string (picman_value_array_index (args, 0));
+  popup_title = g_value_get_string (picman_value_array_index (args, 1));
+  initial_palette = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, palette_callback) ||
-          ! gimp_pdb_dialog_new (gimp, context, progress,
-                                 gimp_data_factory_get_container (gimp->palette_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, palette_callback) ||
+          ! picman_pdb_dialog_new (picman, context, progress,
+                                 picman_data_factory_get_container (picman->palette_factory),
                                  popup_title, palette_callback, initial_palette,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-palettes_close_popup_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_close_popup_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
   const gchar *palette_callback;
 
-  palette_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  palette_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, palette_callback) ||
-          ! gimp_pdb_dialog_close (gimp, gimp_data_factory_get_container (gimp->palette_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, palette_callback) ||
+          ! picman_pdb_dialog_close (picman, picman_data_factory_get_container (picman->palette_factory),
                                    palette_callback))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-palettes_set_popup_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+palettes_set_popup_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   const gchar *palette_callback;
   const gchar *palette_name;
 
-  palette_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  palette_name = g_value_get_string (gimp_value_array_index (args, 1));
+  palette_callback = g_value_get_string (picman_value_array_index (args, 0));
+  palette_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, palette_callback) ||
-          ! gimp_pdb_dialog_set (gimp, gimp_data_factory_get_container (gimp->palette_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, palette_callback) ||
+          ! picman_pdb_dialog_set (picman, picman_data_factory_get_container (picman->palette_factory),
                                  palette_callback, palette_name,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_palette_select_procs (GimpPDB *pdb)
+register_palette_select_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-palettes-popup
+   * picman-palettes-popup
    */
-  procedure = gimp_procedure_new (palettes_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-popup",
-                                     "Invokes the Gimp palette selection.",
+  procedure = picman_procedure_new (palettes_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-popup",
+                                     "Invokes the Picman palette selection.",
                                      "This procedure opens the palette selection dialog.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2002",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("palette-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("palette-callback",
                                                        "palette callback",
                                                        "The callback PDB proc to call when palette selection is made",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("popup-title",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("popup-title",
                                                        "popup title",
                                                        "Title of the palette selection dialog",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("initial-palette",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("initial-palette",
                                                        "initial palette",
                                                        "The name of the palette to set as the first selected",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-palettes-close-popup
+   * picman-palettes-close-popup
    */
-  procedure = gimp_procedure_new (palettes_close_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-close-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-close-popup",
+  procedure = picman_procedure_new (palettes_close_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-close-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-close-popup",
                                      "Close the palette selection dialog.",
                                      "This procedure closes an opened palette selection dialog.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2002",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("palette-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("palette-callback",
                                                        "palette callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-palettes-set-popup
+   * picman-palettes-set-popup
    */
-  procedure = gimp_procedure_new (palettes_set_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-palettes-set-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-palettes-set-popup",
+  procedure = picman_procedure_new (palettes_set_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-palettes-set-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-palettes-set-popup",
                                      "Sets the current palette in a palette selection dialog.",
                                      "Sets the current palette in a palette selection dialog.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2002",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("palette-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("palette-callback",
                                                        "palette callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("palette-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("palette-name",
                                                        "palette name",
                                                        "The name of the palette to set as selected",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

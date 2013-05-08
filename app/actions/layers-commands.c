@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,46 +22,46 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpgrouplayer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-merge.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpitemundo.h"
-#include "core/gimplayer-floating-sel.h"
-#include "core/gimppickable.h"
-#include "core/gimppickable-auto-shrink.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimpundostack.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmangrouplayer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-merge.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmanitemundo.h"
+#include "core/picmanlayer-floating-sel.h"
+#include "core/picmanpickable.h"
+#include "core/picmanpickable-auto-shrink.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmanundostack.h"
+#include "core/picmanprogress.h"
 
-#include "text/gimptext.h"
-#include "text/gimptext-vectors.h"
-#include "text/gimptextlayer.h"
+#include "text/picmantext.h"
+#include "text/picmantext-vectors.h"
+#include "text/picmantextlayer.h"
 
-#include "vectors/gimpvectors-warp.h"
+#include "vectors/picmanvectors-warp.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpprogressdialog.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanprogressdialog.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmanimagewindow.h"
 
-#include "tools/gimptexttool.h"
+#include "tools/picmantexttool.h"
 #include "tools/tool_manager.h"
 
 #include "dialogs/layer-add-mask-dialog.h"
@@ -72,32 +72,32 @@
 #include "actions.h"
 #include "layers-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpLayerModeEffects layer_modes[] =
+static const PicmanLayerModeEffects layer_modes[] =
 {
-  GIMP_NORMAL_MODE,
-  GIMP_DISSOLVE_MODE,
-  GIMP_MULTIPLY_MODE,
-  GIMP_DIVIDE_MODE,
-  GIMP_SCREEN_MODE,
-  GIMP_OVERLAY_MODE,
-  GIMP_DODGE_MODE,
-  GIMP_BURN_MODE,
-  GIMP_HARDLIGHT_MODE,
-  GIMP_SOFTLIGHT_MODE,
-  GIMP_GRAIN_EXTRACT_MODE,
-  GIMP_GRAIN_MERGE_MODE,
-  GIMP_DIFFERENCE_MODE,
-  GIMP_ADDITION_MODE,
-  GIMP_SUBTRACT_MODE,
-  GIMP_DARKEN_ONLY_MODE,
-  GIMP_LIGHTEN_ONLY_MODE,
-  GIMP_HUE_MODE,
-  GIMP_SATURATION_MODE,
-  GIMP_COLOR_MODE,
-  GIMP_VALUE_MODE
+  PICMAN_NORMAL_MODE,
+  PICMAN_DISSOLVE_MODE,
+  PICMAN_MULTIPLY_MODE,
+  PICMAN_DIVIDE_MODE,
+  PICMAN_SCREEN_MODE,
+  PICMAN_OVERLAY_MODE,
+  PICMAN_DODGE_MODE,
+  PICMAN_BURN_MODE,
+  PICMAN_HARDLIGHT_MODE,
+  PICMAN_SOFTLIGHT_MODE,
+  PICMAN_GRAIN_EXTRACT_MODE,
+  PICMAN_GRAIN_MERGE_MODE,
+  PICMAN_DIFFERENCE_MODE,
+  PICMAN_ADDITION_MODE,
+  PICMAN_SUBTRACT_MODE,
+  PICMAN_DARKEN_ONLY_MODE,
+  PICMAN_LIGHTEN_ONLY_MODE,
+  PICMAN_HUE_MODE,
+  PICMAN_SATURATION_MODE,
+  PICMAN_COLOR_MODE,
+  PICMAN_VALUE_MODE
 };
 
 
@@ -114,37 +114,37 @@ static void   layers_add_mask_response     (GtkWidget             *widget,
                                             LayerAddMaskDialog    *dialog);
 
 static void   layers_scale_layer_callback  (GtkWidget             *dialog,
-                                            GimpViewable          *viewable,
+                                            PicmanViewable          *viewable,
                                             gint                   width,
                                             gint                   height,
-                                            GimpUnit               unit,
-                                            GimpInterpolationType  interpolation,
+                                            PicmanUnit               unit,
+                                            PicmanInterpolationType  interpolation,
                                             gdouble                xresolution,
                                             gdouble                yresolution,
-                                            GimpUnit               resolution_unit,
+                                            PicmanUnit               resolution_unit,
                                             gpointer               data);
 static void   layers_resize_layer_callback (GtkWidget             *dialog,
-                                            GimpViewable          *viewable,
+                                            PicmanViewable          *viewable,
                                             gint                   width,
                                             gint                   height,
-                                            GimpUnit               unit,
+                                            PicmanUnit               unit,
                                             gint                   offset_x,
                                             gint                   offset_y,
-                                            GimpItemSet            unused,
+                                            PicmanItemSet            unused,
                                             gboolean               unused2,
                                             gpointer               data);
 
-static gint   layers_mode_index            (GimpLayerModeEffects   layer_mode);
+static gint   layers_mode_index            (PicmanLayerModeEffects   layer_mode);
 
 
 /*  private variables  */
 
-static GimpFillType           layer_fill_type     = GIMP_TRANSPARENT_FILL;
+static PicmanFillType           layer_fill_type     = PICMAN_TRANSPARENT_FILL;
 static gchar                 *layer_name          = NULL;
-static GimpUnit               layer_resize_unit   = GIMP_UNIT_PIXEL;
-static GimpUnit               layer_scale_unit    = GIMP_UNIT_PIXEL;
-static GimpInterpolationType  layer_scale_interp  = -1;
-static GimpAddMaskType        layer_add_mask_type = GIMP_ADD_WHITE_MASK;
+static PicmanUnit               layer_resize_unit   = PICMAN_UNIT_PIXEL;
+static PicmanUnit               layer_scale_unit    = PICMAN_UNIT_PIXEL;
+static PicmanInterpolationType  layer_scale_interp  = -1;
+static PicmanAddMaskType        layer_add_mask_type = PICMAN_ADD_WHITE_MASK;
 static gboolean               layer_mask_invert   = FALSE;
 
 
@@ -154,35 +154,35 @@ void
 layers_text_tool_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   GtkWidget *widget;
-  GimpTool  *active_tool;
+  PicmanTool  *active_tool;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_item_is_text_layer (GIMP_ITEM (layer)))
+  if (! picman_item_is_text_layer (PICMAN_ITEM (layer)))
     {
       layers_edit_attributes_cmd_callback (action, data);
       return;
     }
 
-  active_tool = tool_manager_get_active (image->gimp);
+  active_tool = tool_manager_get_active (image->picman);
 
-  if (! GIMP_IS_TEXT_TOOL (active_tool))
+  if (! PICMAN_IS_TEXT_TOOL (active_tool))
     {
-      GimpToolInfo *tool_info = gimp_get_tool_info (image->gimp,
-                                                    "gimp-text-tool");
+      PicmanToolInfo *tool_info = picman_get_tool_info (image->picman,
+                                                    "picman-text-tool");
 
-      if (GIMP_IS_TOOL_INFO (tool_info))
+      if (PICMAN_IS_TOOL_INFO (tool_info))
         {
-          gimp_context_set_tool (action_data_get_context (data), tool_info);
-          active_tool = tool_manager_get_active (image->gimp);
+          picman_context_set_tool (action_data_get_context (data), tool_info);
+          active_tool = tool_manager_get_active (image->picman);
         }
     }
 
-  if (GIMP_IS_TEXT_TOOL (active_tool))
-    gimp_text_tool_set_layer (GIMP_TEXT_TOOL (active_tool), layer);
+  if (PICMAN_IS_TEXT_TOOL (active_tool))
+    picman_text_tool_set_layer (PICMAN_TEXT_TOOL (active_tool), layer);
 }
 
 void
@@ -190,23 +190,23 @@ layers_edit_attributes_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
   LayerOptionsDialog *dialog;
-  GimpImage          *image;
-  GimpLayer          *layer;
+  PicmanImage          *image;
+  PicmanLayer          *layer;
   GtkWidget          *widget;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  dialog = layer_options_dialog_new (gimp_item_get_image (GIMP_ITEM (layer)),
+  dialog = layer_options_dialog_new (picman_item_get_image (PICMAN_ITEM (layer)),
                                      layer,
                                      action_data_get_context (data),
                                      widget,
-                                     gimp_object_get_name (layer),
+                                     picman_object_get_name (layer),
                                      layer_fill_type,
                                      _("Layer Attributes"),
-                                     "gimp-layer-edit",
+                                     "picman-layer-edit",
                                      GTK_STOCK_EDIT,
                                      _("Edit Layer Attributes"),
-                                     GIMP_HELP_LAYER_EDIT);
+                                     PICMAN_HELP_LAYER_EDIT);
 
   g_signal_connect (dialog->dialog, "response",
                     G_CALLBACK (layers_edit_layer_response),
@@ -220,29 +220,29 @@ layers_new_cmd_callback (GtkAction *action,
                          gpointer   data)
 {
   LayerOptionsDialog *dialog;
-  GimpImage          *image;
+  PicmanImage          *image;
   GtkWidget          *widget;
-  GimpLayer          *floating_sel;
+  PicmanLayer          *floating_sel;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
   /*  If there is a floating selection, the new command transforms
    *  the current fs into a new layer
    */
-  if ((floating_sel = gimp_image_get_floating_selection (image)))
+  if ((floating_sel = picman_image_get_floating_selection (image)))
     {
       GError *error = NULL;
 
       if (! floating_sel_to_layer (floating_sel, &error))
         {
-          gimp_message_literal (image->gimp,
-				G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+          picman_message_literal (image->picman,
+				G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 				error->message);
           g_clear_error (&error);
           return;
         }
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
       return;
     }
 
@@ -252,10 +252,10 @@ layers_new_cmd_callback (GtkAction *action,
                                      layer_name ? layer_name : _("Layer"),
                                      layer_fill_type,
                                      _("New Layer"),
-                                     "gimp-layer-new",
-                                     GIMP_STOCK_LAYER,
+                                     "picman-layer-new",
+                                     PICMAN_STOCK_LAYER,
                                      _("Create a New Layer"),
-                                     GIMP_HELP_LAYER_NEW);
+                                     PICMAN_HELP_LAYER_NEW);
 
   g_signal_connect (dialog->dialog, "response",
                     G_CALLBACK (layers_new_layer_response),
@@ -268,116 +268,116 @@ void
 layers_new_last_vals_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpImage            *image;
+  PicmanImage            *image;
   GtkWidget            *widget;
-  GimpLayer            *floating_sel;
-  GimpLayer            *new_layer;
+  PicmanLayer            *floating_sel;
+  PicmanLayer            *new_layer;
   gint                  width, height;
   gint                  off_x, off_y;
   gdouble               opacity;
-  GimpLayerModeEffects  mode;
+  PicmanLayerModeEffects  mode;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
   /*  If there is a floating selection, the new command transforms
    *  the current fs into a new layer
    */
-  if ((floating_sel = gimp_image_get_floating_selection (image)))
+  if ((floating_sel = picman_image_get_floating_selection (image)))
     {
       GError *error = NULL;
 
       if (! floating_sel_to_layer (floating_sel, &error))
         {
-          gimp_message_literal (image->gimp, G_OBJECT (widget),
-				GIMP_MESSAGE_WARNING, error->message);
+          picman_message_literal (image->picman, G_OBJECT (widget),
+				PICMAN_MESSAGE_WARNING, error->message);
           g_clear_error (&error);
           return;
         }
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
       return;
     }
 
-  if (GIMP_IS_LAYER (GIMP_ACTION (action)->viewable))
+  if (PICMAN_IS_LAYER (PICMAN_ACTION (action)->viewable))
     {
-      GimpLayer *template = GIMP_LAYER (GIMP_ACTION (action)->viewable);
+      PicmanLayer *template = PICMAN_LAYER (PICMAN_ACTION (action)->viewable);
 
-      gimp_item_get_offset (GIMP_ITEM (template), &off_x, &off_y);
-      width   = gimp_item_get_width  (GIMP_ITEM (template));
-      height  = gimp_item_get_height (GIMP_ITEM (template));
-      opacity = gimp_layer_get_opacity (template);
-      mode    = gimp_layer_get_mode (template);
+      picman_item_get_offset (PICMAN_ITEM (template), &off_x, &off_y);
+      width   = picman_item_get_width  (PICMAN_ITEM (template));
+      height  = picman_item_get_height (PICMAN_ITEM (template));
+      opacity = picman_layer_get_opacity (template);
+      mode    = picman_layer_get_mode (template);
     }
   else
     {
-      width   = gimp_image_get_width (image);
-      height  = gimp_image_get_height (image);
+      width   = picman_image_get_width (image);
+      height  = picman_image_get_height (image);
       off_x   = 0;
       off_y   = 0;
       opacity = 1.0;
-      mode    = GIMP_NORMAL_MODE;
+      mode    = PICMAN_NORMAL_MODE;
     }
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                _("New Layer"));
 
-  new_layer = gimp_layer_new (image, width, height,
-                              gimp_image_get_layer_format (image, TRUE),
+  new_layer = picman_layer_new (image, width, height,
+                              picman_image_get_layer_format (image, TRUE),
                               layer_name,
                               opacity, mode);
 
-  gimp_drawable_fill_by_type (GIMP_DRAWABLE (new_layer),
+  picman_drawable_fill_by_type (PICMAN_DRAWABLE (new_layer),
                               action_data_get_context (data),
                               layer_fill_type);
-  gimp_item_translate (GIMP_ITEM (new_layer), off_x, off_y, FALSE);
+  picman_item_translate (PICMAN_ITEM (new_layer), off_x, off_y, FALSE);
 
-  gimp_image_add_layer (image, new_layer,
-                        GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_layer (image, new_layer,
+                        PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 layers_new_from_visible_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpImage    *image;
-  GimpLayer    *layer;
-  GimpPickable *pickable;
+  PicmanImage    *image;
+  PicmanLayer    *layer;
+  PicmanPickable *pickable;
   return_if_no_image (image, data);
 
-  pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+  pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  layer = gimp_layer_new_from_buffer (gimp_pickable_get_buffer (pickable),
+  layer = picman_layer_new_from_buffer (picman_pickable_get_buffer (pickable),
                                       image,
-                                      gimp_image_get_layer_format (image, TRUE),
+                                      picman_image_get_layer_format (image, TRUE),
                                       _("Visible"),
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
-  gimp_image_add_layer (image, layer,
-                        GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_layer (image, layer,
+                        PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 layers_new_group_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_image (image, data);
 
-  layer = gimp_group_layer_new (image);
+  layer = picman_group_layer_new (image);
 
-  gimp_image_add_layer (image, layer,
-                        GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_layer (image, layer,
+                        PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -385,27 +385,27 @@ layers_select_cmd_callback (GtkAction *action,
                             gint       value,
                             gpointer   data)
 {
-  GimpImage     *image;
-  GimpLayer     *layer;
-  GimpContainer *container;
-  GimpLayer     *new_layer;
+  PicmanImage     *image;
+  PicmanLayer     *layer;
+  PicmanContainer *container;
+  PicmanLayer     *new_layer;
   return_if_no_image (image, data);
 
-  layer = gimp_image_get_active_layer (image);
+  layer = picman_image_get_active_layer (image);
 
   if (layer)
-    container = gimp_item_get_container (GIMP_ITEM (layer));
+    container = picman_item_get_container (PICMAN_ITEM (layer));
   else
-    container = gimp_image_get_layers (image);
+    container = picman_image_get_layers (image);
 
-  new_layer = (GimpLayer *) action_select_object ((GimpActionSelectType) value,
+  new_layer = (PicmanLayer *) action_select_object ((PicmanActionSelectType) value,
                                                   container,
-                                                  (GimpObject *) layer);
+                                                  (PicmanObject *) layer);
 
   if (new_layer && new_layer != layer)
     {
-      gimp_image_set_active_layer (image, new_layer);
-      gimp_image_flush (image);
+      picman_image_set_active_layer (image, new_layer);
+      picman_image_flush (image);
     }
 }
 
@@ -413,85 +413,85 @@ void
 layers_raise_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_raise_item (image, GIMP_ITEM (layer), NULL);
-  gimp_image_flush (image);
+  picman_image_raise_item (image, PICMAN_ITEM (layer), NULL);
+  picman_image_flush (image);
 }
 
 void
 layers_raise_to_top_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_raise_item_to_top (image, GIMP_ITEM (layer));
-  gimp_image_flush (image);
+  picman_image_raise_item_to_top (image, PICMAN_ITEM (layer));
+  picman_image_flush (image);
 }
 
 void
 layers_lower_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_lower_item (image, GIMP_ITEM (layer), NULL);
-  gimp_image_flush (image);
+  picman_image_lower_item (image, PICMAN_ITEM (layer), NULL);
+  picman_image_flush (image);
 }
 
 void
 layers_lower_to_bottom_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_lower_item_to_bottom (image, GIMP_ITEM (layer));
-  gimp_image_flush (image);
+  picman_image_lower_item_to_bottom (image, PICMAN_ITEM (layer));
+  picman_image_flush (image);
 }
 
 void
 layers_duplicate_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
-  GimpLayer *new_layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
+  PicmanLayer *new_layer;
   return_if_no_layer (image, layer, data);
 
-  new_layer = GIMP_LAYER (gimp_item_duplicate (GIMP_ITEM (layer),
+  new_layer = PICMAN_LAYER (picman_item_duplicate (PICMAN_ITEM (layer),
                                                G_TYPE_FROM_INSTANCE (layer)));
 
-  /*  use the actual parent here, not GIMP_IMAGE_ACTIVE_PARENT because
+  /*  use the actual parent here, not PICMAN_IMAGE_ACTIVE_PARENT because
    *  the latter would add a duplicated group inside itself instead of
    *  above it
    */
-  gimp_image_add_layer (image, new_layer,
-                        gimp_layer_get_parent (layer), -1,
+  picman_image_add_layer (image, new_layer,
+                        picman_layer_get_parent (layer), -1,
                         TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 layers_anchor_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     {
       floating_sel_anchor (layer);
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 }
 
@@ -499,73 +499,73 @@ void
 layers_merge_down_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_merge_down (image, layer, action_data_get_context (data),
-                         GIMP_EXPAND_AS_NECESSARY, NULL);
-  gimp_image_flush (image);
+  picman_image_merge_down (image, layer, action_data_get_context (data),
+                         PICMAN_EXPAND_AS_NECESSARY, NULL);
+  picman_image_flush (image);
 }
 
 void
 layers_merge_group_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_merge_group_layer (image, GIMP_GROUP_LAYER (layer));
-  gimp_image_flush (image);
+  picman_image_merge_group_layer (image, PICMAN_GROUP_LAYER (layer));
+  picman_image_flush (image);
 }
 
 void
 layers_delete_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_image_remove_layer (image, layer, TRUE, NULL);
-  gimp_image_flush (image);
+  picman_image_remove_layer (image, layer, TRUE, NULL);
+  picman_image_flush (image);
 }
 
 void
 layers_text_discard_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  if (GIMP_IS_TEXT_LAYER (layer))
-    gimp_text_layer_discard (GIMP_TEXT_LAYER (layer));
+  if (PICMAN_IS_TEXT_LAYER (layer))
+    picman_text_layer_discard (PICMAN_TEXT_LAYER (layer));
 }
 
 void
 layers_text_to_vectors_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  if (GIMP_IS_TEXT_LAYER (layer))
+  if (PICMAN_IS_TEXT_LAYER (layer))
     {
-      GimpVectors *vectors;
+      PicmanVectors *vectors;
       gint         x, y;
 
-      vectors = gimp_text_vectors_new (image, GIMP_TEXT_LAYER (layer)->text);
+      vectors = picman_text_vectors_new (image, PICMAN_TEXT_LAYER (layer)->text);
 
-      gimp_item_get_offset (GIMP_ITEM (layer), &x, &y);
-      gimp_item_translate (GIMP_ITEM (vectors), x, y, FALSE);
+      picman_item_get_offset (PICMAN_ITEM (layer), &x, &y);
+      picman_item_translate (PICMAN_ITEM (vectors), x, y, FALSE);
 
-      gimp_image_add_vectors (image, vectors,
-                              GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_vectors (image, vectors,
+                              PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 }
 
@@ -573,27 +573,27 @@ void
 layers_text_along_vectors_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpImage   *image;
-  GimpLayer   *layer;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanLayer   *layer;
+  PicmanVectors *vectors;
   return_if_no_layer (image, layer, data);
   return_if_no_vectors (image, vectors, data);
 
-  if (GIMP_IS_TEXT_LAYER (layer))
+  if (PICMAN_IS_TEXT_LAYER (layer))
     {
-      GimpVectors *new_vectors;
+      PicmanVectors *new_vectors;
 
-      new_vectors = gimp_text_vectors_new (image, GIMP_TEXT_LAYER (layer)->text);
+      new_vectors = picman_text_vectors_new (image, PICMAN_TEXT_LAYER (layer)->text);
 
-      gimp_vectors_warp_vectors (vectors, new_vectors,
-                                 0.5 * gimp_item_get_height (GIMP_ITEM (layer)));
+      picman_vectors_warp_vectors (vectors, new_vectors,
+                                 0.5 * picman_item_get_height (PICMAN_ITEM (layer)));
 
-      gimp_item_set_visible (GIMP_ITEM (new_vectors), TRUE, FALSE);
+      picman_item_set_visible (PICMAN_ITEM (new_vectors), TRUE, FALSE);
 
-      gimp_image_add_vectors (image, new_vectors,
-                              GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_vectors (image, new_vectors,
+                              PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 }
 
@@ -601,25 +601,25 @@ void
 layers_resize_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpDisplay *display = NULL;
-  GimpImage   *image;
-  GimpLayer   *layer;
+  PicmanDisplay *display = NULL;
+  PicmanImage   *image;
+  PicmanLayer   *layer;
   GtkWidget   *widget;
   GtkWidget   *dialog;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (GIMP_IS_IMAGE_WINDOW (data))
+  if (PICMAN_IS_IMAGE_WINDOW (data))
     display = action_data_get_display (data);
 
-  if (layer_resize_unit != GIMP_UNIT_PERCENT && display)
-    layer_resize_unit = gimp_display_get_shell (display)->unit;
+  if (layer_resize_unit != PICMAN_UNIT_PERCENT && display)
+    layer_resize_unit = picman_display_get_shell (display)->unit;
 
-  dialog = resize_dialog_new (GIMP_VIEWABLE (layer),
+  dialog = resize_dialog_new (PICMAN_VIEWABLE (layer),
                               action_data_get_context (data),
-                              _("Set Layer Boundary Size"), "gimp-layer-resize",
+                              _("Set Layer Boundary Size"), "picman-layer-resize",
                               widget,
-                              gimp_standard_help_func, GIMP_HELP_LAYER_RESIZE,
+                              picman_standard_help_func, PICMAN_HELP_LAYER_RESIZE,
                               layer_resize_unit,
                               layers_resize_layer_callback,
                               action_data_get_context (data));
@@ -631,40 +631,40 @@ void
 layers_resize_to_image_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_layer_resize_to_image (layer, action_data_get_context (data));
-  gimp_image_flush (image);
+  picman_layer_resize_to_image (layer, action_data_get_context (data));
+  picman_image_flush (image);
 }
 
 void
 layers_scale_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
-  GimpDisplay *display = NULL;
-  GimpImage   *image;
-  GimpLayer   *layer;
+  PicmanDisplay *display = NULL;
+  PicmanImage   *image;
+  PicmanLayer   *layer;
   GtkWidget   *widget;
   GtkWidget   *dialog;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (GIMP_IS_IMAGE_WINDOW (data))
+  if (PICMAN_IS_IMAGE_WINDOW (data))
     display = action_data_get_display (data);
 
-  if (layer_scale_unit != GIMP_UNIT_PERCENT && display)
-    layer_scale_unit = gimp_display_get_shell (display)->unit;
+  if (layer_scale_unit != PICMAN_UNIT_PERCENT && display)
+    layer_scale_unit = picman_display_get_shell (display)->unit;
 
   if (layer_scale_interp == -1)
-    layer_scale_interp = image->gimp->config->interpolation_type;
+    layer_scale_interp = image->picman->config->interpolation_type;
 
-  dialog = scale_dialog_new (GIMP_VIEWABLE (layer),
+  dialog = scale_dialog_new (PICMAN_VIEWABLE (layer),
                              action_data_get_context (data),
-                             _("Scale Layer"), "gimp-layer-scale",
+                             _("Scale Layer"), "picman-layer-scale",
                              widget,
-                             gimp_standard_help_func, GIMP_HELP_LAYER_SCALE,
+                             picman_standard_help_func, PICMAN_HELP_LAYER_SCALE,
                              layer_scale_unit,
                              layer_scale_interp,
                              layers_scale_layer_callback,
@@ -677,71 +677,71 @@ void
 layers_crop_to_selection_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   GtkWidget *widget;
   gint       x1, y1, x2, y2;
   gint       off_x, off_y;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_channel_bounds (gimp_image_get_mask (image),
+  if (! picman_channel_bounds (picman_image_get_mask (image),
                              &x1, &y1, &x2, &y2))
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("Cannot crop because the current selection is empty."));
       return;
     }
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (layer), &off_x, &off_y);
 
   off_x -= x1;
   off_y -= y1;
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_RESIZE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_RESIZE,
                                _("Crop Layer to Selection"));
 
-  gimp_item_resize (GIMP_ITEM (layer), action_data_get_context (data),
+  picman_item_resize (PICMAN_ITEM (layer), action_data_get_context (data),
                     x2 - x1, y2 - y1, off_x, off_y);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 layers_crop_to_content_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   GtkWidget *widget;
   gint       x1, y1, x2, y2;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_pickable_auto_shrink (GIMP_PICKABLE (layer),
+  if (! picman_pickable_auto_shrink (PICMAN_PICKABLE (layer),
                                    0, 0,
-                                   gimp_item_get_width  (GIMP_ITEM (layer)),
-                                   gimp_item_get_height (GIMP_ITEM (layer)),
+                                   picman_item_get_width  (PICMAN_ITEM (layer)),
+                                   picman_item_get_height (PICMAN_ITEM (layer)),
                                    &x1, &y1, &x2, &y2))
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("Cannot crop because the active layer has no content."));
       return;
     }
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_RESIZE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_RESIZE,
                                _("Crop Layer to Content"));
 
-  gimp_item_resize (GIMP_ITEM (layer), action_data_get_context (data),
+  picman_item_resize (PICMAN_ITEM (layer), action_data_get_context (data),
                     x2 - x1, y2 - y1, -x1, -y1);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -749,8 +749,8 @@ layers_mask_add_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
   LayerAddMaskDialog *dialog;
-  GimpImage          *image;
-  GimpLayer          *layer;
+  PicmanImage          *image;
+  PicmanLayer          *layer;
   GtkWidget          *widget;
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
@@ -771,17 +771,17 @@ layers_mask_apply_cmd_callback (GtkAction *action,
                                 gint       value,
                                 gpointer   data)
 {
-  GimpImage         *image;
-  GimpLayer         *layer;
-  GimpMaskApplyMode  mode;
+  PicmanImage         *image;
+  PicmanLayer         *layer;
+  PicmanMaskApplyMode  mode;
   return_if_no_layer (image, layer, data);
 
-  mode = (GimpMaskApplyMode) value;
+  mode = (PicmanMaskApplyMode) value;
 
-  if (gimp_layer_get_mask (layer))
+  if (picman_layer_get_mask (layer))
     {
-      gimp_layer_apply_mask (layer, mode, TRUE);
-      gimp_image_flush (image);
+      picman_layer_apply_mask (layer, mode, TRUE);
+      picman_image_flush (image);
     }
 }
 
@@ -789,12 +789,12 @@ void
 layers_mask_edit_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage     *image;
-  GimpLayer     *layer;
-  GimpLayerMask *mask;
+  PicmanImage     *image;
+  PicmanLayer     *layer;
+  PicmanLayerMask *mask;
   return_if_no_layer (image, layer, data);
 
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 
   if (mask)
     {
@@ -802,8 +802,8 @@ layers_mask_edit_cmd_callback (GtkAction *action,
 
       active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-      gimp_layer_set_edit_mask (layer, active);
-      gimp_image_flush (image);
+      picman_layer_set_edit_mask (layer, active);
+      picman_image_flush (image);
     }
 }
 
@@ -811,12 +811,12 @@ void
 layers_mask_show_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage     *image;
-  GimpLayer     *layer;
-  GimpLayerMask *mask;
+  PicmanImage     *image;
+  PicmanLayer     *layer;
+  PicmanLayerMask *mask;
   return_if_no_layer (image, layer, data);
 
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 
   if (mask)
     {
@@ -824,8 +824,8 @@ layers_mask_show_cmd_callback (GtkAction *action,
 
       active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-      gimp_layer_set_show_mask (layer, active, TRUE);
-      gimp_image_flush (image);
+      picman_layer_set_show_mask (layer, active, TRUE);
+      picman_image_flush (image);
     }
 }
 
@@ -833,12 +833,12 @@ void
 layers_mask_disable_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpImage     *image;
-  GimpLayer     *layer;
-  GimpLayerMask *mask;
+  PicmanImage     *image;
+  PicmanLayer     *layer;
+  PicmanLayerMask *mask;
   return_if_no_layer (image, layer, data);
 
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 
   if (mask)
     {
@@ -846,8 +846,8 @@ layers_mask_disable_cmd_callback (GtkAction *action,
 
       active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-      gimp_layer_set_apply_mask (layer, ! active, TRUE);
-      gimp_image_flush (image);
+      picman_layer_set_apply_mask (layer, ! active, TRUE);
+      picman_image_flush (image);
     }
 }
 
@@ -856,19 +856,19 @@ layers_mask_to_selection_cmd_callback (GtkAction *action,
                                        gint       value,
                                        gpointer   data)
 {
-  GimpImage     *image;
-  GimpLayer     *layer;
-  GimpLayerMask *mask;
+  PicmanImage     *image;
+  PicmanLayer     *layer;
+  PicmanLayerMask *mask;
   return_if_no_layer (image, layer, data);
 
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 
   if (mask)
     {
-      gimp_item_to_selection (GIMP_ITEM (mask),
-                              (GimpChannelOps) value,
+      picman_item_to_selection (PICMAN_ITEM (mask),
+                              (PicmanChannelOps) value,
                               TRUE, FALSE, 0.0, 0.0);
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 }
 
@@ -876,14 +876,14 @@ void
 layers_alpha_add_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  if (! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+  if (! picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
     {
-      gimp_layer_add_alpha (layer);
-      gimp_image_flush (image);
+      picman_layer_add_alpha (layer);
+      picman_image_flush (image);
     }
 }
 
@@ -891,14 +891,14 @@ void
 layers_alpha_remove_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  if (gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
     {
-      gimp_layer_flatten (layer, action_data_get_context (data));
-      gimp_image_flush (image);
+      picman_layer_flatten (layer, action_data_get_context (data));
+      picman_image_flush (image);
     }
 }
 
@@ -907,14 +907,14 @@ layers_alpha_to_selection_cmd_callback (GtkAction *action,
                                         gint       value,
                                         gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   return_if_no_layer (image, layer, data);
 
-  gimp_item_to_selection (GIMP_ITEM (layer),
-                          (GimpChannelOps) value,
+  picman_item_to_selection (PICMAN_ITEM (layer),
+                          (PicmanChannelOps) value,
                           TRUE, FALSE, 0.0, 0.0);
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -922,25 +922,25 @@ layers_opacity_cmd_callback (GtkAction *action,
                              gint       value,
                              gpointer   data)
 {
-  GimpImage      *image;
-  GimpLayer      *layer;
+  PicmanImage      *image;
+  PicmanLayer      *layer;
   gdouble         opacity;
-  GimpUndo       *undo;
+  PicmanUndo       *undo;
   gboolean        push_undo = TRUE;
   return_if_no_layer (image, layer, data);
 
-  undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                       GIMP_UNDO_LAYER_OPACITY);
+  undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                       PICMAN_UNDO_LAYER_OPACITY);
 
-  if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (layer))
+  if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (layer))
     push_undo = FALSE;
 
-  opacity = action_select_value ((GimpActionSelectType) value,
-                                 gimp_layer_get_opacity (layer),
+  opacity = action_select_value ((PicmanActionSelectType) value,
+                                 picman_layer_get_opacity (layer),
                                  0.0, 1.0, 1.0,
                                  1.0 / 255.0, 0.01, 0.1, 0.0, FALSE);
-  gimp_layer_set_opacity (layer, opacity, push_undo);
-  gimp_image_flush (image);
+  picman_layer_set_opacity (layer, opacity, push_undo);
+  picman_image_flush (image);
 }
 
 void
@@ -948,54 +948,54 @@ layers_mode_cmd_callback (GtkAction *action,
                           gint       value,
                           gpointer   data)
 {
-  GimpImage            *image;
-  GimpLayer            *layer;
-  GimpLayerModeEffects  layer_mode;
+  PicmanImage            *image;
+  PicmanLayer            *layer;
+  PicmanLayerModeEffects  layer_mode;
   gint                  index;
-  GimpUndo             *undo;
+  PicmanUndo             *undo;
   gboolean              push_undo = TRUE;
   return_if_no_layer (image, layer, data);
 
-  undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                       GIMP_UNDO_LAYER_MODE);
+  undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                       PICMAN_UNDO_LAYER_MODE);
 
-  if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (layer))
+  if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (layer))
     push_undo = FALSE;
 
-  layer_mode = gimp_layer_get_mode (layer);
+  layer_mode = picman_layer_get_mode (layer);
 
-  index = action_select_value ((GimpActionSelectType) value,
+  index = action_select_value ((PicmanActionSelectType) value,
                                layers_mode_index (layer_mode),
                                0, G_N_ELEMENTS (layer_modes) - 1, 0,
                                0.0, 1.0, 1.0, 0.0, FALSE);
-  gimp_layer_set_mode (layer, layer_modes[index], push_undo);
-  gimp_image_flush (image);
+  picman_layer_set_mode (layer, layer_modes[index], push_undo);
+  picman_image_flush (image);
 }
 
 void
 layers_lock_alpha_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
   gboolean   lock_alpha;
   return_if_no_layer (image, layer, data);
 
   lock_alpha = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (lock_alpha != gimp_layer_get_lock_alpha (layer))
+  if (lock_alpha != picman_layer_get_lock_alpha (layer))
     {
-      GimpUndo *undo;
+      PicmanUndo *undo;
       gboolean  push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                           GIMP_UNDO_LAYER_LOCK_ALPHA);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                           PICMAN_UNDO_LAYER_LOCK_ALPHA);
 
-      if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (layer))
+      if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (layer))
         push_undo = FALSE;
 
-      gimp_layer_set_lock_alpha (layer, lock_alpha, push_undo);
-      gimp_image_flush (image);
+      picman_layer_set_lock_alpha (layer, lock_alpha, push_undo);
+      picman_image_flush (image);
     }
 }
 
@@ -1009,7 +1009,7 @@ layers_new_layer_response (GtkWidget          *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpLayer *layer;
+      PicmanLayer *layer;
 
       if (layer_name)
         g_free (layer_name);
@@ -1020,29 +1020,29 @@ layers_new_layer_response (GtkWidget          *widget,
       layer_fill_type = dialog->fill_type;
 
       dialog->xsize =
-        RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (dialog->size_se),
+        RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (dialog->size_se),
                                           0));
       dialog->ysize =
-        RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (dialog->size_se),
+        RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (dialog->size_se),
                                           1));
 
-      layer = gimp_layer_new (dialog->image,
+      layer = picman_layer_new (dialog->image,
                               dialog->xsize,
                               dialog->ysize,
-                              gimp_image_get_layer_format (dialog->image, TRUE),
+                              picman_image_get_layer_format (dialog->image, TRUE),
                               layer_name,
-                              GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                              PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
       if (layer)
         {
-          gimp_drawable_fill_by_type (GIMP_DRAWABLE (layer),
+          picman_drawable_fill_by_type (PICMAN_DRAWABLE (layer),
                                       dialog->context,
                                       layer_fill_type);
 
-          gimp_image_add_layer (dialog->image, layer,
-                                GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+          picman_image_add_layer (dialog->image, layer,
+                                PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-          gimp_image_flush (dialog->image);
+          picman_image_flush (dialog->image);
         }
       else
         {
@@ -1060,23 +1060,23 @@ layers_edit_layer_response (GtkWidget          *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpLayer   *layer = dialog->layer;
+      PicmanLayer   *layer = dialog->layer;
       const gchar *new_name;
 
       new_name = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
-      if (strcmp (new_name, gimp_object_get_name (layer)))
+      if (strcmp (new_name, picman_object_get_name (layer)))
         {
           GError *error = NULL;
 
-          if (gimp_item_rename (GIMP_ITEM (layer), new_name, &error))
+          if (picman_item_rename (PICMAN_ITEM (layer), new_name, &error))
             {
-              gimp_image_flush (dialog->image);
+              picman_image_flush (dialog->image);
             }
           else
             {
-              gimp_message_literal (dialog->image->gimp,
-				    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+              picman_message_literal (dialog->image->picman,
+				    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 				    error->message);
               g_clear_error (&error);
 
@@ -1085,7 +1085,7 @@ layers_edit_layer_response (GtkWidget          *widget,
         }
 
       if (dialog->rename_toggle &&
-          gimp_item_is_text_layer (GIMP_ITEM (layer)))
+          picman_item_is_text_layer (PICMAN_ITEM (layer)))
         {
           g_object_set (layer,
                         "auto-rename",
@@ -1104,15 +1104,15 @@ layers_add_mask_response (GtkWidget          *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpLayer     *layer = dialog->layer;
-      GimpImage     *image = gimp_item_get_image (GIMP_ITEM (layer));
-      GimpLayerMask *mask;
+      PicmanLayer     *layer = dialog->layer;
+      PicmanImage     *image = picman_item_get_image (PICMAN_ITEM (layer));
+      PicmanLayerMask *mask;
 
-      if (dialog->add_mask_type == GIMP_ADD_CHANNEL_MASK &&
+      if (dialog->add_mask_type == PICMAN_ADD_CHANNEL_MASK &&
           ! dialog->channel)
         {
-          gimp_message_literal (image->gimp,
-				G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+          picman_message_literal (image->picman,
+				G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 				_("Please select a channel first"));
           return;
         }
@@ -1120,20 +1120,20 @@ layers_add_mask_response (GtkWidget          *widget,
       layer_add_mask_type = dialog->add_mask_type;
       layer_mask_invert   = dialog->invert;
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_LAYER_ADD_MASK,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_LAYER_ADD_MASK,
                                    _("Add Layer Mask"));
 
-      mask = gimp_layer_create_mask (layer, layer_add_mask_type,
+      mask = picman_layer_create_mask (layer, layer_add_mask_type,
                                      dialog->channel);
 
       if (layer_mask_invert)
-        gimp_channel_invert (GIMP_CHANNEL (mask), FALSE);
+        picman_channel_invert (PICMAN_CHANNEL (mask), FALSE);
 
-      gimp_layer_add_mask (layer, mask, TRUE, NULL);
+      picman_layer_add_mask (layer, mask, TRUE, NULL);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 
   gtk_widget_destroy (dialog->dialog);
@@ -1141,56 +1141,56 @@ layers_add_mask_response (GtkWidget          *widget,
 
 static void
 layers_scale_layer_callback (GtkWidget             *dialog,
-                             GimpViewable          *viewable,
+                             PicmanViewable          *viewable,
                              gint                   width,
                              gint                   height,
-                             GimpUnit               unit,
-                             GimpInterpolationType  interpolation,
+                             PicmanUnit               unit,
+                             PicmanInterpolationType  interpolation,
                              gdouble                xresolution,    /* unused */
                              gdouble                yresolution,    /* unused */
-                             GimpUnit               resolution_unit,/* unused */
+                             PicmanUnit               resolution_unit,/* unused */
                              gpointer               data)
 {
-  GimpDisplay *display = GIMP_DISPLAY (data);
+  PicmanDisplay *display = PICMAN_DISPLAY (data);
 
   layer_scale_unit   = unit;
   layer_scale_interp = interpolation;
 
   if (width > 0 && height > 0)
     {
-      GimpItem     *item = GIMP_ITEM (viewable);
-      GimpProgress *progress;
+      PicmanItem     *item = PICMAN_ITEM (viewable);
+      PicmanProgress *progress;
       GtkWidget    *progress_dialog = NULL;
 
       gtk_widget_destroy (dialog);
 
-      if (width  == gimp_item_get_width  (item) &&
-          height == gimp_item_get_height (item))
+      if (width  == picman_item_get_width  (item) &&
+          height == picman_item_get_height (item))
         return;
 
       if (display)
         {
-          progress = GIMP_PROGRESS (display);
+          progress = PICMAN_PROGRESS (display);
         }
       else
         {
-          progress_dialog = gimp_progress_dialog_new ();
-          progress = GIMP_PROGRESS (progress_dialog);
+          progress_dialog = picman_progress_dialog_new ();
+          progress = PICMAN_PROGRESS (progress_dialog);
         }
 
-      progress = gimp_progress_start (progress, _("Scaling"), FALSE);
+      progress = picman_progress_start (progress, _("Scaling"), FALSE);
 
-      gimp_item_scale_by_origin (item,
+      picman_item_scale_by_origin (item,
                                  width, height, interpolation,
                                  progress, TRUE);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
 
       if (progress_dialog)
         gtk_widget_destroy (progress_dialog);
 
-      gimp_image_flush (gimp_item_get_image (item));
+      picman_image_flush (picman_item_get_image (item));
     }
   else
     {
@@ -1201,34 +1201,34 @@ layers_scale_layer_callback (GtkWidget             *dialog,
 
 static void
 layers_resize_layer_callback (GtkWidget    *dialog,
-                              GimpViewable *viewable,
+                              PicmanViewable *viewable,
                               gint          width,
                               gint          height,
-                              GimpUnit      unit,
+                              PicmanUnit      unit,
                               gint          offset_x,
                               gint          offset_y,
-                              GimpItemSet   unused,
+                              PicmanItemSet   unused,
                               gboolean      unused2,
                               gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
+  PicmanContext *context = PICMAN_CONTEXT (data);
 
   layer_resize_unit = unit;
 
   if (width > 0 && height > 0)
     {
-      GimpItem *item = GIMP_ITEM (viewable);
+      PicmanItem *item = PICMAN_ITEM (viewable);
 
       gtk_widget_destroy (dialog);
 
-      if (width  == gimp_item_get_width  (item) &&
-          height == gimp_item_get_height (item))
+      if (width  == picman_item_get_width  (item) &&
+          height == picman_item_get_height (item))
         return;
 
-      gimp_item_resize (item, context,
+      picman_item_resize (item, context,
                         width, height, offset_x, offset_y);
 
-      gimp_image_flush (gimp_item_get_image (item));
+      picman_image_flush (picman_item_get_image (item));
     }
   else
     {
@@ -1238,7 +1238,7 @@ layers_resize_layer_callback (GtkWidget    *dialog,
 }
 
 static gint
-layers_mode_index (GimpLayerModeEffects layer_mode)
+layers_mode_index (PicmanLayerModeEffects layer_mode)
 {
   gint i = 0;
 

@@ -2,9 +2,9 @@
 /*
  * User interface for plug-in-maze.
  *
- * Implemented as a GIMP 0.99 Plugin by
+ * Implemented as a PICMAN 0.99 Plugin by
  * Kevin Turner <acapnotic@users.sourceforge.net>
- * http://gimp-plug-ins.sourceforge.net/maze/
+ * http://picman-plug-ins.sourceforge.net/maze/
  */
 
 /*
@@ -27,22 +27,22 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "maze.h"
 #include "maze-dialog.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define BORDER_TOLERANCE  1.00  /* maximum ratio of (max % divs) to width */
 #define ENTRY_WIDTH       75
 
 /* entscale stuff begin */
-/* FIXME: Entry-Scale stuff is probably in libgimpui by now.
+/* FIXME: Entry-Scale stuff is probably in libpicmanui by now.
           Should use that instead.*/
-/* Indeed! By using the gimp_scale_entry you could get along without the
+/* Indeed! By using the picman_scale_entry you could get along without the
    EntscaleIntData structure, since it has accessors to all objects  (Sven) */
 
 #define ENTSCALE_INT_SCALE_WIDTH 125
@@ -157,11 +157,11 @@ maze_dialog (void)
   gboolean      run;
   gint          trow = 0;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Maze"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Maze"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -173,7 +173,7 @@ maze_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -181,7 +181,7 @@ maze_dialog (void)
                       vbox, FALSE, FALSE, 0);
 
   /* The maze size frame */
-  frame = gimp_frame_new (_("Maze Size"));
+  frame = picman_frame_new (_("Maze Size"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -206,7 +206,7 @@ maze_dialog (void)
   hbox = divbox_new (&sel_w, width_entry, &width_entry);
   g_snprintf (buffer, BUFSIZE, "%d", (sel_w / mvals.width));
   gtk_entry_set_text (GTK_ENTRY (width_entry), buffer);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, trow,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, trow,
 			     _("Pieces:"), 0.0, 0.5,
 			     hbox, 1, TRUE);
   gtk_table_set_row_spacing (GTK_TABLE (table), trow, 12);
@@ -222,7 +222,7 @@ maze_dialog (void)
   hbox = divbox_new (&sel_h, height_entry, &height_entry);
   g_snprintf (buffer, BUFSIZE, "%d", (sel_h / mvals.height));
   gtk_entry_set_text (GTK_ENTRY (height_entry), buffer);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, trow,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, trow,
 			     _("Pieces:"), 0.0, 0.5,
 			     hbox, 1, TRUE);
   gtk_table_set_row_spacing (GTK_TABLE (table), trow, 12);
@@ -231,7 +231,7 @@ maze_dialog (void)
   g_object_unref (group);
 
   /* The maze algorithm frame */
-  frame = gimp_frame_new (_("Algorithm"));
+  frame = picman_frame_new (_("Algorithm"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -246,15 +246,15 @@ maze_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox2), table2, FALSE, FALSE, 0);
   gtk_widget_show (table2);
 
-  hbox = gimp_random_seed_new (&mvals.seed, &mvals.random_seed);
-  gimp_table_attach_aligned (GTK_TABLE (table2), 0, 0,
+  hbox = picman_random_seed_new (&mvals.seed, &mvals.random_seed);
+  picman_table_attach_aligned (GTK_TABLE (table2), 0, 0,
 			     _("Seed:"), 0.0, 0.5,
 			     hbox, 1, TRUE);
 
   /* Algorithm Choice */
   frame =
-    gimp_int_radio_group_new (FALSE, NULL,
-                              G_CALLBACK (gimp_radio_button_update),
+    picman_int_radio_group_new (FALSE, NULL,
+                              G_CALLBACK (picman_radio_button_update),
                               &mvals.algorithm, mvals.algorithm,
 
                               _("Depth first"),      DEPTH_FIRST,     NULL,
@@ -268,20 +268,20 @@ maze_dialog (void)
   tilecheck = gtk_check_button_new_with_label (_("Tileable"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tilecheck), mvals.tile);
   g_signal_connect (tilecheck, "clicked",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.tile);
 
   gtk_box_pack_start (GTK_BOX (vbox2), tilecheck, FALSE, FALSE, 0);
 
   msg_label = gtk_label_new (NULL);
-  gimp_label_set_attributes (GTK_LABEL (msg_label),
+  picman_label_set_attributes (GTK_LABEL (msg_label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox), msg_label, FALSE, FALSE, 0);
 
   gtk_widget_show_all (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

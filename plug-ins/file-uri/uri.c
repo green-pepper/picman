@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,31 +29,31 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "uri-backend.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-uri-load"
 #define SAVE_PROC      "file-uri-save"
 #define PLUG_IN_BINARY "file-uri"
-#define PLUG_IN_ROLE   "gimp-file-uri"
+#define PLUG_IN_ROLE   "picman-file-uri"
 
 
 static void                query         (void);
 static void                run           (const gchar      *name,
                                           gint              nparams,
-                                          const GimpParam  *param,
+                                          const PicmanParam  *param,
                                           gint             *nreturn_vals,
-                                          GimpParam       **return_vals);
+                                          PicmanParam       **return_vals);
 
 static gint32              load_image    (const gchar      *uri,
-                                          GimpRunMode       run_mode,
+                                          PicmanRunMode       run_mode,
                                           GError          **error);
-static GimpPDBStatusType   save_image    (const gchar      *uri,
+static PicmanPDBStatusType   save_image    (const gchar      *uri,
                                           gint32            image_ID,
                                           gint32            drawable_ID,
                                           gint32            run_mode,
@@ -64,7 +64,7 @@ static gchar             * get_temp_name (const gchar      *uri,
 static gboolean            valid_file    (const gchar      *filename);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -77,32 +77,32 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" }
   };
 
   GError *error = NULL;
 
   if (! uri_backend_init (PLUG_IN_BINARY,
                           FALSE,
-                          GIMP_RUN_NONINTERACTIVE,
+                          PICMAN_RUN_NONINTERACTIVE,
                           &error))
     {
       g_message ("%s", error->message);
@@ -113,7 +113,7 @@ query (void)
 
   if (uri_backend_get_load_protocols ())
     {
-      gimp_install_procedure (LOAD_PROC,
+      picman_install_procedure (LOAD_PROC,
                               "loads files given an URI",
                               uri_backend_get_load_help (),
                               "Spencer Kimball & Peter Mattis",
@@ -121,20 +121,20 @@ query (void)
                               "1995-2008",
                               N_("URI"),
                               NULL,
-                              GIMP_PLUGIN,
+                              PICMAN_PLUGIN,
                               G_N_ELEMENTS (load_args),
                               G_N_ELEMENTS (load_return_vals),
                               load_args, load_return_vals);
 
-      gimp_plugin_icon_register (LOAD_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                                 (const guint8 *) GIMP_STOCK_WEB);
-      gimp_register_load_handler (LOAD_PROC,
+      picman_plugin_icon_register (LOAD_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                                 (const guint8 *) PICMAN_STOCK_WEB);
+      picman_register_load_handler (LOAD_PROC,
                                   "", uri_backend_get_load_protocols ());
     }
 
   if (uri_backend_get_save_protocols ())
     {
-      gimp_install_procedure (SAVE_PROC,
+      picman_install_procedure (SAVE_PROC,
                               "saves files given an URI",
                               uri_backend_get_save_help (),
                               "Michael Natterer, Sven Neumann",
@@ -142,13 +142,13 @@ query (void)
                               "2005-2008",
                               N_("URI"),
                               "RGB*, GRAY*, INDEXED*",
-                              GIMP_PLUGIN,
+                              PICMAN_PLUGIN,
                               G_N_ELEMENTS (save_args), 0,
                               save_args, NULL);
 
-      gimp_plugin_icon_register (SAVE_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                                 (const guint8 *) GIMP_STOCK_WEB);
-      gimp_register_save_handler (SAVE_PROC,
+      picman_plugin_icon_register (SAVE_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                                 (const guint8 *) PICMAN_STOCK_WEB);
+      picman_register_save_handler (SAVE_PROC,
                                   "", uri_backend_get_save_protocols ());
     }
 
@@ -158,13 +158,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_EXECUTION_ERROR;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_EXECUTION_ERROR;
   gint32             image_ID;
   GError            *error = NULL;
 
@@ -173,7 +173,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   if (! uri_backend_init (PLUG_IN_BINARY, TRUE, run_mode, &error))
@@ -181,7 +181,7 @@ run (const gchar      *name,
       if (error)
         {
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = error->message;
         }
 
@@ -191,7 +191,7 @@ run (const gchar      *name,
   /*  We handle PDB errors by forwarding them to the caller in
    *  our return values.
    */
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
   if (! strcmp (name, LOAD_PROC) && uri_backend_get_load_protocols ())
     {
@@ -199,10 +199,10 @@ run (const gchar      *name,
 
       if (image_ID != -1)
         {
-          status = GIMP_PDB_SUCCESS;
+          status = PICMAN_PDB_SUCCESS;
 
 	  *nreturn_vals = 2;
-	  values[1].type         = GIMP_PDB_IMAGE;
+	  values[1].type         = PICMAN_PDB_IMAGE;
 	  values[1].data.d_image = image_ID;
 	}
     }
@@ -215,15 +215,15 @@ run (const gchar      *name,
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   uri_backend_shutdown ();
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -232,7 +232,7 @@ run (const gchar      *name,
 
 static gint32
 load_image (const gchar  *uri,
-            GimpRunMode   run_mode,
+            PicmanRunMode   run_mode,
             GError      **error)
 {
   gint32    image_ID   = -1;
@@ -254,19 +254,19 @@ load_image (const gchar  *uri,
         return -1;
     }
 
-  image_ID = gimp_file_load (run_mode, tmpname, tmpname);
+  image_ID = picman_file_load (run_mode, tmpname, tmpname);
 
   if (image_ID != -1)
     {
       if (mapped || name_image)
-        gimp_image_set_filename (image_ID, uri);
+        picman_image_set_filename (image_ID, uri);
       else
-        gimp_image_set_filename (image_ID, "");
+        picman_image_set_filename (image_ID, "");
     }
   else
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
-                   "%s", gimp_get_pdb_error ());
+                   "%s", picman_get_pdb_error ());
     }
 
   if (! mapped)
@@ -277,14 +277,14 @@ load_image (const gchar  *uri,
   return image_ID;
 }
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 save_image (const gchar  *uri,
             gint32        image_ID,
             gint32        drawable_ID,
             gint32        run_mode,
             GError      **error)
 {
-  GimpPDBStatusType  status = GIMP_PDB_EXECUTION_ERROR;
+  PicmanPDBStatusType  status = PICMAN_PDB_EXECUTION_ERROR;
   gchar             *tmpname;
   gboolean           mapped = FALSE;
 
@@ -295,7 +295,7 @@ save_image (const gchar  *uri,
   else
     tmpname = get_temp_name (uri, NULL);
 
-  if (gimp_file_save (run_mode,
+  if (picman_file_save (run_mode,
                       image_ID,
                       drawable_ID,
                       tmpname,
@@ -303,26 +303,26 @@ save_image (const gchar  *uri,
     {
       if (mapped)
         {
-          status = GIMP_PDB_SUCCESS;
+          status = PICMAN_PDB_SUCCESS;
         }
       else if (valid_file (tmpname))
         {
           if (uri_backend_save_image (uri, tmpname, run_mode, error))
             {
-              status = GIMP_PDB_SUCCESS;
+              status = PICMAN_PDB_SUCCESS;
             }
         }
       else
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Failed to save to temporary file '%s'"),
-                       gimp_filename_to_utf8 (tmpname));
+                       picman_filename_to_utf8 (tmpname));
         }
     }
   else
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
-                   "%s", gimp_get_pdb_error ());
+                   "%s", picman_get_pdb_error ());
     }
 
   if (! mapped)
@@ -351,7 +351,7 @@ get_temp_name (const gchar *uri,
 
       if (ext && strlen (ext))
         {
-          tmpname = gimp_temp_name (ext + 1);
+          tmpname = picman_temp_name (ext + 1);
 
           if (name_image)
             *name_image = TRUE;
@@ -361,7 +361,7 @@ get_temp_name (const gchar *uri,
     }
 
   if (! tmpname)
-    tmpname = gimp_temp_name ("xxx");
+    tmpname = picman_temp_name ("xxx");
 
   return tmpname;
 }

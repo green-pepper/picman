@@ -1,4 +1,4 @@
-# GIMP plug-ins message translation table
+# PICMAN plug-ins message translation table
 # Copyright (C) 1999-2010 Free Software Foundation, Inc.
 # SHIRASAKI Yasuhiro <yasuhiro@gnome.gr.jp>, 1999-2001.
 # Takashi Kido <yositaka@yd5.so-net.ne.jp>, 2000.
@@ -9,9 +9,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp master\n"
+"Project-Id-Version: picman master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-04-04 09:37+0000\n"
 "PO-Revision-Date: 2012-04-05 22:16+0900\n"
 "Last-Translator: Kiyotaka NISHIBORI <ml.nishibori.kiyotaka@gmail.com>\n"
@@ -428,7 +428,7 @@ msgid "Optimizing animation"
 msgstr "動画を最適化しています"
 
 #: ../plug-ins/common/animation-play.c:169
-msgid "Preview a GIMP layer-based animation"
+msgid "Preview a PICMAN layer-based animation"
 msgstr "レイヤーによるアニメーションを再生します"
 
 #: ../plug-ins/common/animation-play.c:174
@@ -625,7 +625,7 @@ msgstr "垂直(_V)"
 #: ../plug-ins/file-psd/psd-image-res-load.c:1001
 #: ../plug-ins/file-psd/psd-load.c:1637 ../plug-ins/file-sgi/sgi.c:407
 #: ../plug-ins/gfig/gfig-dialog.c:1321
-#: ../plug-ins/gimpressionist/general.c:139
+#: ../plug-ins/picmanressionist/general.c:139
 #: ../plug-ins/map-object/map-object-apply.c:252 ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1162
 msgid "Background"
@@ -1040,8 +1040,8 @@ msgstr "チャンネルミキサー設定読み込み"
 #: ../plug-ins/common/file-xmc.c:663 ../plug-ins/common/file-xmc.c:848
 #: ../plug-ins/common/file-xwd.c:433 ../plug-ins/common/sphere-designer.c:2010
 #: ../plug-ins/file-bmp/bmp-read.c:153 ../plug-ins/file-faxg3/faxg3.c:229
-#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-gimp.c:459
-#: ../plug-ins/file-fli/fli-gimp.c:496 ../plug-ins/file-ico/ico-load.c:651
+#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-picman.c:459
+#: ../plug-ins/file-fli/fli-picman.c:496 ../plug-ins/file-ico/ico-load.c:651
 #: ../plug-ins/file-ico/ico-load.c:729 ../plug-ins/file-jpeg/jpeg-load.c:117
 #: ../plug-ins/file-jpeg/jpeg-load.c:889 ../plug-ins/file-psd/psd-load.c:130
 #: ../plug-ins/file-psd/psd-thumb-load.c:79
@@ -1050,8 +1050,8 @@ msgstr "チャンネルミキサー設定読み込み"
 #: ../plug-ins/flame/flame.c:411
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1865
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:923
-#: ../plug-ins/gfig/gfig.c:433 ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/gfig/gfig.c:433 ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1367
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1078,7 +1078,7 @@ msgstr "チャンネルミキサー設定保存"
 #: ../plug-ins/common/file-xbm.c:1036 ../plug-ins/common/file-xmc.c:1455
 #: ../plug-ins/common/file-xwd.c:619 ../plug-ins/common/sphere-designer.c:2121
 #: ../plug-ins/file-bmp/bmp-write.c:306 ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:750 ../plug-ins/file-ico/ico-save.c:1007
+#: ../plug-ins/file-fli/fli-picman.c:750 ../plug-ins/file-ico/ico-save.c:1007
 #: ../plug-ins/file-jpeg/jpeg-save.c:332 ../plug-ins/file-psd/psd-save.c:1652
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:166
 #: ../plug-ins/file-xjt/xjt.c:1276 ../plug-ins/file-xjt/xjt.c:1715
@@ -1115,7 +1115,7 @@ msgid "Checkerboard"
 msgstr "市松模様"
 
 #: ../plug-ins/common/checkerboard.c:413 ../plug-ins/common/file-xmc.c:1162
-#: ../plug-ins/gimpressionist/sizemap.c:510
+#: ../plug-ins/picmanressionist/sizemap.c:510
 msgid "_Size:"
 msgstr "サイズ(_S):"
 
@@ -1318,8 +1318,8 @@ msgstr "共通種を元にした乱数"
 
 #: ../plug-ins/common/cml-explorer.c:300 ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "色相"
 
@@ -1330,8 +1330,8 @@ msgstr "彩度"
 
 #: ../plug-ins/common/cml-explorer.c:302 ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "明度"
 
@@ -2256,8 +2256,8 @@ msgstr "カーブに沿って曲げる"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1262
-#: ../plug-ins/gimpressionist/orientmap.c:590
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:590
+#: ../plug-ins/picmanressionist/sizemap.c:459
 #: ../plug-ins/print/print-page-layout.c:175
 msgid "Preview"
 msgstr "プレビュー"
@@ -2639,7 +2639,7 @@ msgstr "スケール 2(_L):"
 msgid "Remove speckle noise from the image"
 msgstr ""
 "画像中のノイズやモアレを除去します\n"
-"(以前の GIMP の「非斑化」)"
+"(以前の PICMAN の「非斑化」)"
 
 #: ../plug-ins/common/despeckle.c:166
 msgid "Des_peckle..."
@@ -2849,7 +2849,7 @@ msgstr "半径 1(_R):"
 msgid "R_adius 2:"
 msgstr "半径 2(_A):"
 
-#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "階調を反転する(_I)"
 
@@ -3056,7 +3056,7 @@ msgstr "KISS パレットの読み込み"
 #: ../plug-ins/common/file-xbm.c:742 ../plug-ins/common/file-xmc.c:675
 #: ../plug-ins/common/file-xpm.c:352 ../plug-ins/common/file-xwd.c:524
 #: ../plug-ins/file-bmp/bmp-read.c:158 ../plug-ins/file-faxg3/faxg3.c:213
-#: ../plug-ins/file-fli/fli-gimp.c:501 ../plug-ins/file-ico/ico-load.c:644
+#: ../plug-ins/file-fli/fli-picman.c:501 ../plug-ins/file-ico/ico-load.c:644
 #: ../plug-ins/file-jpeg/jpeg-load.c:123 ../plug-ins/file-psd/psd-load.c:135
 #: ../plug-ins/file-sgi/sgi.c:330 ../plug-ins/file-xjt/xjt.c:3333
 #, c-format
@@ -3084,7 +3084,7 @@ msgstr "利用できない色数 (%d)!"
 #: ../plug-ins/common/file-xbm.c:1041 ../plug-ins/common/file-xmc.c:1460
 #: ../plug-ins/common/file-xpm.c:638 ../plug-ins/common/file-xwd.c:624
 #: ../plug-ins/file-bmp/bmp-write.c:317 ../plug-ins/file-fits/fits.c:481
-#: ../plug-ins/file-fli/fli-gimp.c:718 ../plug-ins/file-ico/ico-save.c:1001
+#: ../plug-ins/file-fli/fli-picman.c:718 ../plug-ins/file-ico/ico-save.c:1001
 #: ../plug-ins/file-jpeg/jpeg-save.c:289 ../plug-ins/file-psd/psd-save.c:1657
 #: ../plug-ins/file-sgi/sgi.c:576 ../plug-ins/file-xjt/xjt.c:1696
 #, c-format
@@ -3175,8 +3175,8 @@ msgid "Cannot operate on unknown image types."
 msgstr "不明な画像タイプは扱えません。"
 
 #: ../plug-ins/common/file-gbr.c:154 ../plug-ins/common/file-gbr.c:175
-msgid "GIMP brush"
-msgstr "GIMP ブラシ"
+msgid "PICMAN brush"
+msgstr "PICMAN ブラシ"
 
 #: ../plug-ins/common/file-gbr.c:399 ../plug-ins/common/file-pat.c:418
 #, c-format
@@ -3189,8 +3189,8 @@ msgstr "非対応のブラシフォーマット"
 
 #: ../plug-ins/common/file-gbr.c:447
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "GIMP ブラシファイル '%s' でエラー発生"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "PICMAN ブラシファイル '%s' でエラー発生"
 
 #: ../plug-ins/common/file-gbr.c:455
 #, c-format
@@ -3204,8 +3204,8 @@ msgid "Unnamed"
 msgstr "名称未設定"
 
 #: ../plug-ins/common/file-gbr.c:653
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP ブラシファイルはグレースケールか RGBA のいずれかです"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN ブラシファイルはグレースケールか RGBA のいずれかです"
 
 #: ../plug-ins/common/file-gbr.c:770
 msgid "Brush"
@@ -3217,7 +3217,7 @@ msgid "Spacing:"
 msgstr "間隔:"
 
 #: ../plug-ins/common/file-gbr.c:795 ../plug-ins/common/file-gih.c:888
-#: ../plug-ins/common/file-pat.c:568 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:568 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "説明:"
 
@@ -3359,16 +3359,16 @@ msgid "The default comment is limited to %d characters."
 msgstr "デフォルトのコメントは %d 文字までです。"
 
 #: ../plug-ins/common/file-gih.c:209 ../plug-ins/common/file-gih.c:230
-msgid "GIMP brush (animated)"
-msgstr "GIMP ブラシ (動画)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMAN ブラシ (動画)"
 
 #: ../plug-ins/common/file-gih.c:480
-msgid "Error in GIMP brush pipe file."
-msgstr "GIMP ブラシパイプファイル中にエラー"
+msgid "Error in PICMAN brush pipe file."
+msgstr "PICMAN ブラシパイプファイル中にエラー"
 
 #: ../plug-ins/common/file-gih.c:546
-msgid "GIMP brush file appears to be corrupted."
-msgstr "GIMP ブラシファイルが破損しているようです。"
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "PICMAN ブラシファイルが破損しているようです。"
 
 #: ../plug-ins/common/file-gih.c:696
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -3745,8 +3745,8 @@ msgid "MNG animation"
 msgstr "MNG 動画"
 
 #: ../plug-ins/common/file-pat.c:123 ../plug-ins/common/file-pat.c:145
-msgid "GIMP pattern"
-msgstr "GIMP パターン"
+msgid "PICMAN pattern"
+msgstr "PICMAN パターン"
 
 #: ../plug-ins/common/file-pat.c:378
 #, c-format
@@ -4078,16 +4078,16 @@ msgid "Invalid X resolution."
 msgstr "不正な X 解像度です"
 
 #: ../plug-ins/common/file-pnm.c:555
-msgid "Image width is larger than GIMP can handle."
-msgstr "画像の幅が GIMP で扱える範囲を超えています"
+msgid "Image width is larger than PICMAN can handle."
+msgstr "画像の幅が PICMAN で扱える範囲を超えています"
 
 #: ../plug-ins/common/file-pnm.c:562
 msgid "Invalid Y resolution."
 msgstr "不正な Y 解像度です"
 
 #: ../plug-ins/common/file-pnm.c:564
-msgid "Image height is larger than GIMP can handle."
-msgstr "画像の高さが GIMP で扱える範囲を超えています"
+msgid "Image height is larger than PICMAN can handle."
+msgstr "画像の高さが PICMAN で扱える範囲を超えています"
 
 #: ../plug-ins/common/file-pnm.c:574
 msgid "Unsupported maximum value."
@@ -4198,8 +4198,8 @@ msgstr "モノクロ 2 階調"
 
 # 「色」とすべき箇所と「カラー」とすべき箇所（あるいはその他の表記）が衝突している
 #: ../plug-ins/common/file-ps.c:3097 ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "カラー"
@@ -4441,10 +4441,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"画像の幅がGIMPで扱える範囲を超えています"
+"画像の幅がPICMANで扱える範囲を超えています"
 
 #: ../plug-ins/common/file-sunras.c:473 ../plug-ins/common/file-xbm.c:841
 #: ../plug-ins/common/file-xwd.c:508
@@ -4461,10 +4461,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"画像の高さがGIMPで扱える範囲を超えています"
+"画像の高さがPICMANで扱える範囲を超えています"
 
 #: ../plug-ins/common/file-sunras.c:520
 msgid "This image depth is not supported"
@@ -4563,8 +4563,8 @@ msgstr "パスをインポートする(_P)"
 
 #: ../plug-ins/common/file-svg.c:944
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
-msgstr "SVG のパス要素を GIMP パスツールで使えるようにインポートします"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
+msgstr "SVG のパス要素を PICMAN パスツールで使えるようにインポートします"
 
 #: ../plug-ins/common/file-svg.c:952
 msgid "Merge imported paths"
@@ -4638,12 +4638,12 @@ msgstr "TIFF チャンネル"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "警告:\n"
-"16 bit /チャンネルの画像を読み込もうとしていますが、GIMPはこのモードが取り扱"
+"16 bit /チャンネルの画像を読み込もうとしていますが、PICMANはこのモードが取り扱"
 "えないので 8 bit /チャンネルに変換します。この変換によりカラー情報の一部が失"
 "われます。"
 
@@ -6601,10 +6601,10 @@ msgid "Simplify image into an array of solid-colored squares"
 msgstr "画像にモザイク処理を適用します (旧バージョンの「ピクセル化」)"
 
 # 「ピクセル化」から「モザイク処理」に変更
-# - GIMP ユーザーから「モザイクを掛けたいのだがどのフィルターを使えばいいの？」との問いかけがあった
+# - PICMAN ユーザーから「モザイクを掛けたいのだがどのフィルターを使えばいいの？」との問いかけがあった
 # - 日本では "Pixelize" を「モザイク」と呼ぶことが一般的である
 # - Photoshop でも同様のフィルターに「モザイク」の呼称が使われている
-# - GIMP では既に「モザイク」の呼称のフィルターが存在するので、曖昧さ回避のために「モザイク処理」とした
+# - PICMAN では既に「モザイク」の呼称のフィルターが存在するので、曖昧さ回避のために「モザイク処理」とした
 #: ../plug-ins/common/pixelize.c:171
 msgid "_Pixelize..."
 msgstr "モザイク処理(_P)..."
@@ -6614,10 +6614,10 @@ msgid "Pixelizing"
 msgstr "モザイク処理を適用しています"
 
 # 「ピクセル化」から「モザイク処理」に変更
-# - GIMP ユーザーから「モザイクを掛けたいのだがどのフィルターを使えばいいの？」との問いかけがあった
+# - PICMAN ユーザーから「モザイクを掛けたいのだがどのフィルターを使えばいいの？」との問いかけがあった
 # - 日本では "Pixelize" を「モザイク」と呼ぶことが一般的である
 # - Photoshop でも同様のフィルターに「モザイク」の呼称が使われている
-# - GIMP では既に「モザイク」の呼称のフィルターが存在するので、曖昧さ回避のために「モザイク処理」とした
+# - PICMAN では既に「モザイク」の呼称のフィルターが存在するので、曖昧さ回避のために「モザイク処理」とした
 #: ../plug-ins/common/pixelize.c:316
 msgid "Pixelize"
 msgstr "モザイク処理"
@@ -7442,7 +7442,7 @@ msgid "Use the background color"
 msgstr "背景色を使う"
 
 #: ../plug-ins/common/sphere-designer.c:293
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "単色"
 
@@ -7538,7 +7538,7 @@ msgstr "色選択ダイアログ"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2763
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:553
 msgid "Scale:"
 msgstr "拡大縮小:"
@@ -7835,9 +7835,9 @@ msgstr "保存済"
 
 #: ../plug-ins/common/unit-editor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
-msgstr "チェックされている単位定義は GIMP 終了時に保存されます。"
+msgstr "チェックされている単位定義は PICMAN 終了時に保存されます。"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid "ID"
@@ -7845,8 +7845,8 @@ msgstr "ID"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
-msgstr "これらの文字列は GIMP の設定ファイルで単位を識別するために使われます。"
+"This string will be used to identify a unit in PICMAN's configuration files."
+msgstr "これらの文字列は PICMAN の設定ファイルで単位を識別するために使われます。"
 
 #: ../plug-ins/common/unit-editor.c:98
 msgid "Factor"
@@ -7914,9 +7914,9 @@ msgstr "新しい単位を定義します"
 msgid "Create a new unit using the currently selected unit as template"
 msgstr "選択している単位を基に、新しい単位を定義します"
 
-# GIMP で使う単位であることはわかりきったことなので "used in GIMP" の訳は省略した
+# PICMAN で使う単位であることはわかりきったことなので "used in PICMAN" の訳は省略した
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
+msgid "Create or alter units used in PICMAN"
 msgstr "新しい単位を定義したり変更したりします"
 
 #: ../plug-ins/common/unit-editor.c:150
@@ -8528,7 +8528,7 @@ msgstr ""
 
 # - Twitter 上で、ユーザから訳が適切でないとの指摘があった
 # - これに類似したフィルターは、Photoshop では「渦巻き」と「つまむ」と表記されている (Photoshop では 2つのフィルターに分かれている)
-# - GIMPでは「つまむ」という名のフィルターが既に存在しているので、「つまむ」に該当する部分を「吸い込み」とした
+# - PICMANでは「つまむ」という名のフィルターが既に存在しているので、「つまむ」に該当する部分を「吸い込み」とした
 #: ../plug-ins/common/whirl-pinch.c:149
 msgid "W_hirl and Pinch..."
 msgstr "渦巻きと吸い込み(_H)..."
@@ -8539,7 +8539,7 @@ msgstr "渦巻き効果と吸い込み効果を適用しています"
 
 # - Twitter 上で、ユーザから訳が適切でないとの指摘があった
 # - これに類似したフィルターは、Photoshop では「渦巻き」と「つまむ」と表記されている (Photoshop では 2つのフィルターに分かれている)
-# - GIMPでは「つまむ」という名のフィルターが既に存在しているので、「つまむ」に該当する部分を「吸い込み」とした
+# - PICMANでは「つまむ」という名のフィルターが既に存在しているので、「つまむ」に該当する部分を「吸い込み」とした
 #: ../plug-ins/common/whirl-pinch.c:529
 msgid "Whirl and Pinch"
 msgstr "渦巻きと吸い込み"
@@ -8618,7 +8618,7 @@ msgstr "両方(_H)"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "値を大きくすると影響を受ける領域が小さくなります"
 
-#: ../plug-ins/common/wind.c:1025 ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/common/wind.c:1025 ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "強さ(_S):"
 
@@ -8685,8 +8685,8 @@ msgstr "色空間の情報を書き込まない(_D)"
 #: ../plug-ins/file-bmp/bmp-write.c:886
 msgid ""
 "Some applications can not read BMP images that include color space "
-"information. GIMP writes color space information by default. Enabling this "
-"option will cause GIMP to not write color space information to the file."
+"information. PICMAN writes color space information by default. Enabling this "
+"option will cause PICMAN to not write color space information to the file."
 msgstr ""
 "アプリケーションによっては色空間の情報を含む BMP 形式の画像ファイルを読み込め"
 "ない場合があります。既定では BMP 形式ファイルへのエクスポート時に色空間情報を"
@@ -8779,34 +8779,34 @@ msgctxt "composing"
 msgid "None"
 msgstr "なし"
 
-#: ../plug-ins/file-fli/fli-gimp.c:166 ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166 ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr "AutoDesk FLIC 動画"
 
-#: ../plug-ins/file-fli/fli-gimp.c:561
+#: ../plug-ins/file-fli/fli-picman.c:561
 #, c-format
 msgid "Frame (%i)"
 msgstr "フレーム (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr "インデックスもしくはグレースケール画像しか保存できません。"
 
-#: ../plug-ins/file-fli/fli-gimp.c:847
+#: ../plug-ins/file-fli/fli-picman.c:847
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - フレームスタックの読み込み"
 
-#: ../plug-ins/file-fli/fli-gimp.c:876 ../plug-ins/file-fli/fli-gimp.c:932
+#: ../plug-ins/file-fli/fli-picman.c:876 ../plug-ins/file-fli/fli-picman.c:932
 msgctxt "frame-range"
 msgid "From:"
 msgstr "開始フレーム:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:885 ../plug-ins/file-fli/fli-gimp.c:941
+#: ../plug-ins/file-fli/fli-picman.c:885 ../plug-ins/file-fli/fli-picman.c:941
 msgctxt "frame-range"
 msgid "To:"
 msgstr "終了フレーム:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:915
+#: ../plug-ins/file-fli/fli-picman.c:915
 msgid "GFLI 1.3"
 msgstr "GFLI 1.3"
 
@@ -8882,7 +8882,7 @@ msgstr ""
 "(EXIF データに回転情報が記録されています。)"
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:426
-msgid "Would you like GIMP to rotate it into the standard orientation?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
 msgstr "(プレビューのように) 元の向きで開きますか？"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:247
@@ -9136,8 +9136,8 @@ msgstr ""
 "します。"
 
 #: ../plug-ins/file-psd/psd-save.c:634
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
-msgstr "GIMP の画像タイプを PSD のモードに変換できません"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
+msgstr "PICMAN の画像タイプを PSD のモードに変換できません"
 
 #: ../plug-ins/file-psd/psd-save.c:1622
 #, c-format
@@ -9299,8 +9299,8 @@ msgid "URI"
 msgstr "URI"
 
 #: ../plug-ins/file-xjt/xjt.c:485 ../plug-ins/file-xjt/xjt.c:503
-msgid "GIMP compressed XJT image"
-msgstr "GIMP 圧縮 XJT 画像"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMAN 圧縮 XJT 画像"
 
 #: ../plug-ins/file-xjt/xjt.c:733
 #, c-format
@@ -9412,8 +9412,8 @@ msgstr "乱数のリセット(_R)"
 msgid "Same"
 msgstr "同じ"
 
-#: ../plug-ins/flame/flame.c:746 ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/flame/flame.c:746 ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "ランダム"
 
@@ -9562,16 +9562,16 @@ msgid "C_amera"
 msgstr "ビューオプション(_A)"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
-#: ../plug-ins/gfig/gfig-dialog.c:275 ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/gfig/gfig-dialog.c:275 ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"gimprc の中に '%1$s' の記述が見つかりません\n"
+"picmanrc の中に '%1$s' の記述が見つかりません\n"
 "ファイル '%4$s' の中に\n"
 "\n"
 "(%2$s \"%3$s\")\n"
@@ -10109,7 +10109,7 @@ msgid "Max undo:"
 msgstr "元に戻せる段階:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1320
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "透明"
 
@@ -10203,7 +10203,7 @@ msgid "Left"
 msgstr "左"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1753
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "向き:"
 
@@ -10262,299 +10262,299 @@ msgstr "図を付属物として保存中にエラー: 描画対象に付属物�
 msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr "付属物読み込み用の一時ファイル '%s' オープン中にエラー: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:243
+#: ../plug-ins/picmanressionist/brush.c:243
 msgid "Can only save drawables!"
 msgstr "描画対象のみ保存できます!"
 
-#: ../plug-ins/gimpressionist/brush.c:248
+#: ../plug-ins/picmanressionist/brush.c:248
 msgid "Save Brush"
 msgstr "ブラシの保存"
 
-#: ../plug-ins/gimpressionist/brush.c:503
+#: ../plug-ins/picmanressionist/brush.c:503
 msgid "_Brush"
 msgstr "ブラシ(_B)"
 
-#: ../plug-ins/gimpressionist/brush.c:540
+#: ../plug-ins/picmanressionist/brush.c:540
 msgid "Gamma:"
 msgstr "ガンマ:"
 
-#: ../plug-ins/gimpressionist/brush.c:558
+#: ../plug-ins/picmanressionist/brush.c:558
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "選択したブラシのガンマ (明るさ) を変更します"
 
-#: ../plug-ins/gimpressionist/brush.c:566
+#: ../plug-ins/picmanressionist/brush.c:566
 msgid "Select:"
 msgstr "選択:"
 
-#: ../plug-ins/gimpressionist/brush.c:595
+#: ../plug-ins/picmanressionist/brush.c:595
 msgid "Aspect ratio:"
 msgstr "縦横比:"
 
-#: ../plug-ins/gimpressionist/brush.c:599
+#: ../plug-ins/picmanressionist/brush.c:599
 msgid "Specifies the aspect ratio of the brush"
 msgstr "ブラシの縦横比を指定します"
 
-#: ../plug-ins/gimpressionist/brush.c:608
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:608
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "浮き彫り:"
 
-#: ../plug-ins/gimpressionist/brush.c:612
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:612
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "浮き彫り効果の強さをパーセントで指定します"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "色(_L)"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "ブラシ下の平均(_V)"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "ブラシの中心(_E)"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "ブラシの下のすべてのピクセルの平均から色を設定します"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "ブラシの中心にあるピクセルの色を取得して設定します"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "ノイズの付加(_N):"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "色にランダムノイズを付加します"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3530
 msgid "_General"
 msgstr "全般(_G)"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "元画像を残す"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "元画像を背景として残します"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "紙から"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "選択した紙のテクスチャーを背景にコピーします"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "背景を単色で塗ります"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "背景を透明にして塗った部分だけが見えるようにします"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "端も塗る"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "画像の周りに出ていくようにブラシストロークさせるかどうか"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
+#: ../plug-ins/picmanressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "タイル化可能"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "結果画像が継目無しに並べられるようにするかどうか"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "ドロップシャドウ"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "個々のブラシ描画の際に影を付けます"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "端の暗度:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "ブラシストロークの端の暗度を設定します"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "ドロップシャドウの暗度:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "ドロップシャドウの暗度を設定します"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "ドロップシャドウの深度:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr ""
 "ドロップシャドウの深さ (オブジェクトからドロップシャドウを離す度合い) を設定"
 "します"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "ドロップシャドウのぼかし量:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "ドロップシャドウのぼかし量を設定します"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "しきい値:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "効果を適用する領域を決定するためのしきい値を設定します"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "色々なオプションを用いて芸術的効果を画像に適用します"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "GIMPressionist(_G)..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "PICMANressionist(_G)..."
 
-#: ../plug-ins/gimpressionist/gimp.c:164
+#: ../plug-ins/picmanressionist/picman.c:164
 msgid "The selection does not intersect the active layer or mask."
 msgstr "選択範囲がアクティブなレイヤーまたはレイヤーマスクと交差していません。"
 
-#: ../plug-ins/gimpressionist/gimp.c:391
+#: ../plug-ins/picmanressionist/picman.c:391
 msgid "Painting"
 msgstr "描画しています"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPressionist"
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANressionist"
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "向き(_I)"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "方向バリエーション数:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "使用できるストローク方向のバリエーション数を指定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "開始角度:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "最初のストローク方向 (角度) を指定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "角度範囲:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "ストローク方向を変化させる範囲 (角度) を指定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "付近の明度でストローク方向を決定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "中央からの距離"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "画像中央からの距離でストローク方向を決定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "ストロークごとにランダムなストローク方向を選びます"
 
 # fixed Bug 588342 reported by SimaMoto, Ryota.
 # 「半径」から変更、フィルター適用後の結果から意訳
 # (2009-07-19 NISHIBORI Kiyotaka)
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "中央からの方向"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "画像中央からの方向でストローク方向を決定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "流れるように"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "「流れるような」パターンに従ってストロークします"
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "付近の色相でストローク方向を決定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "適応的"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "原画に最適なストローク方向を自動的に選びます"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "手動設定"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "ストローク方向を手動で設定します"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "方位マップエディターを開く"
 
-#: ../plug-ins/gimpressionist/orientmap.c:523
+#: ../plug-ins/picmanressionist/orientmap.c:523
 msgid "Orientation Map Editor"
 msgstr "方位マップエディター"
 
-#: ../plug-ins/gimpressionist/orientmap.c:552
+#: ../plug-ins/picmanressionist/orientmap.c:552
 msgid "Vectors"
 msgstr "ベクトル"
 
-#: ../plug-ins/gimpressionist/orientmap.c:564
+#: ../plug-ins/picmanressionist/orientmap.c:564
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -10563,64 +10563,64 @@ msgstr ""
 "右クリック: アクティブなベクトルの方向を決定します\n"
 "中クリック: 新しいベクトルを追加します"
 
-#: ../plug-ins/gimpressionist/orientmap.c:588
-#: ../plug-ins/gimpressionist/sizemap.c:457
+#: ../plug-ins/picmanressionist/orientmap.c:588
+#: ../plug-ins/picmanressionist/sizemap.c:457
 msgid "Adjust the preview's brightness"
 msgstr "プレビューの明るさを調整する"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "前のベクトルをアクティブにします"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "次のベクトルをアクティブにします"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:489
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:489
 msgid "A_dd"
 msgstr "追加(_D)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "新しいベクトルを追加します"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:496
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:496
 msgid "_Kill"
 msgstr "削除(_K)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "アクティブなベクトルを削除します"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "種類"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "標準(_N)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "渦(_X)"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "渦 _2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "渦 _3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:541
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:541
 msgid "_Voronoi"
 msgstr "ボロノイモード(_V)"
 
 #  訳注：実際の動作から意訳（作文）した
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
@@ -10628,227 +10628,227 @@ msgstr ""
 "ボロノイモードでは、設定したベクトルを母点とするボロノイ図として各ベクトルが"
 "影響を受けます"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "角度(_N):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "アクティブなベクトルの角度を指定します"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "角度オフセット(_L):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr ""
 "指定した角度で、アクティブなベクトル以外のベクトルの向きをオフセットします"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "アクティブなベクトルの強さを指定します"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "強さ指数(_T):"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:536
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:536
 msgid "Change the exponent of the strength"
 msgstr "強さの指数を指定します"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "紙(_A)"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "紙テクスチャーの階調を反転して適用します"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "オーバーレイ(_V)"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "紙テクスチャーを浮き彫りにせず、そのまま適用します"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "テクスチャーの拡大率/縮小率をパーセントで指定します"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "配置(_A)"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "ストロークの配置"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "ランダムに"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "均等に"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "ストロークを画像中にランダムに配置します"
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "ストロークを画像中に均等に配置します"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "中心に集中させる"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "画像の中心周りにブラシストロークを集中させます"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "ストローク密度(_D):"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "ブラシストロークの相対的な密度を指定します"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:648
+#: ../plug-ins/picmanressionist/ppmtool.c:648
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "PPM ファイル '%s' の保存に失敗: %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "現状保存"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Gimpressionist デフォルト"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Picmanressionist デフォルト"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "プリセット(_P)"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "現状保存..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "現在の設定に名前を付けてファイルに保存します"
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "メモリに選択したプリセットを読み込みます"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "選択したプリセットを削除します"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "プリセットのディレクトリを再読み込みします"
 
-#: ../plug-ins/gimpressionist/preview.c:174
-#: ../plug-ins/gimpressionist/repaint.c:1182
+#: ../plug-ins/picmanressionist/preview.c:174
+#: ../plug-ins/picmanressionist/repaint.c:1182
 #: ../plug-ins/imagemap/imap_polygon.c:515
 #: ../plug-ins/lighting/lighting-ui.c:1082
 msgid "_Update"
 msgstr "更新(_U)"
 
-#: ../plug-ins/gimpressionist/preview.c:180
+#: ../plug-ins/picmanressionist/preview.c:180
 msgid "Refresh the Preview window"
 msgstr "プレビューウィンドウの更新"
 
-#: ../plug-ins/gimpressionist/preview.c:188
+#: ../plug-ins/picmanressionist/preview.c:188
 msgid "Revert to the original image"
 msgstr "元画像に戻す"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "サイズ(_S)"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 msgid "Size variants:"
 msgstr "サイズバリエーション数:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "使用できるストロークサイズのバリエーション数を指定します"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "最小サイズ:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "作成する最小ブラシサイズを指定します"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "最大サイズ:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "作成する最大ブラシサイズを指定します"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr "サイズの決定基準:"
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "付近の明度でストロークサイズを決定します"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr "画像中央からの距離でストロークサイズを決定します"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "ストロークごとにランダムなブラシサイズを選びます"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "画像中央からの方向でストロークサイズを決定します"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "付近の色相でストロークサイズを決定します"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "原画に最適なストロークサイズを自動的に選びます"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "ストロークサイズを手動で設定します"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "サイズマップエディターを開いてストロークサイズを設定します"
 
-#: ../plug-ins/gimpressionist/sizemap.c:397
+#: ../plug-ins/picmanressionist/sizemap.c:397
 msgid "Size Map Editor"
 msgstr "サイズマップエディター"
 
-#: ../plug-ins/gimpressionist/sizemap.c:426
+#: ../plug-ins/picmanressionist/sizemap.c:426
 msgid "Smvectors"
 msgstr "サイズマップベクトル"
 
-#: ../plug-ins/gimpressionist/sizemap.c:436
+#: ../plug-ins/picmanressionist/sizemap.c:436
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -10857,40 +10857,40 @@ msgstr ""
 "ティブなサイズマップベクトルの方向を決定、中クリックで新しいサイズマップベク"
 "トルを追加します。"
 
-#: ../plug-ins/gimpressionist/sizemap.c:480
+#: ../plug-ins/picmanressionist/sizemap.c:480
 msgid "Select previous smvector"
 msgstr "前のサイズマップベクトルをアクティブにします"
 
-#: ../plug-ins/gimpressionist/sizemap.c:487
+#: ../plug-ins/picmanressionist/sizemap.c:487
 msgid "Select next smvector"
 msgstr "次のサイズマップベクトルをアクティブにします"
 
-#: ../plug-ins/gimpressionist/sizemap.c:494
+#: ../plug-ins/picmanressionist/sizemap.c:494
 msgid "Add new smvector"
 msgstr "新しいサイズマップベクトルを追加します"
 
-#: ../plug-ins/gimpressionist/sizemap.c:501
+#: ../plug-ins/picmanressionist/sizemap.c:501
 msgid "Delete selected smvector"
 msgstr "アクティブなサイズマップベクトルを削除します"
 
-#: ../plug-ins/gimpressionist/sizemap.c:514
+#: ../plug-ins/picmanressionist/sizemap.c:514
 msgid "Change the angle of the selected smvector"
 msgstr "アクティブなサイズマップベクトルの角度を指定します"
 
-#: ../plug-ins/gimpressionist/sizemap.c:521
+#: ../plug-ins/picmanressionist/sizemap.c:521
 msgid "S_trength:"
 msgstr "強さ(_T):"
 
-#: ../plug-ins/gimpressionist/sizemap.c:525
+#: ../plug-ins/picmanressionist/sizemap.c:525
 msgid "Change the strength of the selected smvector"
 msgstr "アクティブなサイズマップベクトルの強さを指定します"
 
-#: ../plug-ins/gimpressionist/sizemap.c:532
+#: ../plug-ins/picmanressionist/sizemap.c:532
 msgid "St_rength exp.:"
 msgstr "強さ指数(_R):"
 
 # 実際の動作から意訳（作文）した
-#: ../plug-ins/gimpressionist/sizemap.c:548
+#: ../plug-ins/picmanressionist/sizemap.c:548
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -11015,9 +11015,9 @@ msgid "invalid formatted GFlare file: %s\n"
 msgstr "'%s' は無効な形式のグラデーションフレアファイルです。\n"
 
 # %1$s: gflare->name
-# %2$s: gimprc
+# %2$s: picmanrc
 # %3$s: gflare_dir
-# %4$s: gimp_filename_to_utf8 (dir)
+# %4$s: picman_filename_to_utf8 (dir)
 #: ../plug-ins/gradient-flare/gradient-flare.c:1452
 #, c-format
 msgid ""
@@ -11260,8 +11260,8 @@ msgstr "二次フレア(_S)"
 
 #: ../plug-ins/help-browser/dialog.c:184
 #: ../plug-ins/help-browser/dialog.c:1133
-msgid "GIMP Help Browser"
-msgstr "GIMP ヘルプブラウザー"
+msgid "PICMAN Help Browser"
+msgstr "PICMAN ヘルプブラウザー"
 
 #: ../plug-ins/help-browser/dialog.c:582
 msgid "Go back one page"
@@ -11316,8 +11316,8 @@ msgid "Toggle the visibility of the sidebar"
 msgstr "目次 (サイドバー) の表示/非表示を切り替えます"
 
 #: ../plug-ins/help-browser/dialog.c:674
-msgid "Visit the GIMP documentation website"
-msgstr "GIMP Documentation ウェブサイトへ移動"
+msgid "Visit the PICMAN documentation website"
+msgstr "PICMAN Documentation ウェブサイトへ移動"
 
 #: ../plug-ins/help-browser/dialog.c:1174
 msgid "Find:"
@@ -11333,40 +11333,40 @@ msgctxt "search"
 msgid "_Next"
 msgstr "次(_N)"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr "%s に関するヘルプ (ページ) は、現在利用できません。"
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
-msgstr "現在、GIMP ユーザーマニュアルは利用できません。"
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
+msgstr "現在、PICMAN ユーザーマニュアルは利用できません。"
 
-#: ../plug-ins/help/gimphelpdomain.c:187
+#: ../plug-ins/help/picmanhelpdomain.c:187
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
-"GIMP 2 ユーザーマニュアル・パッケージをインストールするか、オンライン版の "
-"GIMP ユーザーマニュアル ( http://docs.gimp.org/) を利用してください。"
+"PICMAN 2 ユーザーマニュアル・パッケージをインストールするか、オンライン版の "
+"PICMAN ユーザーマニュアル ( http://docs.picman.org/) を利用してください。"
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr ""
 "おそらく GIO バックエンドが見つからないためと思われます。GVFS のインストール"
 "を確認してください。"
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "ヘルプ ID '%s' が分かりません"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "'%s' からインデックスを読み込んでいます..."
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11595,7 +11595,7 @@ msgid "Clear"
 msgstr "消去"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "作成"
 
@@ -11620,41 +11620,41 @@ msgid "Edit Object"
 msgstr "オブジェクト編集"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
-msgstr "Gimp のガイドを使う"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
+msgstr "Picman のガイドを使う"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "一つおきのタイル(_T)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "すべて(_L)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "ガイドを追加"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "左の縁(_E)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "右の縁(_R)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "上の縁(_U)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "下の縁(_W)"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "基準 URL(_B):"
 
@@ -12085,8 +12085,8 @@ msgid "Grid Settings..."
 msgstr "グリッドの設定..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
-msgstr "GIMP のガイドを使う..."
+msgid "Use PICMAN Guides..."
+msgstr "PICMAN のガイドを使う..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
 msgid "Create Guides..."
@@ -13192,7 +13192,7 @@ msgstr "何も取り込まれませんでした"
 
 #~ msgid ""
 #~ "Error starting Ghostscript. Make sure that Ghostscript is installed and - "
-#~ "if necessary - use the environment variable GS_PROG to tell GIMP about "
+#~ "if necessary - use the environment variable GS_PROG to tell PICMAN about "
 #~ "its location.\n"
 #~ "(%s)"
 #~ msgstr ""
@@ -13265,14 +13265,14 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Hotspot _X:"
 #~ msgstr "ホットスポット X(_X): "
 
-#~ msgid "A big hello from the GIMP team!"
-#~ msgstr "A big hello from the GIMP team!"
+#~ msgid "A big hello from the PICMAN team!"
+#~ msgstr "A big hello from the PICMAN team!"
 
 #~ msgid "Gee Zoom"
 #~ msgstr "Gee ズーム"
 
-#~ msgid "Thank You for Choosing GIMP"
-#~ msgstr "GIMP を選んでくれてありがとう"
+#~ msgid "Thank You for Choosing PICMAN"
+#~ msgstr "PICMAN を選んでくれてありがとう"
 
 #~ msgid "An obsolete creation by %s"
 #~ msgstr "%s の昔の作品"
@@ -13433,8 +13433,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Unable to add additional point.\n"
 #~ msgstr "これ以上点を追加できません。\n"
 
-#~ msgid "There is a problem with the GIMP user manual."
-#~ msgstr "GIMP ユーザーマニュアルに以下の問題が発生しました。"
+#~ msgid "There is a problem with the PICMAN user manual."
+#~ msgstr "PICMAN ユーザーマニュアルに以下の問題が発生しました。"
 
 #~ msgid "Please check your installation."
 #~ msgstr "インストール内容を確認してください。"
@@ -13457,8 +13457,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "_Smoothing:"
 #~ msgstr "スムージング(_S):"
 
-#~ msgid "The GIMP help files are not found."
-#~ msgstr "GIMP ヘルプファイルが見つかりません。"
+#~ msgid "The PICMAN help files are not found."
+#~ msgstr "PICMAN ヘルプファイルが見つかりません。"
 
 #~ msgid "The GIF format does not support images larger than %d x %d pixels."
 #~ msgstr "GIF 形式は %d × %d ピクセルより大きい画像をサポートしません。"
@@ -13518,7 +13518,7 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr ""
 #~ "画像中の黒を描画色、白を背景色の基準でマッピングします。また、描画色と同じ"
 #~ "色のピクセルは黒に、背景色と同じ色のピクセルは白にマップされます。\n"
-#~ "(GIMP2.2 の「前景-背景調整」)"
+#~ "(PICMAN2.2 の「前景-背景調整」)"
 
 #~ msgid "Adjust _Foreground & Background"
 #~ msgstr "描画色と背景色でマップ"
@@ -13535,7 +13535,7 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Adjusting foreground and background colors"
 #~ msgstr ""
 #~ "現在の描画色と背景色でマッピングします\n"
-#~ "(GIMP2.2 の「前景/背景調整」)"
+#~ "(PICMAN2.2 の「前景/背景調整」)"
 
 #~ msgid "Mapping colors"
 #~ msgstr "カラーマッピングしています"
@@ -14099,14 +14099,14 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "GEE-SLIME"
 #~ msgstr "GEE-スライム"
 
-#~ msgid "Thank you for choosing GIMP"
-#~ msgstr "GIMP を選んでくれてありがとう"
+#~ msgid "Thank you for choosing PICMAN"
+#~ msgstr "PICMAN を選んでくれてありがとう"
 
 #~ msgid ""
-#~ "A less-obsolete creation of Adam D. Moss / adam@gimp.org / adam@foxbox."
+#~ "A less-obsolete creation of Adam D. Moss / adam@picman.org / adam@foxbox."
 #~ "org / 1998-2000"
 #~ msgstr ""
-#~ "ちょっと古い Adam D. Moss の作品 / adam@gimp.org / adam@foxbox.org / 1998-"
+#~ "ちょっと古い Adam D. Moss の作品 / adam@picman.org / adam@foxbox.org / 1998-"
 #~ "2000"
 
 #~ msgid "Gee-_Zoom"
@@ -14116,10 +14116,10 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "GEE-ズーム"
 
 #~ msgid ""
-#~ "An obsolete creation of Adam D. Moss / adam@gimp.org / adam@foxbox.org / "
+#~ "An obsolete creation of Adam D. Moss / adam@picman.org / adam@foxbox.org / "
 #~ "1998-2000"
 #~ msgstr ""
-#~ "Adam D. Moss の昔の作品 / adam@gimp.org / adam@foxbox.org / 1998-2000"
+#~ "Adam D. Moss の昔の作品 / adam@picman.org / adam@foxbox.org / 1998-2000"
 
 #~ msgid ""
 #~ "Warning:\n"
@@ -14176,8 +14176,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Drawing Grid..."
 #~ msgstr "グリッドを描いています..."
 
-#~ msgid "GIMP Table Magic"
-#~ msgstr "GIMP テーブルマジック"
+#~ msgid "PICMAN Table Magic"
+#~ msgstr "PICMAN テーブルマジック"
 
 #~ msgid "Guillotine..."
 #~ msgstr "ギロチンで切断しています..."
@@ -14736,8 +14736,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "PageSetupDlg failed: %d"
 #~ msgstr "PageSetupDlg 失敗: %d"
 
-#~ msgid "Created with The GIMP"
-#~ msgstr "GIMP で作成しました"
+#~ msgid "Created with The PICMAN"
+#~ msgstr "PICMAN で作成しました"
 
 #~ msgid ""
 #~ "XWD-file %s has format %d, depth %d\n"
@@ -14787,14 +14787,14 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Date:"
 #~ msgstr "日付:"
 
-#~ msgid "Internal GIMP procedure"
-#~ msgstr "GIMP 内部プロシージャー"
+#~ msgid "Internal PICMAN procedure"
+#~ msgstr "PICMAN 内部プロシージャー"
 
-#~ msgid "GIMP Plug-In"
-#~ msgstr "GIMP プラグイン"
+#~ msgid "PICMAN Plug-In"
+#~ msgstr "PICMAN プラグイン"
 
-#~ msgid "GIMP Extension"
-#~ msgstr "GIMP 拡張機能"
+#~ msgid "PICMAN Extension"
+#~ msgstr "PICMAN 拡張機能"
 
 #~ msgid "Temporary Procedure"
 #~ msgstr "テンポラリプロシージャー"
@@ -14895,11 +14895,11 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Painting..."
 #~ msgstr "描画しています..."
 
-#~ msgid "The GIMPressionist"
-#~ msgstr "The GIMPressionist"
+#~ msgid "The PICMANressionist"
+#~ msgstr "The PICMANressionist"
 
-#~ msgid "Gimpressionist"
-#~ msgstr "Gimpressionist"
+#~ msgid "Picmanressionist"
+#~ msgstr "Picmanressionist"
 
 #~ msgid "A_bout"
 #~ msgstr "このプラグインについて(_B)"
@@ -14907,8 +14907,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Centerize"
 #~ msgstr "中央寄せ"
 
-#~ msgid "The Gimpressionist Defaults"
-#~ msgstr "Gimpressionist デフォルト"
+#~ msgid "The Picmanressionist Defaults"
+#~ msgstr "Picmanressionist デフォルト"
 
 #~ msgid "Save current..."
 #~ msgstr "現状保存..."
@@ -14918,15 +14918,15 @@ msgstr "何も取り込まれませんでした"
 
 #~ msgid ""
 #~ "It is highly recommended to add\n"
-#~ " (gimpressionist-path \"%s\")\n"
-#~ "(or similar) to your gimprc file."
+#~ " (picmanressionist-path \"%s\")\n"
+#~ "(or similar) to your picmanrc file."
 #~ msgstr ""
-#~ "  (gimpressionist-path \"%s\")\n"
-#~ "のように gimprc に付け足すことを\n"
+#~ "  (picmanressionist-path \"%s\")\n"
+#~ "のように picmanrc に付け足すことを\n"
 #~ "強くお勧めします。"
 
-#~ msgid "GIMP Help browser"
-#~ msgstr "GIMP ヘルプブラウザー"
+#~ msgid "PICMAN Help browser"
+#~ msgstr "PICMAN ヘルプブラウザー"
 
 #~ msgid "Scale Hue by:"
 #~ msgstr "色相倍率:"
@@ -15036,8 +15036,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Grid settings..."
 #~ msgstr "グリッド設定..."
 
-#~ msgid "Use GIMP guides..."
-#~ msgstr "GIMP のガイドを使う..."
+#~ msgid "Use PICMAN guides..."
+#~ msgstr "PICMAN のガイドを使う..."
 
 #~ msgid "Create guides..."
 #~ msgstr "ガイドの作成..."
@@ -15300,19 +15300,19 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Enter the name you wish to give this logical printer"
 #~ msgstr "この論理プリンタ用の名前を入力してください"
 
-#~ msgid "About Gimp-Print "
-#~ msgstr "Gimp-Print について "
+#~ msgid "About Picman-Print "
+#~ msgstr "Picman-Print について "
 
-#~ msgid "Gimp-Print Version "
-#~ msgstr "Gimp-Print バージョン "
+#~ msgid "Picman-Print Version "
+#~ msgstr "Picman-Print バージョン "
 
 #~ msgid ""
 #~ "\n"
 #~ "\n"
 #~ "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-#~ "and the rest of the Gimp-Print Development Team.\n"
+#~ "and the rest of the Picman-Print Development Team.\n"
 #~ "\n"
-#~ "Please visit our web site at http://gimp-print.sourceforge.net.\n"
+#~ "Please visit our web site at http://picman-print.sourceforge.net.\n"
 #~ "\n"
 #~ "This program is free software; you can redistribute it and/or modify\n"
 #~ "it under the terms of the GNU General Public License as published by\n"
@@ -15332,9 +15332,9 @@ msgstr "何も取り込まれませんでした"
 #~ "\n"
 #~ "\n"
 #~ "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-#~ "and the rest of the Gimp-Print Development Team.\n"
+#~ "and the rest of the Picman-Print Development Team.\n"
 #~ "\n"
-#~ "私たちの web サイト http://gimp-print.sourceforge.net をご覧ください。\n"
+#~ "私たちの web サイト http://picman-print.sourceforge.net をご覧ください。\n"
 #~ "\n"
 #~ "本プログラムはフリー・ソフトウェアです。あなたは、Free Software\n"
 #~ " Foundation が公表したGNU一般公有使用許諾の「バージョン2」あるいはそ\n"
@@ -15583,8 +15583,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Transferring TWAIN data..."
 #~ msgstr "TWAIN データを転送しています..."
 
-#~ msgid "GIMP Windows Icon Plugin"
-#~ msgstr "GIMP Windows プラグイン"
+#~ msgid "PICMAN Windows Icon Plugin"
+#~ msgstr "PICMAN Windows プラグイン"
 
 #~ msgid "Icon details"
 #~ msgstr "アイコン詳細"
@@ -15707,12 +15707,12 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "側面/ポイント/回転の数:"
 
 #~ msgid ""
-#~ "The requested document could not be found in your GIMP help path as shown "
+#~ "The requested document could not be found in your PICMAN help path as shown "
 #~ "above. This means that the topic has not yet been written or your "
 #~ "installation is not complete. Ensure that your installation is complete "
 #~ "before reporting this error as a bug."
 #~ msgstr ""
-#~ "お求めの文書は上の GIMP ヘルプファイルパスに見つかりませんでした。該当する"
+#~ "お求めの文書は上の PICMAN ヘルプファイルパスに見つかりませんでした。該当する"
 #~ "トピックのヘルプがまだないか、インストールが不完全である可能性があります。"
 #~ "これをバグとして報告する前にインストールが完全であるか確認して下さい。"
 
@@ -16147,8 +16147,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "About Gfig"
 #~ msgstr "GFig について"
 
-#~ msgid "Gfig - GIMP plug-in"
-#~ msgstr "Gfig - GIMP プラグイン"
+#~ msgid "Gfig - PICMAN plug-in"
+#~ msgstr "Gfig - PICMAN プラグイン"
 
 #, fuzzy
 #~ msgid "Release 2.0"
@@ -16577,8 +16577,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "<Image>/Filters/Toys/Gee-_Slime"
 #~ msgstr "<Image>/フィルター/おもちゃ/Gee-スライム"
 
-#~ msgid "GEE-ZOOM: The Plug-In Formerly Known As \"The GIMP E'er Egg\""
-#~ msgstr "GEE-万華鏡: 以前は \"The GIMP E'er Egg\" だったプラグイン"
+#~ msgid "GEE-ZOOM: The Plug-In Formerly Known As \"The PICMAN E'er Egg\""
+#~ msgstr "GEE-万華鏡: 以前は \"The PICMAN E'er Egg\" だったプラグイン"
 
 #~ msgid "Save as GIcon"
 #~ msgstr "GIcon 形式で保存"
@@ -16861,8 +16861,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "\"%s\" が見つかりません: \"%s\" を使用します"
 
 #, fuzzy
-#~ msgid "<Image>/Filters/Artistic/_GIMPressionist..."
-#~ msgstr "<Image>/フィルター/芸術的効果/GIMPressionist..."
+#~ msgid "<Image>/Filters/Artistic/_PICMANressionist..."
+#~ msgstr "<Image>/フィルター/芸術的効果/PICMANressionist..."
 
 #~ msgid "Paper Preview:"
 #~ msgstr "紙プレビュー:"
@@ -17087,7 +17087,7 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "別名で保存..."
 
 #~ msgid "A_bout..."
-#~ msgstr "Gimpressionist について(_B)..."
+#~ msgstr "Picmanressionist について(_B)..."
 
 #~ msgid "Click here to load your file"
 #~ msgstr "個人ファイルを読み込みます"
@@ -17127,14 +17127,14 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "ウィンドウ飾りも含める(_D)"
 
 #~ msgid ""
-#~ "GIMP Help Browser Error.\n"
+#~ "PICMAN Help Browser Error.\n"
 #~ "\n"
-#~ "Couldn't find GIMP_HELP_ROOT html directory.\n"
+#~ "Couldn't find PICMAN_HELP_ROOT html directory.\n"
 #~ "(%s)"
 #~ msgstr ""
-#~ "GIMP ヘルプブラウザーエラー。\n"
+#~ "PICMAN ヘルプブラウザーエラー。\n"
 #~ "\n"
-#~ "GIMP_HELP_ROOT HTML ディレクトリが見つかりません。\n"
+#~ "PICMAN_HELP_ROOT HTML ディレクトリが見つかりません。\n"
 #~ "(%s)"
 
 #~ msgid "<Image>/Select/To Path"
@@ -17310,12 +17310,12 @@ msgstr "何も取り込まれませんでした"
 #~ "1999 年 9月 作"
 
 #~ msgid ""
-#~ "No fractalexplorer-path in gimprc:\n"
+#~ "No fractalexplorer-path in picmanrc:\n"
 #~ "You need to add an entry like\n"
 #~ "(fractalexplorer-path \"%s\")\n"
 #~ "to your %s file."
 #~ msgstr ""
-#~ "fractalexplorer-path が gimprc 中に見つかりません:\n"
+#~ "fractalexplorer-path が picmanrc 中に見つかりません:\n"
 #~ "(fractalexplorer-path \"%s\")\n"
 #~ "のように %s ファイルに追加してみて下さい。"
 
@@ -17378,12 +17378,12 @@ msgstr "何も取り込まれませんでした"
 #~ msgstr "等幅グリッド By Rob Saunders"
 
 #~ msgid ""
-#~ "No gflare-path in gimprc:\n"
+#~ "No gflare-path in picmanrc:\n"
 #~ "You need to add an entry like\n"
 #~ "(gflare-path \"%s\")\n"
 #~ "to your %s file."
 #~ msgstr ""
-#~ "gflare-path が gimprc 中に見つかりません:\n"
+#~ "gflare-path が picmanrc 中に見つかりません:\n"
 #~ "(gflare-path \"%s\")\n"
 #~ "のように %s ファイルに追加して下さい。"
 
@@ -17411,11 +17411,11 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "Don't Save Unit"
 #~ msgstr "単位を保存しない"
 
-#~ msgid "Don't save the currently selected unit before GIMP exits."
-#~ msgstr "GIMP が終了するまで現在選択中の単位を保存しない。"
+#~ msgid "Don't save the currently selected unit before PICMAN exits."
+#~ msgstr "PICMAN が終了するまで現在選択中の単位を保存しない。"
 
-#~ msgid "Save the currently selected unit before GIMP exits."
-#~ msgstr "GIMP 終了前に現在選択中の単位を保存する。"
+#~ msgid "Save the currently selected unit before PICMAN exits."
+#~ msgstr "PICMAN 終了前に現在選択中の単位を保存する。"
 
 #~ msgid "Save as..."
 #~ msgstr "別名で保存..."
@@ -17579,8 +17579,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "selection_to_path"
 #~ msgstr "選択領域からされたパス"
 
-#~ msgid "gimp_image_get_selection failed"
-#~ msgstr "gimp_image_get_selection 失敗"
+#~ msgid "picman_image_get_selection failed"
+#~ msgstr "picman_image_get_selection 失敗"
 
 #~ msgid "Internal error. Selection bpp > 1"
 #~ msgstr "内部エラー。選択領域の bpp > 1"
@@ -17626,12 +17626,12 @@ msgstr "何も取り込まれませんでした"
 #~ "これをバグとして報告する前に慎重に調べて下さい</small></body></html>"
 
 #~ msgid ""
-#~ "GIMP Help Browser Error.\n"
+#~ "PICMAN Help Browser Error.\n"
 #~ "\n"
 #~ "Couldn't find my root html directory.\n"
 #~ "(%s)"
 #~ msgstr ""
-#~ "GIMP ヘルプブラウザーエラー。\n"
+#~ "PICMAN ヘルプブラウザーエラー。\n"
 #~ "\n"
 #~ "ルート HTML ディレクトリが見つかりません。\n"
 #~ "(%s)"
@@ -17829,8 +17829,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "    you have to set Environment variable GAP_XANIM_PROG "
 #~ msgstr "    環境変数 GAP_XANIM_PROG が国際版 xanim を指すようにして"
 
-#~ msgid "    to your xanim exporting program and restart gimp"
-#~ msgstr "    gimp を再起動して下さい"
+#~ msgid "    to your xanim exporting program and restart picman"
+#~ msgstr "    picman を再起動して下さい"
 
 #~ msgid "An ERROR occured while trying to call xanim:"
 #~ msgstr "xanim 呼び出し中にエラー発生"
@@ -18508,10 +18508,10 @@ msgstr "何も取り込まれませんでした"
 
 #~ msgid ""
 #~ "Save all single frames of animated preview to video buffer\n"
-#~ "(configured in gimprc by video-paste-dir and video-paste-basename)"
+#~ "(configured in picmanrc by video-paste-dir and video-paste-basename)"
 #~ msgstr ""
 #~ "すべての動画プレビューのフレームそれぞれをビデオバッファに保存する\n"
-#~ "(video-paste-dir と video-paste-basename によって gimprc で設定される)"
+#~ "(video-paste-dir と video-paste-basename によって picmanrc で設定される)"
 
 #~ msgid "Move Path Animated Preview"
 #~ msgstr "パス移動動画プレビュー"
@@ -19398,8 +19398,8 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "GDynText Layer"
 #~ msgstr "GDynText レイヤー"
 
-#~ msgid "GIMP Dynamic Text"
-#~ msgstr "GIMP ダイナミック文字"
+#~ msgid "PICMAN Dynamic Text"
+#~ msgstr "PICMAN ダイナミック文字"
 
 #~ msgid "GDynText: Messages Window"
 #~ msgstr "GDynText メッセージ窓"
@@ -19490,9 +19490,9 @@ msgstr "何も取り込まれませんでした"
 
 #~ msgid ""
 #~ "Holding the Shift key while pressing this button will force GDynText in "
-#~ "changing the layer name as done in GIMP 1.0."
+#~ "changing the layer name as done in PICMAN 1.0."
 #~ msgstr ""
-#~ "Shift キーを押しながらこのボタンを押すと GDynText は GIMP 1.0 のようにレイ"
+#~ "Shift キーを押しながらこのボタンを押すと GDynText は PICMAN 1.0 のようにレイ"
 #~ "ヤー名を強制的に変更します。"
 
 #~ msgid "GDynText: Load text"
@@ -19537,14 +19537,14 @@ msgstr "何も取り込まれませんでした"
 #~ msgid "<Image>/File/Print (Gtk)..."
 #~ msgstr "<Image>/ファイル/印刷 (Gtk)..."
 
-#~ msgid "<Image>/File/Print (Gimp)..."
-#~ msgstr "<Image>/ファイル/印刷 (Gimp)..."
+#~ msgid "<Image>/File/Print (Picman)..."
+#~ msgstr "<Image>/ファイル/印刷 (Picman)..."
 
 #~ msgid "(unknown!?)"
 #~ msgstr "(不明!?)"
 
-#~ msgid "GEE!  The GIMP E'er Egg!"
-#~ msgstr "GEE! The GIMP E'er Egg!"
+#~ msgid "GEE!  The PICMAN E'er Egg!"
+#~ msgstr "GEE! The PICMAN E'er Egg!"
 
 #, fuzzy
 #~ msgid "Save as Pixmap Brush"

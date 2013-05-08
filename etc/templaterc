@@ -1,8 +1,8 @@
-# GIMP templates
+# PICMAN templates
 # 
 # A collection of image templates.
 
-(GimpTemplate "640x480"
+(PicmanTemplate "640x480"
     (width 640)
     (height 480)
     (unit pixels)
@@ -11,7 +11,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "800x600"
+(PicmanTemplate "800x600"
     (width 800)
     (height 600)
     (unit pixels)
@@ -20,7 +20,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "1024x768"
+(PicmanTemplate "1024x768"
     (width 1024)
     (height 768)
     (unit pixels)
@@ -29,7 +29,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "1600x1200"
+(PicmanTemplate "1600x1200"
     (width 1600)
     (height 1200)
     (unit pixels)
@@ -38,7 +38,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "A3 (300ppi)"
+(PicmanTemplate "A3 (300ppi)"
     (width 3508)
     (height 4960)
     (unit millimeters)
@@ -47,7 +47,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "A4 (300ppi)"
+(PicmanTemplate "A4 (300ppi)"
     (width 2480)
     (height 3508)
     (unit millimeters)
@@ -56,7 +56,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "A5 (300ppi)"
+(PicmanTemplate "A5 (300ppi)"
     (width 1754)
     (height 2480)
     (unit millimeters)
@@ -65,7 +65,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "A6 (300ppi)"
+(PicmanTemplate "A6 (300ppi)"
     (width 1240)
     (height 1754)
     (unit millimeters)
@@ -74,7 +74,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "B4 (300ppi)"
+(PicmanTemplate "B4 (300ppi)"
     (width 2953)
     (height 4169)
     (unit millimeters)
@@ -83,7 +83,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "B5 (300ppi)"
+(PicmanTemplate "B5 (300ppi)"
     (width 2079)
     (height 2953)
     (unit millimeters)
@@ -92,7 +92,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "B5-Japan (300ppi)"
+(PicmanTemplate "B5-Japan (300ppi)"
     (width 2150)
     (height 3035)
     (unit millimeters)
@@ -101,7 +101,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "US-Letter (300ppi)"
+(PicmanTemplate "US-Letter (300ppi)"
     (width 2550)
     (height 3300)
     (unit inches)
@@ -110,7 +110,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "US-Legal (300ppi)"
+(PicmanTemplate "US-Legal (300ppi)"
     (width 2550)
     (height 4200)
     (unit inches)
@@ -119,8 +119,8 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "Toilet paper (US, 300ppi)"
-    (stock-id "gimp-toilet-paper")
+(PicmanTemplate "Toilet paper (US, 300ppi)"
+    (stock-id "picman-toilet-paper")
     (width 1350)
     (height 1350)
     (unit inches)
@@ -129,7 +129,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "CD cover (300ppi)"
+(PicmanTemplate "CD cover (300ppi)"
     (stock-id "gtk-cdrom")
     (width 1429)
     (height 1417)
@@ -139,7 +139,7 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "Floppy label (300ppi)"
+(PicmanTemplate "Floppy label (300ppi)"
     (stock-id "gtk-floppy")
     (width 825)
     (height 825)
@@ -149,8 +149,8 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "Web banner common 468x60"
-    (stock-id "gimp-web")
+(PicmanTemplate "Web banner common 468x60"
+    (stock-id "picman-web")
     (width 468)
     (height 60)
     (unit pixels)
@@ -159,8 +159,8 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "Web banner huge 728x90"
-    (stock-id "gimp-web")
+(PicmanTemplate "Web banner huge 728x90"
+    (stock-id "picman-web")
     (width 728)
     (height 90)
     (unit pixels)
@@ -169,8 +169,8 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "PAL - 720x576"
-    (stock-id "gimp-video")
+(PicmanTemplate "PAL - 720x576"
+    (stock-id "picman-video")
     (width 720)
     (height 576)
     (unit pixels)
@@ -179,8 +179,8 @@
     (resolution-unit inches)
     (image-type rgb)
     (fill-type background-fill))
-(GimpTemplate "NTSC - 720x486"
-    (stock-id "gimp-video")
+(PicmanTemplate "NTSC - 720x486"
+    (stock-id "picman-video")
     (width 720)
     (height 486)
     (unit pixels)

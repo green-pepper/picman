@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,17 +28,17 @@ struct _ChannelOptionsDialog
   GtkWidget   *color_panel;
   GtkWidget   *save_sel_checkbutton;
 
-  GimpImage   *image;
-  GimpContext *context;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanContext *context;
+  PicmanChannel *channel;
 };
 
 
-ChannelOptionsDialog * channel_options_dialog_new (GimpImage     *image,
-                                                   GimpChannel   *channel,
-                                                   GimpContext   *context,
+ChannelOptionsDialog * channel_options_dialog_new (PicmanImage     *image,
+                                                   PicmanChannel   *channel,
+                                                   PicmanContext   *context,
                                                    GtkWidget     *parent,
-                                                   const GimpRGB *channel_color,
+                                                   const PicmanRGB *channel_color,
                                                    const gchar   *channel_name,
                                                    const gchar   *title,
                                                    const gchar   *role,

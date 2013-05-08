@@ -1,0 +1,2087 @@
+# This is the Esperanto catalog for the libpicman.
+# Copyright (C) 1999-2012 Free Software Foundation, Inc.
+#
+# Antonio C. CODAZZI "la Filozofo" <f_sophia@libero.it>, 2006.
+# Michael MORONI < >, 2011.
+# Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>, 2011, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: picman 2.3\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=picman&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2012-04-06 16:33+0000\n"
+"PO-Revision-Date: 2012-04-06 20:58+0200\n"
+"Last-Translator: Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>\n"
+"Language-Team: Esperanto <gnome-l10n-eo@lists.launchpad.net>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Launchpad-Export-Date: 2012-04-06 18:41+0000\n"
+"X-Generator: Launchpad (build 15060)\n"
+"Date: dom feb  6 16:47:39 CET 2000\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "sukceso"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr ""
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr ""
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr ""
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Penika elekto"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Foliumi..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "%s kromprogramo ne povas trakti tavolojn"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Kunfandi videblajn tavolojn"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"%s kromprogramo ne povas trakti deŝovon, grandon aŭ opakecon de tavoloj"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "%s povas trakti tavolojn nur kiel animaciaj filmeroj"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Konservi kiel animacio"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Plata bildo"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "%s kromprogramo ne povas trakti travideblecon"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "%s kromprogramo ne povas trakti tavolmaskojn"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Apliki tavolmaskojn"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "%s povas trakti nur RVB-bildojn"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Transigo al RVB"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr "Kromprogramo %s povas trakti nur grizoskalajn bildojn"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Konverti al grizoskalo"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "Kromprogramo %s povas trakti nur indicitajn bildojn"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Konverti al indicita bildo per defaŭltaj agordoj\n"
+"(faru tion mane por zorge agordi la rezulton)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+"Kromprogramo %s povas trakti nur bitmapan (du koloroj) aŭ indicitajn bildojn"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Konverti al indicita bildo per defaŭltaj agordoj de bitmapo\n"
+"(Faru tion mane por zorge agordi la rezulton)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "Kromprogramo %s  povas trakti nur RVB- aŭ grizgamajn bildojn"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "Kromprogramo %s povas trakti nur RVB- aŭ indicitajn bildojn"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr "Kromprogramo %s povas trakti nur grizgamajn aŭ indicitajn bildojn"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "Kromprogramo %s necesas alfan kanalon"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Aldoni alfa-kanalon"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Konfirmi konservon"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Konfirmi"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Elporti dosieron"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "_Ignori"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "_Elporti"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"La bildo estas elportenda antaŭ ol ĝi povas esti konservita kiel %s pro ĉi "
+"kaŭzoj:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "La elportado ne modifos la originan bildon."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Oni konservos tavolmaskon kiel %s.\n"
+"Ĉi tiu ne konservos videblajn tavolojn."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Oni konservos kanalon (konservita elekto) kiel %s.\n"
+"Ĉi tiu ne konservos videblajn tavolojn."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "Elporti bildon kiel "
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Tiparelekto"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Elekto de gradiento"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(Malplene)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Elekto de paletro"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Elekto de modelo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "laŭ nomo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "laŭ priskribo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "laŭ helpo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "laŭ aŭtoro"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "laŭ kopirajto"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "laŭ dato"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "laŭ tipo"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Neniu kongruaĵo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr ""
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Serĉo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Serĉo laŭ nomo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Serĉo laŭ priskribo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Serĉo laŭ helpo"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Serĉo laŭ aŭtoro"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Serĉo laŭ kopirajto"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Serĉo laŭ dato"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Serĉo laŭ speco"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d proceduro"
+msgstr[1] "%d proceduroj"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Neniuj kongruoj je via informpeto"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d proceduro kongruas laŭ informpeto"
+msgstr[1] "%d proceduroj kongruas laŭ informpeto"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametroj"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Resenditaj valoroj"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Pliaj informoj"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Aŭtoro:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Dato:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Kopirajto:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "elcento"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Blanko (tuta opakeco)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Nigro (tute travidebla)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "_Alfa kanalo de la tavolo"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Transigi alfa-kanalon de la tavolo"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Elekto"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "_Grizgama kopio de la tavolo"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "Ka_nalo"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "MF al FN (RVB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "MF al FN (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "MF al travidebleco"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Personigita gradiento"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "MF-kolora plenigo"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "FN-kolora plenigo"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Plenigo per modelo"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Aldoni al la nuna elekto"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Depreni de la nuna elekto"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Anstataŭigi la nunan elekton"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Sekci kun la nuna elekto"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Ruĝo"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Verdo"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Bluo"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Grizo"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indicite"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+msgctxt "check-size"
+msgid "Small"
+msgstr "Malgrande"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Meze"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+msgctxt "check-size"
+msgid "Large"
+msgstr "Grande"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Helaj kvadratitoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Meztonaj kvadratitoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Malhelaj kvadratitoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+msgctxt "check-type"
+msgid "White only"
+msgstr "Nur blanko"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Nur grizo"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Nur nigro"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Bildo"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Modelo"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Lumeco"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Lumintenso"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Meznombro"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Ekranŝirmi"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Registri"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Lineare"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Du-lineara"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Radiale"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Kvadrate"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Konusa (sim.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Konusa (nesim.)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Konturita (angula)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Konturita (sfera)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Konturita (kurbita)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Spirala (dekstroĝire)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Spirala (maldekstroĝire)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Intersekcoj (punktoj)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Intersekcoj (kruce)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Streketite"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Duoble streketite"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Solide"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Stok-ID"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Enteksta Pixbuf"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Bilddosiero"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "RVB-koloro"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Grizoskalo"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Indicita koloro"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RVB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RVB-alfo"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Grizoskalo"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Grizskalo-alfo"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indicite"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indicita-alfo"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Neniu"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Lineara"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Kuba"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Konstante"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Alkremente"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Neniu"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+#, fuzzy
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Segildenta ondo"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Triangula ondo"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Ruli interaktive"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Ruli ne-interaktive"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Ruli per lastuzataj valoroj"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Bilderoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+msgctxt "size-type"
+msgid "Points"
+msgstr "Punktoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Ombroj"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Meztonoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Lumakcentoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Normale (antaŭen)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr ""
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Ĝustigi"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Eltondi"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Stuci laŭ rezulto"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Stuci laŭ aspekto"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Interna proceduro de PICMANo"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "Kromprogramo de PICMANo"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "Kromprogramo de PICMANo"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Dumtempa proceduro"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "De maldekstre al dekstre"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "De dekstre al maldekstre"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Neniu"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+#, fuzzy
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Lumakcentoj"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Meze"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Plene"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Maldekstre ĝisrandigite"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Dekstre ĝisrandigite"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Centrigite"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Plenigite"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(nevalida UTF-8 ĉeno)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Operaciomoduzo por administri koloron."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Profilo de koloro por (ĉefa) ekrano."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Se ĝi estas enŝaltite, PICMANo provos uzi profilon de koloro por ekrano el "
+"grafika sistemo. Profilo de ekrano, kiu estis agordita, estos uzita nur se "
+"tiu el la grafika sistemo malsukcesis."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "Defaŭlta profilo de RVB-koloro en laborspaco."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "Profilo de CMYK-koloro uzita por interŝanĝi RGB kaj CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr "Profilo de koloro uzita por simulado de presita versio (presprovaĵo)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Agordi la manieron en kiu koloroj bildiĝos pro ekrano."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Agordi la manieron per kiu koloroj konvertiĝos el laborspaco de RGB al "
+"aparato de presa simulado."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr ""
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Neniu koloradministrado"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Koloradministrata ekrano"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Presa simulado"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Perceptive"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Relative kolorometrie"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Satureco"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Absolute kolorometrie"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "la valoro de %s peco ne estas valida UTF-8-ĉeno"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "por boolea peco %s estas necese \"yes\" aŭ \"no\" dume \"%s\" alvenis"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "la valoro \"%s\" estas nevalida por %s peco"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "la valoro \"%ld\" estas nevalida por %s peco"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "dum analizo de peco \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "fatala analizeraro"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Estas neeble plivastigi $(%s)"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Eraro dum skribo en \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Estas neeble krei dumtempan dosieron por \"%s\": %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Ne eblas malfermi '%s' por skribo: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Eraro dum skribado en dumtempa dosiero por '%s': %s\n"
+"Origina dosiero estas netuŝita."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Eraro dum skribado de dumtempa dosiero por '%s': %s\n"
+"Neniu dosiero estis kreita."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Esras neeble krei \"%s\": %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "nevalida UTF-8-ĉeno"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, fuzzy, c-format
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr "por boolea peco %s estas necese \"yes\" aŭ \"no\" dume \"%s\" alvenis"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Eraro dum procezo de \"%s\" en linio %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Eraro dum ŝargado de modulo \"%s\": %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Moduleraro"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Ŝargite"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Ŝargado malsukcesis"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Ne ŝargite"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Estas neeble determini validan hejmo-dosierujon.\n"
+"Do la miniaturoj estos enmemorigitaj en dosierujo (%s) por dumtempaj "
+"dosieroj."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Kreado de dosierujo '%s' por miniaturoj malsukcesis."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr ""
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Estas neeble krei miniaturon de %s: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "_Serĉi:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "_Malfona koloro"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "_Fona koloro"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "_Nigro"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "_Blanko"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr ""
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Neniu"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Skalo"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Nuna:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Malnova:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Deksesuma kolornotaro kiel tiu kiu estas uzita por HTML kaj por CSS. Tiu ero "
+"konsentas ankaŭ CSS-kolornomojn."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "HTML-_notaro:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Malfermi dosierelektilon por foliumi sian dosierujojn"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Malfermi dosierelektilon por foliumi sian dosierojn"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Elekti dosierujon"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Elekti dosieron"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr ""
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "Kilobajtoj"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "Megabajtoj"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "Gigabajtoj"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Nenio estas elektita"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "_Elekti ĉiujn"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "Elekti ample_kson:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Malfermi _paĝojn kiel"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Paĝo 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Paĝo %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Unu elektita paĝo"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "%d elektita paĝo"
+msgstr[1] "%d elektitaj paĝoj"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Skribeble"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Dosierujo"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Alklaku la gutigilon, poste alklaku koloron ie ajn en la ekrano por elekti "
+"tiun koloron."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Antaŭmontro"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Kvadrogrando"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Kvadrostilo"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Ĉi fako de teksta enigo povas enteni %d tipon."
+msgstr[1] "Ĉi fako de teksta enigo povas enteni %d tipojn."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Ankri"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "C_entri"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Duobligi"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "R_edakti"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Kunligite"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Enmeti kiel nova"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Enmeti en"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Reagordi"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Videble"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Streko"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "Int_erspaco"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "_Interlinio"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "_Aligrandigi"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_Skali"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "_Stuci"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "_Transformi"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_Turni"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "_Tondi"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Pli..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Elekto de unito"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Unito"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Faktoro"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Uzu ĉi valoron por la semo de generilo de hazarda nombro - ĉi tiu eblas \n"
+"ripeti estabilitan \"hazardan\" operacion"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "_Nova semo"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr "Generilo de hazarda semo per nombro kiu estas hazarde akirita"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "_Hazardigi"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Elŝaltite"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Ekrano"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Fenestro"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Kvadrate"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Vertikala orientiĝo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Horizontala orientiĝo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Nuanco"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Satureco"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Valoro"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Ruĝo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Verdo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Bluo"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Tavoloj"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Bildoj"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Enzomi"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Elzomi"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr ""
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMFN"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_F"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_N"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Cejano"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Malva"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Flavo"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Nigro"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profilo: (neniu)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profilo: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "Elektilo de CMYK-koloro"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "El_tiro de nigro:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "La procento da eltiro de nigro el koloritaj inkoj."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Kolorelektilo por akvareloj"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Akvarelo"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Premo"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr ""
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Rado"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Aparato:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "Butono %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr ""
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Neniu agordita aparato"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Aparato ne disponeblas"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Butono 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Butono 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Butono 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Butono 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Butono 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Butono 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Butono 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Butono 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Butono 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Butono 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Musbutono"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Maldekstra butono"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Dekstra butono"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Meza butono"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Flanka butono"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Ekstra butono"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Antaŭena butono"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Malantaŭena butono"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Taska butono"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Radetobutono"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Radetobutono suben"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Radetobutono supren"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr ""
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Diskobutono maldekstren"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Diskobutono dekstren"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Radeto maldekstren"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Radeto dekstren"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Reĝilo por enigaj eventoj de Linukso"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Aparatnomo el kiu oni legas enigajn eventojn de Linukso."
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Linuksa enigo"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Enigaj eventoj de Linukso"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Legante el %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Nedisponebla aparato: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Dosierfino"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "Regilo de MIDI-eventoj"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "La nomo de la aparato el kiu oni legas MIDI-eventojn."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Enigu 'alsa' por uzi ALSA-sekvencilon."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanalo:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"La MIDI-kanalo el kiu oni legas eventojn. Agordi al -1 por legi MIDI-"
+"eventojn de ĉiuj kanaloj."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Noto %02x en kondutka poz."
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Noto %02x en elkluda poz."
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Regilo %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "MIDI-eventoj"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMANo"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr ""
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopio (blindeco laŭ ruĝo)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopio (blindeco laŭ verdo)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopio (blindeco laŭ bluo)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr ""
+"Filtrilo por simulado de daltonismo (algoritmo de Brettel-Vienot-Mollon)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Daltonisma vido"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "_Daltonismospeco:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Filtrilo por vido de gama-koloro"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamo"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamo:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Filtrilo por vido de kontrastega koloro"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrasto"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "_Cikloj de kontrasto:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Vidofiltrilo por administrado de koloro uzas profilon de ICC-koloro"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Koloradministrado"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Neniu"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Ĉi filtrilo agordiĝis per fako de la koloradministrada sekcio en la "
+"agordodialogo."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Operacireĝimo:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Bildprofilo:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Profilo de ekrano:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Profilo de presa simulado:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Kolorimuna filtrilo per profilo de ICC koloro"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Kolorimuna"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Elekti profilon de ICC-koloro"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Ĉiuj dosieroj (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr ""
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profilo:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "_Okupo:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "Kompensado por _nigra punkto"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "Lineara"
+
+#~ msgid "interpolation|None"
+#~ msgstr "Nenio"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "Lineara"
+
+#~ msgid "intent|Saturation"
+#~ msgstr "Satureco"

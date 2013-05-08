@@ -1,5 +1,5 @@
 /*
- * This is a plugin for GIMP.
+ * This is a plugin for PICMAN.
  *
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1996 Torsten Martinsen
@@ -26,23 +26,23 @@
  * May 2000 tim copperfield [timecop@japan.co.jp]
  * Added dynamic preview.
  *
- * alt@gimp.org. Fixed previews so they handle alpha channels correctly.
+ * alt@picman.org. Fixed previews so they handle alpha channels correctly.
  */
 
 #include "config.h"
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define RGB_NOISE_PROC   "plug-in-rgb-noise"
 #define NOISIFY_PROC     "plug-in-noisify"
 #define PLUG_IN_BINARY   "noise-rgb"
-#define PLUG_IN_ROLE     "gimp-noise-rgb"
+#define PLUG_IN_ROLE     "picman-noise-rgb"
 #define SCALE_WIDTH      125
 #define TILE_CACHE_SIZE  16
 
@@ -66,9 +66,9 @@ typedef struct
 static void     query        (void);
 static void     run          (const gchar      *name,
                               gint              nparams,
-                              const GimpParam  *param,
+                              const PicmanParam  *param,
                               gint             *nreturn_vals,
-                              GimpParam       **return_vals);
+                              PicmanParam       **return_vals);
 
 
 static void     noisify_func (const guchar     *src,
@@ -76,18 +76,18 @@ static void     noisify_func (const guchar     *src,
                               gint              bpp,
                               gpointer          data);
 
-static void     noisify      (GimpPreview      *preview);
+static void     noisify      (PicmanPreview      *preview);
 
 
 static gdouble  gauss                            (GRand         *gr);
 
-static gboolean noisify_dialog                   (GimpDrawable  *drawable,
+static gboolean noisify_dialog                   (PicmanDrawable  *drawable,
                                                   gint           channels);
 static void     noisify_double_adjustment_update (GtkAdjustment *adjustment,
                                                   gpointer       data);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc */
   NULL,  /* quit_proc */
@@ -115,33 +115,33 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef scatter_args[] =
+  static const PicmanParamDef scatter_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable" },
-    { GIMP_PDB_INT32,    "independent", "Noise in channels independent" },
-    { GIMP_PDB_INT32,    "correlated",  "Noise correlated (i.e. multiplicative not additive)" },
-    { GIMP_PDB_FLOAT,    "noise-1",     "Noise in the first channel (red, gray)" },
-    { GIMP_PDB_FLOAT,    "noise-2",     "Noise in the second channel (green, gray_alpha)" },
-    { GIMP_PDB_FLOAT,    "noise-3",     "Noise in the third channel (blue)" },
-    { GIMP_PDB_FLOAT,    "noise-4",     "Noise in the fourth channel (alpha)" }
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable" },
+    { PICMAN_PDB_INT32,    "independent", "Noise in channels independent" },
+    { PICMAN_PDB_INT32,    "correlated",  "Noise correlated (i.e. multiplicative not additive)" },
+    { PICMAN_PDB_FLOAT,    "noise-1",     "Noise in the first channel (red, gray)" },
+    { PICMAN_PDB_FLOAT,    "noise-2",     "Noise in the second channel (green, gray_alpha)" },
+    { PICMAN_PDB_FLOAT,    "noise-3",     "Noise in the third channel (blue)" },
+    { PICMAN_PDB_FLOAT,    "noise-4",     "Noise in the fourth channel (alpha)" }
   };
 
-  static const GimpParamDef noisify_args[] =
+  static const PicmanParamDef noisify_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable" },
-    { GIMP_PDB_INT32,    "independent", "Noise in channels independent" },
-    { GIMP_PDB_FLOAT,    "noise-1",     "Noise in the first channel (red, gray)" },
-    { GIMP_PDB_FLOAT,    "noise-2",     "Noise in the second channel (green, gray_alpha)" },
-    { GIMP_PDB_FLOAT,    "noise-3",     "Noise in the third channel (blue)" },
-    { GIMP_PDB_FLOAT,    "noise-4",     "Noise in the fourth channel (alpha)" }
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable" },
+    { PICMAN_PDB_INT32,    "independent", "Noise in channels independent" },
+    { PICMAN_PDB_FLOAT,    "noise-1",     "Noise in the first channel (red, gray)" },
+    { PICMAN_PDB_FLOAT,    "noise-2",     "Noise in the second channel (green, gray_alpha)" },
+    { PICMAN_PDB_FLOAT,    "noise-3",     "Noise in the third channel (blue)" },
+    { PICMAN_PDB_FLOAT,    "noise-4",     "Noise in the fourth channel (alpha)" }
   };
 
 
-  gimp_install_procedure (RGB_NOISE_PROC,
+  picman_install_procedure (RGB_NOISE_PROC,
                           N_("Distort colors by random amounts"),
                           "Add normally distributed (zero mean) random values "
                           "to image channels.  Noise may be additive "
@@ -154,13 +154,13 @@ query (void)
                           "May 2000",
                           N_("_RGB Noise..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (scatter_args), 0,
                           scatter_args, NULL);
 
-  gimp_plugin_menu_register (RGB_NOISE_PROC, "<Image>/Filters/Noise");
+  picman_plugin_menu_register (RGB_NOISE_PROC, "<Image>/Filters/Noise");
 
-  gimp_install_procedure (NOISIFY_PROC,
+  picman_install_procedure (NOISIFY_PROC,
                           "Adds random noise to image channels ",
                           "Add normally distributed random values to "
                           "image channels. For colour images each "
@@ -171,7 +171,7 @@ query (void)
                           "May 2000",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (noisify_args), 0,
                           noisify_args, NULL);
 }
@@ -179,14 +179,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
 
   run_mode = param[0].data.d_int32;
 
@@ -195,40 +195,40 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   noise_gr = g_rand_new ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
-  if (gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_gray (drawable->drawable_id))
     nvals.noise[1] = 0.0;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (RGB_NOISE_PROC, &nvals);
+      picman_get_data (RGB_NOISE_PROC, &nvals);
 
       /*  First acquire information with a dialog  */
       if (! noisify_dialog (drawable, drawable->bpp))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           g_rand_free (noise_gr);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (strcmp (name, NOISIFY_PROC) == 0)
         {
           /*  Make sure all the arguments are there!  */
           if (nparams != 8)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -245,7 +245,7 @@ run (const gchar      *name,
         {
           if (nparams != 9)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -261,13 +261,13 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (RGB_NOISE_PROC, &nvals);
+      picman_get_data (RGB_NOISE_PROC, &nvals);
       break;
 
     default:
@@ -275,31 +275,31 @@ run (const gchar      *name,
     }
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_indexed (drawable->drawable_id))
-    status = GIMP_PDB_EXECUTION_ERROR;
+  if (picman_drawable_is_indexed (drawable->drawable_id))
+    status = PICMAN_PDB_EXECUTION_ERROR;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Adding noise"));
+      picman_progress_init (_("Adding noise"));
 
       /*  compute the luminosity which exceeds the luminosity threshold  */
-      gimp_rgn_iterate2 (drawable, 0 /* unused */, noisify_func, noise_gr);
+      picman_rgn_iterate2 (drawable, 0 /* unused */, noisify_func, noise_gr);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (RGB_NOISE_PROC, &nvals, sizeof (NoisifyVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (RGB_NOISE_PROC, &nvals, sizeof (NoisifyVals));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
   g_rand_free (noise_gr);
 }
 
@@ -342,10 +342,10 @@ noisify_func (const guchar *src,
 }
 
 static void
-noisify (GimpPreview *preview)
+noisify (PicmanPreview *preview)
 {
-  GimpDrawable *drawable;
-  GimpPixelRgn  src_rgn;
+  PicmanDrawable *drawable;
+  PicmanPixelRgn  src_rgn;
   guchar       *src, *dst;
   gint          i;
   gint          x1, y1;
@@ -354,25 +354,25 @@ noisify (GimpPreview *preview)
   GRand        *gr = g_rand_copy (noise_gr);
 
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
 
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &width, &height);
 
   bpp = drawable->bpp;
 
   src = g_new (guchar, width * height * bpp);
   dst = g_new (guchar, width * height * bpp);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
+  picman_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
 
   for (i = 0; i < width * height; i++)
     noisify_func (src + i * bpp, dst + i * bpp, bpp, gr);
 
-  gimp_preview_draw_buffer (preview, dst, width * bpp);
+  picman_preview_draw_buffer (preview, dst, width * bpp);
 
   g_free (src);
   g_free (dst);
@@ -383,12 +383,12 @@ static void
 noisify_add_channel (GtkWidget    *table,
                      gint          channel,
                      const gchar  *name,
-                     GimpDrawable *drawable,
+                     PicmanDrawable *drawable,
                      GtkWidget    *preview)
 {
   GtkObject *adj;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, channel + 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, channel + 1,
                               name, SCALE_WIDTH, 0,
                               nvals.noise[channel], 0.0, 1.0, 0.01, 0.1, 2,
                               TRUE, 0, 0,
@@ -400,7 +400,7 @@ noisify_add_channel (GtkWidget    *table,
                     G_CALLBACK (noisify_double_adjustment_update),
                     &nvals.noise[channel]);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   noise_int.channel_adj[channel] = adj;
@@ -410,12 +410,12 @@ static void
 noisify_add_alpha_channel (GtkWidget    *table,
                            gint          channel,
                            const gchar  *name,
-                           GimpDrawable *drawable,
+                           PicmanDrawable *drawable,
                            GtkWidget    *preview)
 {
   GtkObject *adj;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, channel + 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, channel + 1,
                               name, SCALE_WIDTH, 0,
                               nvals.noise[channel], 0.0, 1.0, 0.01, 0.1, 2,
                               TRUE, 0, 0,
@@ -424,17 +424,17 @@ noisify_add_alpha_channel (GtkWidget    *table,
   g_object_set_data (G_OBJECT (adj), "drawable", drawable);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &nvals.noise[channel]);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   noise_int.channel_adj[channel] = adj;
 }
 
 static gboolean
-noisify_dialog (GimpDrawable *drawable,
+noisify_dialog (PicmanDrawable *drawable,
                 gint          channels)
 {
   GtkWidget *dialog;
@@ -445,11 +445,11 @@ noisify_dialog (GimpDrawable *drawable,
   GtkWidget *table;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("RGB Noise"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("RGB Noise"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, RGB_NOISE_PROC,
+                            picman_standard_help_func, RGB_NOISE_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -461,7 +461,7 @@ noisify_dialog (GimpDrawable *drawable,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -469,7 +469,7 @@ noisify_dialog (GimpDrawable *drawable,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, FALSE, FALSE, 0);
   gtk_widget_show (preview);
 
@@ -488,13 +488,13 @@ noisify_dialog (GimpDrawable *drawable,
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &nvals.correlated);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id))
     {
       toggle = gtk_check_button_new_with_mnemonic (_("_Independent RGB"));
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle),
@@ -503,10 +503,10 @@ noisify_dialog (GimpDrawable *drawable,
       gtk_widget_show (toggle);
 
       g_signal_connect (toggle, "toggled",
-                        G_CALLBACK (gimp_toggle_button_update),
+                        G_CALLBACK (picman_toggle_button_update),
                         &nvals.independent);
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
     }
 
@@ -560,7 +560,7 @@ noisify_dialog (GimpDrawable *drawable,
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -602,7 +602,7 @@ noisify_double_adjustment_update (GtkAdjustment *adjustment,
 {
   gint n;
 
-  gimp_double_adjustment_update (adjustment, data);
+  picman_double_adjustment_update (adjustment, data);
 
   if (! nvals.independent)
     {

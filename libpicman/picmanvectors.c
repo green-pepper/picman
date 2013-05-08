@@ -1,0 +1,271 @@
+/* LIBPICMAN - The PICMAN Library
+ * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
+ *
+ * picmanvectors.c
+ *
+ * This library is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#include "config.h"
+
+#include <string.h>
+
+#include "picman.h"
+#include "picmanvectors.h"
+
+
+/**
+ * picman_vectors_is_valid:
+ * @vectors_ID: The vectors object to check.
+ *
+ * Deprecated: Use picman_item_is_valid() instead.
+ *
+ * Returns: Whether the vectors ID is valid.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_is_valid (gint32 vectors_ID)
+{
+  return picman_item_is_valid (vectors_ID);
+}
+
+/**
+ * picman_vectors_get_image:
+ * @vectors_ID: The vectors object.
+ *
+ * Deprecated: Use picman_item_get_image() instead.
+ *
+ * Returns: The vectors image.
+ *
+ * Since: PICMAN 2.4
+ */
+gint32
+picman_vectors_get_image (gint32 vectors_ID)
+{
+  return picman_item_get_image (vectors_ID);
+}
+
+/**
+ * picman_vectors_get_name:
+ * @vectors_ID: The vectors object.
+ *
+ * Deprecated: Use picman_item_get_name() instead.
+ *
+ * Returns: The name of the vectors object.
+ *
+ * Since: PICMAN 2.4
+ */
+gchar *
+picman_vectors_get_name (gint32 vectors_ID)
+{
+  return picman_item_get_name (vectors_ID);
+}
+
+/**
+ * picman_vectors_set_name:
+ * @vectors_ID: The vectors object.
+ * @name: the new name of the path.
+ *
+ * Deprecated: Use picman_item_set_name() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_set_name (gint32       vectors_ID,
+                       const gchar *name)
+{
+  return picman_item_set_name (vectors_ID, name);
+}
+
+/**
+ * picman_vectors_get_visible:
+ * @vectors_ID: The vectors object.
+ *
+ * Deprecated: Use picman_item_get_visible() instead.
+ *
+ * Returns: TRUE if the path is visible, FALSE otherwise.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_get_visible (gint32 vectors_ID)
+{
+  return picman_item_get_visible (vectors_ID);
+}
+
+/**
+ * picman_vectors_set_visible:
+ * @vectors_ID: The vectors object.
+ * @visible: Whether the path is visible.
+ *
+ * Deprecated: Use picman_item_set_visible() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_set_visible (gint32   vectors_ID,
+                          gboolean visible)
+{
+  return picman_item_set_visible (vectors_ID, visible);
+}
+
+/**
+ * picman_vectors_get_linked:
+ * @vectors_ID: The vectors object.
+ *
+ * Deprecated: Use picman_item_get_linked() instead.
+ *
+ * Returns: TRUE if the path is linked, FALSE otherwise.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_get_linked (gint32 vectors_ID)
+{
+  return picman_item_get_linked (vectors_ID);
+}
+
+/**
+ * picman_vectors_set_linked:
+ * @vectors_ID: The vectors object.
+ * @linked: Whether the path is linked.
+ *
+ * Deprecated: Use picman_item_set_linked() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_set_linked (gint32   vectors_ID,
+                         gboolean linked)
+{
+  return picman_item_set_linked (vectors_ID, linked);
+}
+
+/**
+ * picman_vectors_get_tattoo:
+ * @vectors_ID: The vectors object.
+ *
+ * Deprecated: Use picman_item_get_tattoo() instead.
+ *
+ * Returns: The vectors tattoo.
+ *
+ * Since: PICMAN 2.4
+ */
+gint
+picman_vectors_get_tattoo (gint32 vectors_ID)
+{
+  return picman_item_get_tattoo (vectors_ID);
+}
+
+/**
+ * picman_vectors_set_tattoo:
+ * @vectors_ID: The vectors object.
+ * @tattoo: the new tattoo.
+ *
+ * Deprecated: Use picman_item_set_tattoo() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ */
+gboolean
+picman_vectors_set_tattoo (gint32 vectors_ID,
+                         gint   tattoo)
+{
+  return picman_item_set_tattoo (vectors_ID, tattoo);
+}
+
+/**
+ * picman_vectors_parasite_find:
+ * @vectors_ID: The vectors object.
+ * @name: The name of the parasite to find.
+ *
+ * Deprecated: Use picman_item_get_parasite() instead.
+ *
+ * Returns: The found parasite.
+ *
+ * Since: PICMAN 2.4
+ **/
+PicmanParasite *
+picman_vectors_parasite_find (gint32       vectors_ID,
+                            const gchar *name)
+{
+  return picman_item_get_parasite (vectors_ID, name);
+}
+
+/**
+ * picman_vectors_parasite_attach:
+ * @vectors_ID: The vectors object.
+ * @parasite: The parasite to attach to a vectors object.
+ *
+ * Deprecated: Use picman_item_attach_parasite() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ **/
+gboolean
+picman_vectors_parasite_attach (gint32              vectors_ID,
+                              const PicmanParasite *parasite)
+{
+  return picman_item_attach_parasite (vectors_ID, parasite);
+}
+
+/**
+ * picman_vectors_parasite_detach:
+ * @vectors_ID: The vectors object.
+ * @name: The name of the parasite to detach from a vectors object.
+ *
+ * Deprecated: Use picman_item_detach_parasite() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ **/
+gboolean
+picman_vectors_parasite_detach (gint32       vectors_ID,
+                              const gchar *name)
+{
+  return picman_item_detach_parasite (vectors_ID, name);
+}
+
+/**
+ * picman_vectors_parasite_list:
+ * @vectors_ID: The vectors object.
+ * @num_parasites: The number of attached parasites.
+ * @parasites: The names of currently attached parasites.
+ *
+ * Deprecated: Use picman_item_get_parasite_list() instead.
+ *
+ * Returns: TRUE on success.
+ *
+ * Since: PICMAN 2.4
+ **/
+gboolean
+picman_vectors_parasite_list (gint32    vectors_ID,
+                            gint     *num_parasites,
+                            gchar  ***parasites)
+{
+  *parasites = picman_item_get_parasite_list (vectors_ID, num_parasites);
+
+  return *parasites != NULL;
+}

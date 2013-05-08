@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,32 +23,32 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "gui-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
 #include "themes.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   themes_apply_theme         (Gimp                   *gimp,
+static void   themes_apply_theme         (Picman                   *picman,
                                           const gchar            *theme_name);
-static void   themes_directories_foreach (const GimpDatafileData *file_data,
+static void   themes_directories_foreach (const PicmanDatafileData *file_data,
                                           gpointer                user_data);
 static void   themes_list_themes_foreach (gpointer                key,
                                           gpointer                value,
                                           gpointer                data);
-static void   themes_theme_change_notify (GimpGuiConfig          *config,
+static void   themes_theme_change_notify (PicmanGuiConfig          *config,
                                           GParamSpec             *pspec,
-                                          Gimp                   *gimp);
+                                          Picman                   *picman);
 
 
 /*  private variables  */
@@ -59,14 +59,14 @@ static GHashTable *themes_hash = NULL;
 /*  public functions  */
 
 void
-themes_init (Gimp *gimp)
+themes_init (Picman *picman)
 {
-  GimpGuiConfig *config;
+  PicmanGuiConfig *config;
   gchar         *themerc;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  config = GIMP_GUI_CONFIG (gimp->config);
+  config = PICMAN_GUI_CONFIG (picman->config);
 
   themes_hash = g_hash_table_new_full (g_str_hash,
                                        g_str_equal,
@@ -77,37 +77,37 @@ themes_init (Gimp *gimp)
     {
       gchar *path;
 
-      path = gimp_config_path_expand (config->theme_path, TRUE, NULL);
+      path = picman_config_path_expand (config->theme_path, TRUE, NULL);
 
-      gimp_datafiles_read_directories (path,
+      picman_datafiles_read_directories (path,
                                        G_FILE_TEST_IS_DIR,
                                        themes_directories_foreach,
-                                       gimp);
+                                       picman);
 
       g_free (path);
     }
 
-  themes_apply_theme (gimp, config->theme);
+  themes_apply_theme (picman, config->theme);
 
-  themerc = gimp_personal_rc_file ("themerc");
+  themerc = picman_personal_rc_file ("themerc");
   gtk_rc_parse (themerc);
   g_free (themerc);
 
   g_signal_connect (config, "notify::theme",
                     G_CALLBACK (themes_theme_change_notify),
-                    gimp);
+                    picman);
 }
 
 void
-themes_exit (Gimp *gimp)
+themes_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   if (themes_hash)
     {
-      g_signal_handlers_disconnect_by_func (gimp->config,
+      g_signal_handlers_disconnect_by_func (picman->config,
                                             themes_theme_change_notify,
-                                            gimp);
+                                            picman);
 
       g_hash_table_destroy (themes_hash);
       themes_hash = NULL;
@@ -115,11 +115,11 @@ themes_exit (Gimp *gimp)
 }
 
 gchar **
-themes_list_themes (Gimp *gimp,
+themes_list_themes (Picman *picman,
                     gint *n_themes)
 {
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (n_themes != NULL, NULL);
 
   *n_themes = g_hash_table_size (themes_hash);
@@ -142,10 +142,10 @@ themes_list_themes (Gimp *gimp,
 }
 
 const gchar *
-themes_get_theme_dir (Gimp        *gimp,
+themes_get_theme_dir (Picman        *picman,
                       const gchar *theme_name)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   if (! theme_name)
     theme_name = "Default";
@@ -154,17 +154,17 @@ themes_get_theme_dir (Gimp        *gimp,
 }
 
 gchar *
-themes_get_theme_file (Gimp        *gimp,
+themes_get_theme_file (Picman        *picman,
                        const gchar *first_component,
                        ...)
 {
-  GimpGuiConfig *gui_config;
+  PicmanGuiConfig *gui_config;
   gchar         *file;
   gchar         *component;
   gchar         *path;
   va_list        args;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (first_component != NULL, NULL);
 
   file = g_strdup (first_component);
@@ -182,16 +182,16 @@ themes_get_theme_file (Gimp        *gimp,
 
   va_end (args);
 
-  gui_config = GIMP_GUI_CONFIG (gimp->config);
+  gui_config = PICMAN_GUI_CONFIG (picman->config);
 
-  path = g_build_filename (themes_get_theme_dir (gimp, gui_config->theme),
+  path = g_build_filename (themes_get_theme_dir (picman, gui_config->theme),
                            file, NULL);
 
   if (! g_file_test (path, G_FILE_TEST_EXISTS))
     {
       g_free (path);
 
-      path = g_build_filename (themes_get_theme_dir (gimp, NULL),
+      path = g_build_filename (themes_get_theme_dir (picman, NULL),
                                file, NULL);
     }
 
@@ -204,7 +204,7 @@ themes_get_theme_file (Gimp        *gimp,
 /*  private functions  */
 
 static void
-themes_apply_theme (Gimp        *gimp,
+themes_apply_theme (Picman        *picman,
                     const gchar *theme_name)
 {
   const gchar *theme_dir;
@@ -213,9 +213,9 @@ themes_apply_theme (Gimp        *gimp,
   gchar       *themerc;
   FILE        *file;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  theme_dir = themes_get_theme_dir (gimp, theme_name);
+  theme_dir = themes_get_theme_dir (picman, theme_name);
 
   if (theme_dir)
     {
@@ -224,24 +224,24 @@ themes_apply_theme (Gimp        *gimp,
   else
     {
       /*  get the hardcoded default theme gtkrc  */
-      gtkrc_theme = g_strdup (gimp_gtkrc ());
+      gtkrc_theme = g_strdup (picman_gtkrc ());
     }
 
-  gtkrc_user = gimp_personal_rc_file ("gtkrc");
+  gtkrc_user = picman_personal_rc_file ("gtkrc");
 
-  themerc = gimp_personal_rc_file ("themerc");
+  themerc = picman_personal_rc_file ("themerc");
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("Writing '%s'\n",
-             gimp_filename_to_utf8 (themerc));
+             picman_filename_to_utf8 (themerc));
 
   file = g_fopen (themerc, "w");
 
   if (! file)
     {
-      gimp_message (gimp, NULL, GIMP_MESSAGE_ERROR,
+      picman_message (picman, NULL, PICMAN_MESSAGE_ERROR,
                     _("Could not open '%s' for writing: %s"),
-                    gimp_filename_to_utf8 (themerc), g_strerror (errno));
+                    picman_filename_to_utf8 (themerc), g_strerror (errno));
       goto cleanup;
     }
 
@@ -250,9 +250,9 @@ themes_apply_theme (Gimp        *gimp,
     gchar *esc_gtkrc_user  = g_strescape (gtkrc_user, NULL);
 
     fprintf (file,
-             "# GIMP themerc\n"
+             "# PICMAN themerc\n"
              "#\n"
-             "# This file is written on GIMP startup and on every theme change.\n"
+             "# This file is written on PICMAN startup and on every theme change.\n"
              "# It is NOT supposed to be edited manually. Edit your personal\n"
              "# gtkrc file instead (%s).\n"
              "\n"
@@ -277,15 +277,15 @@ themes_apply_theme (Gimp        *gimp,
 }
 
 static void
-themes_directories_foreach (const GimpDatafileData *file_data,
+themes_directories_foreach (const PicmanDatafileData *file_data,
                             gpointer                user_data)
 {
-  Gimp *gimp = GIMP (user_data);
+  Picman *picman = PICMAN (user_data);
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("Adding theme '%s' (%s)\n",
-             gimp_filename_to_utf8 (file_data->basename),
-             gimp_filename_to_utf8 (file_data->filename));
+             picman_filename_to_utf8 (file_data->basename),
+             picman_filename_to_utf8 (file_data->filename));
 
   g_hash_table_insert (themes_hash,
                        g_strdup (file_data->basename),
@@ -305,11 +305,11 @@ themes_list_themes_foreach (gpointer key,
 }
 
 static void
-themes_theme_change_notify (GimpGuiConfig *config,
+themes_theme_change_notify (PicmanGuiConfig *config,
                             GParamSpec    *pspec,
-                            Gimp          *gimp)
+                            Picman          *picman)
 {
-  themes_apply_theme (gimp, config->theme);
+  themes_apply_theme (picman, config->theme);
 
   gtk_rc_reparse_all ();
 }

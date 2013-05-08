@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 #define __SESSION_H__
 
 
-void       session_init    (Gimp     *gimp);
-void       session_exit    (Gimp     *gimp);
+void       session_init    (Picman     *picman);
+void       session_exit    (Picman     *picman);
 
-void       session_restore (Gimp     *gimp);
-void       session_save    (Gimp     *gimp,
+void       session_restore (Picman     *picman);
+void       session_save    (Picman     *picman,
                             gboolean  always_save);
 
-gboolean   session_clear   (Gimp     *gimp,
+gboolean   session_clear   (Picman     *picman,
                             GError  **error);
 
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * newsprint plug-in
- * Copyright (C) 1997-1998 Austin Donnelly <austin@gimp.org>
+ * Copyright (C) 1997-1998 Austin Donnelly <austin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define VERSION "v0.60"
 
@@ -57,7 +57,7 @@
 
 #define PLUG_IN_PROC       "plug-in-newsprint"
 #define PLUG_IN_BINARY     "newsprint"
-#define PLUG_IN_ROLE       "gimp-newsprint"
+#define PLUG_IN_ROLE       "picman-newsprint"
 
 #define TILE_CACHE_SIZE     16
 #define SCALE_WIDTH        125
@@ -437,11 +437,11 @@ static const gint cspace_nchans[] =
 static void     query   (void);
 static void     run     (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static gboolean newsprint_dialog            (GimpDrawable  *drawable);
+static gboolean newsprint_dialog            (PicmanDrawable  *drawable);
 static void     newsprint_cspace_update     (GtkWidget     *widget,
                                              gpointer       data);
 
@@ -458,14 +458,14 @@ static void     cellsize_callback           (GtkAdjustment *adjustment,
 static void     newsprint_defaults_callback (GtkWidget     *widget,
                                              gpointer       data);
 
-static void     newsprint                   (GimpDrawable  *drawable,
-                                             GimpPreview   *preview);
+static void     newsprint                   (PicmanDrawable  *drawable,
+                                             PicmanPreview   *preview);
 static guchar * spot2thresh                 (gint           type,
                                              gint           width);
 
 static void     preview_update              (channel_st    *st);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -481,30 +481,30 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable" },
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable" },
 
-    { GIMP_PDB_INT32,    "cell-width", "Screen cell width in pixels" },
+    { PICMAN_PDB_INT32,    "cell-width", "Screen cell width in pixels" },
 
-    { GIMP_PDB_INT32,    "colorspace", "Separate to { GRAYSCALE (0), RGB (1), CMYK (2), LUMINANCE (3) }" },
-    { GIMP_PDB_INT32,    "k-pullout",  "Percentage of black to pullout (CMYK only)" },
+    { PICMAN_PDB_INT32,    "colorspace", "Separate to { GRAYSCALE (0), RGB (1), CMYK (2), LUMINANCE (3) }" },
+    { PICMAN_PDB_INT32,    "k-pullout",  "Percentage of black to pullout (CMYK only)" },
 
-    { GIMP_PDB_FLOAT,    "gry-ang",    "Grey/black screen angle (degrees)" },
-    { GIMP_PDB_INT32,    "gry-spotfn", "Grey/black spot function { DOTS (0), LINES (1), DIAMONDS (2), EUCLIDIAN-DOT (3), PS-DIAMONDS (4) }" },
-    { GIMP_PDB_FLOAT,    "red-ang",    "Red/cyan screen angle (degrees)" },
-    { GIMP_PDB_INT32,    "red-spotfn", "Red/cyan spot function (values as gry-spotfn)" },
-    { GIMP_PDB_FLOAT,    "grn-ang",    "Green/magenta screen angle (degrees)" },
-    { GIMP_PDB_INT32,    "grn-spotfn", "Green/magenta spot function (values as gry-spotfn)" },
-    { GIMP_PDB_FLOAT,    "blu-ang",    "Blue/yellow screen angle (degrees)" },
-    { GIMP_PDB_INT32,    "blu-spotfn", "Blue/yellow spot function (values as gry-spotfn)" },
+    { PICMAN_PDB_FLOAT,    "gry-ang",    "Grey/black screen angle (degrees)" },
+    { PICMAN_PDB_INT32,    "gry-spotfn", "Grey/black spot function { DOTS (0), LINES (1), DIAMONDS (2), EUCLIDIAN-DOT (3), PS-DIAMONDS (4) }" },
+    { PICMAN_PDB_FLOAT,    "red-ang",    "Red/cyan screen angle (degrees)" },
+    { PICMAN_PDB_INT32,    "red-spotfn", "Red/cyan spot function (values as gry-spotfn)" },
+    { PICMAN_PDB_FLOAT,    "grn-ang",    "Green/magenta screen angle (degrees)" },
+    { PICMAN_PDB_INT32,    "grn-spotfn", "Green/magenta spot function (values as gry-spotfn)" },
+    { PICMAN_PDB_FLOAT,    "blu-ang",    "Blue/yellow screen angle (degrees)" },
+    { PICMAN_PDB_INT32,    "blu-spotfn", "Blue/yellow spot function (values as gry-spotfn)" },
 
-    { GIMP_PDB_INT32,    "oversample", "how many times to oversample spot fn" }
+    { PICMAN_PDB_INT32,    "oversample", "how many times to oversample spot fn" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Halftone the image to give newspaper-like effect"),
                           "Halftone the image, trading off resolution to "
                           "represent colors or grey levels using the process "
@@ -516,24 +516,24 @@ query (void)
                           "1998 (" VERSION ")",
                           N_("Newsprin_t..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -542,7 +542,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* basic defaults */
@@ -550,28 +550,28 @@ run (const gchar      *name,
   pvals_ui = factory_defaults_ui;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
-      gimp_get_data (PLUG_IN_PROC "-ui", &pvals_ui);
+      picman_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC "-ui", &pvals_ui);
 
       /*  First acquire information with a dialog  */
       if (! newsprint_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 15)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
 
@@ -596,55 +596,55 @@ run (const gchar      *name,
           !VALID_CS (pvals.colourspace) ||
           pvals.k_pullout < 0 || pvals.k_pullout > 100)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Newsprint"));
+          picman_progress_init (_("Newsprint"));
 
           /*  set the tile cache size  */
-          gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+          picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
           /*  run the newsprint effect  */
           newsprint (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
             {
-              gimp_set_data (PLUG_IN_PROC,
+              picman_set_data (PLUG_IN_PROC,
                              &pvals, sizeof (NewsprintValues));
-              gimp_set_data (PLUG_IN_PROC "-ui",
+              picman_set_data (PLUG_IN_PROC "-ui",
                              &pvals_ui, sizeof (NewsprintUIValues));
             }
         }
       else
         {
-          /*gimp_message ("newsprint: cannot operate on indexed images");*/
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /*picman_message ("newsprint: cannot operate on indexed images");*/
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
@@ -664,7 +664,7 @@ new_preview (gint *sfn)
   /* make the preview widgets */
   for (i = 0; i < 3; i++)
     {
-      preview = gimp_preview_area_new ();
+      preview = picman_preview_area_new ();
       gtk_widget_set_size_request (preview,
                                    PREVIEW_SIZE, PREVIEW_SIZE);
       gtk_widget_show (preview);
@@ -760,9 +760,9 @@ preview_update (channel_st *st)
         }
 
       /* redraw preview widget */
-      gimp_preview_area_draw (GIMP_PREVIEW_AREA (prev->widget),
+      picman_preview_area_draw (PICMAN_PREVIEW_AREA (prev->widget),
                               0, 0, PREVIEW_SIZE, PREVIEW_SIZE,
-                              GIMP_RGB_IMAGE,
+                              PICMAN_RGB_IMAGE,
                               rgb,
                               PREVIEW_SIZE * 3);
 
@@ -782,7 +782,7 @@ newsprint_menu_callback (GtkWidget *widget,
   static gboolean  in_progress = FALSE;
 
   /* We shouldn't need recursion protection, but if lock_channels is
-   * set, and gimp_int_combo_box_set_active ever generates a "changed"
+   * set, and picman_int_combo_box_set_active ever generates a "changed"
    * signal, then we'll get back here.
    */
   if (in_progress)
@@ -793,7 +793,7 @@ newsprint_menu_callback (GtkWidget *widget,
 
   in_progress = TRUE;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value);
 
   *(st->spotfn_num) = value;
 
@@ -808,7 +808,7 @@ newsprint_menu_callback (GtkWidget *widget,
 
       while (c != st)
         {
-          gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (c->combo), value);
+          picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (c->combo), value);
 
           old_value = *(c->spotfn_num);
           *(c->spotfn_num) = value;
@@ -833,7 +833,7 @@ angle_callback (GtkAdjustment *adjustment,
 
   angle_ptr = g_object_get_data (G_OBJECT (adjustment), "angle");
 
-  gimp_double_adjustment_update (adjustment, angle_ptr);
+  picman_double_adjustment_update (adjustment, angle_ptr);
 
   if (pvals_ui.lock_channels && !in_progress)
     {
@@ -857,7 +857,7 @@ lpi_callback (GtkAdjustment *adjustment,
 {
   NewsprintDialog_st *st = data;
 
-  gimp_double_adjustment_update (adjustment, &pvals_ui.output_lpi);
+  picman_double_adjustment_update (adjustment, &pvals_ui.output_lpi);
 
   g_signal_handlers_block_by_func (st->cellsize,
                                    cellsize_callback,
@@ -877,7 +877,7 @@ spi_callback (GtkAdjustment *adjustment,
 {
   NewsprintDialog_st *st = data;
 
-  gimp_double_adjustment_update (adjustment, &pvals_ui.input_spi);
+  picman_double_adjustment_update (adjustment, &pvals_ui.input_spi);
 
   g_signal_handlers_block_by_func (st->output_lpi,
                                    lpi_callback,
@@ -897,7 +897,7 @@ cellsize_callback (GtkAdjustment *adjustment,
 {
   NewsprintDialog_st *st = data;
 
-  gimp_int_adjustment_update (adjustment, &pvals.cell_width);
+  picman_int_adjustment_update (adjustment, &pvals.cell_width);
 
   g_signal_handlers_block_by_func (st->output_lpi,
                                    lpi_callback,
@@ -947,7 +947,7 @@ newsprint_defaults_callback (GtkWidget *widget,
            * question, in order to run the handler that re-computes
            * the preview area */
           spotfn = *(ct->factory_spotfn);
-          gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (chst[c]->combo),
+          picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (chst[c]->combo),
                                          spotfn);
 
           c++;
@@ -988,7 +988,7 @@ new_channel (const chan_tmpl *ct, GtkWidget *preview)
   group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   /* angle slider */
-  chst->angle_adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  chst->angle_adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                           _("_Angle:"), SCALE_WIDTH, 0,
                                           *ct->angle,
                                           -90, 90, 1, 15, 1,
@@ -996,14 +996,14 @@ new_channel (const chan_tmpl *ct, GtkWidget *preview)
                                           NULL, NULL);
   g_object_set_data (G_OBJECT (chst->angle_adj), "angle", ct->angle);
 
-  gtk_size_group_add_widget (group, GIMP_SCALE_ENTRY_LABEL (chst->angle_adj));
+  gtk_size_group_add_widget (group, PICMAN_SCALE_ENTRY_LABEL (chst->angle_adj));
   g_object_unref (group);
 
   g_signal_connect (chst->angle_adj, "value-changed",
                     G_CALLBACK (angle_callback),
                     chst);
   g_signal_connect_swapped (chst->angle_adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* spot function popup */
@@ -1026,22 +1026,22 @@ new_channel (const chan_tmpl *ct, GtkWidget *preview)
 
   gtk_size_group_add_widget (group, label);
 
-  chst->combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  chst->combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
 
   for (sf = spotfn_list, i = 0; sf->name; sf++, i++)
-    gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (chst->combo),
-                               GIMP_INT_STORE_VALUE, i,
-                               GIMP_INT_STORE_LABEL, gettext (sf->name),
+    picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (chst->combo),
+                               PICMAN_INT_STORE_VALUE, i,
+                               PICMAN_INT_STORE_LABEL, gettext (sf->name),
                                -1);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (chst->combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (chst->combo),
                                  *ct->spotfn);
 
   g_signal_connect (chst->combo, "changed",
                     G_CALLBACK (newsprint_menu_callback),
                     chst);
   g_signal_connect_swapped (chst->combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_box_pack_start (GTK_BOX (hbox2), chst->combo, FALSE, FALSE, 0);
@@ -1134,7 +1134,7 @@ gen_channels (NewsprintDialog_st *st,
 
 
 static gboolean
-newsprint_dialog (GimpDrawable *drawable)
+newsprint_dialog (PicmanDrawable *drawable)
 {
   /* widgets we need from callbacks stored here */
   NewsprintDialog_st st;
@@ -1152,7 +1152,7 @@ newsprint_dialog (GimpDrawable *drawable)
   gdouble    xres, yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   /* flag values to say we haven't filled these channel
    * states in yet */
@@ -1161,8 +1161,8 @@ newsprint_dialog (GimpDrawable *drawable)
 
   /* need to know the bpp, so we can tell if we're doing
    * RGB/CMYK or grey style of dialog box */
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  bpp = picman_drawable_bpp (drawable->drawable_id);
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     bpp--;
 
   /* force greyscale if it's the only thing we can do */
@@ -1176,9 +1176,9 @@ newsprint_dialog (GimpDrawable *drawable)
         pvals.colourspace = CS_RGB;
     }
 
-  dialog = gimp_dialog_new (_("Newsprint"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Newsprint"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1190,7 +1190,7 @@ newsprint_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_set_border_width (GTK_CONTAINER (paned), 12);
@@ -1207,7 +1207,7 @@ newsprint_dialog (GimpDrawable *drawable)
   gtk_box_pack_end (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -1229,7 +1229,7 @@ newsprint_dialog (GimpDrawable *drawable)
   gtk_widget_show (vbox);
 
   /* resolution settings  */
-  frame = gimp_frame_new (_("Resolution"));
+  frame = picman_frame_new (_("Resolution"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1239,7 +1239,7 @@ newsprint_dialog (GimpDrawable *drawable)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  gimp_image_get_resolution (gimp_item_get_image (drawable->drawable_id),
+  picman_image_get_resolution (picman_item_get_image (drawable->drawable_id),
                              &xres, &yres);
   /* XXX hack: should really note both resolutions, and use
    * rectangular cells, not square cells.  But I'm being lazy,
@@ -1247,48 +1247,48 @@ newsprint_dialog (GimpDrawable *drawable)
   pvals_ui.input_spi = xres;
 
   st.input_spi =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("_Input SPI:"), SCALE_WIDTH, 7,
                           pvals_ui.input_spi,
                           1.0, 1200.0, 1.0, 10.0, 0,
-                          FALSE, GIMP_MIN_RESOLUTION, GIMP_MAX_RESOLUTION,
+                          FALSE, PICMAN_MIN_RESOLUTION, PICMAN_MAX_RESOLUTION,
                           NULL, NULL);
   g_signal_connect (st.input_spi, "value-changed",
                     G_CALLBACK (spi_callback),
                     &st);
   g_signal_connect_swapped (st.input_spi, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   st.output_lpi =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("O_utput LPI:"), SCALE_WIDTH, 7,
                           pvals_ui.output_lpi,
                           1.0, 1200.0, 1.0, 10.0, 1,
-                          FALSE, GIMP_MIN_RESOLUTION, GIMP_MAX_RESOLUTION,
+                          FALSE, PICMAN_MIN_RESOLUTION, PICMAN_MAX_RESOLUTION,
                           NULL, NULL);
   g_signal_connect (st.output_lpi, "value-changed",
                     G_CALLBACK (lpi_callback),
                     &st);
   g_signal_connect_swapped (st.output_lpi, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  st.cellsize = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  st.cellsize = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                                       _("C_ell size:"), SCALE_WIDTH, 7,
                                       pvals.cell_width,
                                       3.0, 100.0, 1.0, 5.0, 0,
-                                      FALSE, 3.0, GIMP_MAX_IMAGE_SIZE,
+                                      FALSE, 3.0, PICMAN_MAX_IMAGE_SIZE,
                                       NULL, NULL);
   g_signal_connect (st.cellsize, "value-changed",
                     G_CALLBACK (cellsize_callback),
                     &st);
   g_signal_connect_swapped (st.cellsize, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* screen settings */
-  frame = gimp_frame_new (_("Screen"));
+  frame = picman_frame_new (_("Screen"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
   st.vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
@@ -1306,7 +1306,7 @@ newsprint_dialog (GimpDrawable *drawable)
       gtk_table_set_col_spacings (GTK_TABLE (st.pull_table), 6);
 
       /* black pullout */
-      st.pull = gimp_scale_entry_new (GTK_TABLE (st.pull_table), 0, 0,
+      st.pull = picman_scale_entry_new (GTK_TABLE (st.pull_table), 0, 0,
                                       _("B_lack pullout (%):"), SCALE_WIDTH, 0,
                                       pvals.k_pullout,
                                       0, 100, 1, 10, 0,
@@ -1316,10 +1316,10 @@ newsprint_dialog (GimpDrawable *drawable)
       gtk_widget_show (st.pull_table);
 
       g_signal_connect (st.pull, "value-changed",
-                        G_CALLBACK (gimp_int_adjustment_update),
+                        G_CALLBACK (picman_int_adjustment_update),
                         &pvals.k_pullout);
       g_signal_connect_swapped (st.pull, "value-changed",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       /* RGB / CMYK / Luminance select */
@@ -1347,7 +1347,7 @@ newsprint_dialog (GimpDrawable *drawable)
                         G_CALLBACK (newsprint_cspace_update),
                         GINT_TO_POINTER (CS_RGB));
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       toggle = gtk_radio_button_new_with_mnemonic (group, _("C_MYK"));
@@ -1364,7 +1364,7 @@ newsprint_dialog (GimpDrawable *drawable)
                         G_CALLBACK (newsprint_cspace_update),
                         GINT_TO_POINTER (CS_CMYK));
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       toggle = gtk_radio_button_new_with_mnemonic (group, _("I_ntensity"));
@@ -1381,7 +1381,7 @@ newsprint_dialog (GimpDrawable *drawable)
                         G_CALLBACK (newsprint_cspace_update),
                         GINT_TO_POINTER (CS_LUMINANCE));
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       gtk_widget_show (hbox);
@@ -1399,10 +1399,10 @@ newsprint_dialog (GimpDrawable *drawable)
       gtk_widget_show (toggle);
 
       g_signal_connect (toggle, "toggled",
-                        G_CALLBACK (gimp_toggle_button_update),
+                        G_CALLBACK (picman_toggle_button_update),
                         &pvals_ui.lock_channels);
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
 
       button = gtk_button_new_with_mnemonic (_("_Factory Defaults"));
@@ -1413,7 +1413,7 @@ newsprint_dialog (GimpDrawable *drawable)
                         G_CALLBACK (newsprint_defaults_callback),
                         &st);
       g_signal_connect_swapped (button, "clicked",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
     }
 
@@ -1431,24 +1431,24 @@ newsprint_dialog (GimpDrawable *drawable)
   gtk_widget_show (frame);
 
   /* anti-alias control */
-  frame = gimp_frame_new (_("Antialiasing"));
+  frame = picman_frame_new (_("Antialiasing"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
   table = gtk_table_new (1, 3, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
   gtk_container_add (GTK_CONTAINER (frame), table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("O_versample:"), SCALE_WIDTH, 0,
                               pvals.oversample,
                               1.0, 15.0, 1.0, 5.0, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pvals.oversample);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
@@ -1458,7 +1458,7 @@ newsprint_dialog (GimpDrawable *drawable)
 
   preview_update(st.chst[pvals.colourspace][0]);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1743,10 +1743,10 @@ spot2thresh (gint type,
 
 /* This function operates on the image, striding across it in tiles. */
 static void
-newsprint (GimpDrawable *drawable,
-           GimpPreview  *preview)
+newsprint (PicmanDrawable *drawable,
+           PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   guchar       *src_row, *dest_row;
   guchar       *src, *dest;
   guchar       *thresh[4] = { NULL, NULL, NULL, NULL };
@@ -1786,25 +1786,25 @@ newsprint (GimpDrawable *drawable,
 
   width *= oversample;
 
-  tile_width = gimp_tile_width ();
-  tile_height = gimp_tile_height ();
+  tile_width = picman_tile_width ();
+  tile_height = picman_tile_height ();
 
-  bpp        = gimp_drawable_bpp (drawable->drawable_id);
+  bpp        = picman_drawable_bpp (drawable->drawable_id);
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &preview_width, &preview_height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &preview_width, &preview_height);
       x2 = x1 + preview_width;
       y2 = y1 + preview_height;
       preview_buffer = g_new (guchar, preview_width * preview_height * bpp);
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
     }
 
-  has_alpha  = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha  = picman_drawable_has_alpha (drawable->drawable_id);
   colour_bpp = has_alpha ? bpp-1 : bpp;
   colourspace= pvals.colourspace;
   if (colour_bpp == 1)
@@ -1892,16 +1892,16 @@ do {                                                            \
           y_step = MIN (y_step, y2 - y);
 
           /* set up the source and dest regions */
-          gimp_pixel_rgn_init (&src_rgn, drawable, x, y, x_step, y_step,
+          picman_pixel_rgn_init (&src_rgn, drawable, x, y, x_step, y_step,
                                FALSE/*dirty*/, FALSE/*shadow*/);
 
-          gimp_pixel_rgn_init (&dest_rgn, drawable, x, y, x_step, y_step,
+          picman_pixel_rgn_init (&dest_rgn, drawable, x, y, x_step, y_step,
                                TRUE/*dirty*/, TRUE/*shadow*/);
 
           /* page in the image, one tile at a time */
-          for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+          for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
                pr != NULL;
-               pr = gimp_pixel_rgns_process (pr))
+               pr = picman_pixel_rgns_process (pr))
             {
               src_row  = src_rgn.data;
               if (preview)
@@ -1940,7 +1940,7 @@ do {                                                            \
                             b = data[2];
                             k = pvals.k_pullout;
 
-                            gimp_rgb_to_cmyk_int (&r, &g, &b, &k);
+                            picman_rgb_to_cmyk_int (&r, &g, &b, &k);
 
                             data[0] = r;
                             data[1] = g;
@@ -1951,7 +1951,7 @@ do {                                                            \
 
                         case CS_LUMINANCE:
                           data[3] = data[0]; /* save orig for later */
-                          data[0] = GIMP_RGB_LUMINANCE (data[0],
+                          data[0] = PICMAN_RGB_LUMINANCE (data[0],
                                                         data[1],
                                                         data[2]) + 0.5;
                           break;
@@ -2042,7 +2042,7 @@ do {                                                            \
               /* Update progress */
               progress += src_rgn.w * src_rgn.h;
               if (!preview)
-                gimp_progress_update ((double) progress / (double) max_progress);
+                picman_progress_update ((double) progress / (double) max_progress);
             }
         }
     }
@@ -2060,16 +2060,16 @@ do {                                                            \
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, preview_width * bpp);
+      picman_preview_draw_buffer (preview, preview_buffer, preview_width * bpp);
 
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /* update the affected region */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
     }
 }

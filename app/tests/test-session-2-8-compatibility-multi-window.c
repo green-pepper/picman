@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2011 Martin Nordholts
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,23 +23,23 @@
 
 #include "tests.h"
 
-#include "gimp-test-session-utils.h"
-#include "gimp-app-test-utils.h"
+#include "picman-test-session-utils.h"
+#include "picman-app-test-utils.h"
 
 
 #define ADD_TEST(function) \
-  g_test_add_func ("/gimp-session-2-8-compatibility-multi-window/" #function, \
+  g_test_add_func ("/picman-session-2-8-compatibility-multi-window/" #function, \
                    function);
 
 
 /**
- * Tests that a single-window sessionrc in GIMP 2.8 format is loaded
+ * Tests that a single-window sessionrc in PICMAN 2.8 format is loaded
  * and written (thus also interpreted) like we expect.
  **/
 static void
 read_and_write_session_files (void)
 {
-  gimp_test_session_load_and_write_session_files ("sessionrc-2-8-multi-window",
+  picman_test_session_load_and_write_session_files ("sessionrc-2-8-multi-window",
                                                   "dockrc-2-8",
                                                   "sessionrc-expected-multi-window",
                                                   "dockrc-expected",
@@ -48,7 +48,7 @@ read_and_write_session_files (void)
 
 int main(int argc, char **argv)
 {
-  gimp_test_bail_if_no_display ();
+  picman_test_bail_if_no_display ();
   gtk_test_init (&argc, &argv, NULL);
 
   ADD_TEST (read_and_write_session_files);

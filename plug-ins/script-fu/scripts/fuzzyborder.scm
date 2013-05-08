@@ -35,35 +35,35 @@
         )
 
   (define (chris-color-edge inImage inLayer inColor inSize)
-    (gimp-selection-all inImage)
-    (gimp-selection-shrink inImage inSize)
-    (gimp-selection-invert inImage)
-    (gimp-context-set-background inColor)
-    (gimp-edit-fill inLayer BACKGROUND-FILL)
-    (gimp-selection-none inImage)
+    (picman-selection-all inImage)
+    (picman-selection-shrink inImage inSize)
+    (picman-selection-invert inImage)
+    (picman-context-set-background inColor)
+    (picman-edit-fill inLayer BACKGROUND-FILL)
+    (picman-selection-none inImage)
   )
 
   (let (
-       (theWidth (car (gimp-image-width inImage)))
-       (theHeight (car (gimp-image-height inImage)))
+       (theWidth (car (picman-image-width inImage)))
+       (theHeight (car (picman-image-height inImage)))
        (theImage 0)
        (theLayer 0)
        )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-selection-all inImage)
+    (picman-selection-all inImage)
     (set! theImage (if (= inCopy TRUE)
-                     (car (gimp-image-duplicate inImage))
+                     (car (picman-image-duplicate inImage))
                      inImage
                    )
     )
-    (if (> (car (gimp-drawable-type inLayer)) 1)
-        (gimp-image-convert-rgb theImage)
+    (if (> (car (picman-drawable-type inLayer)) 1)
+        (picman-image-convert-rgb theImage)
     )
 
-    (set! theLayer (car (gimp-layer-new theImage
+    (set! theLayer (car (picman-layer-new theImage
                                         theWidth
                                         theHeight
                                         RGBA-IMAGE
@@ -71,13 +71,13 @@
                                         100
                                         NORMAL-MODE)))
 
-    (gimp-image-insert-layer theImage theLayer 0 0)
+    (picman-image-insert-layer theImage theLayer 0 0)
 
 
-    (gimp-edit-clear theLayer)
+    (picman-edit-clear theLayer)
     (chris-color-edge theImage theLayer inColor inSize)
 
-    (gimp-layer-scale theLayer
+    (picman-layer-scale theLayer
                       (/ theWidth inGranu)
                       (/ theHeight inGranu)
                       TRUE)
@@ -88,16 +88,16 @@
                     (/ inSize inGranu)
                     (/ inSize inGranu))
     (chris-color-edge theImage theLayer inColor 1)
-    (gimp-layer-scale theLayer theWidth theHeight TRUE)
+    (picman-layer-scale theLayer theWidth theHeight TRUE)
 
-    (gimp-image-select-item theImage CHANNEL-OP-REPLACE theLayer)
-    (gimp-selection-invert theImage)
-    (gimp-edit-clear theLayer)
-    (gimp-selection-invert theImage)
-    (gimp-edit-clear theLayer)
-    (gimp-context-set-background inColor)
-    (gimp-edit-fill theLayer BACKGROUND-FILL)
-    (gimp-selection-none inImage)
+    (picman-image-select-item theImage CHANNEL-OP-REPLACE theLayer)
+    (picman-selection-invert theImage)
+    (picman-edit-clear theLayer)
+    (picman-selection-invert theImage)
+    (picman-edit-clear theLayer)
+    (picman-context-set-background inColor)
+    (picman-edit-fill theLayer BACKGROUND-FILL)
+    (picman-selection-none inImage)
     (chris-color-edge theImage theLayer inColor 1)
 
     (if (= inBlur TRUE)
@@ -106,14 +106,14 @@
     )
     (if (= inShadow TRUE)
         (begin
-          (gimp-image-insert-layer theImage
-                                   (car (gimp-layer-copy theLayer FALSE)) 0 -1)
-          (gimp-layer-scale theLayer
+          (picman-image-insert-layer theImage
+                                   (car (picman-layer-copy theLayer FALSE)) 0 -1)
+          (picman-layer-scale theLayer
                             (- theWidth inSize) (- theHeight inSize) TRUE)
-          (gimp-desaturate theLayer)
-          (gimp-brightness-contrast theLayer 127 127)
-          (gimp-invert theLayer)
-          (gimp-layer-resize theLayer
+          (picman-desaturate theLayer)
+          (picman-brightness-contrast theLayer 127 127)
+          (picman-invert theLayer)
+          (picman-layer-resize theLayer
                              theWidth
                              theHeight
                              (/ inSize 2)
@@ -124,21 +124,21 @@
                              (/ inSize 2)
                              TRUE
                              TRUE)
-          (gimp-layer-set-opacity theLayer inShadWeight)
+          (picman-layer-set-opacity theLayer inShadWeight)
         )
     )
     (if (= inFlatten TRUE)
-        (gimp-image-flatten theImage)
+        (picman-image-flatten theImage)
     )
     (if (= inCopy TRUE)
       (begin
-        (gimp-image-clean-all theImage)
-        (gimp-display-new theImage)
+        (picman-image-clean-all theImage)
+        (picman-display-new theImage)
       )
     )
-    (gimp-displays-flush)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 

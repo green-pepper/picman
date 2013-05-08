@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,28 +20,28 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpcolorpanel.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmancolorpanel.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "channel-options-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void channel_options_opacity_update (GtkAdjustment        *adjustment,
                                             gpointer              data);
-static void channel_options_color_changed  (GimpColorButton      *button,
+static void channel_options_color_changed  (PicmanColorButton      *button,
                                             gpointer              data);
 static void channel_options_dialog_free    (ChannelOptionsDialog *options);
 
@@ -49,11 +49,11 @@ static void channel_options_dialog_free    (ChannelOptionsDialog *options);
 /*  public functions  */
 
 ChannelOptionsDialog *
-channel_options_dialog_new (GimpImage     *image,
-                            GimpChannel   *channel,
-                            GimpContext   *context,
+channel_options_dialog_new (PicmanImage     *image,
+                            PicmanChannel   *channel,
+                            PicmanContext   *context,
                             GtkWidget     *parent,
-                            const GimpRGB *channel_color,
+                            const PicmanRGB *channel_color,
                             const gchar   *channel_name,
                             const gchar   *title,
                             const gchar   *role,
@@ -65,15 +65,15 @@ channel_options_dialog_new (GimpImage     *image,
                             gboolean       show_from_sel)
 {
   ChannelOptionsDialog *options;
-  GimpViewable         *viewable;
+  PicmanViewable         *viewable;
   GtkWidget            *hbox;
   GtkWidget            *vbox;
   GtkWidget            *table;
   GtkObject            *opacity_adj;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (channel == NULL || GIMP_IS_CHANNEL (channel), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (channel == NULL || PICMAN_IS_CHANNEL (channel), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
   g_return_val_if_fail (channel_color != NULL, NULL);
   g_return_val_if_fail (title != NULL, NULL);
@@ -90,23 +90,23 @@ channel_options_dialog_new (GimpImage     *image,
   options->context = context;
   options->channel = channel;
 
-  options->color_panel = gimp_color_panel_new (color_label,
+  options->color_panel = picman_color_panel_new (color_label,
                                                channel_color,
-                                               GIMP_COLOR_AREA_LARGE_CHECKS,
+                                               PICMAN_COLOR_AREA_LARGE_CHECKS,
                                                48, 64);
-  gimp_color_panel_set_context (GIMP_COLOR_PANEL (options->color_panel),
+  picman_color_panel_set_context (PICMAN_COLOR_PANEL (options->color_panel),
                                 context);
 
   if (channel)
-    viewable = GIMP_VIEWABLE (channel);
+    viewable = PICMAN_VIEWABLE (channel);
   else
-    viewable = GIMP_VIEWABLE (image);
+    viewable = PICMAN_VIEWABLE (image);
 
   options->dialog =
-    gimp_viewable_dialog_new (viewable, context,
+    picman_viewable_dialog_new (viewable, context,
                               title, role, stock_id, desc,
                               parent,
-                              gimp_standard_help_func, help_id,
+                              picman_standard_help_func, help_id,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -142,14 +142,14 @@ channel_options_dialog_new (GimpImage     *image,
     {
       options->name_entry = gtk_entry_new ();
       gtk_entry_set_activates_default (GTK_ENTRY (options->name_entry), TRUE);
-      gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+      picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                  _("Channel _name:"), 0.0, 0.5,
                                  options->name_entry, 2, FALSE);
 
       gtk_entry_set_text (GTK_ENTRY (options->name_entry), channel_name);
     }
 
-  opacity_adj = gimp_scale_entry_new (GTK_TABLE (table),
+  opacity_adj = picman_scale_entry_new (GTK_TABLE (table),
                                       0, channel_name ? 1 : 0,
                                       opacity_label, 100, -1,
                                       channel_color->a * 100.0,
@@ -189,21 +189,21 @@ static void
 channel_options_opacity_update (GtkAdjustment *adjustment,
                                 gpointer       data)
 {
-  GimpRGB  color;
+  PicmanRGB  color;
 
-  gimp_color_button_get_color (GIMP_COLOR_BUTTON (data), &color);
-  gimp_rgb_set_alpha (&color, gtk_adjustment_get_value (adjustment) / 100.0);
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (data), &color);
+  picman_color_button_get_color (PICMAN_COLOR_BUTTON (data), &color);
+  picman_rgb_set_alpha (&color, gtk_adjustment_get_value (adjustment) / 100.0);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (data), &color);
 }
 
 static void
-channel_options_color_changed (GimpColorButton *button,
+channel_options_color_changed (PicmanColorButton *button,
                                gpointer         data)
 {
   GtkAdjustment *adj = GTK_ADJUSTMENT (data);
-  GimpRGB        color;
+  PicmanRGB        color;
 
-  gimp_color_button_get_color (button, &color);
+  picman_color_button_get_color (button, &color);
   gtk_adjustment_set_value (adj, color.a * 100.0);
 }
 

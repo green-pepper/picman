@@ -17,7 +17,7 @@
 
 # Do override some GTK stock icons however.
 
-style "gimp-default-style"
+style "picman-default-style"
 {
   stock["gtk-dialog-error"] =
     {
@@ -37,75 +37,75 @@ style "gimp-default-style"
     }
 
   GtkPaned::handle-size             = 6
-  GimpDockWindow::default-height    = 300
-  GimpDock::font-scale              = 0.8333
-  GimpMenuDock::minimal-width       = 200
-  GimpDockWindow::menu-preview-size = button
-  GimpToolPalette::tool-icon-size   = button
-  GimpToolPalette::button-relief    = none
-  GimpDockbook::tab-border          = 0
-  GimpDockbook::tab-icon-size       = button
-  GimpColorNotebook::tab-border     = 0
-  GimpColorNotebook::tab-icon-size  = button
-  GimpDeviceEditor::handle-size     = 12
-  GimpDockable::content-border      = 2
-  GimpEditor::content-spacing       = 2
-  GimpEditor::button-spacing        = 2
-  GimpEditor::button-icon-size      = menu
-  GimpDataEditor::minimal-height    = 96
+  PicmanDockWindow::default-height    = 300
+  PicmanDock::font-scale              = 0.8333
+  PicmanMenuDock::minimal-width       = 200
+  PicmanDockWindow::menu-preview-size = button
+  PicmanToolPalette::tool-icon-size   = button
+  PicmanToolPalette::button-relief    = none
+  PicmanDockbook::tab-border          = 0
+  PicmanDockbook::tab-icon-size       = button
+  PicmanColorNotebook::tab-border     = 0
+  PicmanColorNotebook::tab-icon-size  = button
+  PicmanDeviceEditor::handle-size     = 12
+  PicmanDockable::content-border      = 2
+  PicmanEditor::content-spacing       = 2
+  PicmanEditor::button-spacing        = 2
+  PicmanEditor::button-icon-size      = menu
+  PicmanDataEditor::minimal-height    = 96
   GtkDialog::content-area-border    = 0
   GtkDialog::button-spacing         = 6
   GtkDialog::action-area-border     = 12
-  GimpUnitComboBox::appears-as-list = 0
+  PicmanUnitComboBox::appears-as-list = 0
 }
 
-class "GtkWidget" style "gimp-default-style"
+class "GtkWidget" style "picman-default-style"
 
 
-style "gimp-tool-dialog-style" = "gimp-default-style"
+style "picman-tool-dialog-style" = "picman-default-style"
 {
   GtkDialog::action-area-border = 6
 }
 
-class "GimpToolDialog" style "gimp-tool-dialog-style"
+class "PicmanToolDialog" style "picman-tool-dialog-style"
 
 
-style "gimp-grid-view-style" = "gimp-default-style"
+style "picman-grid-view-style" = "picman-default-style"
 {
   bg[NORMAL] = { 1.0, 1.0, 1.0 }
 }
 
-widget "*GimpContainerGridView*GtkViewport*" style "gimp-grid-view-style"
+widget "*PicmanContainerGridView*GtkViewport*" style "picman-grid-view-style"
 
 
-style "gimp-dockable-style" = "gimp-default-style"
+style "picman-dockable-style" = "picman-default-style"
 {
-  GimpFrame::label-bold       = 0
-  GimpFrame::label-spacing    = 2
+  PicmanFrame::label-bold       = 0
+  PicmanFrame::label-spacing    = 2
   GtkButton::focus-line_width = 1
   GtkButton::focus-padding    = 0
 }
 
-widget "*GimpDockable.*" style "gimp-dockable-style"
+widget "*PicmanDockable.*" style "picman-dockable-style"
 
 
-style "gimp-display-style" = "gimp-default-style"
+style "picman-display-style" = "picman-default-style"
 {
-  GimpRuler::font-scale          = 0.8333
-  GimpUnitComboBox::label-scale  = 0.8333
-  GimpScaleComboBox::label-scale = 0.8333
+  PicmanRuler::font-scale          = 0.8333
+  PicmanUnitComboBox::label-scale  = 0.8333
+  PicmanScaleComboBox::label-scale = 0.8333
   GtkComboBox::arrow-size        = 8
   GtkButton::inner-border        = { 0, 0, 0, 0 }
   GtkButton::focus-line_width    = 0
   GtkButton::focus-padding       = 0
 }
 
-widget "*GimpDisplayShell.*" style "gimp-display-style"
+widget "*PicmanDisplayShell.*" style "picman-display-style"
 
 
-style "gimp-overlay-style" = "gimp-display-style"
+style "picman-overlay-style" = "picman-display-style"
 {
   GtkButton::focus-line_width = 1
 }
 
-widget_class "*<GimpOverlayFrame>*" style "gimp-overlay-style"
+widget_class "*<PicmanOverlayFrame>*" style "picman-overlay-style"

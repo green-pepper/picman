@@ -1,0 +1,6 @@
+#include <glib-object.h>
+#include <libpicmanmodule/picmanmodule.h>
+
+picman_module_get_type
+picman_module_db_get_type
+

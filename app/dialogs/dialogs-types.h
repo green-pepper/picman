@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 #include "display/display-types.h"
 
 
-typedef void (* GimpScaleCallback) (GtkWidget             *dialog,
-                                    GimpViewable          *viewable,
+typedef void (* PicmanScaleCallback) (GtkWidget             *dialog,
+                                    PicmanViewable          *viewable,
                                     gint                   width,
                                     gint                   height,
-                                    GimpUnit               unit,
-                                    GimpInterpolationType  interpolation,
+                                    PicmanUnit               unit,
+                                    PicmanInterpolationType  interpolation,
                                     gdouble                xresolution,
                                     gdouble                yresolution,
-                                    GimpUnit               resolution_unit,
+                                    PicmanUnit               resolution_unit,
                                     gpointer               user_data);
 
 

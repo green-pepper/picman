@@ -1,4 +1,4 @@
-The GIMP Generated Brush File Format Version 1 (.vbr)
+The PICMAN Generated Brush File Format Version 1 (.vbr)
 -----------------------------------------------------
 
 Updated August 24, 2006.
@@ -18,7 +18,7 @@ number of spikes (for shaped brushes), which is an integer.
 
 Non-shaped brushes:
 
-Line 1: Must always contain the magic string "GIMP-VBR".
+Line 1: Must always contain the magic string "PICMAN-VBR".
 
 Line 2: Version number, always "1.0".
 
@@ -38,7 +38,7 @@ Line 8: The brush angle.
 
 Shaped brushes:
 
-Line 1: Must always contain the magic string "GIMP-VBR".
+Line 1: Must always contain the magic string "PICMAN-VBR".
 
 Line 2: Version number, always "1.5".
 
@@ -47,7 +47,7 @@ Line 3: The name of the brush.  This is a UTF-8 string, with a maximum
 
 Line 4: A string giving the shape of the brush.  Currently "Circle",
         "Square", and "Diamond" are supported.  The possible shapes
-        are defined by the GimpBrushGeneratedShape enum in
+        are defined by the PicmanBrushGeneratedShape enum in
         core-enums.h.
 
 Line 5: The brush spacing.

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,26 +23,26 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-gradients_popup_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_popup_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
@@ -51,186 +51,186 @@ gradients_popup_invoker (GimpProcedure         *procedure,
   const gchar *initial_gradient;
   gint32 sample_size;
 
-  gradient_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  popup_title = g_value_get_string (gimp_value_array_index (args, 1));
-  initial_gradient = g_value_get_string (gimp_value_array_index (args, 2));
-  sample_size = g_value_get_int (gimp_value_array_index (args, 3));
+  gradient_callback = g_value_get_string (picman_value_array_index (args, 0));
+  popup_title = g_value_get_string (picman_value_array_index (args, 1));
+  initial_gradient = g_value_get_string (picman_value_array_index (args, 2));
+  sample_size = g_value_get_int (picman_value_array_index (args, 3));
 
   if (success)
     {
       if (sample_size < 1 || sample_size > 10000)
-        sample_size = GIMP_GRADIENT_DEFAULT_SAMPLE_SIZE;
+        sample_size = PICMAN_GRADIENT_DEFAULT_SAMPLE_SIZE;
 
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, gradient_callback) ||
-          ! gimp_pdb_dialog_new (gimp, context, progress,
-                                 gimp_data_factory_get_container (gimp->gradient_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, gradient_callback) ||
+          ! picman_pdb_dialog_new (picman, context, progress,
+                                 picman_data_factory_get_container (picman->gradient_factory),
                                  popup_title, gradient_callback, initial_gradient,
                                  "sample-size", sample_size,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-gradients_close_popup_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_close_popup_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
   const gchar *gradient_callback;
 
-  gradient_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  gradient_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, gradient_callback) ||
-          ! gimp_pdb_dialog_close (gimp, gimp_data_factory_get_container (gimp->gradient_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, gradient_callback) ||
+          ! picman_pdb_dialog_close (picman, picman_data_factory_get_container (picman->gradient_factory),
                                    gradient_callback))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-gradients_set_popup_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+gradients_set_popup_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   const gchar *gradient_callback;
   const gchar *gradient_name;
 
-  gradient_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  gradient_name = g_value_get_string (gimp_value_array_index (args, 1));
+  gradient_callback = g_value_get_string (picman_value_array_index (args, 0));
+  gradient_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, gradient_callback) ||
-          ! gimp_pdb_dialog_set (gimp, gimp_data_factory_get_container (gimp->gradient_factory),
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, gradient_callback) ||
+          ! picman_pdb_dialog_set (picman, picman_data_factory_get_container (picman->gradient_factory),
                                  gradient_callback, gradient_name,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_gradient_select_procs (GimpPDB *pdb)
+register_gradient_select_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-gradients-popup
+   * picman-gradients-popup
    */
-  procedure = gimp_procedure_new (gradients_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-popup",
-                                     "Invokes the Gimp gradients selection.",
+  procedure = picman_procedure_new (gradients_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-popup",
+                                     "Invokes the Picman gradients selection.",
                                      "This procedure opens the gradient selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("gradient-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("gradient-callback",
                                                        "gradient callback",
                                                        "The callback PDB proc to call when gradient selection is made",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("popup-title",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("popup-title",
                                                        "popup title",
                                                        "Title of the gradient selection dialog",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("initial-gradient",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("initial-gradient",
                                                        "initial gradient",
                                                        "The name of the gradient to set as the first selected",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("sample-size",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("sample-size",
                                                       "sample size",
                                                       "Size of the sample to return when the gradient is changed",
                                                       1, 10000, 1,
-                                                      GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-close-popup
+   * picman-gradients-close-popup
    */
-  procedure = gimp_procedure_new (gradients_close_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-close-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-close-popup",
+  procedure = picman_procedure_new (gradients_close_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-close-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-close-popup",
                                      "Close the gradient selection dialog.",
                                      "This procedure closes an opened gradient selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("gradient-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("gradient-callback",
                                                        "gradient callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-gradients-set-popup
+   * picman-gradients-set-popup
    */
-  procedure = gimp_procedure_new (gradients_set_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-gradients-set-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-gradients-set-popup",
+  procedure = picman_procedure_new (gradients_set_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-gradients-set-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-gradients-set-popup",
                                      "Sets the current gradient in a gradient selection dialog.",
                                      "Sets the current gradient in a gradient selection dialog.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("gradient-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("gradient-callback",
                                                        "gradient callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("gradient-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("gradient-name",
                                                        "gradient name",
                                                        "The name of the gradient to set as selected",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

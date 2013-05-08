@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Gradient example script --- create an example image of a custom gradient
@@ -22,8 +22,8 @@
                                     height
                                     gradient-reverse)
   (let* (
-        (img (car (gimp-image-new width height RGB)))
-        (drawable (car (gimp-layer-new img width height RGB
+        (img (car (picman-image-new width height RGB)))
+        (drawable (car (picman-layer-new img width height RGB
                                        "Gradient example" 100 NORMAL-MODE)))
 
         ; Calculate colors for checkerboard... just like in the gradient editor
@@ -32,30 +32,30 @@
         (bg-color (* 255 (/ 1 3)))
         )
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
     ; Render background checkerboard
 
-    (gimp-context-push)
+    (picman-context-push)
 
-    (gimp-context-set-foreground (list fg-color fg-color fg-color))
-    (gimp-context-set-background (list bg-color bg-color bg-color))
+    (picman-context-set-foreground (list fg-color fg-color fg-color))
+    (picman-context-set-background (list bg-color bg-color bg-color))
     (plug-in-checkerboard RUN-NONINTERACTIVE img drawable 0 8)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
     ; Render gradient
 
-    (gimp-edit-blend drawable CUSTOM-MODE NORMAL-MODE
+    (picman-edit-blend drawable CUSTOM-MODE NORMAL-MODE
                      GRADIENT-LINEAR 100 0 REPEAT-NONE gradient-reverse
                      FALSE 0 0 TRUE
                      0 0 (- width 1) 0)
 
     ; Terminate
 
-    (gimp-image-undo-enable img)
-    (gimp-display-new img)
+    (picman-image-undo-enable img)
+    (picman-display-new img)
   )
 )
 

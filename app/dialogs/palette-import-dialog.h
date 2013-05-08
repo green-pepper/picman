@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #define __PALETTE_IMPORT_H__
 
 
-GtkWidget * palette_import_dialog_new (GimpContext *context);
+GtkWidget * palette_import_dialog_new (PicmanContext *context);
 
 
 #endif /* __PALETTE_IMPORT_H__ */

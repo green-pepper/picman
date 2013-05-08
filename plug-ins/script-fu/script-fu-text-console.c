@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 #include <unistd.h>
 #endif
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 #include "scheme-wrapper.h"
 #include "script-fu-text-console.h"
@@ -34,26 +34,26 @@
 void
 script_fu_text_console_run (const gchar      *name,
                             gint              nparams,
-                            const GimpParam  *params,
+                            const PicmanParam  *params,
                             gint             *nreturn_vals,
-                            GimpParam       **return_vals)
+                            PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
+  static PicmanParam  values[1];
 
   /*  Enable Script-Fu output  */
   ts_register_output_func (ts_stdout_output_func, NULL);
 
   ts_print_welcome ();
 
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
   /*  Run the interface  */
   ts_interpret_stdin ();
 
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_INTERNAL);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_INTERNAL);
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   *nreturn_vals = 1;
   *return_vals  = values;

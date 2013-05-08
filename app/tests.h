@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 #define __TESTS_H__
 
 
-Gimp * gimp_init_for_testing             (void);
-Gimp * gimp_init_for_gui_testing         (gboolean     show_gui);
-Gimp * gimp_init_for_gui_testing_with_rc (gboolean     show_gui,
-                                          const gchar *gimprc);
-void   gimp_test_run_temp_mainloop       (guint32      running_time);
-void   gimp_test_run_mainloop_until_idle (void);
-void   gimp_test_bail_if_no_display      (void);
+Picman * picman_init_for_testing             (void);
+Picman * picman_init_for_gui_testing         (gboolean     show_gui);
+Picman * picman_init_for_gui_testing_with_rc (gboolean     show_gui,
+                                          const gchar *picmanrc);
+void   picman_test_run_temp_mainloop       (guint32      running_time);
+void   picman_test_run_mainloop_until_idle (void);
+void   picman_test_bail_if_no_display      (void);
 
 
 #endif /* __TESTS_H__ */

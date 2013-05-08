@@ -6,7 +6,7 @@
 
 #define PLUG_IN_PROC   "plug-in-map-object"
 #define PLUG_IN_BINARY "map-object"
-#define PLUG_IN_ROLE   "gimp-map-object"
+#define PLUG_IN_ROLE   "picman-map-object"
 
 #define TILE_CACHE_SIZE 16
 
@@ -38,21 +38,21 @@ typedef struct
   gdouble  diffuse_ref;
   gdouble  specular_ref;
   gdouble  highlight;
-  GimpRGB  color;
+  PicmanRGB  color;
 } MaterialSettings;
 
 typedef struct
 {
   LightType    type;
-  GimpVector3  position;
-  GimpVector3  direction;
-  GimpRGB      color;
+  PicmanVector3  position;
+  PicmanVector3  direction;
+  PicmanRGB      color;
   gdouble      intensity;
 } LightSettings;
 
 typedef struct
 {
-  GimpVector3   viewpoint,firstaxis,secondaxis,normal,position,scale;
+  PicmanVector3   viewpoint,firstaxis,secondaxis,normal,position,scale;
   LightSettings lightsource;
 
   MaterialSettings material;

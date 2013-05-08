@@ -1,29 +1,29 @@
 
-/* Generated data (by gimp-mkenums) */
+/* Generated data (by picman-mkenums) */
 
 #include "config.h"
 #include <glib-object.h>
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 #include "display-enums.h"
-#include"gimp-intl.h"
+#include"picman-intl.h"
 
 /* enumerations from "./display-enums.h" */
 GType
-gimp_cursor_precision_get_type (void)
+picman_cursor_precision_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_CURSOR_PRECISION_PIXEL_CENTER, "GIMP_CURSOR_PRECISION_PIXEL_CENTER", "pixel-center" },
-    { GIMP_CURSOR_PRECISION_PIXEL_BORDER, "GIMP_CURSOR_PRECISION_PIXEL_BORDER", "pixel-border" },
-    { GIMP_CURSOR_PRECISION_SUBPIXEL, "GIMP_CURSOR_PRECISION_SUBPIXEL", "subpixel" },
+    { PICMAN_CURSOR_PRECISION_PIXEL_CENTER, "PICMAN_CURSOR_PRECISION_PIXEL_CENTER", "pixel-center" },
+    { PICMAN_CURSOR_PRECISION_PIXEL_BORDER, "PICMAN_CURSOR_PRECISION_PIXEL_BORDER", "pixel-border" },
+    { PICMAN_CURSOR_PRECISION_SUBPIXEL, "PICMAN_CURSOR_PRECISION_SUBPIXEL", "subpixel" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_CURSOR_PRECISION_PIXEL_CENTER, "GIMP_CURSOR_PRECISION_PIXEL_CENTER", NULL },
-    { GIMP_CURSOR_PRECISION_PIXEL_BORDER, "GIMP_CURSOR_PRECISION_PIXEL_BORDER", NULL },
-    { GIMP_CURSOR_PRECISION_SUBPIXEL, "GIMP_CURSOR_PRECISION_SUBPIXEL", NULL },
+    { PICMAN_CURSOR_PRECISION_PIXEL_CENTER, "PICMAN_CURSOR_PRECISION_PIXEL_CENTER", NULL },
+    { PICMAN_CURSOR_PRECISION_PIXEL_BORDER, "PICMAN_CURSOR_PRECISION_PIXEL_BORDER", NULL },
+    { PICMAN_CURSOR_PRECISION_SUBPIXEL, "PICMAN_CURSOR_PRECISION_SUBPIXEL", NULL },
     { 0, NULL, NULL }
   };
 
@@ -31,40 +31,40 @@ gimp_cursor_precision_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpCursorPrecision", values);
-      gimp_type_set_translation_context (type, "cursor-precision");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanCursorPrecision", values);
+      picman_type_set_translation_context (type, "cursor-precision");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;
 }
 
 GType
-gimp_guides_type_get_type (void)
+picman_guides_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_GUIDES_NONE, "GIMP_GUIDES_NONE", "none" },
-    { GIMP_GUIDES_CENTER_LINES, "GIMP_GUIDES_CENTER_LINES", "center-lines" },
-    { GIMP_GUIDES_THIRDS, "GIMP_GUIDES_THIRDS", "thirds" },
-    { GIMP_GUIDES_FIFTHS, "GIMP_GUIDES_FIFTHS", "fifths" },
-    { GIMP_GUIDES_GOLDEN, "GIMP_GUIDES_GOLDEN", "golden" },
-    { GIMP_GUIDES_DIAGONALS, "GIMP_GUIDES_DIAGONALS", "diagonals" },
-    { GIMP_GUIDES_N_LINES, "GIMP_GUIDES_N_LINES", "n-lines" },
-    { GIMP_GUIDES_SPACING, "GIMP_GUIDES_SPACING", "spacing" },
+    { PICMAN_GUIDES_NONE, "PICMAN_GUIDES_NONE", "none" },
+    { PICMAN_GUIDES_CENTER_LINES, "PICMAN_GUIDES_CENTER_LINES", "center-lines" },
+    { PICMAN_GUIDES_THIRDS, "PICMAN_GUIDES_THIRDS", "thirds" },
+    { PICMAN_GUIDES_FIFTHS, "PICMAN_GUIDES_FIFTHS", "fifths" },
+    { PICMAN_GUIDES_GOLDEN, "PICMAN_GUIDES_GOLDEN", "golden" },
+    { PICMAN_GUIDES_DIAGONALS, "PICMAN_GUIDES_DIAGONALS", "diagonals" },
+    { PICMAN_GUIDES_N_LINES, "PICMAN_GUIDES_N_LINES", "n-lines" },
+    { PICMAN_GUIDES_SPACING, "PICMAN_GUIDES_SPACING", "spacing" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_GUIDES_NONE, NC_("guides-type", "No guides"), NULL },
-    { GIMP_GUIDES_CENTER_LINES, NC_("guides-type", "Center lines"), NULL },
-    { GIMP_GUIDES_THIRDS, NC_("guides-type", "Rule of thirds"), NULL },
-    { GIMP_GUIDES_FIFTHS, NC_("guides-type", "Rule of fifths"), NULL },
-    { GIMP_GUIDES_GOLDEN, NC_("guides-type", "Golden sections"), NULL },
-    { GIMP_GUIDES_DIAGONALS, NC_("guides-type", "Diagonal lines"), NULL },
-    { GIMP_GUIDES_N_LINES, NC_("guides-type", "Number of lines"), NULL },
-    { GIMP_GUIDES_SPACING, NC_("guides-type", "Line spacing"), NULL },
+    { PICMAN_GUIDES_NONE, NC_("guides-type", "No guides"), NULL },
+    { PICMAN_GUIDES_CENTER_LINES, NC_("guides-type", "Center lines"), NULL },
+    { PICMAN_GUIDES_THIRDS, NC_("guides-type", "Rule of thirds"), NULL },
+    { PICMAN_GUIDES_FIFTHS, NC_("guides-type", "Rule of fifths"), NULL },
+    { PICMAN_GUIDES_GOLDEN, NC_("guides-type", "Golden sections"), NULL },
+    { PICMAN_GUIDES_DIAGONALS, NC_("guides-type", "Diagonal lines"), NULL },
+    { PICMAN_GUIDES_N_LINES, NC_("guides-type", "Number of lines"), NULL },
+    { PICMAN_GUIDES_SPACING, NC_("guides-type", "Line spacing"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -72,38 +72,38 @@ gimp_guides_type_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpGuidesType", values);
-      gimp_type_set_translation_context (type, "guides-type");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanGuidesType", values);
+      picman_type_set_translation_context (type, "guides-type");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;
 }
 
 GType
-gimp_handle_type_get_type (void)
+picman_handle_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_HANDLE_SQUARE, "GIMP_HANDLE_SQUARE", "square" },
-    { GIMP_HANDLE_FILLED_SQUARE, "GIMP_HANDLE_FILLED_SQUARE", "filled-square" },
-    { GIMP_HANDLE_CIRCLE, "GIMP_HANDLE_CIRCLE", "circle" },
-    { GIMP_HANDLE_FILLED_CIRCLE, "GIMP_HANDLE_FILLED_CIRCLE", "filled-circle" },
-    { GIMP_HANDLE_DIAMOND, "GIMP_HANDLE_DIAMOND", "diamond" },
-    { GIMP_HANDLE_FILLED_DIAMOND, "GIMP_HANDLE_FILLED_DIAMOND", "filled-diamond" },
-    { GIMP_HANDLE_CROSS, "GIMP_HANDLE_CROSS", "cross" },
+    { PICMAN_HANDLE_SQUARE, "PICMAN_HANDLE_SQUARE", "square" },
+    { PICMAN_HANDLE_FILLED_SQUARE, "PICMAN_HANDLE_FILLED_SQUARE", "filled-square" },
+    { PICMAN_HANDLE_CIRCLE, "PICMAN_HANDLE_CIRCLE", "circle" },
+    { PICMAN_HANDLE_FILLED_CIRCLE, "PICMAN_HANDLE_FILLED_CIRCLE", "filled-circle" },
+    { PICMAN_HANDLE_DIAMOND, "PICMAN_HANDLE_DIAMOND", "diamond" },
+    { PICMAN_HANDLE_FILLED_DIAMOND, "PICMAN_HANDLE_FILLED_DIAMOND", "filled-diamond" },
+    { PICMAN_HANDLE_CROSS, "PICMAN_HANDLE_CROSS", "cross" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_HANDLE_SQUARE, "GIMP_HANDLE_SQUARE", NULL },
-    { GIMP_HANDLE_FILLED_SQUARE, "GIMP_HANDLE_FILLED_SQUARE", NULL },
-    { GIMP_HANDLE_CIRCLE, "GIMP_HANDLE_CIRCLE", NULL },
-    { GIMP_HANDLE_FILLED_CIRCLE, "GIMP_HANDLE_FILLED_CIRCLE", NULL },
-    { GIMP_HANDLE_DIAMOND, "GIMP_HANDLE_DIAMOND", NULL },
-    { GIMP_HANDLE_FILLED_DIAMOND, "GIMP_HANDLE_FILLED_DIAMOND", NULL },
-    { GIMP_HANDLE_CROSS, "GIMP_HANDLE_CROSS", NULL },
+    { PICMAN_HANDLE_SQUARE, "PICMAN_HANDLE_SQUARE", NULL },
+    { PICMAN_HANDLE_FILLED_SQUARE, "PICMAN_HANDLE_FILLED_SQUARE", NULL },
+    { PICMAN_HANDLE_CIRCLE, "PICMAN_HANDLE_CIRCLE", NULL },
+    { PICMAN_HANDLE_FILLED_CIRCLE, "PICMAN_HANDLE_FILLED_CIRCLE", NULL },
+    { PICMAN_HANDLE_DIAMOND, "PICMAN_HANDLE_DIAMOND", NULL },
+    { PICMAN_HANDLE_FILLED_DIAMOND, "PICMAN_HANDLE_FILLED_DIAMOND", NULL },
+    { PICMAN_HANDLE_CROSS, "PICMAN_HANDLE_CROSS", NULL },
     { 0, NULL, NULL }
   };
 
@@ -111,42 +111,42 @@ gimp_handle_type_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpHandleType", values);
-      gimp_type_set_translation_context (type, "handle-type");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanHandleType", values);
+      picman_type_set_translation_context (type, "handle-type");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;
 }
 
 GType
-gimp_handle_anchor_get_type (void)
+picman_handle_anchor_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_HANDLE_ANCHOR_CENTER, "GIMP_HANDLE_ANCHOR_CENTER", "center" },
-    { GIMP_HANDLE_ANCHOR_NORTH, "GIMP_HANDLE_ANCHOR_NORTH", "north" },
-    { GIMP_HANDLE_ANCHOR_NORTH_WEST, "GIMP_HANDLE_ANCHOR_NORTH_WEST", "north-west" },
-    { GIMP_HANDLE_ANCHOR_NORTH_EAST, "GIMP_HANDLE_ANCHOR_NORTH_EAST", "north-east" },
-    { GIMP_HANDLE_ANCHOR_SOUTH, "GIMP_HANDLE_ANCHOR_SOUTH", "south" },
-    { GIMP_HANDLE_ANCHOR_SOUTH_WEST, "GIMP_HANDLE_ANCHOR_SOUTH_WEST", "south-west" },
-    { GIMP_HANDLE_ANCHOR_SOUTH_EAST, "GIMP_HANDLE_ANCHOR_SOUTH_EAST", "south-east" },
-    { GIMP_HANDLE_ANCHOR_WEST, "GIMP_HANDLE_ANCHOR_WEST", "west" },
-    { GIMP_HANDLE_ANCHOR_EAST, "GIMP_HANDLE_ANCHOR_EAST", "east" },
+    { PICMAN_HANDLE_ANCHOR_CENTER, "PICMAN_HANDLE_ANCHOR_CENTER", "center" },
+    { PICMAN_HANDLE_ANCHOR_NORTH, "PICMAN_HANDLE_ANCHOR_NORTH", "north" },
+    { PICMAN_HANDLE_ANCHOR_NORTH_WEST, "PICMAN_HANDLE_ANCHOR_NORTH_WEST", "north-west" },
+    { PICMAN_HANDLE_ANCHOR_NORTH_EAST, "PICMAN_HANDLE_ANCHOR_NORTH_EAST", "north-east" },
+    { PICMAN_HANDLE_ANCHOR_SOUTH, "PICMAN_HANDLE_ANCHOR_SOUTH", "south" },
+    { PICMAN_HANDLE_ANCHOR_SOUTH_WEST, "PICMAN_HANDLE_ANCHOR_SOUTH_WEST", "south-west" },
+    { PICMAN_HANDLE_ANCHOR_SOUTH_EAST, "PICMAN_HANDLE_ANCHOR_SOUTH_EAST", "south-east" },
+    { PICMAN_HANDLE_ANCHOR_WEST, "PICMAN_HANDLE_ANCHOR_WEST", "west" },
+    { PICMAN_HANDLE_ANCHOR_EAST, "PICMAN_HANDLE_ANCHOR_EAST", "east" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_HANDLE_ANCHOR_CENTER, "GIMP_HANDLE_ANCHOR_CENTER", NULL },
-    { GIMP_HANDLE_ANCHOR_NORTH, "GIMP_HANDLE_ANCHOR_NORTH", NULL },
-    { GIMP_HANDLE_ANCHOR_NORTH_WEST, "GIMP_HANDLE_ANCHOR_NORTH_WEST", NULL },
-    { GIMP_HANDLE_ANCHOR_NORTH_EAST, "GIMP_HANDLE_ANCHOR_NORTH_EAST", NULL },
-    { GIMP_HANDLE_ANCHOR_SOUTH, "GIMP_HANDLE_ANCHOR_SOUTH", NULL },
-    { GIMP_HANDLE_ANCHOR_SOUTH_WEST, "GIMP_HANDLE_ANCHOR_SOUTH_WEST", NULL },
-    { GIMP_HANDLE_ANCHOR_SOUTH_EAST, "GIMP_HANDLE_ANCHOR_SOUTH_EAST", NULL },
-    { GIMP_HANDLE_ANCHOR_WEST, "GIMP_HANDLE_ANCHOR_WEST", NULL },
-    { GIMP_HANDLE_ANCHOR_EAST, "GIMP_HANDLE_ANCHOR_EAST", NULL },
+    { PICMAN_HANDLE_ANCHOR_CENTER, "PICMAN_HANDLE_ANCHOR_CENTER", NULL },
+    { PICMAN_HANDLE_ANCHOR_NORTH, "PICMAN_HANDLE_ANCHOR_NORTH", NULL },
+    { PICMAN_HANDLE_ANCHOR_NORTH_WEST, "PICMAN_HANDLE_ANCHOR_NORTH_WEST", NULL },
+    { PICMAN_HANDLE_ANCHOR_NORTH_EAST, "PICMAN_HANDLE_ANCHOR_NORTH_EAST", NULL },
+    { PICMAN_HANDLE_ANCHOR_SOUTH, "PICMAN_HANDLE_ANCHOR_SOUTH", NULL },
+    { PICMAN_HANDLE_ANCHOR_SOUTH_WEST, "PICMAN_HANDLE_ANCHOR_SOUTH_WEST", NULL },
+    { PICMAN_HANDLE_ANCHOR_SOUTH_EAST, "PICMAN_HANDLE_ANCHOR_SOUTH_EAST", NULL },
+    { PICMAN_HANDLE_ANCHOR_WEST, "PICMAN_HANDLE_ANCHOR_WEST", NULL },
+    { PICMAN_HANDLE_ANCHOR_EAST, "PICMAN_HANDLE_ANCHOR_EAST", NULL },
     { 0, NULL, NULL }
   };
 
@@ -154,30 +154,30 @@ gimp_handle_anchor_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpHandleAnchor", values);
-      gimp_type_set_translation_context (type, "handle-anchor");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanHandleAnchor", values);
+      picman_type_set_translation_context (type, "handle-anchor");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;
 }
 
 GType
-gimp_path_style_get_type (void)
+picman_path_style_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_PATH_STYLE_DEFAULT, "GIMP_PATH_STYLE_DEFAULT", "default" },
-    { GIMP_PATH_STYLE_VECTORS, "GIMP_PATH_STYLE_VECTORS", "vectors" },
-    { GIMP_PATH_STYLE_OUTLINE, "GIMP_PATH_STYLE_OUTLINE", "outline" },
+    { PICMAN_PATH_STYLE_DEFAULT, "PICMAN_PATH_STYLE_DEFAULT", "default" },
+    { PICMAN_PATH_STYLE_VECTORS, "PICMAN_PATH_STYLE_VECTORS", "vectors" },
+    { PICMAN_PATH_STYLE_OUTLINE, "PICMAN_PATH_STYLE_OUTLINE", "outline" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_PATH_STYLE_DEFAULT, "GIMP_PATH_STYLE_DEFAULT", NULL },
-    { GIMP_PATH_STYLE_VECTORS, "GIMP_PATH_STYLE_VECTORS", NULL },
-    { GIMP_PATH_STYLE_OUTLINE, "GIMP_PATH_STYLE_OUTLINE", NULL },
+    { PICMAN_PATH_STYLE_DEFAULT, "PICMAN_PATH_STYLE_DEFAULT", NULL },
+    { PICMAN_PATH_STYLE_VECTORS, "PICMAN_PATH_STYLE_VECTORS", NULL },
+    { PICMAN_PATH_STYLE_OUTLINE, "PICMAN_PATH_STYLE_OUTLINE", NULL },
     { 0, NULL, NULL }
   };
 
@@ -185,32 +185,32 @@ gimp_path_style_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpPathStyle", values);
-      gimp_type_set_translation_context (type, "path-style");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanPathStyle", values);
+      picman_type_set_translation_context (type, "path-style");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;
 }
 
 GType
-gimp_zoom_focus_get_type (void)
+picman_zoom_focus_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_ZOOM_FOCUS_BEST_GUESS, "GIMP_ZOOM_FOCUS_BEST_GUESS", "best-guess" },
-    { GIMP_ZOOM_FOCUS_POINTER, "GIMP_ZOOM_FOCUS_POINTER", "pointer" },
-    { GIMP_ZOOM_FOCUS_IMAGE_CENTER, "GIMP_ZOOM_FOCUS_IMAGE_CENTER", "image-center" },
-    { GIMP_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS, "GIMP_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS", "retain-centering-else-best-guess" },
+    { PICMAN_ZOOM_FOCUS_BEST_GUESS, "PICMAN_ZOOM_FOCUS_BEST_GUESS", "best-guess" },
+    { PICMAN_ZOOM_FOCUS_POINTER, "PICMAN_ZOOM_FOCUS_POINTER", "pointer" },
+    { PICMAN_ZOOM_FOCUS_IMAGE_CENTER, "PICMAN_ZOOM_FOCUS_IMAGE_CENTER", "image-center" },
+    { PICMAN_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS, "PICMAN_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS", "retain-centering-else-best-guess" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_ZOOM_FOCUS_BEST_GUESS, "GIMP_ZOOM_FOCUS_BEST_GUESS", NULL },
-    { GIMP_ZOOM_FOCUS_POINTER, "GIMP_ZOOM_FOCUS_POINTER", NULL },
-    { GIMP_ZOOM_FOCUS_IMAGE_CENTER, "GIMP_ZOOM_FOCUS_IMAGE_CENTER", NULL },
-    { GIMP_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS, "GIMP_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS", NULL },
+    { PICMAN_ZOOM_FOCUS_BEST_GUESS, "PICMAN_ZOOM_FOCUS_BEST_GUESS", NULL },
+    { PICMAN_ZOOM_FOCUS_POINTER, "PICMAN_ZOOM_FOCUS_POINTER", NULL },
+    { PICMAN_ZOOM_FOCUS_IMAGE_CENTER, "PICMAN_ZOOM_FOCUS_IMAGE_CENTER", NULL },
+    { PICMAN_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS, "PICMAN_ZOOM_FOCUS_RETAIN_CENTERING_ELSE_BEST_GUESS", NULL },
     { 0, NULL, NULL }
   };
 
@@ -218,9 +218,9 @@ gimp_zoom_focus_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpZoomFocus", values);
-      gimp_type_set_translation_context (type, "zoom-focus");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanZoomFocus", values);
+      picman_type_set_translation_context (type, "zoom-focus");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;

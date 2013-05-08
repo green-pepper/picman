@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,23 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpcontainerview-utils.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockable.h"
-#include "widgets/gimpdockbook.h"
-#include "widgets/gimpdocked.h"
-#include "widgets/gimpsessioninfo.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmancontainerview-utils.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockable.h"
+#include "widgets/picmandockbook.h"
+#include "widgets/picmandocked.h"
+#include "widgets/picmansessioninfo.h"
 
 #include "dockable-commands.h"
 
 
-static GimpDockable * dockable_get_current (GimpDockbook *dockbook);
+static PicmanDockable * dockable_get_current (PicmanDockbook *dockbook);
 
 
 /*  public functions  */
@@ -47,9 +47,9 @@ dockable_add_tab_cmd_callback (GtkAction   *action,
                                const gchar *value,
                                gpointer     data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
 
-  gimp_dockbook_add_from_dialog_factory (dockbook,
+  picman_dockbook_add_from_dialog_factory (dockbook,
                                          value /*identifiers*/,
                                          -1);
 }
@@ -58,13 +58,13 @@ void
 dockable_close_tab_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
 
   if (dockable)
     {
       g_object_ref (dockable);
-      gimp_dockbook_remove (dockbook, dockable);
+      picman_dockbook_remove (dockbook, dockable);
       gtk_widget_destroy (GTK_WIDGET (dockable));
       g_object_unref (dockable);
     }
@@ -74,25 +74,25 @@ void
 dockable_detach_tab_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
 
   if (dockable)
-    gimp_dockable_detach (dockable);
+    picman_dockable_detach (dockable);
 }
 
 void
 dockable_lock_tab_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
 
   if (dockable)
     {
       gboolean lock = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-      gimp_dockable_set_locked (dockable, lock);
+      picman_dockable_set_locked (dockable, lock);
     }
 }
 
@@ -101,24 +101,24 @@ dockable_toggle_view_cmd_callback (GtkAction *action,
                                    GtkAction *current,
                                    gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable;
-  GimpViewType  view_type;
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable;
+  PicmanViewType  view_type;
   gint          page_num;
 
-  view_type = (GimpViewType)
+  view_type = (PicmanViewType)
     gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (dockbook));
 
-  dockable = (GimpDockable *)
+  dockable = (PicmanDockable *)
     gtk_notebook_get_nth_page (GTK_NOTEBOOK (dockbook), page_num);
 
   if (dockable)
     {
-      GimpDialogFactoryEntry *entry;
+      PicmanDialogFactoryEntry *entry;
 
-      gimp_dialog_factory_from_widget (GTK_WIDGET (dockable), &entry);
+      picman_dialog_factory_from_widget (GTK_WIDGET (dockable), &entry);
 
       if (entry)
         {
@@ -129,7 +129,7 @@ dockable_toggle_view_cmd_callback (GtkAction *action,
 
           substring = strstr (identifier, "grid");
 
-          if (substring && view_type == GIMP_VIEW_TYPE_GRID)
+          if (substring && view_type == PICMAN_VIEW_TYPE_GRID)
             {
               g_free (identifier);
               return;
@@ -139,7 +139,7 @@ dockable_toggle_view_cmd_callback (GtkAction *action,
             {
               substring = strstr (identifier, "list");
 
-              if (substring && view_type == GIMP_VIEW_TYPE_LIST)
+              if (substring && view_type == PICMAN_VIEW_TYPE_LIST)
                 {
                   g_free (identifier);
                   return;
@@ -148,53 +148,53 @@ dockable_toggle_view_cmd_callback (GtkAction *action,
 
           if (substring)
             {
-              GimpContainerView *old_view;
+              PicmanContainerView *old_view;
               GtkWidget         *new_dockable;
-              GimpDock          *dock;
+              PicmanDock          *dock;
               gint               view_size = -1;
 
-              if (view_type == GIMP_VIEW_TYPE_LIST)
+              if (view_type == PICMAN_VIEW_TYPE_LIST)
                 memcpy (substring, "list", 4);
-              else if (view_type == GIMP_VIEW_TYPE_GRID)
+              else if (view_type == PICMAN_VIEW_TYPE_GRID)
                 memcpy (substring, "grid", 4);
 
-              old_view = gimp_container_view_get_by_dockable (dockable);
+              old_view = picman_container_view_get_by_dockable (dockable);
 
               if (old_view)
-                view_size = gimp_container_view_get_view_size (old_view, NULL);
+                view_size = picman_container_view_get_view_size (old_view, NULL);
 
-              dock         = gimp_dockbook_get_dock (dockbook);
-              new_dockable = gimp_dialog_factory_dockable_new (gimp_dock_get_dialog_factory (dock),
+              dock         = picman_dockbook_get_dock (dockbook);
+              new_dockable = picman_dialog_factory_dockable_new (picman_dock_get_dialog_factory (dock),
                                                                dock,
                                                                identifier,
                                                                view_size);
 
               if (new_dockable)
                 {
-                  GimpDocked *old;
-                  GimpDocked *new;
+                  PicmanDocked *old;
+                  PicmanDocked *new;
                   gboolean    show;
 
-                  gimp_dockable_set_locked (GIMP_DOCKABLE (new_dockable),
-                                            gimp_dockable_is_locked (dockable));
+                  picman_dockable_set_locked (PICMAN_DOCKABLE (new_dockable),
+                                            picman_dockable_is_locked (dockable));
 
-                  old = GIMP_DOCKED (gtk_bin_get_child (GTK_BIN (dockable)));
-                  new = GIMP_DOCKED (gtk_bin_get_child (GTK_BIN (new_dockable)));
+                  old = PICMAN_DOCKED (gtk_bin_get_child (GTK_BIN (dockable)));
+                  new = PICMAN_DOCKED (gtk_bin_get_child (GTK_BIN (new_dockable)));
 
-                  show = gimp_docked_get_show_button_bar (old);
-                  gimp_docked_set_show_button_bar (new, show);
+                  show = picman_docked_get_show_button_bar (old);
+                  picman_docked_set_show_button_bar (new, show);
 
-                  /*  Maybe gimp_dialog_factory_dockable_new() returned
+                  /*  Maybe picman_dialog_factory_dockable_new() returned
                    *  an already existing singleton dockable, so check
                    *  if it already is attached to a dockbook.
                    */
-                  if (! gimp_dockable_get_dockbook (GIMP_DOCKABLE (new_dockable)))
+                  if (! picman_dockable_get_dockbook (PICMAN_DOCKABLE (new_dockable)))
                     {
-                      gimp_dockbook_add (dockbook, GIMP_DOCKABLE (new_dockable),
+                      picman_dockbook_add (dockbook, PICMAN_DOCKABLE (new_dockable),
                                          page_num);
 
                       g_object_ref (dockable);
-                      gimp_dockbook_remove (dockbook, dockable);
+                      picman_dockbook_remove (dockbook, dockable);
                       gtk_widget_destroy (GTK_WIDGET (dockable));
                       g_object_unref (dockable);
 
@@ -214,25 +214,25 @@ dockable_view_size_cmd_callback (GtkAction *action,
                                  GtkAction *current,
                                  gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
   gint          view_size;
 
   view_size = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   if (dockable)
     {
-      GimpContainerView *view = gimp_container_view_get_by_dockable (dockable);
+      PicmanContainerView *view = picman_container_view_get_by_dockable (dockable);
 
       if (view)
         {
           gint old_size;
           gint border_width;
 
-          old_size = gimp_container_view_get_view_size (view, &border_width);
+          old_size = picman_container_view_get_view_size (view, &border_width);
 
           if (old_size != view_size)
-            gimp_container_view_set_view_size (view, view_size, border_width);
+            picman_container_view_set_view_size (view, view_size, border_width);
         }
     }
 }
@@ -242,20 +242,20 @@ dockable_tab_style_cmd_callback (GtkAction *action,
                                  GtkAction *current,
                                  gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
-  GimpTabStyle  tab_style;
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
+  PicmanTabStyle  tab_style;
 
-  tab_style = (GimpTabStyle)
+  tab_style = (PicmanTabStyle)
     gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  if (dockable && gimp_dockable_get_tab_style (dockable) != tab_style)
+  if (dockable && picman_dockable_get_tab_style (dockable) != tab_style)
     {
       GtkWidget *tab_widget;
 
-      gimp_dockable_set_tab_style (dockable, tab_style);
+      picman_dockable_set_tab_style (dockable, tab_style);
 
-      tab_widget = gimp_dockbook_create_tab_widget (dockbook, dockable);
+      tab_widget = picman_dockbook_create_tab_widget (dockbook, dockable);
 
       gtk_notebook_set_tab_label (GTK_NOTEBOOK (dockbook),
                                   GTK_WIDGET (dockable),
@@ -267,26 +267,26 @@ void
 dockable_show_button_bar_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpDockbook *dockbook = GIMP_DOCKBOOK (data);
-  GimpDockable *dockable = dockable_get_current (dockbook);
+  PicmanDockbook *dockbook = PICMAN_DOCKBOOK (data);
+  PicmanDockable *dockable = dockable_get_current (dockbook);
 
   if (dockable)
     {
-      GimpDocked *docked;
+      PicmanDocked *docked;
       gboolean    show;
 
-      docked = GIMP_DOCKED (gtk_bin_get_child (GTK_BIN (dockable)));
+      docked = PICMAN_DOCKED (gtk_bin_get_child (GTK_BIN (dockable)));
       show   = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-      gimp_docked_set_show_button_bar (docked, show);
+      picman_docked_set_show_button_bar (docked, show);
     }
 }
 
-static GimpDockable *
-dockable_get_current (GimpDockbook *dockbook)
+static PicmanDockable *
+dockable_get_current (PicmanDockbook *dockbook)
 {
   gint page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (dockbook));
 
-  return (GimpDockable *) gtk_notebook_get_nth_page (GTK_NOTEBOOK (dockbook),
+  return (PicmanDockable *) gtk_notebook_get_nth_page (GTK_NOTEBOOK (dockbook),
                                                      page_num);
 }

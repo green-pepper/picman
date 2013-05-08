@@ -1,4 +1,4 @@
-Gimp Image Pipe Format
+Picman Image Pipe Format
 
 The gih format is use to store a series of brushes, and some extra info 
 for how to use them. 
@@ -11,7 +11,7 @@ Each dimension is indexed when the pipe is used in painting by some
 parameter, eg an incremental counter, a random value, pointing device 
 pen pressure,tilt or velocity , etc.
 
-An idea for how to implement editing of image pipes (with GIMP) is
+An idea for how to implement editing of image pipes (with PICMAN) is
 that each layer of the edited image representing the pipe is divided
 conceptually (and visualized by guides) into equal-sized elements,
 each element containing one pixmap brush. The typical cases are only
@@ -23,7 +23,7 @@ The header format
 
 First line is the name of the pipe.
 Second line is the number of brushes in file, followed by the contents of
-the gimp-image-pipe-parameters parasite (a text string)
+the picman-image-pipe-parameters parasite (a text string)
 
 ie
 ===========================

@@ -1,8 +1,8 @@
 ; -----------------------------------------------------------------------------
-; GIMP palette export toolkit -
+; PICMAN palette export toolkit -
 ; Written by Barak Itkin <lightningismyname@gmail.com>
 ;
-; This script includes various exporters for GIMP palettes, and other
+; This script includes various exporters for PICMAN palettes, and other
 ; utility function to help in exporting to other (text-based) formats.
 ; See instruction on adding new exporters at the end
 ;
@@ -75,7 +75,7 @@
 ; -----------------------------------------------------------------------------
 
 ; The standard way for representing a color would be a list of red
-; green and blue (GIMP's default)
+; green and blue (PICMAN's default)
 (define color-get-red car)
 (define color-get-green cadr)
 (define color-get-blue caddr)
@@ -195,16 +195,16 @@
   (define (write-color-line index)
     (display name-pre)
     (display (name-convertor
-	      (car (gimp-palette-entry-get-name palette-name index))))
+	      (car (picman-palette-entry-get-name palette-name index))))
     (display name-after)
     (display name-color-seperator)
     (display color-pre)
     (display (color-convertor
-	      (car (gimp-palette-entry-get-color palette-name index))))
+	      (car (picman-palette-entry-get-color palette-name index))))
     (display color-after)
     )
 
-  (let ((color-count (car (gimp-palette-get-colors palette-name)))
+  (let ((color-count (car (picman-palette-get-colors palette-name)))
         (i 0)
         )
 
@@ -225,7 +225,7 @@
 
 (define (register-palette-exporter
 	 export-type export-name file-type description author copyright date)
-  (script-fu-register (string-append "gimp-palette-export-" export-type)
+  (script-fu-register (string-append "picman-palette-export-" export-type)
                       export-name
                       description
                       author
@@ -236,12 +236,12 @@
                       SF-STRING _"The name of the file to create (if a file with this name already exist, it will be replaced)"
                       (string-append "palette." file-type)
                       )
-  (script-fu-menu-register (string-append "gimp-palette-export-" export-type)
+  (script-fu-menu-register (string-append "picman-palette-export-" export-type)
                            "<Palettes>/Export as")
   )
 
 (define (bad-file-name)
-  (gimp-message (string-append _"The filename you entered is not a suitable name for a file."
+  (picman-message (string-append _"The filename you entered is not a suitable name for a file."
 			       "\n\n"
 			       _"All characters in the name are either white-spaces or characters which can not appear in filenames.")))
 
@@ -249,15 +249,15 @@
 ; Exporters
 ; -----------------------------------------------------------------------------
 
-(define (gimp-palette-export-css directory-name file-name)
+(define (picman-palette-export-css directory-name file-name)
   (let ((valid-name (valid-file-name file-name)))
     (if valid-name
         (with-output-to-file (string-append
 			      directory-name DIR-SEPARATOR file-name)
-          (lambda () (export-palette (car (gimp-context-get-palette))
+          (lambda () (export-palette (car (picman-context-get-palette))
                                      color-rgb-to-css
                                      name-alpha-numeric        ; name-convertor
-                                     "/* Generated with GIMP Palette Export */\n" ; start
+                                     "/* Generated with PICMAN Palette Export */\n" ; start
                                      "."                       ; name-pre
                                      ""                        ; name-after
                                      " { "                     ; name-color-seperator
@@ -275,15 +275,15 @@
                            "Barak Itkin <lightningismyname@gmail.com>"
 			   "Barak Itkin" "May 15th, 2009")
 
-(define (gimp-palette-export-php directory-name file-name)
+(define (picman-palette-export-php directory-name file-name)
   (let ((valid-name (valid-file-name file-name)))
     (if valid-name
         (with-output-to-file (string-append
 			      directory-name DIR-SEPARATOR file-name)
-          (lambda () (export-palette (car (gimp-context-get-palette))
+          (lambda () (export-palette (car (picman-context-get-palette))
                                      color-rgb-to-hexa-decimal
                                      name-standard             ; name-convertor
-                                     "<?php\n/* Generated with GIMP Palette Export */\n$colors={\n" ; start
+                                     "<?php\n/* Generated with PICMAN Palette Export */\n$colors={\n" ; start
                                      "'"                       ; name-pre
                                      "'"                       ; name-after
                                      " => "                    ; name-color-seperator
@@ -301,14 +301,14 @@
                            "Barak Itkin <lightningismyname@gmail.com>"
 			   "Barak Itkin" "May 15th, 2009")
 
-(define (gimp-palette-export-python directory-name file-name)
+(define (picman-palette-export-python directory-name file-name)
   (let ((valid-name (valid-file-name file-name)))
     (if valid-name
         (with-output-to-file (string-append
 			      directory-name DIR-SEPARATOR file-name)
           (lambda ()
-            (let ((palette-name (car (gimp-context-get-palette))))
-              (begin (displayln "# Generated with GIMP Palette Export")
+            (let ((palette-name (car (picman-context-get-palette))))
+              (begin (displayln "# Generated with PICMAN Palette Export")
                      (displayln (string-append
 				 "# Based on the palette " palette-name))
                      (export-palette palette-name
@@ -333,13 +333,13 @@
                            "Barak Itkin <lightningismyname@gmail.com>"
 			   "Barak Itkin" "May 15th, 2009")
 
-(define (gimp-palette-export-text directory-name file-name)
+(define (picman-palette-export-text directory-name file-name)
   (let ((valid-name (valid-file-name file-name)))
     (if valid-name
         (with-output-to-file (string-append
 			      directory-name DIR-SEPARATOR file-name)
           (lambda ()
-            (export-palette (car (gimp-context-get-palette))
+            (export-palette (car (picman-context-get-palette))
                             color-rgb-to-hexa-decimal
                             name-none                 ; name-convertor
                             ""                        ; start
@@ -362,18 +362,18 @@
                            "Barak Itkin <lightningismyname@gmail.com>"
 			   "Barak Itkin" "May 15th, 2009")
 
-(define (gimp-palette-export-java directory-name file-name)
+(define (picman-palette-export-java directory-name file-name)
   (let ((valid-name (valid-file-name file-name)))
     (if valid-name
         (with-output-to-file (string-append directory-name
 					    DIR-SEPARATOR file-name)
           (lambda ()
-            (let ((palette-name (car (gimp-context-get-palette))))
+            (let ((palette-name (car (picman-context-get-palette))))
               (begin (displayln "")
                      (displayln "import java.awt.Color;")
                      (displayln "import java.util.Hashtable;")
                      (displayln "")
-                     (displayln "// Generated with GIMP palette Export ")
+                     (displayln "// Generated with PICMAN palette Export ")
                      (displayln (string-append
 				 "// Based on the palette " palette-name))
                      (displayln (string-append
@@ -385,7 +385,7 @@
                      (displayln (string-append
 				 "    public "
 				 (name-standard palette-name) "() {"))
-                     (export-palette (car (gimp-context-get-palette))
+                     (export-palette (car (picman-context-get-palette))
                                      color-rgb-to-comma-seperated-list
                                      name-no-conversion
                                      "        colors = new Hashtable<String,Color>();\n" ; start

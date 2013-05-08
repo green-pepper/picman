@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "print-preview.h"
 
@@ -475,7 +475,7 @@ print_preview_expose_event (GtkWidget      *widget,
     }
 
   if (preview->thumbnail == NULL &&
-      gimp_item_is_valid (preview->drawable_id))
+      picman_item_is_valid (preview->drawable_id))
     {
       preview->thumbnail =
         print_preview_get_thumbnail (preview->drawable_id,
@@ -552,8 +552,8 @@ print_preview_set_image_dpi (PrintPreview *preview,
   g_return_if_fail (PRINT_IS_PREVIEW (preview));
   g_return_if_fail (xres > 0.0 && yres > 0.0);
 
-  width  = gimp_drawable_width  (preview->drawable_id) * 72.0 / xres;
-  height = gimp_drawable_height (preview->drawable_id) * 72.0 / yres;
+  width  = picman_drawable_width  (preview->drawable_id) * 72.0 / xres;
+  height = picman_drawable_height (preview->drawable_id) * 72.0 / yres;
 
   if (width != preview->image_width || height != preview->image_height)
     {
@@ -775,7 +775,7 @@ print_preview_get_page_margins (PrintPreview *preview,
 }
 
 
-/*  This thumbnail code should eventually end up in libgimpui.  */
+/*  This thumbnail code should eventually end up in libpicmanui.  */
 
 static cairo_surface_t *
 print_preview_get_thumbnail (gint32 drawable_id,
@@ -795,7 +795,7 @@ print_preview_get_thumbnail (gint32 drawable_id,
   g_return_val_if_fail (width  > 0 && width  <= 1024, NULL);
   g_return_val_if_fail (height > 0 && height <= 1024, NULL);
 
-  data = gimp_drawable_get_thumbnail_data (drawable_id,
+  data = picman_drawable_get_thumbnail_data (drawable_id,
                                            &width, &height, &bpp);
 
   switch (bpp)
@@ -834,7 +834,7 @@ print_preview_get_thumbnail (gint32 drawable_id,
         case 1:
           while (w--)
             {
-              GIMP_CAIRO_RGB24_SET_PIXEL (d, s[0], s[0], s[0]);
+              PICMAN_CAIRO_RGB24_SET_PIXEL (d, s[0], s[0], s[0]);
               s += 1;
               d += 4;
             }
@@ -843,7 +843,7 @@ print_preview_get_thumbnail (gint32 drawable_id,
         case 2:
           while (w--)
             {
-              GIMP_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[0], s[0], s[1]);
+              PICMAN_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[0], s[0], s[1]);
               s += 2;
               d += 4;
             }
@@ -852,7 +852,7 @@ print_preview_get_thumbnail (gint32 drawable_id,
         case 3:
           while (w--)
             {
-              GIMP_CAIRO_RGB24_SET_PIXEL (d, s[0], s[1], s[2]);
+              PICMAN_CAIRO_RGB24_SET_PIXEL (d, s[0], s[1], s[2]);
               s += 3;
               d += 4;
             }
@@ -861,7 +861,7 @@ print_preview_get_thumbnail (gint32 drawable_id,
         case 4:
           while (w--)
             {
-              GIMP_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[1], s[2], s[3]);
+              PICMAN_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[1], s[2], s[3]);
               s += 4;
               d += 4;
             }

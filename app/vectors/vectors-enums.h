@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * vectors-enums.h
- * Copyright (C) 2006 Simon Budig  <simon@gimp.org>
+ * Copyright (C) 2006 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +23,22 @@
 
 typedef enum /*< pdb-skip, skip >*/
 {
-  GIMP_ANCHOR_ANCHOR,
-  GIMP_ANCHOR_CONTROL
-} GimpAnchorType;
+  PICMAN_ANCHOR_ANCHOR,
+  PICMAN_ANCHOR_CONTROL
+} PicmanAnchorType;
 
 typedef enum /*< pdb-skip, skip >*/
 {
-  GIMP_ANCHOR_FEATURE_NONE,
-  GIMP_ANCHOR_FEATURE_EDGE,
-  GIMP_ANCHOR_FEATURE_ALIGNED,
-  GIMP_ANCHOR_FEATURE_SYMMETRIC
-} GimpAnchorFeatureType;
+  PICMAN_ANCHOR_FEATURE_NONE,
+  PICMAN_ANCHOR_FEATURE_EDGE,
+  PICMAN_ANCHOR_FEATURE_ALIGNED,
+  PICMAN_ANCHOR_FEATURE_SYMMETRIC
+} PicmanAnchorFeatureType;
 
 typedef enum  /*< pdb-skip, skip >*/
 {
   EXTEND_SIMPLE,
   EXTEND_EDITABLE
-} GimpVectorExtendMode;
+} PicmanVectorExtendMode;
 
 #endif /* __VECTORS_ENUMS_H__ */

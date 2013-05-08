@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -25,22 +25,22 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpthumb/gimpthumb.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanthumb/picmanthumb.h"
 
 #include "core/core-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagefile.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagefile.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
 #include "file-procedure.h"
 #include "file-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static gchar * file_utils_unescape_uri  (const gchar *escaped,
@@ -96,7 +96,7 @@ file_utils_filename_is_uri (const gchar  *filename,
 }
 
 gchar *
-file_utils_filename_to_uri (Gimp         *gimp,
+file_utils_filename_to_uri (Picman         *picman,
                             const gchar  *filename,
                             GError      **error)
 {
@@ -104,12 +104,12 @@ file_utils_filename_to_uri (Gimp         *gimp,
   gchar  *absolute;
   gchar  *uri;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (filename != NULL, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /*  check for prefixes like http or ftp  */
-  if (file_procedure_find_by_prefix (gimp->plug_in_manager->load_procs,
+  if (file_procedure_find_by_prefix (picman->plug_in_manager->load_procs,
                                      filename))
     {
       if (g_utf8_validate (filename, -1, NULL))
@@ -157,13 +157,13 @@ file_utils_filename_to_uri (Gimp         *gimp,
 }
 
 gchar *
-file_utils_any_to_uri (Gimp         *gimp,
+file_utils_any_to_uri (Picman         *picman,
                        const gchar  *filename_or_uri,
                        GError      **error)
 {
   gchar *uri;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (filename_or_uri != NULL, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
@@ -177,7 +177,7 @@ file_utils_any_to_uri (Gimp         *gimp,
     }
   else
     {
-      uri = file_utils_filename_to_uri (gimp, filename_or_uri, error);
+      uri = file_utils_filename_to_uri (picman, filename_or_uri, error);
     }
 
   return uri;
@@ -397,7 +397,7 @@ file_utils_uri_display_name (const gchar *uri)
 GdkPixbuf *
 file_utils_load_thumbnail (const gchar *filename)
 {
-  GimpThumbnail *thumbnail = NULL;
+  PicmanThumbnail *thumbnail = NULL;
   GdkPixbuf     *pixbuf    = NULL;
   gchar         *uri;
 
@@ -407,11 +407,11 @@ file_utils_load_thumbnail (const gchar *filename)
 
   if (uri)
     {
-      thumbnail = gimp_thumbnail_new ();
-      gimp_thumbnail_set_uri (thumbnail, uri);
+      thumbnail = picman_thumbnail_new ();
+      picman_thumbnail_set_uri (thumbnail, uri);
 
-      pixbuf = gimp_thumbnail_load_thumb (thumbnail,
-                                          GIMP_THUMBNAIL_SIZE_NORMAL,
+      pixbuf = picman_thumbnail_load_thumb (thumbnail,
+                                          PICMAN_THUMBNAIL_SIZE_NORMAL,
                                           NULL);
     }
 
@@ -430,7 +430,7 @@ file_utils_load_thumbnail (const gchar *filename)
           gdk_pixbuf_composite_color (pixbuf, tmp,
                                       0, 0, width, height, 0, 0, 1.0, 1.0,
                                       GDK_INTERP_NEAREST, 255,
-                                      0, 0, GIMP_CHECK_SIZE_SM,
+                                      0, 0, PICMAN_CHECK_SIZE_SM,
                                       0x66666666, 0x99999999);
 
           g_object_unref (pixbuf);
@@ -442,16 +442,16 @@ file_utils_load_thumbnail (const gchar *filename)
 }
 
 gboolean
-file_utils_save_thumbnail (GimpImage   *image,
+file_utils_save_thumbnail (PicmanImage   *image,
                            const gchar *filename)
 {
   const gchar *image_uri;
   gboolean     success = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (filename != NULL, FALSE);
 
-  image_uri = gimp_image_get_uri (image);
+  image_uri = picman_image_get_uri (image);
 
   if (image_uri)
     {
@@ -461,10 +461,10 @@ file_utils_save_thumbnail (GimpImage   *image,
         {
           if ( ! strcmp (uri, image_uri))
             {
-              GimpImagefile *imagefile;
+              PicmanImagefile *imagefile;
 
-              imagefile = gimp_imagefile_new (image->gimp, uri);
-              success = gimp_imagefile_save_thumbnail (imagefile, NULL, image);
+              imagefile = picman_imagefile_new (image->picman, uri);
+              success = picman_imagefile_save_thumbnail (imagefile, NULL, image);
               g_object_unref (imagefile);
             }
 

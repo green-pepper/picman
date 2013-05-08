@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 #include "actions-types.h"
 
-#include "widgets/gimpdataeditor.h"
+#include "widgets/picmandataeditor.h"
 
 #include "data-editor-commands.h"
 
@@ -32,10 +32,10 @@ void
 data_editor_edit_active_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (data);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (data);
   gboolean        edit_active;
 
   edit_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_data_editor_set_edit_active (editor, edit_active);
+  picman_data_editor_set_edit_active (editor, edit_active);
 }

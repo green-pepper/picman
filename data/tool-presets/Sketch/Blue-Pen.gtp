@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-paintbrush")
+(stock-id "picman-tool-paintbrush")
 (name "Blue Pen (Multiply)")
-(tool-options "GimpPaintOptions"
-    (tool "gimp-paintbrush-tool")
+(tool-options "PicmanPaintOptions"
+    (tool "picman-paintbrush-tool")
     (foreground (color-rgb 0.102075 0.183901 0.594317))
     (opacity 0.750000)
     (paint-mode multiply-mode)
@@ -24,4 +24,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

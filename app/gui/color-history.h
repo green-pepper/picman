@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * color-history.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@
 
 #define COLOR_HISTORY_SIZE 12
 
-void   color_history_save        (Gimp             *gimp);
-void   color_history_restore     (Gimp             *gimp);
+void   color_history_save        (Picman             *picman);
+void   color_history_restore     (Picman             *picman);
 
-gint   color_history_add         (const GimpRGB    *rgb);
+gint   color_history_add         (const PicmanRGB    *rgb);
 void   color_history_set         (gint              index,
-                                  const GimpRGB    *rgb);
+                                  const PicmanRGB    *rgb);
 void   color_history_get         (gint              index,
-                                  GimpRGB          *rgb);
+                                  PicmanRGB          *rgb);
 
 
 #endif /* __COLOR_HISTORY_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Supernova plug-in
@@ -25,7 +25,7 @@
  * This plug-in produces an effect like a supernova burst.
  *
  *      Eiichi Takamori <taka@ma1.seikyou.ne.jp>
- *      http://ha1.seikyou.ne.jp/home/taka/gimp/
+ *      http://ha1.seikyou.ne.jp/home/taka/picman/
  *
  *      Preview render mode by timecop@japan.co.jp
  *      http://www.ne.jp/asahi/linux/timecop
@@ -48,7 +48,7 @@
  * - etc...
  *
  * Changes from version 1.1112 to version 1.1114:
- * - Modified proc args to GIMP_PDB_COLOR, also included nspoke.
+ * - Modified proc args to PICMAN_PDB_COLOR, also included nspoke.
  * - nova_int_entryscale_new(): Fixed caption was guchar -> gchar, etc.
  * - Now nova renders properly with alpha channel.
  *   (Very thanks to Spencer Kimball and Federico Mena !)
@@ -62,15 +62,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-nova"
 #define PLUG_IN_BINARY "nova"
-#define PLUG_IN_ROLE   "gimp-nova"
+#define PLUG_IN_ROLE   "picman-nova"
 
 #define SCALE_WIDTH    125
 
@@ -79,7 +79,7 @@ typedef struct
 {
   gint     xcenter;
   gint     ycenter;
-  GimpRGB  color;
+  PicmanRGB  color;
   gint     radius;
   gint     nspoke;
   gint     randomhue;
@@ -87,8 +87,8 @@ typedef struct
 
 typedef struct
 {
-  GimpDrawable *drawable;
-  GimpPreview  *preview;
+  PicmanDrawable *drawable;
+  PicmanPreview  *preview;
   GtkWidget    *coords;
 } NovaCenter;
 
@@ -98,18 +98,18 @@ typedef struct
 static void        query                         (void);
 static void        run                           (const gchar      *name,
                                                   gint              nparams,
-                                                  const GimpParam  *param,
+                                                  const PicmanParam  *param,
                                                   gint             *nreturn_vals,
-                                                  GimpParam       **return_vals);
+                                                  PicmanParam       **return_vals);
 
-static void        nova                          (GimpDrawable     *drawable,
-                                                  GimpPreview      *preview);
+static void        nova                          (PicmanDrawable     *drawable,
+                                                  PicmanPreview      *preview);
 
-static gboolean    nova_dialog                   (GimpDrawable     *drawable);
+static gboolean    nova_dialog                   (PicmanDrawable     *drawable);
 
-static GtkWidget * nova_center_create            (GimpDrawable     *drawable,
-                                                  GimpPreview      *preview);
-static void        nova_center_coords_update     (GimpSizeEntry    *coords,
+static GtkWidget * nova_center_create            (PicmanDrawable     *drawable,
+                                                  PicmanPreview      *preview);
+static void        nova_center_coords_update     (PicmanSizeEntry    *coords,
                                                   NovaCenter       *center);
 static void        nova_center_preview_realize   (GtkWidget        *widget,
                                                   NovaCenter       *center);
@@ -121,7 +121,7 @@ static gboolean    nova_center_preview_events    (GtkWidget        *widget,
                                                   NovaCenter       *center);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -146,20 +146,20 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable" },
-    { GIMP_PDB_INT32,    "xcenter",   "X coordinates of the center of supernova" },
-    { GIMP_PDB_INT32,    "ycenter",   "Y coordinates of the center of supernova" },
-    { GIMP_PDB_COLOR,    "color",     "Color of supernova" },
-    { GIMP_PDB_INT32,    "radius",    "Radius of supernova" },
-    { GIMP_PDB_INT32,    "nspoke",    "Number of spokes" },
-    { GIMP_PDB_INT32,    "randomhue", "Random hue" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable" },
+    { PICMAN_PDB_INT32,    "xcenter",   "X coordinates of the center of supernova" },
+    { PICMAN_PDB_INT32,    "ycenter",   "Y coordinates of the center of supernova" },
+    { PICMAN_PDB_COLOR,    "color",     "Color of supernova" },
+    { PICMAN_PDB_INT32,    "radius",    "Radius of supernova" },
+    { PICMAN_PDB_INT32,    "nspoke",    "Number of spokes" },
+    { PICMAN_PDB_INT32,    "randomhue", "Random hue" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Add a starburst to the image"),
                           "This plug-in produces an effect like a supernova "
                           "burst. The amount of the light effect is "
@@ -171,25 +171,25 @@ query (void)
                           "May 2000",
                           N_("Super_nova..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Light and Shadow/Light");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
@@ -198,32 +198,32 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
 
       /*  First acquire information with a dialog  */
       if (! nova_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 9)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           pvals.xcenter   = param[3].data.d_int32;
           pvals.ycenter   = param[4].data.d_int32;
@@ -233,49 +233,49 @@ run (const gchar      *name,
           pvals.randomhue = param[8].data.d_int32;
         }
 
-      if ((status == GIMP_PDB_SUCCESS) &&
+      if ((status == PICMAN_PDB_SUCCESS) &&
           pvals.radius <= 0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Rendering supernova"));
-          gimp_tile_cache_ntiles (2 *
-                                  (drawable->width / gimp_tile_width () + 1));
+          picman_progress_init (_("Rendering supernova"));
+          picman_tile_cache_ntiles (2 *
+                                  (drawable->width / picman_tile_width () + 1));
 
           nova (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &pvals, sizeof (NovaValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &pvals, sizeof (NovaValues));
         }
       else
         {
-          /* gimp_message ("nova: cannot operate on indexed color images"); */
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /* picman_message ("nova: cannot operate on indexed color images"); */
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /*******************/
@@ -283,7 +283,7 @@ run (const gchar      *name,
 /*******************/
 
 static gboolean
-nova_dialog (GimpDrawable *drawable)
+nova_dialog (PicmanDrawable *drawable)
 {
   GtkWidget  *dialog;
   GtkWidget  *main_vbox;
@@ -294,11 +294,11 @@ nova_dialog (GimpDrawable *drawable)
   GtkObject  *adj;
   gboolean    run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Supernova"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Supernova"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -310,7 +310,7 @@ nova_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -318,8 +318,8 @@ nova_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
-  gtk_widget_add_events (GIMP_PREVIEW (preview)->area,
+  preview = picman_zoom_preview_new (drawable);
+  gtk_widget_add_events (PICMAN_PREVIEW (preview)->area,
                          GDK_BUTTON_PRESS_MASK |
                          GDK_BUTTON1_MOTION_MASK);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
@@ -329,7 +329,7 @@ nova_dialog (GimpDrawable *drawable)
                             G_CALLBACK (nova),
                             drawable);
 
-  frame = nova_center_create (drawable, GIMP_PREVIEW (preview));
+  frame = nova_center_create (drawable, PICMAN_PREVIEW (preview));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -340,66 +340,66 @@ nova_dialog (GimpDrawable *drawable)
   gtk_widget_show (table);
 
   /* Color */
-  if (gimp_drawable_is_rgb (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id))
     {
-      button = gimp_color_button_new (_("Supernova Color Picker"),
+      button = picman_color_button_new (_("Supernova Color Picker"),
                                       SCALE_WIDTH - 8, 16,
-                                      &pvals.color, GIMP_COLOR_AREA_FLAT);
-      gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+                                      &pvals.color, PICMAN_COLOR_AREA_FLAT);
+      picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                  _("Co_lor:"), 0.0, 0.5,
                                  button, 1, TRUE);
 
       g_signal_connect (button, "color-changed",
-                        G_CALLBACK (gimp_color_button_get_color),
+                        G_CALLBACK (picman_color_button_get_color),
                         &pvals.color);
       g_signal_connect_swapped (button, "color-changed",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
     }
 
   /* Radius */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Radius:"), SCALE_WIDTH, 8,
                               pvals.radius, 1, 100, 1, 10, 0,
-                              FALSE, 1, GIMP_MAX_IMAGE_SIZE,
+                              FALSE, 1, PICMAN_MAX_IMAGE_SIZE,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pvals.radius);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   /* Number of spokes */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Spokes:"), SCALE_WIDTH, 8,
                               pvals.nspoke, 1, 1024, 1, 16, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pvals.nspoke);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* Randomness of hue */
-  if (gimp_drawable_is_rgb (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id))
     {
-      adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+      adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                                   _("R_andom hue:"), SCALE_WIDTH, 8,
                                   pvals.randomhue, 0, 360, 1, 15, 0,
                                   TRUE, 0, 0,
                                   NULL, NULL);
       g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_int_adjustment_update),
+                        G_CALLBACK (picman_int_adjustment_update),
                         &pvals.randomhue);
       g_signal_connect_swapped (adj, "value-changed",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
     }
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -418,8 +418,8 @@ nova_dialog (GimpDrawable *drawable)
  * Create new CenterFrame, and return it (GtkFrame).
  */
 static GtkWidget *
-nova_center_create (GimpDrawable *drawable,
-                    GimpPreview  *preview)
+nova_center_create (PicmanDrawable *drawable,
+                    PicmanPreview  *preview)
 {
   NovaCenter *center;
   GtkWidget  *frame;
@@ -434,7 +434,7 @@ nova_center_create (GimpDrawable *drawable,
   center->drawable = drawable;
   center->preview  = preview;
 
-  frame = gimp_frame_new (_("Center of Nova"));
+  frame = picman_frame_new (_("Center of Nova"));
 
   g_signal_connect_swapped (frame, "destroy",
                             G_CALLBACK (g_free),
@@ -444,11 +444,11 @@ nova_center_create (GimpDrawable *drawable,
   gtk_container_add (GTK_CONTAINER (frame), hbox);
   gtk_widget_show (hbox);
 
-  image_ID = gimp_item_get_image (drawable->drawable_id);
-  gimp_image_get_resolution (image_ID, &res_x, &res_y);
+  image_ID = picman_item_get_image (drawable->drawable_id);
+  picman_image_get_resolution (image_ID, &res_x, &res_y);
 
-  center->coords = gimp_coordinates_new (GIMP_UNIT_PIXEL, "%p", TRUE, TRUE, -1,
-                                         GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  center->coords = picman_coordinates_new (PICMAN_UNIT_PIXEL, "%p", TRUE, TRUE, -1,
+                                         PICMAN_SIZE_ENTRY_UPDATE_SIZE,
                                          FALSE, FALSE,
 
                                          _("_X:"), pvals.xcenter, res_x,
@@ -479,7 +479,7 @@ nova_center_create (GimpDrawable *drawable,
   gtk_widget_show (check);
 
   g_signal_connect (check, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &show_cursor);
   g_signal_connect_swapped (check, "toggled",
                             G_CALLBACK (gtk_widget_queue_draw),
@@ -502,13 +502,13 @@ nova_center_create (GimpDrawable *drawable,
  *  CenterFrame entry callback
  */
 static void
-nova_center_coords_update (GimpSizeEntry *coords,
+nova_center_coords_update (PicmanSizeEntry *coords,
                            NovaCenter    *center)
 {
-  pvals.xcenter = gimp_size_entry_get_refval (coords, 0);
-  pvals.ycenter = gimp_size_entry_get_refval (coords, 1);
+  pvals.xcenter = picman_size_entry_get_refval (coords, 0);
+  pvals.ycenter = picman_size_entry_get_refval (coords, 1);
 
-  gimp_preview_invalidate (center->preview);
+  picman_preview_invalidate (center->preview);
 }
 
 /*
@@ -521,7 +521,7 @@ nova_center_preview_realize (GtkWidget  *widget,
   GdkDisplay *display = gtk_widget_get_display (widget);
   GdkCursor  *cursor  = gdk_cursor_new_for_display (display, GDK_CROSSHAIR);
 
-  gimp_preview_set_default_cursor (center->preview, cursor);
+  picman_preview_set_default_cursor (center->preview, cursor);
   gdk_cursor_unref (cursor);
 }
 
@@ -539,12 +539,12 @@ nova_center_preview_expose (GtkWidget  *widget,
       gint     x, y, offx, offy;
       gint     width, height;
 
-      GimpPreviewArea *area = GIMP_PREVIEW_AREA (center->preview->area);
+      PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (center->preview->area);
       GtkAllocation    allocation;
 
       cr = gdk_cairo_create (gtk_widget_get_window (center->preview->area));
 
-      gimp_preview_transform (center->preview,
+      picman_preview_transform (center->preview,
                               pvals.xcenter, pvals.ycenter,
                               &x, &y);
       gtk_widget_get_allocation (GTK_WIDGET (area), &allocation);
@@ -552,7 +552,7 @@ nova_center_preview_expose (GtkWidget  *widget,
       offx = (allocation.width  - area->width)  / 2;
       offy = (allocation.height - area->height) / 2;
 
-      gimp_preview_get_size (center->preview, &width, &height);
+      picman_preview_get_size (center->preview, &width, &height);
 
       cairo_move_to (cr, offx + x + 0.5, 0);
       cairo_line_to (cr, offx + x + 0.5, allocation.height);
@@ -587,7 +587,7 @@ nova_center_update (GtkWidget  *widget,
   gint tx, ty;
 
 
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (center->preview->area);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (center->preview->area);
   GtkAllocation    allocation;
 
   gtk_widget_get_allocation (GTK_WIDGET (area), &allocation);
@@ -595,20 +595,20 @@ nova_center_update (GtkWidget  *widget,
   x -= (allocation.width  - area->width)  / 2;
   y -= (allocation.height - area->height) / 2;
 
-  gimp_preview_untransform (center->preview, x, y, &tx, &ty);
+  picman_preview_untransform (center->preview, x, y, &tx, &ty);
 
   g_signal_handlers_block_by_func (center->coords,
                                    nova_center_coords_update,
                                    center);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (center->coords), 0, tx);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (center->coords), 1, ty);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (center->coords), 0, tx);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (center->coords), 1, ty);
 
   g_signal_handlers_unblock_by_func (center->coords,
                                      nova_center_coords_update,
                                      center);
 
-  nova_center_coords_update (GIMP_SIZE_ENTRY (center->coords), center);
+  nova_center_coords_update (PICMAN_SIZE_ENTRY (center->coords), center);
 
   gtk_widget_queue_draw (center->preview->area);
 }
@@ -675,11 +675,11 @@ gauss (GRand *gr)
 }
 
 static void
-nova (GimpDrawable *drawable,
-      GimpPreview  *preview)
+nova (PicmanDrawable *drawable,
+      PicmanPreview  *preview)
 {
-   GimpPixelRgn  src_rgn;
-   GimpPixelRgn  dest_rgn;
+   PicmanPixelRgn  src_rgn;
+   PicmanPixelRgn  dest_rgn;
    gpointer      pr;
    guchar       *src_row, *dest_row, *save_src;
    guchar       *src, *dest;
@@ -693,9 +693,9 @@ nova (GimpDrawable *drawable,
    gdouble      *spoke;
    gdouble       nova_alpha, src_alpha, new_alpha = 0.0;
    gdouble       compl_ratio, ratio;
-   GimpRGB       color;
-   GimpRGB      *spokecolor;
-   GimpHSV       hsv;
+   PicmanRGB       color;
+   PicmanRGB      *spokecolor;
+   PicmanHSV       hsv;
    gdouble       spokecol;
    gint          i;
    GRand        *gr;
@@ -706,13 +706,13 @@ nova (GimpDrawable *drawable,
    gr = g_rand_new ();
 
    /* initialize */
-   has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+   has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
    spoke = g_new (gdouble, pvals.nspoke);
-   spokecolor = g_new (GimpRGB, pvals.nspoke);
+   spokecolor = g_new (PicmanRGB, pvals.nspoke);
 
-   gimp_rgb_set_alpha (&pvals.color, 1.0);
-   gimp_rgb_to_hsv (&pvals.color, &hsv);
+   picman_rgb_set_alpha (&pvals.color, 1.0);
+   picman_rgb_to_hsv (&pvals.color, &hsv);
 
    for (i = 0; i < pvals.nspoke; i++)
      {
@@ -726,17 +726,17 @@ nova (GimpDrawable *drawable,
        else if (hsv.h >= 1.0)
          hsv.h -= 1.0;
 
-       gimp_hsv_to_rgb (&hsv, spokecolor + i);
+       picman_hsv_to_rgb (&hsv, spokecolor + i);
      }
 
    if (preview)
      {
-       cache = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+       cache = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                              &width, &height, &bpp);
 
-       zoom = gimp_zoom_preview_get_factor (GIMP_ZOOM_PREVIEW (preview));
+       zoom = picman_zoom_preview_get_factor (PICMAN_ZOOM_PREVIEW (preview));
 
-       gimp_preview_transform (preview,
+       picman_preview_transform (preview,
                                pvals.xcenter, pvals.ycenter, &xc, &yc);
 
        x1 = 0;
@@ -746,14 +746,14 @@ nova (GimpDrawable *drawable,
      }
    else
      {
-       gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
-       bpp = gimp_drawable_bpp (drawable->drawable_id);
+       picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+       bpp = picman_drawable_bpp (drawable->drawable_id);
        xc = pvals.xcenter;
        yc = pvals.ycenter;
 
-       gimp_pixel_rgn_init (&src_rgn, drawable,
+       picman_pixel_rgn_init (&src_rgn, drawable,
                             x1, y1, x2-x1, y2-y1, FALSE, FALSE);
-       gimp_pixel_rgn_init (&dest_rgn, drawable,
+       picman_pixel_rgn_init (&dest_rgn, drawable,
                             x1, y1, x2-x1, y2-y1, TRUE, TRUE);
      }
 
@@ -860,7 +860,7 @@ nova (GimpDrawable *drawable,
              }
          }
 
-       gimp_preview_draw_buffer (preview, dest_row, bpp * width);
+       picman_preview_draw_buffer (preview, dest_row, bpp * width);
 
        g_free (cache);
        g_free (save_src);
@@ -868,9 +868,9 @@ nova (GimpDrawable *drawable,
      }
    else
      { /* normal mode */
-       for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+       for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
             pr != NULL ;
-            pr = gimp_pixel_rgns_process (pr))
+            pr = picman_pixel_rgns_process (pr))
          {
            src_row = src_rgn.data;
            dest_row = dest_rgn.data;
@@ -977,14 +977,14 @@ nova (GimpDrawable *drawable,
 
            /* Update progress */
            progress += src_rgn.w * src_rgn.h;
-           gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+           picman_progress_update ((gdouble) progress / (gdouble) max_progress);
          }
 
-       gimp_progress_update (1.0);
+       picman_progress_update (1.0);
 
-       gimp_drawable_flush (drawable);
-       gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-       gimp_drawable_update (drawable->drawable_id,
+       picman_drawable_flush (drawable);
+       picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+       picman_drawable_update (drawable->drawable_id,
                              x1, y1, (x2 - x1), (y2 - y1));
      }
 

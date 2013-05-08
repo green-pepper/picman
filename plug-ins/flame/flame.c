@@ -1,7 +1,7 @@
 /* flame - cosmic recursive fractal flames
  * Copyright (C) 1997  Scott Draves <spot@cs.cmu.edu>
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,17 +26,17 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "flame.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC      "plug-in-flame"
 #define PLUG_IN_BINARY    "flame"
-#define PLUG_IN_ROLE      "gimp-flame"
+#define PLUG_IN_ROLE      "picman-flame"
 
 #define VARIATION_SAME    (-2)
 
@@ -66,10 +66,10 @@ struct
 static void      query             (void);
 static void      run               (const gchar      *name,
                                     gint              nparams,
-                                    const GimpParam  *param,
+                                    const PicmanParam  *param,
                                     gint             *nreturn_vals,
-                                    GimpParam       **return_vals);
-static void      flame             (GimpDrawable     *drawable);
+                                    PicmanParam       **return_vals);
+static void      flame             (PicmanDrawable     *drawable);
 
 static gboolean  flame_dialog      (void);
 static void      set_flame_preview (void);
@@ -103,7 +103,7 @@ static gdouble        pick_speed = 0.2;
 static frame_spec f = { 0.0, &config.cp, 1, 0.0 };
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -118,14 +118,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"               }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"               }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create cosmic recursive fractal flames"),
                           "Create cosmic recursive fractal flames",
                           "Scott Draves",
@@ -133,11 +133,11 @@ query (void)
                           "1997",
                           N_("_Flame..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Nature");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Nature");
 }
 
 static void
@@ -173,14 +173,14 @@ maybe_init_cp (void)
 static void
 run (const gchar      *name,
      gint              n_params,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpDrawable     *drawable = NULL;
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[1];
+  PicmanDrawable     *drawable = NULL;
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   *nreturn_vals = 1;
   *return_vals = values;
@@ -189,26 +189,26 @@ run (const gchar      *name,
 
   INIT_I18N ();
 
-  if (run_mode == GIMP_RUN_NONINTERACTIVE)
+  if (run_mode == PICMAN_RUN_NONINTERACTIVE)
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
   else
     {
-      gimp_get_data (PLUG_IN_PROC, &config);
+      picman_get_data (PLUG_IN_PROC, &config);
       maybe_init_cp ();
 
-      drawable = gimp_drawable_get (param[2].data.d_drawable);
+      drawable = picman_drawable_get (param[2].data.d_drawable);
       config.cp.width  = drawable->width;
       config.cp.height = drawable->height;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (! flame_dialog ())
             {
-              gimp_drawable_detach (drawable);
+              picman_drawable_detach (drawable);
 
-              status = GIMP_PDB_CANCEL;
+              status = PICMAN_PDB_CANCEL;
             }
         }
       else
@@ -220,30 +220,30 @@ run (const gchar      *name,
         }
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
-          gimp_progress_init (_("Drawing flame"));
-          gimp_tile_cache_ntiles (2 * (drawable->width /
-                                       gimp_tile_width () + 1));
+          picman_progress_init (_("Drawing flame"));
+          picman_tile_cache_ntiles (2 * (drawable->width /
+                                       picman_tile_width () + 1));
 
           flame (drawable);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
-          gimp_set_data (PLUG_IN_PROC, &config, sizeof (config));
+          picman_set_data (PLUG_IN_PROC, &config, sizeof (config));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -251,8 +251,8 @@ static void
 drawable_to_cmap (control_point *cp)
 {
   gint          i, j;
-  GimpPixelRgn  pr;
-  GimpDrawable *d;
+  PicmanPixelRgn  pr;
+  PicmanDrawable *d;
   guchar       *p;
 
   if (TABLE_DRAWABLE >= config.cmap_drawable)
@@ -268,12 +268,12 @@ drawable_to_cmap (control_point *cp)
     }
   else if (GRADIENT_DRAWABLE == config.cmap_drawable)
     {
-      gchar   *name = gimp_context_get_gradient ();
+      gchar   *name = picman_context_get_gradient ();
       gint     num;
       gdouble *g;
 
       /* FIXME: "reverse" hardcoded to FALSE. */
-      gimp_gradient_get_uniform_samples (name, 256, FALSE,
+      picman_gradient_get_uniform_samples (name, 256, FALSE,
                                          &num, &g);
 
       g_free (name);
@@ -285,13 +285,13 @@ drawable_to_cmap (control_point *cp)
     }
   else
     {
-      d = gimp_drawable_get (config.cmap_drawable);
+      d = picman_drawable_get (config.cmap_drawable);
       p = g_new (guchar, d->bpp);
-      gimp_pixel_rgn_init (&pr, d, 0, 0,
+      picman_pixel_rgn_init (&pr, d, 0, 0,
                            d->width, d->height, FALSE, FALSE);
       for (i = 0; i < 256; i++)
         {
-          gimp_pixel_rgn_get_pixel (&pr, p, i % d->width,
+          picman_pixel_rgn_get_pixel (&pr, p, i % d->width,
                                     (i / d->width) % d->height);
           for (j = 0; j < 3; j++)
             cp->cmap[i][j] =
@@ -302,7 +302,7 @@ drawable_to_cmap (control_point *cp)
 }
 
 static void
-flame (GimpDrawable *drawable)
+flame (PicmanDrawable *drawable)
 {
   gint    width, height;
   guchar *tmp;
@@ -327,35 +327,35 @@ flame (GimpDrawable *drawable)
     random_control_point (&config.cp, config.variation);
   drawable_to_cmap (&config.cp);
   render_rectangle (&f, tmp, width, field_both, 4,
-                    gimp_progress_update);
-  gimp_progress_update (1.0);
+                    picman_progress_update);
+  picman_progress_update (1.0);
 
   /* update destination */
   if (4 == bytes)
     {
-      GimpPixelRgn pr;
-      gimp_pixel_rgn_init (&pr, drawable, 0, 0, width, height,
+      PicmanPixelRgn pr;
+      picman_pixel_rgn_init (&pr, drawable, 0, 0, width, height,
                            TRUE, TRUE);
-      gimp_pixel_rgn_set_rect (&pr, tmp, 0, 0, width, height);
+      picman_pixel_rgn_set_rect (&pr, tmp, 0, 0, width, height);
     }
   else if (3 == bytes)
     {
       gint       i, j;
-      GimpPixelRgn  src_pr, dst_pr;
+      PicmanPixelRgn  src_pr, dst_pr;
       guchar    *sl;
 
       sl = g_new (guchar, 3 * width);
 
-      gimp_pixel_rgn_init (&src_pr, drawable,
+      picman_pixel_rgn_init (&src_pr, drawable,
                            0, 0, width, height, FALSE, FALSE);
-      gimp_pixel_rgn_init (&dst_pr, drawable,
+      picman_pixel_rgn_init (&dst_pr, drawable,
                            0, 0, width, height, TRUE, TRUE);
       for (i = 0; i < height; i++)
         {
           guchar *rr = tmp + 4 * i * width;
           guchar *sld = sl;
 
-          gimp_pixel_rgn_get_rect (&src_pr, sl, 0, i, width, 1);
+          picman_pixel_rgn_get_rect (&src_pr, sl, 0, i, width, 1);
           for (j = 0; j < width; j++)
             {
               gint k, alpha = rr[3];
@@ -370,15 +370,15 @@ flame (GimpDrawable *drawable)
               rr += 4;
               sld += 3;
             }
-          gimp_pixel_rgn_set_rect (&dst_pr, sl, 0, i, width, 1);
+          picman_pixel_rgn_set_rect (&dst_pr, sl, 0, i, width, 1);
         }
       g_free (sl);
     }
 
   g_free (tmp);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, 0, 0, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, 0, 0, width, height);
 }
 
 static void
@@ -399,7 +399,7 @@ file_response_callback (GtkFileChooser *chooser,
           if (!g_file_test (filename, G_FILE_TEST_IS_REGULAR))
             {
               g_message (_("'%s' is not a regular file"),
-                         gimp_filename_to_utf8 (filename));
+                         picman_filename_to_utf8 (filename));
               g_free (filename);
               return;
             }
@@ -409,7 +409,7 @@ file_response_callback (GtkFileChooser *chooser,
           if (f == NULL)
             {
               g_message (_("Could not open '%s' for reading: %s"),
-                         gimp_filename_to_utf8 (filename), g_strerror (errno));
+                         picman_filename_to_utf8 (filename), g_strerror (errno));
               g_free (filename);
               return;
             }
@@ -428,7 +428,7 @@ file_response_callback (GtkFileChooser *chooser,
           fclose (f);
           /* i want to update the existing dialogue, but it's
              too painful */
-          gimp_set_data ("plug_in_flame", &config, sizeof (config));
+          picman_set_data ("plug_in_flame", &config, sizeof (config));
           /* gtk_widget_destroy(dialog); */
           set_flame_preview ();
           set_edit_preview ();
@@ -440,7 +440,7 @@ file_response_callback (GtkFileChooser *chooser,
           if (NULL == f)
             {
               g_message (_("Could not open '%s' for writing: %s"),
-                         gimp_filename_to_utf8 (filename), g_strerror (errno));
+                         picman_filename_to_utf8 (filename), g_strerror (errno));
               g_free (filename);
               return;
             }
@@ -584,9 +584,9 @@ set_edit_preview (void)
 
         render_rectangle (&pf, b, EDIT_PREVIEW_SIZE, field_both, 3, NULL);
 
-        gimp_preview_area_draw (GIMP_PREVIEW_AREA (edit_previews[mut]),
+        picman_preview_area_draw (PICMAN_PREVIEW_AREA (edit_previews[mut]),
                                 0, 0, EDIT_PREVIEW_SIZE, EDIT_PREVIEW_SIZE,
-                                GIMP_RGB_IMAGE,
+                                PICMAN_RGB_IMAGE,
                                 b,
                                 EDIT_PREVIEW_SIZE * 3);
       }
@@ -642,9 +642,9 @@ edit_callback (GtkWidget *widget,
       GtkObject *adj;
       gint       i, j;
 
-      edit_dialog = gimp_dialog_new (_("Edit Flame"), PLUG_IN_ROLE,
+      edit_dialog = picman_dialog_new (_("Edit Flame"), PLUG_IN_ROLE,
                                      parent, GTK_DIALOG_DESTROY_WITH_PARENT,
-                                     gimp_standard_help_func, PLUG_IN_PROC,
+                                     picman_standard_help_func, PLUG_IN_PROC,
 
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                      GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -665,7 +665,7 @@ edit_callback (GtkWidget *widget,
       gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (edit_dialog))),
                           main_vbox, FALSE, FALSE, 0);
 
-      frame = gimp_frame_new (_("Directions"));
+      frame = picman_frame_new (_("Directions"));
       gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
       gtk_widget_show (frame);
 
@@ -680,7 +680,7 @@ edit_callback (GtkWidget *widget,
           {
             gint mut = i * 3 + j;
 
-            edit_previews[mut] = gimp_preview_area_new ();
+            edit_previews[mut] = picman_preview_area_new ();
             gtk_widget_set_size_request (edit_previews[mut],
                                          EDIT_PREVIEW_SIZE,
                                          EDIT_PREVIEW_SIZE);
@@ -701,7 +701,7 @@ edit_callback (GtkWidget *widget,
                         G_CALLBACK (edit_preview_size_allocate),
                         NULL);
 
-      frame = gimp_frame_new (_("Controls"));
+      frame = picman_frame_new (_("Controls"));
       gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
       gtk_widget_show (frame);
 
@@ -714,7 +714,7 @@ edit_callback (GtkWidget *widget,
       gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
       gtk_widget_show(table);
 
-      adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+      adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                   _("_Speed:"), SCALE_WIDTH, 0,
                                   pick_speed,
                                   0.05, 0.5, 0.01, 0.1, 2,
@@ -722,7 +722,7 @@ edit_callback (GtkWidget *widget,
                                   NULL, NULL);
 
       g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_double_adjustment_update),
+                        G_CALLBACK (picman_double_adjustment_update),
                         &pick_speed);
       g_signal_connect (adj, "value-changed",
                         G_CALLBACK (set_edit_preview),
@@ -742,7 +742,7 @@ edit_callback (GtkWidget *widget,
                                 G_CALLBACK (randomize_callback),
                                 NULL);
 
-      combo = gimp_int_combo_box_new (_("Same"),         VARIATION_SAME,
+      combo = picman_int_combo_box_new (_("Same"),         VARIATION_SAME,
                                       _("Random"),       variation_random,
                                       _("Linear"),       0,
                                       _("Sinusoidal"),   1,
@@ -775,7 +775,7 @@ edit_callback (GtkWidget *widget,
                                       _("Gaussian"),     28,
                                       NULL);
 
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                      VARIATION_SAME);
 
       g_signal_connect (combo, "changed",
@@ -834,7 +834,7 @@ static void
 combo_callback (GtkWidget *widget,
                 gpointer   data)
 {
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), (gint *) data);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), (gint *) data);
 
   if (VARIATION_SAME != config.variation)
     random_control_point (&edit_cp, config.variation);
@@ -870,9 +870,9 @@ set_flame_preview (void)
   pcp.spatial_filter_radius = 0.1;
   render_rectangle (&pf, b, preview_width, field_both, 3, NULL);
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (flame_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (flame_preview),
                           0, 0, preview_width, PREVIEW_SIZE,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           b,
                           preview_width * 3);
   g_free (b);
@@ -919,9 +919,9 @@ set_cmap_preview (void)
       ptr += 32*3;
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (cmap_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (cmap_preview),
                           0, 0, 32, 32,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           cmap_buffer,
                           32 * 3);
   g_free (cmap_buffer);
@@ -931,7 +931,7 @@ static void
 cmap_callback (GtkWidget *widget,
                gpointer   data)
 {
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget),
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget),
                                  &config.cmap_drawable);
 
   set_cmap_preview ();
@@ -944,7 +944,7 @@ cmap_constrain (gint32   image_id,
                 gint32   drawable_id,
                 gpointer data)
 {
-  return ! gimp_drawable_is_indexed (drawable_id);
+  return ! picman_drawable_is_indexed (drawable_id);
 }
 
 
@@ -962,11 +962,11 @@ flame_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Flame"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Flame"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -978,7 +978,7 @@ flame_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -999,7 +999,7 @@ flame_dialog (void)
   gtk_container_add (GTK_CONTAINER (abox), frame);
   gtk_widget_show (frame);
 
-  flame_preview = gimp_preview_area_new ();
+  flame_preview = picman_preview_area_new ();
   {
     gdouble aspect = config.cp.width / (double) config.cp.height;
 
@@ -1076,7 +1076,7 @@ flame_dialog (void)
   gtk_box_pack_start (GTK_BOX (box), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Brightness:"), SCALE_WIDTH, 5,
                               config.cp.brightness,
                               0, 5, 0.1, 1, 2,
@@ -1084,13 +1084,13 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.brightness);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("Co_ntrast:"), SCALE_WIDTH, 5,
                               config.cp.contrast,
                               0, 5, 0.1, 1, 2,
@@ -1098,13 +1098,13 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.contrast);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Gamma:"), SCALE_WIDTH, 5,
                               config.cp.gamma,
                               1, 5, 0.1, 1, 2,
@@ -1112,13 +1112,13 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.gamma);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("Sample _density:"), SCALE_WIDTH, 5,
                               config.cp.sample_density,
                               0.1, 20, 1, 5, 2,
@@ -1126,10 +1126,10 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.sample_density);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                               _("Spa_tial oversample:"), SCALE_WIDTH, 5,
                               config.cp.spatial_oversample,
                               1, 4, 0.01, 0.1, 0,
@@ -1137,10 +1137,10 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.cp.spatial_oversample);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 5,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 5,
                               _("Spatial _filter radius:"), SCALE_WIDTH, 5,
                               config.cp.spatial_filter_radius,
                               0, 4, 0.2, 1, 2,
@@ -1148,7 +1148,7 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.spatial_filter_radius);
 
   {
@@ -1164,14 +1164,14 @@ flame_dialog (void)
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
     gtk_widget_show (label);
 
-    combo = gimp_drawable_combo_box_new (cmap_constrain, NULL);
+    combo = picman_drawable_combo_box_new (cmap_constrain, NULL);
 
     gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
 
 #if 0
-    gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                                GIMP_INT_STORE_VALUE, BLACK_DRAWABLE,
-                                GIMP_INT_STORE_LABEL, _("Black"),
+    picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                                PICMAN_INT_STORE_VALUE, BLACK_DRAWABLE,
+                                PICMAN_INT_STORE_LABEL, _("Black"),
                                 -1);
 #endif
 
@@ -1193,20 +1193,20 @@ flame_dialog (void)
         {
           gint value = TABLE_DRAWABLE - good[i];
 
-          gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                                      GIMP_INT_STORE_VALUE, value,
-                                      GIMP_INT_STORE_LABEL, names[i],
+          picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                                      PICMAN_INT_STORE_VALUE, value,
+                                      PICMAN_INT_STORE_LABEL, names[i],
                                       -1);
         }
     }
 
-    gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                                GIMP_INT_STORE_VALUE,    GRADIENT_DRAWABLE,
-                                GIMP_INT_STORE_LABEL,    _("Custom gradient"),
-                                GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_GRADIENT,
+    picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                                PICMAN_INT_STORE_VALUE,    GRADIENT_DRAWABLE,
+                                PICMAN_INT_STORE_LABEL,    _("Custom gradient"),
+                                PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_GRADIENT,
                                 -1);
 
-    gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+    picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                 config.cmap_drawable,
                                 G_CALLBACK (cmap_callback),
                                 NULL);
@@ -1214,7 +1214,7 @@ flame_dialog (void)
     gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
     gtk_widget_show (combo);
 
-    cmap_preview = gimp_preview_area_new ();
+    cmap_preview = picman_preview_area_new ();
     gtk_widget_set_size_request (cmap_preview, 32, 32);
 
     gtk_box_pack_end (GTK_BOX (hbox), cmap_preview, FALSE, FALSE, 0);
@@ -1232,7 +1232,7 @@ flame_dialog (void)
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), table, label);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Zoom:"), SCALE_WIDTH, 0,
                               config.cp.zoom,
                               -4, 4, 0.5, 1, 2,
@@ -1240,13 +1240,13 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.zoom);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_X:"), SCALE_WIDTH, 0,
                               config.cp.center[0],
                               -2, 2, 0.5, 1, 2,
@@ -1254,13 +1254,13 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.center[0]);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Y:"), SCALE_WIDTH, 0,
                               config.cp.center[1],
                               -2, 2, 0.5, 1, 2,
@@ -1268,7 +1268,7 @@ flame_dialog (void)
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.cp.center[1]);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (set_flame_preview),
@@ -1278,7 +1278,7 @@ flame_dialog (void)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

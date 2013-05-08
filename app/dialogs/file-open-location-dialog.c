@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -23,29 +23,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanprogress.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "widgets/gimpcontainerentry.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpprogressbox.h"
+#include "widgets/picmancontainerentry.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanprogressbox.h"
 
 #include "file-open-location-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void      file_open_location_response   (GtkDialog          *dialog,
                                                 gint                response_id,
-                                                Gimp               *gimp);
+                                                Picman               *picman);
 
 static gboolean  file_open_location_completion (GtkEntryCompletion *completion,
                                                 const gchar        *key,
@@ -56,9 +56,9 @@ static gboolean  file_open_location_completion (GtkEntryCompletion *completion,
 /*  public functions  */
 
 GtkWidget *
-file_open_location_dialog_new (Gimp *gimp)
+file_open_location_dialog_new (Picman *picman)
 {
-  GimpContext        *context;
+  PicmanContext        *context;
   GtkWidget          *dialog;
   GtkWidget          *hbox;
   GtkWidget          *vbox;
@@ -67,13 +67,13 @@ file_open_location_dialog_new (Gimp *gimp)
   GtkWidget          *entry;
   GtkEntryCompletion *completion;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  dialog = gimp_dialog_new (_("Open Location"),
-                            "gimp-file-open-location",
+  dialog = picman_dialog_new (_("Open Location"),
+                            "picman-file-open-location",
                             NULL, 0,
-                            gimp_standard_help_func,
-                            GIMP_HELP_FILE_OPEN_LOCATION,
+                            picman_standard_help_func,
+                            PICMAN_HELP_FILE_OPEN_LOCATION,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OPEN,   GTK_RESPONSE_OK,
@@ -82,7 +82,7 @@ file_open_location_dialog_new (Gimp *gimp)
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (file_open_location_response),
-                    gimp);
+                    picman);
 
   gtk_dialog_set_alternative_button_order (GTK_DIALOG(dialog),
                                            GTK_RESPONSE_OK,
@@ -99,7 +99,7 @@ file_open_location_dialog_new (Gimp *gimp)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_WEB, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_WEB, GTK_ICON_SIZE_BUTTON);
   gtk_box_pack_start (GTK_BOX (vbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -115,9 +115,9 @@ file_open_location_dialog_new (Gimp *gimp)
   /* we don't want the context to affect the entry, so create
    * a scratch one instead of using e.g. the user context
    */
-  context = gimp_context_new (gimp, "file-open-location-dialog", NULL);
-  entry = gimp_container_entry_new (gimp->documents, context,
-                                    GIMP_VIEW_SIZE_SMALL, 0);
+  context = picman_context_new (picman, "file-open-location-dialog", NULL);
+  entry = picman_container_entry_new (picman->documents, context,
+                                    PICMAN_VIEW_SIZE_SMALL, 0);
   g_object_unref (context);
 
   completion = gtk_entry_get_completion (GTK_ENTRY (entry));
@@ -141,7 +141,7 @@ file_open_location_dialog_new (Gimp *gimp)
 static void
 file_open_location_response (GtkDialog *dialog,
                              gint       response_id,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
   GtkWidget   *entry;
   GtkWidget   *box;
@@ -151,8 +151,8 @@ file_open_location_response (GtkDialog *dialog,
     {
       box = g_object_get_data (G_OBJECT (dialog), "progress-box");
 
-      if (box && GIMP_PROGRESS_BOX (box)->active)
-        gimp_progress_cancel (GIMP_PROGRESS (box));
+      if (box && PICMAN_PROGRESS_BOX (box)->active)
+        picman_progress_cancel (PICMAN_PROGRESS (box));
       else
         gtk_widget_destroy (GTK_WIDGET (dialog));
 
@@ -168,12 +168,12 @@ file_open_location_response (GtkDialog *dialog,
 
   if (text && strlen (text))
     {
-      GimpImage         *image;
+      PicmanImage         *image;
       gchar             *uri;
       gchar             *filename;
       gchar             *hostname;
       GError            *error  = NULL;
-      GimpPDBStatusType  status;
+      PicmanPDBStatusType  status;
 
       filename = g_filename_from_uri (text, &hostname, NULL);
 
@@ -186,10 +186,10 @@ file_open_location_response (GtkDialog *dialog,
         }
       else
         {
-          uri = file_utils_filename_to_uri (gimp, text, &error);
+          uri = file_utils_filename_to_uri (picman, text, &error);
         }
 
-      box = gimp_progress_box_new ();
+      box = picman_progress_box_new ();
       gtk_container_set_border_width (GTK_CONTAINER (box), 12);
       gtk_box_pack_end (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                         box, FALSE, FALSE, 0);
@@ -200,17 +200,17 @@ file_open_location_response (GtkDialog *dialog,
         {
           gtk_widget_show (box);
 
-          image = file_open_with_proc_and_display (gimp,
-                                                   gimp_get_user_context (gimp),
-                                                   GIMP_PROGRESS (box),
+          image = file_open_with_proc_and_display (picman,
+                                                   picman_get_user_context (picman),
+                                                   PICMAN_PROGRESS (box),
                                                    uri, text, FALSE, NULL,
                                                    &status, &error);
 
-          if (image == NULL && status != GIMP_PDB_CANCEL)
+          if (image == NULL && status != PICMAN_PDB_CANCEL)
             {
               gchar *filename = file_utils_uri_display_name (uri);
 
-              gimp_message (gimp, G_OBJECT (box), GIMP_MESSAGE_ERROR,
+              picman_message (picman, G_OBJECT (box), PICMAN_MESSAGE_ERROR,
                             _("Opening '%s' failed:\n\n%s"),
                             filename, error->message);
               g_clear_error (&error);
@@ -222,7 +222,7 @@ file_open_location_response (GtkDialog *dialog,
         }
       else
         {
-          gimp_message (gimp, G_OBJECT (box), GIMP_MESSAGE_ERROR,
+          picman_message (picman, G_OBJECT (box), PICMAN_MESSAGE_ERROR,
                         _("Opening '%s' failed:\n\n%s"),
                         text, error->message);
           g_clear_error (&error);

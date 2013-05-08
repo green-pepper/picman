@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,19 +18,19 @@
 #ifndef __ERRORS_H__
 #define __ERRORS_H__
 
-#ifndef GIMP_APP_GLUE_COMPILATION
+#ifndef PICMAN_APP_GLUE_COMPILATION
 #error You must not #include "errors.h" from an app/ subdir
 #endif
 
 
-void   errors_init      (Gimp               *gimp,
+void   errors_init      (Picman               *picman,
                          const gchar        *full_prog_name,
                          gboolean            use_debug_handler,
-                         GimpStackTraceMode  stack_trace_mode);
+                         PicmanStackTraceMode  stack_trace_mode);
 void   errors_exit      (void);
 
-void   gimp_fatal_error (const gchar        *message) G_GNUC_NORETURN;
-void   gimp_terminate   (const gchar        *message) G_GNUC_NORETURN;
+void   picman_fatal_error (const gchar        *message) G_GNUC_NORETURN;
+void   picman_terminate   (const gchar        *message) G_GNUC_NORETURN;
 
 
 #endif /* __ERRORS_H__ */

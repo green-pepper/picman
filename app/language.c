@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 #endif
 
 #include "language.h"
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
@@ -725,7 +725,7 @@ language_init (const gchar *language)
 #endif
 
   /*  We already set the locale according to the environment, so just
-   *  return early if no language is set in gimprc.
+   *  return early if no language is set in picmanrc.
    */
   if (! language)
     return;

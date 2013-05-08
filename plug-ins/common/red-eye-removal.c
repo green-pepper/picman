@@ -1,5 +1,5 @@
-/* GIMP - The GNU Image Manipulation Program
- * Red Eye Plug-in for GIMP.
+/* PICMAN - The GNU Image Manipulation Program
+ * Red Eye Plug-in for PICMAN.
  *
  * Copyright (C) 2004  Robert Merkel <robert.merkel@benambra.org>
  * Copyright (C) 2006  Andreas Røsdal <andrearo@stud.ntnu.no>
@@ -25,7 +25,7 @@
  * This plugin is used for removing the red-eye effect
  * that occurs in flash photos.
  *
- * Based on a GIMP 1.2 Perl plugin by Geoff Kuenning
+ * Based on a PICMAN 1.2 Perl plugin by Geoff Kuenning
  *
  * Version History:
  * 0.1 - initial preliminary release, single file, only documentation
@@ -40,10 +40,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Declare local functions.
@@ -51,13 +51,13 @@
 static void     query                 (void);
 static void     run                   (const gchar      *name,
                                        gint              nparams,
-                                       const GimpParam  *param,
+                                       const PicmanParam  *param,
                                        gint             *nreturn_vals,
-                                       GimpParam       **return_vals);
+                                       PicmanParam       **return_vals);
 
-static void     remove_redeye         (GimpDrawable     *drawable);
-static void     remove_redeye_preview (GimpDrawable     *drawable,
-                                       GimpPreview      *preview);
+static void     remove_redeye         (PicmanDrawable     *drawable);
+static void     remove_redeye_preview (PicmanDrawable     *drawable,
+                                       PicmanPreview      *preview);
 static void     redeye_inner_loop     (const guchar     *src,
                                        guchar           *dest,
                                        gint              width,
@@ -75,10 +75,10 @@ static void     redeye_inner_loop     (const guchar     *src,
 
 #define PLUG_IN_PROC    "plug-in-red-eye-removal"
 #define PLUG_IN_BINARY  "red-eye-removal"
-#define PLUG_IN_ROLE    "gimp-red-eye-removal"
+#define PLUG_IN_ROLE    "picman-red-eye-removal"
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -93,15 +93,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"               },
-    { GIMP_PDB_INT32,    "threshold", "Red eye threshold in percent" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"               },
+    { PICMAN_PDB_INT32,    "threshold", "Red eye threshold in percent" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Remove the red eye effect caused by camera "
                              "flashes"),
                           "This plug-in removes the red eye effect caused by "
@@ -115,11 +115,11 @@ query (void)
                           "2006",
                           N_("_Red Eye Removal..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
 }
 
 
@@ -128,7 +128,7 @@ query (void)
  */
 static gboolean
 dialog (gint32        image_id,
-        GimpDrawable *drawable)
+        PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *preview;
@@ -137,11 +137,11 @@ dialog (gint32        image_id,
   GtkObject *adj;
   gboolean   run = FALSE;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Red Eye Removal"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Red Eye Removal"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
                             NULL);
@@ -151,7 +151,7 @@ dialog (gint32        image_id,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -159,7 +159,7 @@ dialog (gint32        image_id,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   table = gtk_table_new (1, 3, FALSE);
@@ -167,7 +167,7 @@ dialog (gint32        image_id,
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 1, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 1, 0,
                              _("_Threshold:"),
                              SCALE_WIDTH, 0,
                              threshold,
@@ -177,9 +177,9 @@ dialog (gint32        image_id,
                              _("Threshold for the red eye color to remove."),
                              NULL);
 
-  if (gimp_selection_is_empty (gimp_item_get_image (drawable->drawable_id)))
+  if (picman_selection_is_empty (picman_item_get_image (drawable->drawable_id)))
     {
-      GtkWidget *hints = gimp_hint_box_new (_("Manually selecting the eyes may "
+      GtkWidget *hints = picman_hint_box_new (_("Manually selecting the eyes may "
                                               "improve the results."));
 
       gtk_box_pack_end (GTK_BOX (main_vbox), hints, FALSE, FALSE, 0);
@@ -191,15 +191,15 @@ dialog (gint32        image_id,
                             drawable);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &threshold);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -209,14 +209,14 @@ dialog (gint32        image_id,
 static void
 run (const gchar      *name,
      gint             nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam        **return_vals)
+     PicmanParam        **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
 
   run_mode = param[0].data.d_int32;
@@ -224,27 +224,27 @@ run (const gchar      *name,
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
   image_ID = param[1].data.d_image;
 
   switch (run_mode)
     {
-      case GIMP_RUN_NONINTERACTIVE:
+      case PICMAN_RUN_NONINTERACTIVE:
         if (nparams != 4)
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         else
           threshold = param[3].data.d_int32;
         break;
 
-      case GIMP_RUN_INTERACTIVE:
-        gimp_get_data (PLUG_IN_PROC, &threshold);
+      case PICMAN_RUN_INTERACTIVE:
+        picman_get_data (PLUG_IN_PROC, &threshold);
 
         if (! dialog (image_ID, drawable))
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
         break;
 
-      case GIMP_RUN_WITH_LAST_VALS:
-        gimp_get_data (PLUG_IN_PROC, &threshold);
+      case PICMAN_RUN_WITH_LAST_VALS:
+        picman_get_data (PLUG_IN_PROC, &threshold);
         break;
 
       default:
@@ -252,29 +252,29 @@ run (const gchar      *name,
     }
 
   /*  Make sure that the drawable is RGB color.  */
-  if (status == GIMP_PDB_SUCCESS &&
-      gimp_drawable_is_rgb (drawable->drawable_id))
+  if (status == PICMAN_PDB_SUCCESS &&
+      picman_drawable_is_rgb (drawable->drawable_id))
     {
       remove_redeye (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &threshold, sizeof (threshold));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &threshold, sizeof (threshold));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
@@ -284,10 +284,10 @@ run (const gchar      *name,
  * prevent incorrect pixels from being selected.
  */
 static void
-remove_redeye (GimpDrawable *drawable)
+remove_redeye (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  src_rgn;
-  GimpPixelRgn  dest_rgn;
+  PicmanPixelRgn  src_rgn;
+  PicmanPixelRgn  dest_rgn;
   gint          progress, max_progress;
   gboolean      has_alpha;
   gint          x, y;
@@ -295,25 +295,25 @@ remove_redeye (GimpDrawable *drawable)
   gint          i;
   gpointer      pr;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x, &y, &width, &height))
     return;
 
-  gimp_progress_init (_("Removing red eye"));
+  picman_progress_init (_("Removing red eye"));
 
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   progress = 0;
   max_progress = width * height;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x, y, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x, y, width, height, TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn), i = 0;
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn), i = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), i++)
+       pr = picman_pixel_rgns_process (pr), i++)
     {
       redeye_inner_loop (src_rgn.data, dest_rgn.data, src_rgn.w, src_rgn.h,
                          src_rgn.bpp, has_alpha, src_rgn.rowstride);
@@ -321,18 +321,18 @@ remove_redeye (GimpDrawable *drawable)
       progress += src_rgn.w * src_rgn.h;
 
       if (i % 16 == 0)
-        gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+        picman_progress_update ((gdouble) progress / (gdouble) max_progress);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x, y, width, height);
 }
 
 static void
-remove_redeye_preview (GimpDrawable *drawable,
-                       GimpPreview  *preview)
+remove_redeye_preview (PicmanDrawable *drawable,
+                       PicmanPreview  *preview)
 {
   guchar   *src;
   guchar   *dest;
@@ -341,16 +341,16 @@ remove_redeye_preview (GimpDrawable *drawable,
   gint      bpp;
   gint      rowstride;
 
-  src  = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  src  = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                        &width, &height, &bpp);
   dest = g_new (guchar, height * width * bpp);
 
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   rowstride = bpp * width;
 
   redeye_inner_loop (src, dest, width, height, bpp, has_alpha, rowstride);
 
-  gimp_preview_draw_buffer (preview, dest, rowstride);
+  picman_preview_draw_buffer (preview, dest, rowstride);
   g_free (src);
   g_free (dest);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #define __OFFSET_DIALOG_H__
 
 
-GtkWidget * offset_dialog_new (GimpDrawable *drawable,
-                               GimpContext  *context,
+GtkWidget * offset_dialog_new (PicmanDrawable *drawable,
+                               PicmanContext  *context,
                                GtkWidget    *parent);
 
 

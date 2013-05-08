@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 
 #define PLUG_IN_PROC "file-glob"
@@ -31,9 +31,9 @@
 static void      query        (void);
 static void      run          (const gchar      *name,
                                gint              nparams,
-                               const GimpParam  *param,
+                               const PicmanParam  *param,
                                gint             *nreturn_vals,
-                               GimpParam       **return_vals);
+                               PicmanParam       **return_vals);
 
 static gboolean  glob_match   (const gchar      *pattern,
                                gboolean          filename_encoding,
@@ -43,7 +43,7 @@ static gboolean  glob_fnmatch (const gchar      *pattern,
                                const gchar      *string);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,
@@ -56,21 +56,21 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef glob_args[] =
+  static const PicmanParamDef glob_args[] =
   {
-    { GIMP_PDB_STRING,  "pattern" ,  "The glob pattern (in UTF-8 encoding)" },
-    { GIMP_PDB_INT32,   "encoding",  "Encoding of the returned names: "
+    { PICMAN_PDB_STRING,  "pattern" ,  "The glob pattern (in UTF-8 encoding)" },
+    { PICMAN_PDB_INT32,   "encoding",  "Encoding of the returned names: "
                                      "{ UTF-8 (0), filename encoding (1) }" }
   };
 
-  static const GimpParamDef glob_return_vals[] =
+  static const PicmanParamDef glob_return_vals[] =
   {
-    { GIMP_PDB_INT32,       "num-files", "The number of returned names" },
-    { GIMP_PDB_STRINGARRAY, "files",     "The list of matching names"   }
+    { PICMAN_PDB_INT32,       "num-files", "The number of returned names" },
+    { PICMAN_PDB_STRINGARRAY, "files",     "The list of matching names"   }
   };
 
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           "Returns a list of matching filenames",
                           "This can be useful in scripts and other plugins "
                           "(e.g., batch-conversion). See the glob(7) manpage "
@@ -82,7 +82,7 @@ query (void)
                           "2004",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (glob_args),
                           G_N_ELEMENTS (glob_return_vals),
                           glob_args,
@@ -92,17 +92,17 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[3];
+  static PicmanParam values[3];
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
 
   if (strcmp (name, PLUG_IN_PROC) == 0 && nparams >= 1)
     {
@@ -116,19 +116,19 @@ run (const gchar      *name,
       if (! glob_match (param[0].data.d_string, filename_encoding,
                         &num_matches, &matches))
         {
-          values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+          values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
           return;
         }
 
       *nreturn_vals = 3;
 
-      values[0].type               = GIMP_PDB_STATUS;
-      values[0].data.d_status      = GIMP_PDB_SUCCESS;
+      values[0].type               = PICMAN_PDB_STATUS;
+      values[0].data.d_status      = PICMAN_PDB_SUCCESS;
 
-      values[1].type               = GIMP_PDB_INT32;
+      values[1].type               = PICMAN_PDB_INT32;
       values[1].data.d_int32       = num_matches;
 
-      values[2].type               = GIMP_PDB_STRINGARRAY;
+      values[2].type               = PICMAN_PDB_STRINGARRAY;
       values[2].data.d_stringarray = matches;
     }
 }

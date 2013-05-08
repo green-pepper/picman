@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP Help Browser
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Róman Joost <romanofski@gimp.org>
+ * PICMAN Help Browser
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Róman Joost <romanofski@picman.org>
  *
  * dialog.c
  *
@@ -33,25 +33,25 @@
 
 #include <webkit/webkit.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "plug-ins/help/gimphelp.h"
+#include "plug-ins/help/picmanhelp.h"
 
-#include "gimpthrobber.h"
-#include "gimpthrobberaction.h"
+#include "picmanthrobber.h"
+#include "picmanthrobberaction.h"
 
 #include "dialog.h"
 #include "uri.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
-#define GIMP_HELP_BROWSER_DIALOG_DATA      "gimp-help-browser-dialog"
+#define PICMAN_HELP_BROWSER_DIALOG_DATA      "picman-help-browser-dialog"
 
-#define GIMP_HELP_BROWSER_INDEX_MAX_DEPTH  4
+#define PICMAN_HELP_BROWSER_INDEX_MAX_DEPTH  4
 
 
 typedef struct
@@ -175,13 +175,13 @@ browser_dialog_open (const gchar *plug_in_binary)
   GtkAction   *action;
   DialogData   data = { 720, 560, 240, TRUE, 1.0 };
 
-  gimp_ui_init (plug_in_binary, TRUE);
+  picman_ui_init (plug_in_binary, TRUE);
 
-  gimp_get_data (GIMP_HELP_BROWSER_DIALOG_DATA, &data);
+  picman_get_data (PICMAN_HELP_BROWSER_DIALOG_DATA, &data);
 
   /*  the dialog window  */
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), _("GIMP Help Browser"));
+  gtk_window_set_title (GTK_WINDOW (window), _("PICMAN Help Browser"));
   gtk_window_set_role (GTK_WINDOW (window), plug_in_binary);
 
   gtk_window_set_default_size (GTK_WINDOW (window), data.width, data.height);
@@ -347,7 +347,7 @@ window_set_icons (GtkWidget *window)
   for (i = 0; i < G_N_ELEMENTS (sizes); i++)
     list = g_list_prepend (list,
                            gtk_widget_render_icon (window,
-                                                   GIMP_STOCK_USER_MANUAL,
+                                                   PICMAN_STOCK_USER_MANUAL,
                                                    sizes[i], NULL));
 
   gtk_window_set_icon_list (GTK_WINDOW (window), list);
@@ -357,8 +357,8 @@ window_set_icons (GtkWidget *window)
 
 static void
 browser_dialog_make_index_foreach (const gchar    *help_id,
-                                   GimpHelpItem   *item,
-                                   GimpHelpLocale *locale)
+                                   PicmanHelpItem   *item,
+                                   PicmanHelpLocale *locale)
 {
   gchar *sort_key = item->title;
 
@@ -383,7 +383,7 @@ browser_dialog_make_index_foreach (const gchar    *help_id,
 
   if (sort_key)
     {
-      const gint max_tokens = GIMP_HELP_BROWSER_INDEX_MAX_DEPTH;
+      const gint max_tokens = PICMAN_HELP_BROWSER_INDEX_MAX_DEPTH;
       gchar* *indices = g_strsplit (sort_key, ".", max_tokens + 1);
       gint    i;
 
@@ -419,7 +419,7 @@ browser_dialog_make_index_foreach (const gchar    *help_id,
 
   if (item->parent && strlen (item->parent))
     {
-      GimpHelpItem *parent;
+      PicmanHelpItem *parent;
 
       parent = g_hash_table_lookup (locale->help_id_mapping, item->parent);
 
@@ -438,8 +438,8 @@ static gint
 help_item_compare (gconstpointer a,
                    gconstpointer b)
 {
-  const GimpHelpItem *item_a = a;
-  const GimpHelpItem *item_b = b;
+  const PicmanHelpItem *item_a = a;
+  const PicmanHelpItem *item_b = b;
 
   if (item_a->index > item_b->index)
     return 1;
@@ -451,10 +451,10 @@ help_item_compare (gconstpointer a,
 
 static void
 add_child (GtkTreeStore   *store,
-           GimpHelpDomain *domain,
-           GimpHelpLocale *locale,
+           PicmanHelpDomain *domain,
+           PicmanHelpLocale *locale,
            GtkTreeIter    *parent,
-           GimpHelpItem   *item,
+           PicmanHelpItem   *item,
            gint            depth)
 {
   GtkTreeIter  iter;
@@ -477,22 +477,22 @@ add_child (GtkTreeStore   *store,
                        uri,
                        gtk_tree_iter_copy (&iter));
 
-  if (depth + 1 == GIMP_HELP_BROWSER_INDEX_MAX_DEPTH)
+  if (depth + 1 == PICMAN_HELP_BROWSER_INDEX_MAX_DEPTH)
     return;
 
   item->children = g_list_sort (item->children, help_item_compare);
 
   for (list = item->children; list; list = g_list_next (list))
     {
-      GimpHelpItem *item = list->data;
+      PicmanHelpItem *item = list->data;
 
       add_child (store, domain, locale, &iter, item, depth + 1);
     }
 }
 
 void
-browser_dialog_make_index (GimpHelpDomain *domain,
-                           GimpHelpLocale *locale)
+browser_dialog_make_index (PicmanHelpDomain *domain,
+                           PicmanHelpLocale *locale)
 {
   GtkTreeStore *store;
   GList        *list;
@@ -524,7 +524,7 @@ browser_dialog_make_index (GimpHelpDomain *domain,
 
   for (list = locale->toplevel_items; list; list = g_list_next (list))
     {
-      GimpHelpItem *item = list->data;
+      PicmanHelpItem *item = list->data;
 
       add_child (store, domain, locale, NULL, item, 0);
     }
@@ -669,10 +669,10 @@ ui_manager_new (GtkWidget *window)
                                        G_N_ELEMENTS (toggle_actions),
                                        NULL);
 
-  action = gimp_throbber_action_new ("website",
-                                     "docs.gimp.org",
-                                     _("Visit the GIMP documentation website"),
-                                     GIMP_STOCK_USER_MANUAL);
+  action = picman_throbber_action_new ("website",
+                                     "docs.picman.org",
+                                     _("Visit the PICMAN documentation website"),
+                                     PICMAN_STOCK_USER_MANUAL);
   g_signal_connect_closure (action, "activate",
                             g_cclosure_new (G_CALLBACK (website_callback),
                                             NULL, NULL),
@@ -786,15 +786,15 @@ home_callback (GtkAction *action,
                gpointer   data)
 {
   GtkTreeModel   *model  = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
-  GimpHelpDomain *domain = g_object_get_data (G_OBJECT (model), "domain");
-  GimpHelpLocale *locale = g_object_get_data (G_OBJECT (model), "locale");
+  PicmanHelpDomain *domain = g_object_get_data (G_OBJECT (model), "domain");
+  PicmanHelpLocale *locale = g_object_get_data (G_OBJECT (model), "locale");
 
   if (domain && locale)
     {
       gchar *uri = g_strconcat (domain->help_uri,  "/",
                                 locale->locale_id, "/",
-                                gimp_help_locale_map (locale,
-                                                      GIMP_HELP_DEFAULT_ID),
+                                picman_help_locale_map (locale,
+                                                      PICMAN_HELP_DEFAULT_ID),
                                 NULL);
       browser_dialog_load (uri);
       g_free (uri);
@@ -879,7 +879,7 @@ static void
 website_callback (GtkAction *action,
                   gpointer   data)
 {
-  browser_dialog_load ("http://docs.gimp.org/");
+  browser_dialog_load ("http://docs.picman.org/");
 }
 
 static void
@@ -1007,9 +1007,9 @@ row_activated (GtkTreeView       *tree_view,
 {
   GtkTreeModel   *model = gtk_tree_view_get_model (tree_view);
   GtkTreeIter     iter;
-  GimpHelpDomain *domain;
-  GimpHelpLocale *locale;
-  GimpHelpItem   *item;
+  PicmanHelpDomain *domain;
+  PicmanHelpLocale *locale;
+  PicmanHelpItem   *item;
   gchar          *uri;
 
   gtk_tree_model_get_iter (model, &iter, path);
@@ -1045,7 +1045,7 @@ dialog_unmap (GtkWidget *window,
   data.zoom = (view ?
                webkit_web_view_get_zoom_level (WEBKIT_WEB_VIEW (view)) : 1.0);
 
-  gimp_set_data (GIMP_HELP_BROWSER_DIALOG_DATA, &data, sizeof (data));
+  picman_set_data (PICMAN_HELP_BROWSER_DIALOG_DATA, &data, sizeof (data));
 
   gtk_main_quit ();
 }
@@ -1130,7 +1130,7 @@ title_changed (GtkWidget      *view,
 
   full_title = g_strdup_printf ("%s - %s",
                                 title ? title : _("Untitled"),
-                                _("GIMP Help Browser"));
+                                _("PICMAN Help Browser"));
 
   gtk_window_set_title (GTK_WINDOW (window), full_title);
   g_free (full_title);

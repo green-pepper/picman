@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,152 +20,152 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayermask.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayermask.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "drawable-actions.h"
 #include "drawable-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry drawable_actions[] =
+static const PicmanActionEntry drawable_actions[] =
 {
   { "drawable-equalize", NULL,
     NC_("drawable-action", "_Equalize"), NULL,
     NC_("drawable-action", "Automatic contrast enhancement"),
     G_CALLBACK (drawable_equalize_cmd_callback),
-    GIMP_HELP_LAYER_EQUALIZE },
+    PICMAN_HELP_LAYER_EQUALIZE },
 
-  { "drawable-invert", GIMP_STOCK_INVERT,
+  { "drawable-invert", PICMAN_STOCK_INVERT,
     NC_("drawable-action", "In_vert"), NULL,
     NC_("drawable-action", "Invert the colors"),
     G_CALLBACK (drawable_invert_cmd_callback),
-    GIMP_HELP_LAYER_INVERT },
+    PICMAN_HELP_LAYER_INVERT },
 
-  { "drawable-value-invert", GIMP_STOCK_GEGL,
+  { "drawable-value-invert", PICMAN_STOCK_GEGL,
     NC_("drawable-action", "_Value Invert"), NULL,
     NC_("drawable-action", "Invert the brightness of each pixel"),
     G_CALLBACK (drawable_value_invert_cmd_callback),
-    GIMP_HELP_LAYER_INVERT },
+    PICMAN_HELP_LAYER_INVERT },
 
   { "drawable-levels-stretch", NULL,
     NC_("drawable-action", "_White Balance"), NULL,
     NC_("drawable-action", "Automatic white balance correction"),
     G_CALLBACK (drawable_levels_stretch_cmd_callback),
-    GIMP_HELP_LAYER_WHITE_BALANCE},
+    PICMAN_HELP_LAYER_WHITE_BALANCE},
 
   { "drawable-offset", NULL,
     NC_("drawable-action", "_Offset..."), "<primary><shift>O",
     NC_("drawable-action",
         "Shift the pixels, optionally wrapping them at the borders"),
     G_CALLBACK (drawable_offset_cmd_callback),
-    GIMP_HELP_LAYER_OFFSET }
+    PICMAN_HELP_LAYER_OFFSET }
 };
 
-static const GimpToggleActionEntry drawable_toggle_actions[] =
+static const PicmanToggleActionEntry drawable_toggle_actions[] =
 {
-  { "drawable-visible", GIMP_STOCK_VISIBLE,
+  { "drawable-visible", PICMAN_STOCK_VISIBLE,
     NC_("drawable-action", "_Visible"), NULL,
     NC_("drawable-action", "Toggle visibility"),
     G_CALLBACK (drawable_visible_cmd_callback),
     FALSE,
-    GIMP_HELP_LAYER_VISIBLE },
+    PICMAN_HELP_LAYER_VISIBLE },
 
-  { "drawable-linked", GIMP_STOCK_LINKED,
+  { "drawable-linked", PICMAN_STOCK_LINKED,
     NC_("drawable-action", "_Linked"), NULL,
     NC_("drawable-action", "Toggle the linked state"),
     G_CALLBACK (drawable_linked_cmd_callback),
     FALSE,
-    GIMP_HELP_LAYER_LINKED },
+    PICMAN_HELP_LAYER_LINKED },
 
-  { "drawable-lock-content", NULL /* GIMP_STOCK_LOCK */,
+  { "drawable-lock-content", NULL /* PICMAN_STOCK_LOCK */,
     NC_("drawable-action", "L_ock pixels"), NULL,
     NC_("drawable-action",
         "Keep the pixels on this drawable from being modified"),
     G_CALLBACK (drawable_lock_content_cmd_callback),
     FALSE,
-    GIMP_HELP_LAYER_LOCK_PIXELS },
+    PICMAN_HELP_LAYER_LOCK_PIXELS },
 
-  { "drawable-lock-position", GIMP_STOCK_TOOL_MOVE,
+  { "drawable-lock-position", PICMAN_STOCK_TOOL_MOVE,
     NC_("drawable-action", "L_ock position of channel"), NULL,
     NC_("drawable-action",
         "Keep the position on this drawable from being modified"),
     G_CALLBACK (drawable_lock_position_cmd_callback),
     FALSE,
-    GIMP_HELP_LAYER_LOCK_POSITION },
+    PICMAN_HELP_LAYER_LOCK_POSITION },
 };
 
-static const GimpEnumActionEntry drawable_flip_actions[] =
+static const PicmanEnumActionEntry drawable_flip_actions[] =
 {
-  { "drawable-flip-horizontal", GIMP_STOCK_FLIP_HORIZONTAL,
+  { "drawable-flip-horizontal", PICMAN_STOCK_FLIP_HORIZONTAL,
     NC_("drawable-action", "Flip _Horizontally"), NULL,
     NC_("drawable-action", "Flip horizontally"),
-    GIMP_ORIENTATION_HORIZONTAL, FALSE,
-    GIMP_HELP_LAYER_FLIP_HORIZONTAL },
+    PICMAN_ORIENTATION_HORIZONTAL, FALSE,
+    PICMAN_HELP_LAYER_FLIP_HORIZONTAL },
 
-  { "drawable-flip-vertical", GIMP_STOCK_FLIP_VERTICAL,
+  { "drawable-flip-vertical", PICMAN_STOCK_FLIP_VERTICAL,
     NC_("drawable-action", "Flip _Vertically"), NULL,
     NC_("drawable-action", "Flip vertically"),
-    GIMP_ORIENTATION_VERTICAL, FALSE,
-    GIMP_HELP_LAYER_FLIP_VERTICAL }
+    PICMAN_ORIENTATION_VERTICAL, FALSE,
+    PICMAN_HELP_LAYER_FLIP_VERTICAL }
 };
 
-static const GimpEnumActionEntry drawable_rotate_actions[] =
+static const PicmanEnumActionEntry drawable_rotate_actions[] =
 {
-  { "drawable-rotate-90", GIMP_STOCK_ROTATE_90,
+  { "drawable-rotate-90", PICMAN_STOCK_ROTATE_90,
     NC_("drawable-action", "Rotate 90° _clockwise"), NULL,
     NC_("drawable-action", "Rotate 90 degrees to the right"),
-    GIMP_ROTATE_90, FALSE,
-    GIMP_HELP_LAYER_ROTATE_90 },
+    PICMAN_ROTATE_90, FALSE,
+    PICMAN_HELP_LAYER_ROTATE_90 },
 
-  { "drawable-rotate-180", GIMP_STOCK_ROTATE_180,
+  { "drawable-rotate-180", PICMAN_STOCK_ROTATE_180,
     NC_("drawable-action", "Rotate _180°"), NULL,
     NC_("drawable-action", "Turn upside-down"),
-    GIMP_ROTATE_180, FALSE,
-    GIMP_HELP_LAYER_ROTATE_180 },
+    PICMAN_ROTATE_180, FALSE,
+    PICMAN_HELP_LAYER_ROTATE_180 },
 
-  { "drawable-rotate-270", GIMP_STOCK_ROTATE_270,
+  { "drawable-rotate-270", PICMAN_STOCK_ROTATE_270,
     NC_("drawable-action", "Rotate 90° counter-clock_wise"), NULL,
     NC_("drawable-action", "Rotate 90 degrees to the left"),
-    GIMP_ROTATE_270, FALSE,
-    GIMP_HELP_LAYER_ROTATE_270 }
+    PICMAN_ROTATE_270, FALSE,
+    PICMAN_HELP_LAYER_ROTATE_270 }
 };
 
 
 void
-drawable_actions_setup (GimpActionGroup *group)
+drawable_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "drawable-action",
+  picman_action_group_add_actions (group, "drawable-action",
                                  drawable_actions,
                                  G_N_ELEMENTS (drawable_actions));
 
-  gimp_action_group_add_toggle_actions (group, "drawable-action",
+  picman_action_group_add_toggle_actions (group, "drawable-action",
                                         drawable_toggle_actions,
                                         G_N_ELEMENTS (drawable_toggle_actions));
 
-  gimp_action_group_add_enum_actions (group, "drawable-action",
+  picman_action_group_add_enum_actions (group, "drawable-action",
                                       drawable_flip_actions,
                                       G_N_ELEMENTS (drawable_flip_actions),
                                       G_CALLBACK (drawable_flip_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, "drawable-action",
+  picman_action_group_add_enum_actions (group, "drawable-action",
                                       drawable_rotate_actions,
                                       G_N_ELEMENTS (drawable_rotate_actions),
                                       G_CALLBACK (drawable_rotate_cmd_callback));
 
 #define SET_ALWAYS_SHOW_IMAGE(action,show) \
-        gimp_action_group_set_action_always_show_image (group, action, show)
+        picman_action_group_set_action_always_show_image (group, action, show)
 
   SET_ALWAYS_SHOW_IMAGE ("drawable-rotate-90",  TRUE);
   SET_ALWAYS_SHOW_IMAGE ("drawable-rotate-180", TRUE);
@@ -175,11 +175,11 @@ drawable_actions_setup (GimpActionGroup *group)
 }
 
 void
-drawable_actions_update (GimpActionGroup *group,
+drawable_actions_update (PicmanActionGroup *group,
                          gpointer         data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable     = NULL;
+  PicmanImage    *image;
+  PicmanDrawable *drawable     = NULL;
   gboolean      is_rgb       = FALSE;
   gboolean      visible      = FALSE;
   gboolean      linked       = FALSE;
@@ -195,37 +195,37 @@ drawable_actions_update (GimpActionGroup *group,
 
   if (image)
     {
-      drawable = gimp_image_get_active_drawable (image);
+      drawable = picman_image_get_active_drawable (image);
 
       if (drawable)
         {
-          GimpItem *item;
+          PicmanItem *item;
 
-          is_rgb = gimp_drawable_is_rgb (drawable);
+          is_rgb = picman_drawable_is_rgb (drawable);
 
-          if (GIMP_IS_LAYER_MASK (drawable))
-            item = GIMP_ITEM (gimp_layer_mask_get_layer (GIMP_LAYER_MASK (drawable)));
+          if (PICMAN_IS_LAYER_MASK (drawable))
+            item = PICMAN_ITEM (picman_layer_mask_get_layer (PICMAN_LAYER_MASK (drawable)));
           else
-            item = GIMP_ITEM (drawable);
+            item = PICMAN_ITEM (drawable);
 
-          visible       = gimp_item_get_visible (item);
-          linked        = gimp_item_get_linked (item);
-          locked        = gimp_item_get_lock_content (item);
-          can_lock      = gimp_item_can_lock_content (item);
-          writable      = ! gimp_item_is_content_locked (item);
-          locked_pos    = gimp_item_get_lock_position (item);
-          can_lock_pos  = gimp_item_can_lock_position (item);
-          movable       = ! gimp_item_is_position_locked (item);
+          visible       = picman_item_get_visible (item);
+          linked        = picman_item_get_linked (item);
+          locked        = picman_item_get_lock_content (item);
+          can_lock      = picman_item_can_lock_content (item);
+          writable      = ! picman_item_is_content_locked (item);
+          locked_pos    = picman_item_get_lock_position (item);
+          can_lock_pos  = picman_item_can_lock_position (item);
+          movable       = ! picman_item_is_position_locked (item);
 
-          if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+          if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
             children = TRUE;
         }
     }
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_SENSITIVE ("drawable-equalize",       writable && !children);
   SET_SENSITIVE ("drawable-invert",         writable && !children);

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,80 +19,80 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimperrorconsole.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanerrorconsole.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "error-console-actions.h"
 #include "error-console-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry error_console_actions[] =
+static const PicmanActionEntry error_console_actions[] =
 {
-  { "error-console-popup", GIMP_STOCK_WARNING,
+  { "error-console-popup", PICMAN_STOCK_WARNING,
     NC_("error-console-action", "Error Console Menu"), NULL, NULL, NULL,
-    GIMP_HELP_ERRORS_DIALOG },
+    PICMAN_HELP_ERRORS_DIALOG },
 
   { "error-console-clear", GTK_STOCK_CLEAR,
     NC_("error-console-action", "_Clear"), "",
     NC_("error-console-action", "Clear error console"),
     G_CALLBACK (error_console_clear_cmd_callback),
-    GIMP_HELP_ERRORS_CLEAR },
+    PICMAN_HELP_ERRORS_CLEAR },
 
   { "error-console-select-all", NULL,
     NC_("error-console-action", "Select _All"), "",
     NC_("error-console-action", "Select all error messages"),
     G_CALLBACK (error_console_select_all_cmd_callback),
-    GIMP_HELP_ERRORS_SELECT_ALL }
+    PICMAN_HELP_ERRORS_SELECT_ALL }
 };
 
-static const GimpEnumActionEntry error_console_save_actions[] =
+static const PicmanEnumActionEntry error_console_save_actions[] =
 {
   { "error-console-save-all", GTK_STOCK_SAVE_AS,
     NC_("error-console-action", "_Save Error Log to File..."), "",
     NC_("error-console-action", "Write all error messages to a file"),
     FALSE, FALSE,
-    GIMP_HELP_ERRORS_SAVE },
+    PICMAN_HELP_ERRORS_SAVE },
 
   { "error-console-save-selection", GTK_STOCK_SAVE_AS,
     NC_("error-console-action", "Save S_election to File..."), "",
     NC_("error-console-action", "Write the selected error messages to a file"),
     TRUE, FALSE,
-    GIMP_HELP_ERRORS_SAVE }
+    PICMAN_HELP_ERRORS_SAVE }
 };
 
 
 void
-error_console_actions_setup (GimpActionGroup *group)
+error_console_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "error-console-action",
+  picman_action_group_add_actions (group, "error-console-action",
                                  error_console_actions,
                                  G_N_ELEMENTS (error_console_actions));
 
-  gimp_action_group_add_enum_actions (group, "error-console-action",
+  picman_action_group_add_enum_actions (group, "error-console-action",
                                       error_console_save_actions,
                                       G_N_ELEMENTS (error_console_save_actions),
                                       G_CALLBACK (error_console_save_cmd_callback));
 }
 
 void
-error_console_actions_update (GimpActionGroup *group,
+error_console_actions_update (PicmanActionGroup *group,
                               gpointer         data)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (data);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (data);
   gboolean          selection;
 
   selection = gtk_text_buffer_get_selection_bounds (console->text_buffer,
                                                     NULL, NULL);
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("error-console-clear",          TRUE);
   SET_SENSITIVE ("error-console-select-all",     TRUE);

@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/interpreters
+## Makefile.am for picman/data/interpreters
 
-interpretersdir = $(gimpplugindir)/interpreters
+interpretersdir = $(picmanplugindir)/interpreters
 
 interpreters_DATA = default.interp
 

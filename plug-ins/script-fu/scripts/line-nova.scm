@@ -1,6 +1,6 @@
-;;; line-nova.scm for gimp-1.1 -*-scheme-*-
-;;; Time-stamp: <1998/11/25 13:26:44 narazaki@gimp.org>
-;;; Author Shuji Narazaki <narazaki@gimp.org>
+;;; line-nova.scm for picman-1.1 -*-scheme-*-
+;;; Time-stamp: <1998/11/25 13:26:44 narazaki@picman.org>
+;;; Author Shuji Narazaki <narazaki@picman.org>
 ;;; Version 0.7
 
 (define (script-fu-line-nova img drw num-of-lines corn-deg offset variation)
@@ -16,16 +16,16 @@
         (2pi (* 2 *pi*))
         (rad/deg (/ 2pi 360))
         (variation/2 (/ variation 2))
-        (drw-width (car (gimp-drawable-width drw)))
-        (drw-height (car (gimp-drawable-height drw)))
-        (drw-offsets (gimp-drawable-offsets drw))
+        (drw-width (car (picman-drawable-width drw)))
+        (drw-height (car (picman-drawable-height drw)))
+        (drw-offsets (picman-drawable-offsets drw))
         (old-selection FALSE)
         (radius (max drw-height drw-width))
         (index 0)
         (dir-deg/line (/ 360 num-of-lines))
         )
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
     (define (draw-vector beg-x beg-y direction)
 
@@ -63,20 +63,20 @@
                     (+ beg-y (* off (sin dir0)))
         )
         (set-marginal-point beg-x beg-y direction)
-        (gimp-image-select-polygon img CHANNEL-OP-ADD 6 *points*)
+        (picman-image-select-polygon img CHANNEL-OP-ADD 6 *points*)
       )
     )
 
-    (gimp-image-undo-group-start img)
+    (picman-image-undo-group-start img)
 
     (set! old-selection
-      (if (eq? (car (gimp-selection-is-empty img)) TRUE)
+      (if (eq? (car (picman-selection-is-empty img)) TRUE)
          #f
-         (car (gimp-selection-save img))
+         (car (picman-selection-save img))
       )
     )
 
-    (gimp-selection-none img)
+    (picman-selection-none img)
     (srand (realtime))
     (while (< index num-of-lines)
       (draw-vector (+ (nth 0 drw-offsets) (/ drw-width 2))
@@ -85,27 +85,27 @@
       )
       (set! index (+ index 1))
     )
-    (gimp-edit-bucket-fill drw FG-BUCKET-FILL NORMAL-MODE 100 0 FALSE 0 0)
+    (picman-edit-bucket-fill drw FG-BUCKET-FILL NORMAL-MODE 100 0 FALSE 0 0)
 
     (if old-selection
       (begin
-        (gimp-image-select-item img CHANNEL-OP-REPLACE old-selection)
-        ;; (gimp-image-set-active-layer img drw)
+        (picman-image-select-item img CHANNEL-OP-REPLACE old-selection)
+        ;; (picman-image-set-active-layer img drw)
         ;; delete extra channel by Sven Neumann <neumanns@uni-duesseldorf.de>
-        (gimp-image-remove-channel img old-selection)
+        (picman-image-remove-channel img old-selection)
       )
     )
 
-    (gimp-image-undo-group-end img)
-    (gimp-displays-flush)
-    (gimp-context-pop)
+    (picman-image-undo-group-end img)
+    (picman-displays-flush)
+    (picman-context-pop)
   )
 )
 
 (script-fu-register "script-fu-line-nova"
   _"Line _Nova..."
   _"Fill a layer with rays emanating outward from its center using the foreground color"
-  "Shuji Narazaki <narazaki@gimp.org>"
+  "Shuji Narazaki <narazaki@picman.org>"
   "Shuji Narazaki"
   "1997,1998"
   "*"

@@ -20,14 +20,14 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define PLUG_IN_PROC   "plug-in-align-layers"
 #define PLUG_IN_BINARY "align-layers"
-#define PLUG_IN_ROLE   "gimp-align-layers"
+#define PLUG_IN_ROLE   "picman-align-layers"
 #define SCALE_WIDTH    150
 
 enum
@@ -75,12 +75,12 @@ typedef struct
 static void     query   (void);
 static void     run     (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 /* Main function */
-static GimpPDBStatusType align_layers                (gint32  image_id);
+static PicmanPDBStatusType align_layers                (gint32  image_id);
 
 /* Helpers and internal functions */
 static gint      align_layers_count_visibles_layers  (gint     *layers,
@@ -107,7 +107,7 @@ static gint      align_layers_dialog                 (void);
 
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -145,16 +145,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args [] =
+  static const PicmanParamDef args [] =
   {
-    { GIMP_PDB_INT32,    "run-mode",             "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"},
-    { GIMP_PDB_IMAGE,    "image",                "Input image"},
-    { GIMP_PDB_DRAWABLE, "drawable",             "Input drawable (not used)"},
-    { GIMP_PDB_INT32,    "link-after-alignment", "Link the visible layers after alignment { TRUE, FALSE }"},
-    { GIMP_PDB_INT32,    "use-bottom",           "use the bottom layer as the base of alignment { TRUE, FALSE }"}
+    { PICMAN_PDB_INT32,    "run-mode",             "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"},
+    { PICMAN_PDB_IMAGE,    "image",                "Input image"},
+    { PICMAN_PDB_DRAWABLE, "drawable",             "Input drawable (not used)"},
+    { PICMAN_PDB_INT32,    "link-after-alignment", "Link the visible layers after alignment { TRUE, FALSE }"},
+    { PICMAN_PDB_INT32,    "use-bottom",           "use the bottom layer as the base of alignment { TRUE, FALSE }"}
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Align all visible layers of the image"),
                           "Align visible layers",
                           "Shuji Narazaki <narazaki@InetQ.or.jp>",
@@ -162,23 +162,23 @@ query (void)
                           "1997",
                           N_("Align Visi_ble Layers..."),
                           "RGB*,GRAY*,INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image/Arrange");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image/Arrange");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpPDBStatusType status = GIMP_PDB_EXECUTION_ERROR;
-  GimpRunMode       run_mode;
+  static PicmanParam  values[2];
+  PicmanPDBStatusType status = PICMAN_PDB_EXECUTION_ERROR;
+  PicmanRunMode       run_mode;
   gint              image_id, layer_num;
   gint             *layers;
 
@@ -190,44 +190,44 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch ( run_mode )
     {
-    case GIMP_RUN_INTERACTIVE:
-      layers = gimp_image_get_layers (image_id, &layer_num);
+    case PICMAN_RUN_INTERACTIVE:
+      layers = picman_image_get_layers (image_id, &layer_num);
       layer_num = align_layers_count_visibles_layers (layers,
                                                       layer_num);
       g_free (layers);
       if (layer_num < 2)
         {
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("There are not enough layers to align.");
           return;
         }
-      gimp_get_data (PLUG_IN_PROC, &VALS);
+      picman_get_data (PLUG_IN_PROC, &VALS);
       VALS.grid_size = MAX (VALS.grid_size, 1);
       if (! align_layers_dialog ())
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &VALS);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &VALS);
       break;
     }
 
   status = align_layers (image_id);
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush ();
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush ();
 
-  if (run_mode == GIMP_RUN_INTERACTIVE && status == GIMP_PDB_SUCCESS)
-    gimp_set_data (PLUG_IN_PROC, &VALS, sizeof (ValueType));
+  if (run_mode == PICMAN_RUN_INTERACTIVE && status == PICMAN_PDB_SUCCESS)
+    picman_set_data (PLUG_IN_PROC, &VALS, sizeof (ValueType));
 
   values[0].data.d_status = status;
 }
@@ -235,7 +235,7 @@ run (const gchar      *name,
 /*
  * Main function
  */
-static GimpPDBStatusType
+static PicmanPDBStatusType
 align_layers (gint32 image_id)
 {
   gint       layer_num  = 0;
@@ -247,7 +247,7 @@ align_layers (gint32 image_id)
   if (layer_num < 2)
     {
       g_free (layers);
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   background = align_layers_find_background (image_id);
@@ -262,17 +262,17 @@ align_layers (gint32 image_id)
                                    layer_num,
                                    background);
 
-  gimp_image_undo_group_start (image_id);
+  picman_image_undo_group_start (image_id);
 
   align_layers_perform_alignment (layers,
                                   layer_num,
                                   data);
 
-  gimp_image_undo_group_end (image_id);
+  picman_image_undo_group_end (image_id);
 
   g_free (layers);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 /*
@@ -290,13 +290,13 @@ align_layers_find_last_layer (gint     *layers,
     {
       gint item = layers[i];
 
-      if (gimp_item_is_group (item))
+      if (picman_item_is_group (item))
         {
           gint *children;
           gint  children_num;
           gint  last_layer;
 
-          children = gimp_item_get_children (item, &children_num);
+          children = picman_item_get_children (item, &children_num);
           last_layer = align_layers_find_last_layer (children,
                                                      children_num,
                                                      found);
@@ -304,7 +304,7 @@ align_layers_find_last_layer (gint     *layers,
           if (*found)
             return last_layer;
         }
-      else if (gimp_item_is_layer (item))
+      else if (picman_item_is_layer (item))
         {
           *found = TRUE;
           return item;
@@ -326,7 +326,7 @@ align_layers_find_background (gint32 image_id)
   gint     background;
   gboolean found = FALSE;
 
-  layers = gimp_image_get_layers (image_id, &layers_num);
+  layers = picman_image_get_layers (image_id, &layers_num);
   background = align_layers_find_last_layer (layers,
                                              layers_num,
                                              &found);
@@ -351,20 +351,20 @@ align_layers_spread_visibles_layers (gint *layers,
     {
       gint item = layers[i];
 
-      if (gimp_item_get_visible (item))
+      if (picman_item_get_visible (item))
         {
-          if (gimp_item_is_group (item))
+          if (picman_item_is_group (item))
             {
               gint *children;
               gint  children_num;
 
-              children = gimp_item_get_children (item, &children_num);
+              children = picman_item_get_children (item, &children_num);
               index += align_layers_spread_visibles_layers (children,
                                                             children_num,
                                                             &(layers_array[index]));
               g_free (children);
             }
-          else if (gimp_item_is_layer (item))
+          else if (picman_item_is_layer (item))
             {
               layers_array[index] = item;
               index++;
@@ -386,7 +386,7 @@ align_layers_spread_image (gint32  image_id,
   gint *layers_array;
   gint  layer_num_loc;
 
-  layers = gimp_image_get_layers (image_id, &layer_num_loc);
+  layers = picman_image_get_layers (image_id, &layer_num_loc);
   *layer_num = align_layers_count_visibles_layers (layers,
                                                    layer_num_loc);
 
@@ -411,19 +411,19 @@ align_layers_count_visibles_layers (gint *layers,
     {
       gint item = layers[i];
 
-      if (gimp_item_get_visible (item))
+      if (picman_item_get_visible (item))
         {
-          if (gimp_item_is_group (item))
+          if (picman_item_is_group (item))
             {
               gint *children;
               gint  children_num;
 
-              children = gimp_item_get_children (item, &children_num);
+              children = picman_item_get_children (item, &children_num);
               count += align_layers_count_visibles_layers (children,
                                                            children_num);
               g_free (children);
             }
-          else if (gimp_item_is_layer (item))
+          else if (picman_item_is_layer (item))
             {
               count += 1;
             }
@@ -457,7 +457,7 @@ align_layers_gather_data (gint *layers,
   /* 0 is the top layer */
   for (index = 0; index < layer_num; index++)
     {
-      gimp_drawable_offsets (layers[index], &orig_x, &orig_y);
+      picman_drawable_offsets (layers[index], &orig_x, &orig_y);
 
       align_layers_get_align_offsets (layers[index],
                                       &offset_x,
@@ -473,7 +473,7 @@ align_layers_gather_data (gint *layers,
 
   if (VALS.base_is_bottom_layer)
     {
-      gimp_drawable_offsets (background, &orig_x, &orig_y);
+      picman_drawable_offsets (background, &orig_x, &orig_y);
 
       align_layers_get_align_offsets (background,
                                       &offset_x,
@@ -519,7 +519,7 @@ align_layers_perform_alignment (gint      *layers,
       gint offset_x;
       gint offset_y;
 
-      gimp_drawable_offsets (layers[index], &orig_x, &orig_y);
+      picman_drawable_offsets (layers[index], &orig_x, &orig_y);
 
       align_layers_get_align_offsets (layers[index],
                                       &offset_x,
@@ -566,7 +566,7 @@ align_layers_perform_alignment (gint      *layers,
           break;
         }
 
-      gimp_layer_set_offsets (layers[index], x, y);
+      picman_layer_set_offsets (layers[index], x, y);
     }
 }
 
@@ -575,8 +575,8 @@ align_layers_get_align_offsets (gint32  drawable_id,
                                 gint   *x,
                                 gint   *y)
 {
-  gint width  = gimp_drawable_width  (drawable_id);
-  gint height = gimp_drawable_height (drawable_id);
+  gint width  = picman_drawable_width  (drawable_id);
+  gint height = picman_drawable_height (drawable_id);
 
   switch (VALS.h_base)
     {
@@ -621,11 +621,11 @@ align_layers_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Align Visible Layers"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Align Visible Layers"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -637,7 +637,7 @@ align_layers_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   table = gtk_table_new (7, 3, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
@@ -647,74 +647,74 @@ align_layers_dialog (void)
                       table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (C_("align-style", "None"), H_NONE,
+  combo = picman_int_combo_box_new (C_("align-style", "None"), H_NONE,
                                   _("Collect"),              H_COLLECT,
                                   _("Fill (left to right)"), LEFT2RIGHT,
                                   _("Fill (right to left)"), RIGHT2LEFT,
                                   _("Snap to grid"),         SNAP2HGRID,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), VALS.h_style);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), VALS.h_style);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &VALS.h_style);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Horizontal style:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
 
-  combo = gimp_int_combo_box_new (_("Left edge"),  H_BASE_LEFT,
+  combo = picman_int_combo_box_new (_("Left edge"),  H_BASE_LEFT,
                                   _("Center"),     H_BASE_CENTER,
                                   _("Right edge"), H_BASE_RIGHT,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), VALS.h_base);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), VALS.h_base);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &VALS.h_base);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Ho_rizontal base:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
-  combo = gimp_int_combo_box_new (C_("align-style", "None"), V_NONE,
+  combo = picman_int_combo_box_new (C_("align-style", "None"), V_NONE,
                                   _("Collect"),              V_COLLECT,
                                   _("Fill (top to bottom)"), TOP2BOTTOM,
                                   _("Fill (bottom to top)"), BOTTOM2TOP,
                                   _("Snap to grid"),         SNAP2VGRID,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), VALS.v_style);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), VALS.v_style);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &VALS.v_style);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("_Vertical style:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
-  combo = gimp_int_combo_box_new (_("Top edge"),    V_BASE_TOP,
+  combo = picman_int_combo_box_new (_("Top edge"),    V_BASE_TOP,
                                   _("Center"),      V_BASE_CENTER,
                                   _("Bottom edge"), V_BASE_BOTTOM,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), VALS.v_base);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), VALS.v_base);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &VALS.v_base);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("Ver_tical base:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                               _("_Grid size:"), SCALE_WIDTH, 0,
                               VALS.grid_size, 1, 200, 1, 10, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &VALS.grid_size);
 
   toggle = gtk_check_button_new_with_mnemonic
@@ -724,7 +724,7 @@ align_layers_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &VALS.ignore_bottom);
 
   toggle = gtk_check_button_new_with_mnemonic
@@ -735,12 +735,12 @@ align_layers_dialog (void)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &VALS.base_is_bottom_layer);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

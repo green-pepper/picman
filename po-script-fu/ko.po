@@ -7,9 +7,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-03-08 17:29+0000\n"
 "PO-Revision-Date: 2012-03-09 04:30+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
@@ -40,7 +40,7 @@ msgid "_Start Server..."
 msgstr "서버 시작(_S)..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
+msgid "_PICMAN Online"
 msgstr "김프 온라인(_G)"
 
 #: ../plug-ins/script-fu/script-fu.c:302
@@ -80,8 +80,8 @@ msgid "_Beveled Pattern"
 msgstr "바벨 무늬(_B)"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "예전 Gimp.Org(_C)"
+msgid "_Classic.Picman.Org"
+msgstr "예전 Picman.Org(_C)"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -260,19 +260,19 @@ msgstr "타일"
 msgid "Wrap"
 msgstr "반복"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "스파이로그래프"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "원"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "연필"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "고정 색상"
 

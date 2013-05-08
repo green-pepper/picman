@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,67 +20,67 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpdataeditor.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmandataeditor.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "data-editor-commands.h"
 #include "tool-preset-editor-actions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry tool_preset_editor_actions[] =
+static const PicmanActionEntry tool_preset_editor_actions[] =
 {
-  { "tool-preset-editor-popup", GIMP_STOCK_TOOL_PRESET,
+  { "tool-preset-editor-popup", PICMAN_STOCK_TOOL_PRESET,
     NC_("tool-preset-editor-action", "Tool Preset Editor Menu"), NULL, NULL, NULL,
-    GIMP_HELP_BRUSH_EDITOR_DIALOG }
+    PICMAN_HELP_BRUSH_EDITOR_DIALOG }
 };
 
 
-static const GimpToggleActionEntry tool_preset_editor_toggle_actions[] =
+static const PicmanToggleActionEntry tool_preset_editor_toggle_actions[] =
 {
-  { "tool-preset-editor-edit-active", GIMP_STOCK_LINKED,
+  { "tool-preset-editor-edit-active", PICMAN_STOCK_LINKED,
     NC_("tool-preset-editor-action", "Edit Active Tool Preset"), NULL, NULL,
     G_CALLBACK (data_editor_edit_active_cmd_callback),
     FALSE,
-    GIMP_HELP_BRUSH_EDITOR_EDIT_ACTIVE }
+    PICMAN_HELP_BRUSH_EDITOR_EDIT_ACTIVE }
 };
 
 
 void
-tool_preset_editor_actions_setup (GimpActionGroup *group)
+tool_preset_editor_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "tool-preset-editor-action",
+  picman_action_group_add_actions (group, "tool-preset-editor-action",
                                  tool_preset_editor_actions,
                                  G_N_ELEMENTS (tool_preset_editor_actions));
 
-  gimp_action_group_add_toggle_actions (group, "tool-preset-editor-action",
+  picman_action_group_add_toggle_actions (group, "tool-preset-editor-action",
                                         tool_preset_editor_toggle_actions,
                                         G_N_ELEMENTS (tool_preset_editor_toggle_actions));
 
 }
 
 void
-tool_preset_editor_actions_update (GimpActionGroup *group,
+tool_preset_editor_actions_update (PicmanActionGroup *group,
                                    gpointer         user_data)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (user_data);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (user_data);
   gboolean        edit_active = FALSE;
 
-  edit_active = gimp_data_editor_get_edit_active (data_editor);
+  edit_active = picman_data_editor_get_edit_active (data_editor);
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_ACTIVE ("tool-preset-editor-edit-active", edit_active);
 

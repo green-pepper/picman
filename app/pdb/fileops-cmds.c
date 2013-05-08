@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,127 +25,127 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp-utils.h"
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman-utils.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmanparamspecs.h"
 #include "file/file-open.h"
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 #include "file/file-utils.h"
-#include "plug-in/gimppluginmanager-file.h"
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager-file.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-file_load_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+file_load_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
-  GimpValueArray      *new_args;
-  GimpValueArray      *return_vals;
-  GimpPlugInProcedure *file_proc;
-  GimpProcedure       *proc;
+  PicmanValueArray      *new_args;
+  PicmanValueArray      *return_vals;
+  PicmanPlugInProcedure *file_proc;
+  PicmanProcedure       *proc;
   gchar               *uri;
   gint                 i;
 
-  uri = file_utils_filename_to_uri (gimp,
-                                    g_value_get_string (gimp_value_array_index (args, 1)),
+  uri = file_utils_filename_to_uri (picman,
+                                    g_value_get_string (picman_value_array_index (args, 1)),
                                     error);
 
   if (! uri)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
   file_proc =
-    file_procedure_find (gimp->plug_in_manager->load_procs, uri, error);
+    file_procedure_find (picman->plug_in_manager->load_procs, uri, error);
 
   g_free (uri);
 
   if (! file_proc)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
-  proc = GIMP_PROCEDURE (file_proc);
+  proc = PICMAN_PROCEDURE (file_proc);
 
-  new_args = gimp_procedure_get_arguments (proc);
+  new_args = picman_procedure_get_arguments (proc);
 
   for (i = 0; i < 3; i++)
-    g_value_transform (gimp_value_array_index (args, i),
-                       gimp_value_array_index (new_args, i));
+    g_value_transform (picman_value_array_index (args, i),
+                       picman_value_array_index (new_args, i));
 
   for (i = 3; i < proc->num_args; i++)
     if (G_IS_PARAM_SPEC_STRING (proc->args[i]))
-      g_value_set_static_string (gimp_value_array_index (new_args, i), "");
+      g_value_set_static_string (picman_value_array_index (new_args, i), "");
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name_args (gimp->pdb,
+    picman_pdb_execute_procedure_by_name_args (picman->pdb,
                                              context, progress, error,
-                                             gimp_object_get_name (proc),
+                                             picman_object_get_name (proc),
                                              new_args);
 
-  gimp_value_array_unref (new_args);
+  picman_value_array_unref (new_args);
 
-  if (g_value_get_enum (gimp_value_array_index (return_vals, 0)) ==
-      GIMP_PDB_SUCCESS)
+  if (g_value_get_enum (picman_value_array_index (return_vals, 0)) ==
+      PICMAN_PDB_SUCCESS)
     {
-      if (gimp_value_array_length (return_vals) > 1 &&
-          GIMP_VALUE_HOLDS_IMAGE_ID (gimp_value_array_index (return_vals, 1)))
+      if (picman_value_array_length (return_vals) > 1 &&
+          PICMAN_VALUE_HOLDS_IMAGE_ID (picman_value_array_index (return_vals, 1)))
         {
-          GimpImage *image =
-            gimp_value_get_image (gimp_value_array_index (return_vals, 1),
-                                  gimp);
-          gimp_image_set_load_proc (image, file_proc);
+          PicmanImage *image =
+            picman_value_get_image (picman_value_array_index (return_vals, 1),
+                                  picman);
+          picman_image_set_load_proc (image, file_proc);
         }
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-file_load_layer_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+file_load_layer_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 run_mode;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *filename;
-  GimpLayer *layer = NULL;
+  PicmanLayer *layer = NULL;
 
-  run_mode = g_value_get_enum (gimp_value_array_index (args, 0));
-  image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 2));
+  run_mode = g_value_get_enum (picman_value_array_index (args, 0));
+  image = picman_value_get_image (picman_value_array_index (args, 1), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      gchar *uri = file_utils_filename_to_uri (gimp, filename, error);
+      gchar *uri = file_utils_filename_to_uri (picman, filename, error);
 
       if (uri)
         {
           GList             *layers;
-          GimpPDBStatusType  status;
+          PicmanPDBStatusType  status;
 
-          layers = file_open_layers (gimp, context, progress,
+          layers = file_open_layers (picman, context, progress,
                                      image, FALSE,
                                      uri, run_mode, NULL, &status, error);
 
@@ -161,45 +161,45 @@ file_load_layer_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-file_load_layers_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+file_load_layers_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 run_mode;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *filename;
   gint32 num_layers = 0;
   gint32 *layer_ids = NULL;
 
-  run_mode = g_value_get_enum (gimp_value_array_index (args, 0));
-  image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 2));
+  run_mode = g_value_get_enum (picman_value_array_index (args, 0));
+  image = picman_value_get_image (picman_value_array_index (args, 1), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      gchar *uri = file_utils_filename_to_uri (gimp, filename, error);
+      gchar *uri = file_utils_filename_to_uri (picman, filename, error);
 
       if (uri)
         {
           GList             *layers;
-          GimpPDBStatusType  status;
+          PicmanPDBStatusType  status;
 
-          layers = file_open_layers (gimp, context, progress,
+          layers = file_open_layers (picman, context, progress,
                                      image, FALSE,
                                      uri, run_mode, NULL, &status, error);
 
@@ -215,7 +215,7 @@ file_load_layers_invoker (GimpProcedure         *procedure,
               for (i = 0, list = layers;
                    i < num_layers;
                    i++, list = g_list_next (list))
-                layer_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+                layer_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
               g_list_free (layers);
             }
@@ -226,93 +226,93 @@ file_load_layers_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_layers);
-      gimp_value_take_int32array (gimp_value_array_index (return_vals, 2), layer_ids, num_layers);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_layers);
+      picman_value_take_int32array (picman_value_array_index (return_vals, 2), layer_ids, num_layers);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-file_save_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+file_save_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
-  GimpValueArray      *new_args;
-  GimpValueArray      *return_vals;
-  GimpPlugInProcedure *file_proc;
-  GimpProcedure       *proc;
+  PicmanValueArray      *new_args;
+  PicmanValueArray      *return_vals;
+  PicmanPlugInProcedure *file_proc;
+  PicmanProcedure       *proc;
   gchar               *uri;
   gint                 i;
 
-  uri = file_utils_filename_to_uri (gimp,
-                                    g_value_get_string (gimp_value_array_index (args, 3)),
+  uri = file_utils_filename_to_uri (picman,
+                                    g_value_get_string (picman_value_array_index (args, 3)),
                                     error);
 
   if (! uri)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
   file_proc =
-    file_procedure_find (gimp->plug_in_manager->save_procs, uri, NULL);
+    file_procedure_find (picman->plug_in_manager->save_procs, uri, NULL);
 
   if (! file_proc)
-    file_proc = file_procedure_find (gimp->plug_in_manager->export_procs, uri, error);
+    file_proc = file_procedure_find (picman->plug_in_manager->export_procs, uri, error);
 
   g_free (uri);
 
   if (! file_proc)
-    return gimp_procedure_get_return_values (procedure, FALSE,
+    return picman_procedure_get_return_values (procedure, FALSE,
                                              error ? *error : NULL);
 
-  proc = GIMP_PROCEDURE (file_proc);
+  proc = PICMAN_PROCEDURE (file_proc);
 
-  new_args = gimp_procedure_get_arguments (proc);
+  new_args = picman_procedure_get_arguments (proc);
 
   for (i = 0; i < 5; i++)
-    g_value_transform (gimp_value_array_index (args, i),
-                       gimp_value_array_index (new_args, i));
+    g_value_transform (picman_value_array_index (args, i),
+                       picman_value_array_index (new_args, i));
 
   for (i = 5; i < proc->num_args; i++)
     if (G_IS_PARAM_SPEC_STRING (proc->args[i]))
-      g_value_set_static_string (gimp_value_array_index (new_args, i), "");
+      g_value_set_static_string (picman_value_array_index (new_args, i), "");
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name_args (gimp->pdb,
+    picman_pdb_execute_procedure_by_name_args (picman->pdb,
                                              context, progress, error,
-                                             gimp_object_get_name (proc),
+                                             picman_object_get_name (proc),
                                              new_args);
 
-  gimp_value_array_unref (new_args);
+  picman_value_array_unref (new_args);
 
   return return_vals;
 }
 
-static GimpValueArray *
-file_load_thumbnail_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+file_load_thumbnail_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *filename;
   gint32 width = 0;
   gint32 height = 0;
   gint32 thumb_data_count = 0;
   guint8 *thumb_data = NULL;
 
-  filename = g_value_get_string (gimp_value_array_index (args, 0));
+  filename = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
@@ -332,79 +332,79 @@ file_load_thumbnail_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), thumb_data_count);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 4), thumb_data, thumb_data_count);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), thumb_data_count);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 4), thumb_data, thumb_data_count);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-file_save_thumbnail_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+file_save_thumbnail_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   const gchar *filename;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  filename = g_value_get_string (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  filename = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
       success = file_utils_save_thumbnail (image, filename);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-temp_name_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+temp_name_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *extension;
   gchar *name = NULL;
 
-  extension = g_value_get_string (gimp_value_array_index (args, 0));
+  extension = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      name = gimp_get_temp_filename (gimp, extension);
+      name = picman_get_temp_filename (picman, extension);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-register_magic_load_handler_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+register_magic_load_handler_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
@@ -413,32 +413,32 @@ register_magic_load_handler_invoker (GimpProcedure         *procedure,
   const gchar *prefixes;
   const gchar *magics;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  extensions = g_value_get_string (gimp_value_array_index (args, 1));
-  prefixes = g_value_get_string (gimp_value_array_index (args, 2));
-  magics = g_value_get_string (gimp_value_array_index (args, 3));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  extensions = g_value_get_string (picman_value_array_index (args, 1));
+  prefixes = g_value_get_string (picman_value_array_index (args, 2));
+  magics = g_value_get_string (picman_value_array_index (args, 3));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_load_handler (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_load_handler (picman->plug_in_manager,
                                                             canonical,
                                                             extensions, prefixes, magics);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-register_load_handler_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+register_load_handler_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
@@ -446,31 +446,31 @@ register_load_handler_invoker (GimpProcedure         *procedure,
   const gchar *extensions;
   const gchar *prefixes;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  extensions = g_value_get_string (gimp_value_array_index (args, 1));
-  prefixes = g_value_get_string (gimp_value_array_index (args, 2));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  extensions = g_value_get_string (picman_value_array_index (args, 1));
+  prefixes = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_load_handler (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_load_handler (picman->plug_in_manager,
                                                             canonical,
                                                             extensions, prefixes, NULL);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-register_save_handler_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+register_save_handler_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
@@ -478,620 +478,620 @@ register_save_handler_invoker (GimpProcedure         *procedure,
   const gchar *extensions;
   const gchar *prefixes;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  extensions = g_value_get_string (gimp_value_array_index (args, 1));
-  prefixes = g_value_get_string (gimp_value_array_index (args, 2));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  extensions = g_value_get_string (picman_value_array_index (args, 1));
+  prefixes = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_save_handler (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_save_handler (picman->plug_in_manager,
                                                             canonical,
                                                             extensions, prefixes);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-register_file_handler_mime_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+register_file_handler_mime_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
   const gchar *procedure_name;
   const gchar *mime_type;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  mime_type = g_value_get_string (gimp_value_array_index (args, 1));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  mime_type = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_mime_type (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_mime_type (picman->plug_in_manager,
                                                          canonical, mime_type);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-register_file_handler_uri_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+register_file_handler_uri_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
   const gchar *procedure_name;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+      gchar *canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_handles_uri (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_handles_uri (picman->plug_in_manager,
                                                            canonical);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-register_thumbnail_loader_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+register_thumbnail_loader_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
   const gchar *load_proc;
   const gchar *thumb_proc;
 
-  load_proc = g_value_get_string (gimp_value_array_index (args, 0));
-  thumb_proc = g_value_get_string (gimp_value_array_index (args, 1));
+  load_proc = g_value_get_string (picman_value_array_index (args, 0));
+  thumb_proc = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gchar *canonical   = gimp_canonicalize_identifier (load_proc);
-      gchar *canon_thumb = gimp_canonicalize_identifier (thumb_proc);
+      gchar *canonical   = picman_canonicalize_identifier (load_proc);
+      gchar *canon_thumb = picman_canonicalize_identifier (thumb_proc);
 
-      success = gimp_plug_in_manager_register_thumb_loader (gimp->plug_in_manager,
+      success = picman_plug_in_manager_register_thumb_loader (picman->plug_in_manager,
                                                             canonical, canon_thumb);
 
       g_free (canonical);
       g_free (canon_thumb);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_fileops_procs (GimpPDB *pdb)
+register_fileops_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-file-load
+   * picman-file-load
    */
-  procedure = gimp_procedure_new (file_load_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-load");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-load",
+  procedure = picman_procedure_new (file_load_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-load");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-load",
                                      "Loads an image file by invoking the right load handler.",
-                                     "This procedure invokes the correct file load handler using magic if possible, and falling back on the file's extension and/or prefix if not. The name of the file to load is typically a full pathname, and the name entered is what the user actually typed before prepending a directory path. The reason for this is that if the user types http://www.xcf/~gimp/ he wants to fetch a URL, and the full pathname will not look like a URL.\"",
+                                     "This procedure invokes the correct file load handler using magic if possible, and falling back on the file's extension and/or prefix if not. The name of the file to load is typically a full pathname, and the name entered is what the user actually typed before prepending a directory path. The reason for this is that if the user types http://www.xcf/~picman/ he wants to fetch a URL, and the full pathname will not look like a URL.\"",
                                      "Josh MacDonald",
                                      "Josh MacDonald",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("run-mode",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("run-mode",
                                                      "run mode",
                                                      "The run mode",
-                                                     GIMP_TYPE_RUN_MODE,
-                                                     GIMP_RUN_INTERACTIVE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[0]),
-                                      GIMP_RUN_WITH_LAST_VALS);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                     PICMAN_TYPE_RUN_MODE,
+                                                     PICMAN_RUN_INTERACTIVE,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[0]),
+                                      PICMAN_RUN_WITH_LAST_VALS);
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file to load",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("raw-filename",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("raw-filename",
                                                        "raw filename",
                                                        "The name as entered by the user",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_image_id ("image",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_image_id ("image",
                                                              "image",
                                                              "The output image",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-file-load-layer
+   * picman-file-load-layer
    */
-  procedure = gimp_procedure_new (file_load_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-load-layer");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-load-layer",
+  procedure = picman_procedure_new (file_load_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-load-layer");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-load-layer",
                                      "Loads an image file as a layer for an existing image.",
-                                     "This procedure behaves like the file-load procedure but opens the specified image as a layer for an existing image. The returned layer needs to be added to the existing image with 'gimp-image-insert-layer'.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "This procedure behaves like the file-load procedure but opens the specified image as a layer for an existing image. The returned layer needs to be added to the existing image with 'picman-image-insert-layer'.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("run-mode",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("run-mode",
                                                      "run mode",
                                                      "The run mode",
-                                                     GIMP_TYPE_RUN_MODE,
-                                                     GIMP_RUN_INTERACTIVE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[0]),
-                                      GIMP_RUN_WITH_LAST_VALS);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                     PICMAN_TYPE_RUN_MODE,
+                                                     PICMAN_RUN_INTERACTIVE,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[0]),
+                                      PICMAN_RUN_WITH_LAST_VALS);
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Destination image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file to load",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer",
                                                              "layer",
                                                              "The layer created when loading the image file",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-file-load-layers
+   * picman-file-load-layers
    */
-  procedure = gimp_procedure_new (file_load_layers_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-load-layers");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-load-layers",
+  procedure = picman_procedure_new (file_load_layers_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-load-layers");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-load-layers",
                                      "Loads an image file as layers for an existing image.",
-                                     "This procedure behaves like the file-load procedure but opens the specified image as layers for an existing image. The returned layers needs to be added to the existing image with 'gimp-image-insert-layer'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure behaves like the file-load procedure but opens the specified image as layers for an existing image. The returned layers needs to be added to the existing image with 'picman-image-insert-layer'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("run-mode",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("run-mode",
                                                      "run mode",
                                                      "The run mode",
-                                                     GIMP_TYPE_RUN_MODE,
-                                                     GIMP_RUN_INTERACTIVE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[0]),
-                                      GIMP_RUN_WITH_LAST_VALS);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                     PICMAN_TYPE_RUN_MODE,
+                                                     PICMAN_RUN_INTERACTIVE,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[0]),
+                                      PICMAN_RUN_WITH_LAST_VALS);
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Destination image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file to load",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-layers",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-layers",
                                                           "num layers",
                                                           "The number of loaded layers",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32_array ("layer-ids",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32_array ("layer-ids",
                                                                 "layer ids",
                                                                 "The list of loaded layers",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-file-save
+   * picman-file-save
    */
-  procedure = gimp_procedure_new (file_save_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-save");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-save",
+  procedure = picman_procedure_new (file_save_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-save");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-save",
                                      "Saves a file by extension.",
-                                     "This procedure invokes the correct file save handler according to the file's extension and/or prefix. The name of the file to save is typically a full pathname, and the name entered is what the user actually typed before prepending a directory path. The reason for this is that if the user types http://www.xcf/~gimp/ she wants to fetch a URL, and the full pathname will not look like a URL.",
+                                     "This procedure invokes the correct file save handler according to the file's extension and/or prefix. The name of the file to save is typically a full pathname, and the name entered is what the user actually typed before prepending a directory path. The reason for this is that if the user types http://www.xcf/~picman/ she wants to fetch a URL, and the full pathname will not look like a URL.",
                                      "Josh MacDonald",
                                      "Josh MacDonald",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Drawable to save",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file to save the image in",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("raw-filename",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("raw-filename",
                                                        "raw filename",
                                                        "The name as entered by the user",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-file-load-thumbnail
+   * picman-file-load-thumbnail
    */
-  procedure = gimp_procedure_new (file_load_thumbnail_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-load-thumbnail");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-load-thumbnail",
+  procedure = picman_procedure_new (file_load_thumbnail_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-load-thumbnail");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-load-thumbnail",
                                      "Loads the thumbnail for a file.",
-                                     "This procedure tries to load a thumbnail that belongs to the file with the given filename. This name is a full pathname. The returned data is an array of colordepth 3 (RGB), regardless of the image type. Width and height of the thumbnail are also returned. Don't use this function if you need a thumbnail of an already opened image, use 'gimp-image-thumbnail' instead.",
+                                     "This procedure tries to load a thumbnail that belongs to the file with the given filename. This name is a full pathname. The returned data is an array of colordepth 3 (RGB), regardless of the image type. Width and height of the thumbnail are also returned. Don't use this function if you need a thumbnail of an already opened image, use 'picman-image-thumbnail' instead.",
                                      "Adam D. Moss, Sven Neumann",
                                      "Adam D. Moss, Sven Neumann",
                                      "1999-2003",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file that owns the thumbnail to load",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The width of the thumbnail",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The height of the thumbnail",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("thumb-data-count",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("thumb-data-count",
                                                           "thumb data count",
                                                           "The number of bytes in thumbnail data",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("thumb-data",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("thumb-data",
                                                                "thumb data",
                                                                "The thumbnail data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-file-save-thumbnail
+   * picman-file-save-thumbnail
    */
-  procedure = gimp_procedure_new (file_save_thumbnail_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-file-save-thumbnail");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-file-save-thumbnail",
+  procedure = picman_procedure_new (file_save_thumbnail_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-file-save-thumbnail");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-file-save-thumbnail",
                                      "Saves a thumbnail for the given image",
                                      "This procedure saves a thumbnail for the given image according to the Free Desktop Thumbnail Managing Standard. The thumbnail is saved so that it belongs to the file with the given filename. This means you have to save the image under this name first, otherwise this procedure will fail. This procedure may become useful if you want to explicitly save a thumbnail with a file.",
                                      "Josh MacDonald",
                                      "Josh MacDonald",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The name of the file the thumbnail belongs to",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-temp-name
+   * picman-temp-name
    */
-  procedure = gimp_procedure_new (temp_name_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-temp-name");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-temp-name",
+  procedure = picman_procedure_new (temp_name_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-temp-name");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-temp-name",
                                      "Generates a unique filename.",
-                                     "Generates a unique filename using the temp path supplied in the user's gimprc.",
+                                     "Generates a unique filename using the temp path supplied in the user's picmanrc.",
                                      "Josh MacDonald",
                                      "Josh MacDonald",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("extension",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("extension",
                                                        "extension",
                                                        "The extension the file will have",
                                                        TRUE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The new temp filename",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-magic-load-handler
+   * picman-register-magic-load-handler
    */
-  procedure = gimp_procedure_new (register_magic_load_handler_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-magic-load-handler");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-magic-load-handler",
+  procedure = picman_procedure_new (register_magic_load_handler_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-magic-load-handler");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-magic-load-handler",
                                      "Registers a file load handler procedure.",
                                      "Registers a procedural database procedure to be called to load files of a particular file format using magic file information.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to be used for loading",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("extensions",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("extensions",
                                                        "extensions",
                                                        "comma separated list of extensions this handler can load (i.e. \"jpg,jpeg\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("prefixes",
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("prefixes",
                                                        "prefixes",
                                                        "comma separated list of prefixes this handler can load (i.e. \"http:,ftp:\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("magics",
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("magics",
                                                        "magics",
                                                        "comma separated list of magic file information this handler can load (i.e. \"0,string,GIF\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-load-handler
+   * picman-register-load-handler
    */
-  procedure = gimp_procedure_new (register_load_handler_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-load-handler");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-load-handler",
+  procedure = picman_procedure_new (register_load_handler_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-load-handler");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-load-handler",
                                      "Registers a file load handler procedure.",
                                      "Registers a procedural database procedure to be called to load files of a particular file format.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to be used for loading",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("extensions",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("extensions",
                                                        "extensions",
                                                        "comma separated list of extensions this handler can load (i.e. \"jpg,jpeg\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("prefixes",
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("prefixes",
                                                        "prefixes",
                                                        "comma separated list of prefixes this handler can load (i.e. \"http:,ftp:\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-save-handler
+   * picman-register-save-handler
    */
-  procedure = gimp_procedure_new (register_save_handler_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-save-handler");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-save-handler",
+  procedure = picman_procedure_new (register_save_handler_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-save-handler");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-save-handler",
                                      "Registers a file save handler procedure.",
                                      "Registers a procedural database procedure to be called to save files in a particular file format.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to be used for saving",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("extensions",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("extensions",
                                                        "extensions",
                                                        "comma separated list of extensions this handler can save (i.e. \"jpg,jpeg\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("prefixes",
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("prefixes",
                                                        "prefixes",
                                                        "comma separated list of prefixes this handler can save (i.e. \"http:,ftp:\")",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-file-handler-mime
+   * picman-register-file-handler-mime
    */
-  procedure = gimp_procedure_new (register_file_handler_mime_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-file-handler-mime");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-file-handler-mime",
+  procedure = picman_procedure_new (register_file_handler_mime_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-file-handler-mime");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-file-handler-mime",
                                      "Associates a MIME type with a file handler procedure.",
-                                     "Registers a MIME type for a file handler procedure. This allows GIMP to determine the MIME type of the file opened or saved using this procedure.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Registers a MIME type for a file handler procedure. This allows PICMAN to determine the MIME type of the file opened or saved using this procedure.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to associate a MIME type with.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("mime-type",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("mime-type",
                                                        "mime type",
                                                        "A single MIME type, like for example \"image/jpeg\".",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-file-handler-uri
+   * picman-register-file-handler-uri
    */
-  procedure = gimp_procedure_new (register_file_handler_uri_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-file-handler-uri");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-file-handler-uri",
+  procedure = picman_procedure_new (register_file_handler_uri_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-file-handler-uri");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-file-handler-uri",
                                      "Registers a file handler procedure as capable of handling URIs.",
-                                     "Registers a file handler procedure as capable of handling URIs. This allows GIMP to call the procecure directly for all kinds of URIs, and the 'filename' traditionally passed to file procesures turns into an URI.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Registers a file handler procedure as capable of handling URIs. This allows PICMAN to call the procecure directly for all kinds of URIs, and the 'filename' traditionally passed to file procesures turns into an URI.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to enable URIs for.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-register-thumbnail-loader
+   * picman-register-thumbnail-loader
    */
-  procedure = gimp_procedure_new (register_thumbnail_loader_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-register-thumbnail-loader");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-register-thumbnail-loader",
+  procedure = picman_procedure_new (register_thumbnail_loader_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-register-thumbnail-loader");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-register-thumbnail-loader",
                                      "Associates a thumbnail loader with a file load procedure.",
-                                     "Some file formats allow for embedded thumbnails, other file formats contain a scalable image or provide the image data in different resolutions. A file plug-in for such a format may register a special procedure that allows GIMP to load a thumbnail preview of the image. This procedure is then associated with the standard load procedure using this function.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Some file formats allow for embedded thumbnails, other file formats contain a scalable image or provide the image data in different resolutions. A file plug-in for such a format may register a special procedure that allows PICMAN to load a thumbnail preview of the image. This procedure is then associated with the standard load procedure using this function.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("load-proc",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("load-proc",
                                                        "load proc",
                                                        "The name of the procedure the thumbnail loader with.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("thumb-proc",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("thumb-proc",
                                                        "thumb proc",
                                                        "The name of the thumbnail load procedure.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

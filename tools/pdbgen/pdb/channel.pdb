@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub channel_new {
     $blurb = 'Create a new channel.';
@@ -23,7 +23,7 @@ sub channel_new {
 This procedure creates a new channel with the specified width and
 height. Name, opacity, and color are also supplied parameters. The new
 channel still needs to be added to the image, as this is not
-automatic. Add the new channel with the gimp_image_insert_channel()
+automatic. Add the new channel with the picman_image_insert_channel()
 command. Other attributes such as channel show masked, should be set
 with explicit procedure calls. The channel's contents are undefined
 initially.
@@ -34,9 +34,9 @@ HELP
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image to which to add the channel' },
-	{ name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'The channel width' },
-	{ name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'The channel height' },
 	{ name => 'name', type => 'string',
 	  desc => 'The channel name' },
@@ -55,10 +55,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpRGB rgb_color = color;
+  PicmanRGB rgb_color = color;
 
   rgb_color.a = opacity / 100.0;
-  channel = gimp_channel_new (image, width, height, name, &rgb_color);
+  channel = picman_channel_new (image, width, height, name, &rgb_color);
 
   if (! channel)
     success = FALSE;
@@ -89,7 +89,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  channel_copy = GIMP_CHANNEL (gimp_item_duplicate (GIMP_ITEM (channel),
+  channel_copy = PICMAN_CHANNEL (picman_item_duplicate (PICMAN_ITEM (channel),
                                G_TYPE_FROM_INSTANCE (channel)));
 
   if (! channel_copy)
@@ -114,7 +114,7 @@ HELP
 	  desc => 'The channel1' },
 	{ name => 'channel2', type => 'channel',
 	  desc => 'The channel2' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'offx', type => 'int32',
 	  desc => 'x offset between upper left corner of
@@ -125,11 +125,11 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpchannel-combine.h" "gimp-intl.h") ],
+        headers => [ qw("core/picmanchannel-combine.h" "picman-intl.h") ],
         code => <<'CODE'
 {
-  gimp_channel_push_undo (channel1, _("Combine Masks"));
-  gimp_channel_combine_mask (channel1, channel2, operation, offx, offy);
+  picman_channel_push_undo (channel1, _("Combine Masks"));
+  picman_channel_combine_mask (channel1, channel2, operation, offx, offy);
 }
 CODE
     );
@@ -147,7 +147,7 @@ HELP
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image to which to add the channel' },
-	{ name => 'component', type => 'enum GimpChannelType',
+	{ name => 'component', type => 'enum PicmanChannelType',
 	  desc => 'The image component' },
 	{ name => 'name', type => 'string',
 	  desc => 'The channel name' },
@@ -161,12 +161,12 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_image_get_component_format (image, component) != NULL)
-    channel = gimp_channel_new_from_component (image,
+  if (picman_image_get_component_format (image, component) != NULL)
+    channel = picman_channel_new_from_component (image,
                                                component, name, NULL);
 
   if (channel)
-    gimp_item_set_visible (GIMP_ITEM (channel), FALSE, FALSE);
+    picman_item_set_visible (PICMAN_ITEM (channel), FALSE, FALSE);
   else
     success = FALSE;
 }
@@ -198,7 +198,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  show_masked = gimp_channel_get_show_masked (channel);
+  show_masked = picman_channel_get_show_masked (channel);
 }
 CODE
     );
@@ -225,7 +225,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_set_show_masked (channel, show_masked);
+  picman_channel_set_show_masked (channel, show_masked);
 }
 CODE
     );
@@ -253,7 +253,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  opacity = gimp_channel_get_opacity (channel) * 100;
+  opacity = picman_channel_get_opacity (channel) * 100;
 }
 CODE
     );
@@ -278,7 +278,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_set_opacity (channel, opacity / 100.0, TRUE);
+  picman_channel_set_opacity (channel, opacity / 100.0, TRUE);
 }
 CODE
     );
@@ -306,8 +306,8 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_get_color (channel, &color);
-  gimp_rgb_set_alpha (&color, 1.0);
+  picman_channel_get_color (channel, &color);
+  picman_rgb_set_alpha (&color, 1.0);
 }
 CODE
     );
@@ -332,17 +332,17 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpRGB rgb_color = color;
+  PicmanRGB rgb_color = color;
 
   rgb_color.a = channel->color.a;
-  gimp_channel_set_color (channel, &rgb_color, TRUE);
+  picman_channel_set_color (channel, &rgb_color, TRUE);
 }
 CODE
     );
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h");
+@headers = qw("libpicmanbase/picmanbase.h");
 
 @procs = qw(channel_new
             channel_new_from_component
@@ -355,7 +355,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Channel';
-$doc_title = 'gimpchannel';
+$doc_title = 'picmanchannel';
 $doc_short_desc = 'Functions for manipulating channels.';
 $doc_long_desc = 'Functions for manipulating channels.';
 

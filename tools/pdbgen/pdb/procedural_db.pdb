@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub procedural_db_temp_name {
     $blurb = 'Generates a unique temporary PDB name.';
@@ -64,7 +64,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  success = gimp_pdb_dump (gimp->pdb, filename);
+  success = picman_pdb_dump (picman->pdb, filename);
 }
 CODE
     );
@@ -105,8 +105,8 @@ HELP
 	{ name => 'date', type => 'string', allow_non_utf8 => 1,
 	  desc => 'The regex for procedure date' },
 	{ name => 'proc_type', type => 'string', allow_non_utf8 => 1,
-	  desc => 'The regex for procedure type: { \'Internal GIMP procedure\',
-		   \'GIMP Plug-In\', \'GIMP Extension\',
+	  desc => 'The regex for procedure type: { \'Internal PICMAN procedure\',
+		   \'PICMAN Plug-In\', \'PICMAN Extension\',
 		   \'Temporary Procedure\' }' }
     );
 
@@ -120,7 +120,7 @@ HELP
     %invoke = (
 	code => <<CODE
 {
-  success = gimp_pdb_query (gimp->pdb,
+  success = picman_pdb_query (picman->pdb,
                             name, blurb, help, author,
                             copyright, date, proc_type,
                             &num_matches, &procedure_names,
@@ -155,19 +155,19 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
   gchar         *canonical;
 
-  canonical = gimp_canonicalize_identifier (procedure_name);
+  canonical = picman_canonicalize_identifier (procedure_name);
 
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+  procedure = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
   if (! procedure)
     {
-      procedure_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+      procedure_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
       if (procedure_name)
-        procedure = gimp_pdb_lookup_procedure (gimp->pdb, procedure_name);
+        procedure = picman_pdb_lookup_procedure (picman->pdb, procedure_name);
     }
 
   g_free (canonical);
@@ -188,7 +188,7 @@ This procedure returns information on the specified procedure. A short
 blurb, detailed help, author(s), copyright information, procedure
 type, number of input, and number of return values are returned. For
 specific information on each input argument and return value, use the
-gimp_procedural_db_proc_arg() and gimp_procedural_db_proc_val()
+picman_procedural_db_proc_arg() and picman_procedural_db_proc_val()
 procedures.
 HELP
 
@@ -211,7 +211,7 @@ HELP
 	  desc => 'The copyright' },
 	{ name => 'date', type => 'string',
 	  desc => 'Copyright date' },
-        { name => 'proc_type', type => 'enum GimpPDBProcType',
+        { name => 'proc_type', type => 'enum PicmanPDBProcType',
 	  desc => 'The procedure type' },
         { name => 'num_args', type => 'int32',
 	  desc => 'The number of input arguments' },
@@ -222,12 +222,12 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPDBProcType  ptype;
+  PicmanPDBProcType  ptype;
   gchar           *canonical;
 
-  canonical = gimp_canonicalize_identifier (procedure_name);
+  canonical = picman_canonicalize_identifier (procedure_name);
 
-  success = gimp_pdb_proc_info (gimp->pdb, canonical,
+  success = picman_pdb_proc_info (picman->pdb, canonical,
                                 &blurb, &help, &author,
                                 &copyright, &date, &ptype,
                                 &num_args, &num_values,
@@ -262,7 +262,7 @@ HELP
     );
 
     @outargs = (
-	{ name => 'arg_type', type => 'enum GimpPDBArgType (no GIMP_PDB_END)',
+	{ name => 'arg_type', type => 'enum PicmanPDBArgType (no PICMAN_PDB_END)',
 	  void_ret => 1,
 	  desc => "The type of argument" },
 	{ name => 'arg_name', type => 'string',
@@ -274,21 +274,21 @@ HELP
    %invoke = (
 	code => <<CODE
 {
-  GimpProcedure *proc;
+  PicmanProcedure *proc;
   gchar         *canonical;
 
-  canonical = gimp_canonicalize_identifier (procedure_name);
+  canonical = picman_canonicalize_identifier (procedure_name);
 
-  proc = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+  proc = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
   if (! proc)
     {
       const gchar *compat_name;
 
-      compat_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+      compat_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
       if (compat_name)
-        proc = gimp_pdb_lookup_procedure (gimp->pdb, compat_name);
+        proc = picman_pdb_lookup_procedure (picman->pdb, compat_name);
     }
 
   g_free (canonical);
@@ -297,9 +297,9 @@ HELP
     {
       GParamSpec *pspec = proc->args[arg_num];
 
-      arg_type = gimp_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
+      arg_type = picman_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
       arg_name = g_strdup (g_param_spec_get_name (pspec));
-      arg_desc = gimp_param_spec_get_desc (pspec);
+      arg_desc = picman_param_spec_get_desc (pspec);
     }
   else
     success = FALSE;
@@ -330,7 +330,7 @@ HELP
     );
 
     @outargs = (
-	{ name => 'val_type', type => 'enum GimpPDBArgType (no GIMP_PDB_END)',
+	{ name => 'val_type', type => 'enum PicmanPDBArgType (no PICMAN_PDB_END)',
 	  void_ret => 1,
 	  desc => "The type of return value" },
 	{ name => 'val_name', type => 'string',
@@ -342,21 +342,21 @@ HELP
    %invoke = (
 	code => <<CODE
 {
-  GimpProcedure *proc;
+  PicmanProcedure *proc;
   gchar         *canonical;
 
-  canonical = gimp_canonicalize_identifier (procedure_name);
+  canonical = picman_canonicalize_identifier (procedure_name);
 
-  proc = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+  proc = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
   if (! proc)
     {
       const gchar *compat_name;
 
-      compat_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+      compat_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
       if (compat_name)
-        proc = gimp_pdb_lookup_procedure (gimp->pdb, compat_name);
+        proc = picman_pdb_lookup_procedure (picman->pdb, compat_name);
     }
 
   g_free (canonical);
@@ -365,9 +365,9 @@ HELP
     {
       GParamSpec *pspec = proc->values[val_num];
 
-      val_type = gimp_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
+      val_type = picman_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
       val_name = g_strdup (g_param_spec_get_name (pspec));
-      val_desc = gimp_param_spec_get_desc (pspec);
+      val_desc = picman_param_spec_get_desc (pspec);
     }
   else
     success = FALSE;
@@ -403,10 +403,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gchar        *canonical = gimp_canonicalize_identifier (identifier);
+  gchar        *canonical = picman_canonicalize_identifier (identifier);
   const guint8 *orig_data;
 
-  orig_data = gimp_plug_in_manager_get_data (gimp->plug_in_manager,
+  orig_data = picman_plug_in_manager_get_data (picman->plug_in_manager,
                                              canonical, &bytes);
 
   g_free (canonical);
@@ -444,9 +444,9 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (identifier);
+  gchar *canonical = picman_canonicalize_identifier (identifier);
 
-  if (! gimp_plug_in_manager_get_data (gimp->plug_in_manager,
+  if (! picman_plug_in_manager_get_data (picman->plug_in_manager,
                                        canonical, &bytes))
     success = FALSE;
 
@@ -479,9 +479,9 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gchar *canonical = gimp_canonicalize_identifier (identifier);
+  gchar *canonical = picman_canonicalize_identifier (identifier);
 
-  gimp_plug_in_manager_set_data (gimp->plug_in_manager,
+  picman_plug_in_manager_set_data (picman->plug_in_manager,
                                  canonical, bytes, data);
 
   g_free (canonical);
@@ -491,12 +491,12 @@ CODE
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "core/gimp.h"
-              "core/gimpparamspecs-desc.h"
-              "plug-in/gimppluginmanager-data.h"
-              "gimppdb-query.h"
-              "gimp-pdb-compat.h");
+@headers = qw("libpicmanbase/picmanbase.h"
+              "core/picman.h"
+              "core/picmanparamspecs-desc.h"
+              "plug-in/picmanpluginmanager-data.h"
+              "picmanpdb-query.h"
+              "picman-pdb-compat.h");
 
 @procs = qw(procedural_db_temp_name
             procedural_db_dump
@@ -510,7 +510,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Procedural database';
-$doc_title = 'gimpproceduraldb';
+$doc_title = 'picmanproceduraldb';
 $doc_short_desc = 'Functions for querying and changing procedural database (PDB) entries.';
 $doc_long_desc = 'Functions for querying and changing procedural database (PDB) entries.';
 

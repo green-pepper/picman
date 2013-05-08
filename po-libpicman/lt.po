@@ -1,0 +1,2227 @@
+# Lithuanian translation of PICMAN (libpicman).
+# Copyright (C) 2001-2012 Free Software Foundation, Inc.
+# Mantas Kriaučiūnas <mantas@akl.lt>, 2001.
+# Linas Vasiliauskas <linasv@centras.lt>, 2004.
+# Žygimantas Beručka <zygis@gnome.org>, 2004-2008, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: PICMAN (libpicman) HEAD\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&k"
+"eywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2011-11-05 16:04+0000\n"
+"PO-Revision-Date: 2012-01-28 13:44+0300\n"
+"Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
+"Language-Team: Lithuanian\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
+"100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Virtaal 0.7.0\n"
+"X-Project-Style: gnome\n"
+
+#. procedure executed successfully
+#: ../libpicman/picman.c:1077
+msgid "success"
+msgstr "atlikta sėkmingai"
+
+#. procedure execution failed
+#: ../libpicman/picman.c:1081
+msgid "execution error"
+msgstr "vykdymo klaida"
+
+#. procedure called incorrectly
+#: ../libpicman/picman.c:1085
+msgid "calling error"
+msgstr "šaukinio klaida"
+
+#. procedure execution cancelled
+#: ../libpicman/picman.c:1089
+msgid "cancelled"
+msgstr "atšaukta"
+
+#: ../libpicman/picmanbrushselectbutton.c:178
+msgid "Brush Selection"
+msgstr "Teptuko pasirinkimas"
+
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
+msgid "_Browse..."
+msgstr "_Naršyti..."
+
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:279
+#, c-format
+msgid "%s plug-in can't handle layers"
+msgstr "Įskiepis %s negali apdoroti sluoksnių"
+
+#: ../libpicman/picmanexport.c:244 ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:280
+msgid "Merge Visible Layers"
+msgstr "Sujungti matomus sluoksnius"
+
+#: ../libpicman/picmanexport.c:252
+#, c-format
+msgid "%s plug-in can't handle layer offsets, size or opacity"
+msgstr ""
+"Įskiepis %s negali apdoroti sluoksnio poslinkių, dydžio ar nepermatomumo"
+
+#: ../libpicman/picmanexport.c:261 ../libpicman/picmanexport.c:270
+#, c-format
+msgid "%s plug-in can only handle layers as animation frames"
+msgstr "Įskiepis %s gali apdoroti sluoksnius tik kaip animacijos kadrus"
+
+#: ../libpicman/picmanexport.c:262 ../libpicman/picmanexport.c:271
+msgid "Save as Animation"
+msgstr "Išsaugoti kaip animaciją"
+
+#: ../libpicman/picmanexport.c:271 ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
+msgid "Flatten Image"
+msgstr "Suploti paveikslėlį"
+
+#: ../libpicman/picmanexport.c:288
+#, c-format
+msgid "%s plug-in can't handle transparency"
+msgstr "Įskiepis %s negali apdoroti permatomumo"
+
+#: ../libpicman/picmanexport.c:297
+#, c-format
+msgid "%s plug-in can't handle layer masks"
+msgstr "Įskiepis %s negali apdoroti sluoksnio kaukių"
+
+#: ../libpicman/picmanexport.c:298
+msgid "Apply Layer Masks"
+msgstr "Pritaikyti sluoksnio kaukes"
+
+#: ../libpicman/picmanexport.c:306
+#, c-format
+msgid "%s plug-in can only handle RGB images"
+msgstr "Įskiepis %s gali apdoroti tik RGB paveikslėlius"
+
+#: ../libpicman/picmanexport.c:307 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
+msgid "Convert to RGB"
+msgstr "Konvertuoti į RGB"
+
+#: ../libpicman/picmanexport.c:315
+#, c-format
+msgid "%s plug-in can only handle grayscale images"
+msgstr ""
+"Įskiepis %s gali apdoroti tik pilkumo atspalvių (grayscale) paveikslėlius"
+
+#: ../libpicman/picmanexport.c:316 ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
+msgid "Convert to Grayscale"
+msgstr "Konvertuoti į pilkumo atspalvius (grayscale)"
+
+#: ../libpicman/picmanexport.c:324
+#, c-format
+msgid "%s plug-in can only handle indexed images"
+msgstr "Įskiepis %s gali apdoroti tik indeksuotus paveikslėlius"
+
+#: ../libpicman/picmanexport.c:325 ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
+msgid ""
+"Convert to Indexed using default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Konvertuoti į indeksuotą naudojant numatytuosius parametrus\n"
+"(Norėmi pakoreguoti rezultatą, darykite tai rankiniu būdu)"
+
+#: ../libpicman/picmanexport.c:334
+#, c-format
+msgid "%s plug-in can only handle bitmap (two color) indexed images"
+msgstr ""
+"Įskiepis %s gali apdoroti tik bitmap (dviejų spalvų) indeksuotus "
+"paveikslėlius"
+
+#: ../libpicman/picmanexport.c:335
+msgid ""
+"Convert to Indexed using bitmap default settings\n"
+"(Do it manually to tune the result)"
+msgstr ""
+"Konvertuoti į indeksuotą naudojant bitmap numatytuosius parametrus\n"
+"(Norėmi pakoreguoti rezultatą, darykite tai rankiniu būdu)"
+
+#: ../libpicman/picmanexport.c:344
+#, c-format
+msgid "%s plug-in can only handle RGB or grayscale images"
+msgstr "Įskiepis %s gali apdoroti tik RGB arba pilkumo atspalvių paveikslėlius"
+
+#: ../libpicman/picmanexport.c:353
+#, c-format
+msgid "%s plug-in  can only handle RGB or indexed images"
+msgstr "Įskiepis %s gali apdoroti tik RGB arba indeksuotus paveikslėlius"
+
+#: ../libpicman/picmanexport.c:363
+#, c-format
+msgid "%s plug-in can only handle grayscale or indexed images"
+msgstr ""
+"Įskiepis %s gali apdoroti tik pilkumo atspalvių arba indeksuotus "
+"paveikslėlius"
+
+#: ../libpicman/picmanexport.c:374
+#, c-format
+msgid "%s plug-in needs an alpha channel"
+msgstr "Įskiepiui %s reikia alfa kanalo"
+
+#: ../libpicman/picmanexport.c:375
+msgid "Add Alpha Channel"
+msgstr "Pridėti alfa kanalą"
+
+#: ../libpicman/picmanexport.c:430
+msgid "Confirm Save"
+msgstr "Patvirtinkite įrašymą"
+
+#: ../libpicman/picmanexport.c:436
+msgid "Confirm"
+msgstr "Patvirtinkite"
+
+#: ../libpicman/picmanexport.c:512
+msgid "Export File"
+msgstr "Eksportuoti failą"
+
+#: ../libpicman/picmanexport.c:516
+msgid "_Ignore"
+msgstr "_Nepaisyti"
+
+#: ../libpicman/picmanexport.c:518 ../libpicman/picmanexport.c:988
+msgid "_Export"
+msgstr "_Eksportuoti"
+
+#. the headline
+#: ../libpicman/picmanexport.c:548
+#, c-format
+msgid ""
+"Your image should be exported before it can be saved as %s for the following "
+"reasons:"
+msgstr ""
+"Norint įrašyti paveikslėlį kaip %s, jį dėl šių priežasčių reikia "
+"eksportuoti:"
+
+#. the footline
+#: ../libpicman/picmanexport.c:622
+msgid "The export conversion won't modify your original image."
+msgstr "Eksportuojant jūsų originalus paveikslėlis nebus pakeistas."
+
+#: ../libpicman/picmanexport.c:725
+#, c-format
+msgid ""
+"You are about to save a layer mask as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Ketinate įrašyti sluoksnio kaukę kaip %s.\n"
+"Matomi sluoksniai nebus įrašyti."
+
+#: ../libpicman/picmanexport.c:731
+#, c-format
+msgid ""
+"You are about to save a channel (saved selection) as %s.\n"
+"This will not save the visible layers."
+msgstr ""
+"Ketinate įrašyti kanalą (įrašytą pažymėtą sritį) kaip %s.\n"
+"Matomi sluoksniai nebus įrašyti."
+
+#: ../libpicman/picmanexport.c:979
+msgid "Export Image as "
+msgstr "Eksportuoti paveikslėlį kaip"
+
+#: ../libpicman/picmanfontselectbutton.c:138
+msgid "Font Selection"
+msgstr "Šriftų pasirinkimas"
+
+#: ../libpicman/picmanfontselectbutton.c:153
+msgid "Sans"
+msgstr "Sans"
+
+#: ../libpicman/picmangradientselectbutton.c:156
+msgid "Gradient Selection"
+msgstr "Gradientų pasirinkimas"
+
+#. This string appears in an empty menu as in
+#. * "nothing selected and nothing to select"
+#.
+#: ../libpicman/picmanmenu.c:461 ../libpicmanwidgets/picmanintstore.c:241
+msgid "(Empty)"
+msgstr "(Tuščias)"
+
+#: ../libpicman/picmanpaletteselectbutton.c:138
+msgid "Palette Selection"
+msgstr "Palečių pasirinkimas"
+
+#: ../libpicman/picmanpatternselectbutton.c:164
+msgid "Pattern Selection"
+msgstr "Raštų pasirinkimas"
+
+#: ../libpicman/picmanprocbrowserdialog.c:149
+msgid "by name"
+msgstr "pagal pavadinimą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:150
+msgid "by description"
+msgstr "pagal aprašymą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:151
+msgid "by help"
+msgstr "pagal pagalbą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:152
+msgid "by author"
+msgstr "pagal autorių"
+
+#: ../libpicman/picmanprocbrowserdialog.c:153
+msgid "by copyright"
+msgstr "pagal autorines teises"
+
+#: ../libpicman/picmanprocbrowserdialog.c:154
+msgid "by date"
+msgstr "pagal datą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:155
+msgid "by type"
+msgstr "pagal tipą"
+
+#. count label
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545 ../libpicmanwidgets/picmanbrowser.c:139
+msgid "No matches"
+msgstr "Atitikmenų nėra"
+
+#: ../libpicman/picmanprocbrowserdialog.c:397
+msgid "Search term invalid or incomplete"
+msgstr "Ieškomas terminas netinkamas arba nebaigtas"
+
+#: ../libpicman/picmanprocbrowserdialog.c:406
+msgid "Searching"
+msgstr "Ieškoma"
+
+#: ../libpicman/picmanprocbrowserdialog.c:417
+msgid "Searching by name"
+msgstr "Ieškoma pagal pavadinimą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:438
+msgid "Searching by description"
+msgstr "Ieškoma pagal aprašymą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:445
+msgid "Searching by help"
+msgstr "Ieškoma pagal pagalbą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:452
+msgid "Searching by author"
+msgstr "Ieškoma pagal autorių"
+
+#: ../libpicman/picmanprocbrowserdialog.c:459
+msgid "Searching by copyright"
+msgstr "Ieškoma pagal autoriaus teises"
+
+#: ../libpicman/picmanprocbrowserdialog.c:466
+msgid "Searching by date"
+msgstr "Ieškoma pagal datą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:473
+msgid "Searching by type"
+msgstr "Ieškoma pagal tipą"
+
+#: ../libpicman/picmanprocbrowserdialog.c:483
+#, c-format
+msgid "%d procedure"
+msgid_plural "%d procedures"
+msgstr[0] "%d procedūra"
+msgstr[1] "%d procedūros"
+msgstr[2] "%d procedūrų"
+
+#: ../libpicman/picmanprocbrowserdialog.c:492
+msgid "No matches for your query"
+msgstr "Jūsų užklausai atitikmenų nerasta"
+
+#: ../libpicman/picmanprocbrowserdialog.c:496
+#, c-format
+msgid "%d procedure matches your query"
+msgid_plural "%d procedures match your query"
+msgstr[0] "%d procedūra atitinka jūsų užklausą"
+msgstr[1] "%d procedūros atitinka jūsų užklausą"
+msgstr[2] "%d procedūrų atitinka jūsų užklausą"
+
+#: ../libpicman/picmanprocview.c:172
+msgid "Parameters"
+msgstr "Parametrai"
+
+#: ../libpicman/picmanprocview.c:185
+msgid "Return Values"
+msgstr "Grąžinamos reikšmės"
+
+#: ../libpicman/picmanprocview.c:198
+msgid "Additional Information"
+msgstr "Papildoma informacija"
+
+#: ../libpicman/picmanprocview.c:238
+msgid "Author:"
+msgstr "Autorius:"
+
+#: ../libpicman/picmanprocview.c:250
+msgid "Date:"
+msgstr "Data:"
+
+#: ../libpicman/picmanprocview.c:262
+msgid "Copyright:"
+msgstr "Autoriaus teisės:"
+
+#: ../libpicman/picmanunitcache.c:54
+msgid "percent"
+msgstr "procentų"
+
+#: ../libpicmanbase/picmanbaseenums.c:28
+#| msgid "_White (full opacity)"
+msgctxt "add-mask-type"
+msgid "_White (full opacity)"
+msgstr "_Balta (visiškas nepermatomumas)"
+
+#: ../libpicmanbase/picmanbaseenums.c:29
+#| msgid "_Black (full transparency)"
+msgctxt "add-mask-type"
+msgid "_Black (full transparency)"
+msgstr "_Juoda (visiškas permatomumas)"
+
+#: ../libpicmanbase/picmanbaseenums.c:30
+#| msgid "Layer's _alpha channel"
+msgctxt "add-mask-type"
+msgid "Layer's _alpha channel"
+msgstr "Sluoksnio _alfa kanalas"
+
+#: ../libpicmanbase/picmanbaseenums.c:31
+#| msgid "_Transfer layer's alpha channel"
+msgctxt "add-mask-type"
+msgid "_Transfer layer's alpha channel"
+msgstr "_Perkelti sluoksnio alfą kanalą"
+
+#: ../libpicmanbase/picmanbaseenums.c:32
+#| msgid "_Selection"
+msgctxt "add-mask-type"
+msgid "_Selection"
+msgstr "_Pažymėjimas"
+
+#: ../libpicmanbase/picmanbaseenums.c:33
+#| msgid "_Grayscale copy of layer"
+msgctxt "add-mask-type"
+msgid "_Grayscale copy of layer"
+msgstr "_Sluoksnio pilkų atspalvių kopija"
+
+#: ../libpicmanbase/picmanbaseenums.c:34
+#| msgid "C_hannel"
+msgctxt "add-mask-type"
+msgid "C_hannel"
+msgstr "K_analas"
+
+#: ../libpicmanbase/picmanbaseenums.c:65
+#| msgid "FG to BG (RGB)"
+msgctxt "blend-mode"
+msgid "FG to BG (RGB)"
+msgstr "Iš priekinio plano spalvos į fono spalvą (RGB)"
+
+#: ../libpicmanbase/picmanbaseenums.c:66
+#| msgid "FG to BG (HSV)"
+msgctxt "blend-mode"
+msgid "FG to BG (HSV)"
+msgstr "Iš priekinio plano spalvos į fono spalvą (HSV)"
+
+#: ../libpicmanbase/picmanbaseenums.c:67
+#| msgid "FG to transparent"
+msgctxt "blend-mode"
+msgid "FG to transparent"
+msgstr "Iš priekinio plano spalvos į skaidrią"
+
+#: ../libpicmanbase/picmanbaseenums.c:68
+#| msgid "Custom gradient"
+msgctxt "blend-mode"
+msgid "Custom gradient"
+msgstr "Pasirinktinis gradientas"
+
+#: ../libpicmanbase/picmanbaseenums.c:98
+#| msgid "FG color fill"
+msgctxt "bucket-fill-mode"
+msgid "FG color fill"
+msgstr "Užpildymas priekinio plano spalva"
+
+#: ../libpicmanbase/picmanbaseenums.c:99
+#| msgid "BG color fill"
+msgctxt "bucket-fill-mode"
+msgid "BG color fill"
+msgstr "Užpildymas fono spalva"
+
+#: ../libpicmanbase/picmanbaseenums.c:100
+#| msgid "Pattern fill"
+msgctxt "bucket-fill-mode"
+msgid "Pattern fill"
+msgstr "Užpildymas raštu"
+
+#: ../libpicmanbase/picmanbaseenums.c:131
+#| msgid "Add to the current selection"
+msgctxt "channel-ops"
+msgid "Add to the current selection"
+msgstr "Pridėti prie dabar pažymėtos srities"
+
+#: ../libpicmanbase/picmanbaseenums.c:132
+#| msgid "Subtract from the current selection"
+msgctxt "channel-ops"
+msgid "Subtract from the current selection"
+msgstr "Atimti iš dabar pažymėtos srities"
+
+#: ../libpicmanbase/picmanbaseenums.c:133
+#| msgid "Replace the current selection"
+msgctxt "channel-ops"
+msgid "Replace the current selection"
+msgstr "Pakeisti dabar pažymėtą sritį"
+
+#: ../libpicmanbase/picmanbaseenums.c:134
+#| msgid "Intersect with the current selection"
+msgctxt "channel-ops"
+msgid "Intersect with the current selection"
+msgstr "Sankirta su dabar pažymėta sritimi"
+
+#: ../libpicmanbase/picmanbaseenums.c:167
+#| msgid "Red"
+msgctxt "channel-type"
+msgid "Red"
+msgstr "Raudona"
+
+#: ../libpicmanbase/picmanbaseenums.c:168
+#| msgid "Green"
+msgctxt "channel-type"
+msgid "Green"
+msgstr "Žalia"
+
+#: ../libpicmanbase/picmanbaseenums.c:169
+#| msgid "Blue"
+msgctxt "channel-type"
+msgid "Blue"
+msgstr "Mėlyna"
+
+#: ../libpicmanbase/picmanbaseenums.c:170
+#| msgid "Gray"
+msgctxt "channel-type"
+msgid "Gray"
+msgstr "Pilka"
+
+#: ../libpicmanbase/picmanbaseenums.c:171
+#| msgid "Indexed"
+msgctxt "channel-type"
+msgid "Indexed"
+msgstr "Indeksuota"
+
+#: ../libpicmanbase/picmanbaseenums.c:172
+#| msgid "Alpha"
+msgctxt "channel-type"
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:202
+#| msgid "Small"
+msgctxt "check-size"
+msgid "Small"
+msgstr "Mažas"
+
+#: ../libpicmanbase/picmanbaseenums.c:203
+#| msgid "Medium"
+msgctxt "check-size"
+msgid "Medium"
+msgstr "Vidutinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:204
+#| msgid "Large"
+msgctxt "check-size"
+msgid "Large"
+msgstr "Didelis"
+
+#: ../libpicmanbase/picmanbaseenums.c:237
+#| msgid "Light checks"
+msgctxt "check-type"
+msgid "Light checks"
+msgstr "Šviesūs kvadratėliai"
+
+#: ../libpicmanbase/picmanbaseenums.c:238
+#| msgid "Mid-tone checks"
+msgctxt "check-type"
+msgid "Mid-tone checks"
+msgstr "Vidutinių tonų kvadratėliai"
+
+#: ../libpicmanbase/picmanbaseenums.c:239
+#| msgid "Dark checks"
+msgctxt "check-type"
+msgid "Dark checks"
+msgstr "Tamsūs kvadratėliai"
+
+#: ../libpicmanbase/picmanbaseenums.c:240
+#| msgid "White only"
+msgctxt "check-type"
+msgid "White only"
+msgstr "Tik balta"
+
+#: ../libpicmanbase/picmanbaseenums.c:241
+#| msgid "Gray only"
+msgctxt "check-type"
+msgid "Gray only"
+msgstr "Tik pilka"
+
+#: ../libpicmanbase/picmanbaseenums.c:242
+#| msgid "Black only"
+msgctxt "check-type"
+msgid "Black only"
+msgstr "Tik juoda"
+
+#: ../libpicmanbase/picmanbaseenums.c:271
+#| msgid "Image"
+msgctxt "clone-type"
+msgid "Image"
+msgstr "Paveikslėlis"
+
+#: ../libpicmanbase/picmanbaseenums.c:272
+#| msgid "Pattern"
+msgctxt "clone-type"
+msgid "Pattern"
+msgstr "Raštas"
+
+#: ../libpicmanbase/picmanbaseenums.c:302
+#| msgid "Lightness"
+msgctxt "desaturate-mode"
+msgid "Lightness"
+msgstr "Šviesumas"
+
+#: ../libpicmanbase/picmanbaseenums.c:303
+#| msgid "Luminosity"
+msgctxt "desaturate-mode"
+msgid "Luminosity"
+msgstr "Šviesis"
+
+#: ../libpicmanbase/picmanbaseenums.c:304
+#| msgid "Average"
+msgctxt "desaturate-mode"
+msgid "Average"
+msgstr "Vidurkis"
+
+#: ../libpicmanbase/picmanbaseenums.c:333
+#| msgid "Dodge"
+msgctxt "dodge-burn-type"
+msgid "Dodge"
+msgstr "Blukinimas"
+
+#: ../libpicmanbase/picmanbaseenums.c:334
+#| msgid "Burn"
+msgctxt "dodge-burn-type"
+msgid "Burn"
+msgstr "Ryškinimas"
+
+#: ../libpicmanbase/picmanbaseenums.c:400
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Linear"
+msgstr "Linijinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:401
+#| msgid "Bi-linear"
+msgctxt "gradient-type"
+msgid "Bi-linear"
+msgstr "Linijinis dvikryptis"
+
+#: ../libpicmanbase/picmanbaseenums.c:402
+#| msgid "Radial"
+msgctxt "gradient-type"
+msgid "Radial"
+msgstr "Radialinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:403
+#| msgid "Square"
+msgctxt "gradient-type"
+msgid "Square"
+msgstr "Kvadratinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:404
+#| msgid "Conical (sym)"
+msgctxt "gradient-type"
+msgid "Conical (sym)"
+msgstr "Kūginis (simetriškas)"
+
+#: ../libpicmanbase/picmanbaseenums.c:405
+#| msgid "Conical (asym)"
+msgctxt "gradient-type"
+msgid "Conical (asym)"
+msgstr "Kūginis (nesimetriškas)"
+
+#: ../libpicmanbase/picmanbaseenums.c:406
+#| msgid "Shaped (angular)"
+msgctxt "gradient-type"
+msgid "Shaped (angular)"
+msgstr "Forminis (kampinis)"
+
+#: ../libpicmanbase/picmanbaseenums.c:407
+#| msgid "Shaped (spherical)"
+msgctxt "gradient-type"
+msgid "Shaped (spherical)"
+msgstr "Forminis (sferinis)"
+
+#: ../libpicmanbase/picmanbaseenums.c:408
+#| msgid "Shaped (dimpled)"
+msgctxt "gradient-type"
+msgid "Shaped (dimpled)"
+msgstr "Forminis (įdubęs)"
+
+#: ../libpicmanbase/picmanbaseenums.c:409
+#| msgid "Spiral (cw)"
+msgctxt "gradient-type"
+msgid "Spiral (cw)"
+msgstr "Spiralinis (pagal laikrodžio rodyklę)"
+
+#: ../libpicmanbase/picmanbaseenums.c:410
+#| msgid "Spiral (ccw)"
+msgctxt "gradient-type"
+msgid "Spiral (ccw)"
+msgstr "Spiralinis (prieš laikrodžio rodyklę)"
+
+#: ../libpicmanbase/picmanbaseenums.c:442
+#| msgid "Intersections (dots)"
+msgctxt "grid-style"
+msgid "Intersections (dots)"
+msgstr "Sankirtos (taškeliai)"
+
+#: ../libpicmanbase/picmanbaseenums.c:443
+#| msgid "Intersections (crosshairs)"
+msgctxt "grid-style"
+msgid "Intersections (crosshairs)"
+msgstr "Sankirtos (kryželiai)"
+
+#: ../libpicmanbase/picmanbaseenums.c:444
+#| msgid "Dashed"
+msgctxt "grid-style"
+msgid "Dashed"
+msgstr "Brūkšniuota"
+
+#: ../libpicmanbase/picmanbaseenums.c:445
+#| msgid "Double dashed"
+msgctxt "grid-style"
+msgid "Double dashed"
+msgstr "Dviguba brūkšniuota"
+
+#: ../libpicmanbase/picmanbaseenums.c:446
+#| msgid "Solid"
+msgctxt "grid-style"
+msgid "Solid"
+msgstr "Vientisas"
+
+#: ../libpicmanbase/picmanbaseenums.c:476
+#| msgid "Stock ID"
+msgctxt "icon-type"
+msgid "Stock ID"
+msgstr "Standartinis ID"
+
+#: ../libpicmanbase/picmanbaseenums.c:477
+#| msgid "Inline pixbuf"
+msgctxt "icon-type"
+msgid "Inline pixbuf"
+msgstr "Vidinis pixbuf"
+
+#: ../libpicmanbase/picmanbaseenums.c:478
+#| msgid "Image file"
+msgctxt "icon-type"
+msgid "Image file"
+msgstr "Paveikslėlio failas"
+
+#: ../libpicmanbase/picmanbaseenums.c:508
+#| msgid "RGB color"
+msgctxt "image-base-type"
+msgid "RGB color"
+msgstr "RGB spalvos"
+
+#: ../libpicmanbase/picmanbaseenums.c:509
+#| msgid "Grayscale"
+msgctxt "image-base-type"
+msgid "Grayscale"
+msgstr "Pilkumo atspalviai"
+
+#: ../libpicmanbase/picmanbaseenums.c:510
+#| msgid "Indexed color"
+msgctxt "image-base-type"
+msgid "Indexed color"
+msgstr "Indeksuota spalva"
+
+#: ../libpicmanbase/picmanbaseenums.c:543
+#| msgid "RGB"
+msgctxt "image-type"
+msgid "RGB"
+msgstr "RGB"
+
+#: ../libpicmanbase/picmanbaseenums.c:544
+#| msgid "RGB-alpha"
+msgctxt "image-type"
+msgid "RGB-alpha"
+msgstr "RGB alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:545
+#| msgid "Grayscale"
+msgctxt "image-type"
+msgid "Grayscale"
+msgstr "Pilkumo atspalviai"
+
+#: ../libpicmanbase/picmanbaseenums.c:546
+#| msgid "Grayscale-alpha"
+msgctxt "image-type"
+msgid "Grayscale-alpha"
+msgstr "Pilkų atspalvių alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:547
+#| msgid "Indexed"
+msgctxt "image-type"
+msgid "Indexed"
+msgstr "Indeksuota"
+
+#: ../libpicmanbase/picmanbaseenums.c:548
+#| msgid "Indexed-alpha"
+msgctxt "image-type"
+msgid "Indexed-alpha"
+msgstr "Indeksuota alfa"
+
+#: ../libpicmanbase/picmanbaseenums.c:579
+#| msgid "None"
+msgctxt "interpolation-type"
+msgid "None"
+msgstr "Nėra"
+
+#: ../libpicmanbase/picmanbaseenums.c:580
+#| msgid "Bi-linear"
+msgctxt "interpolation-type"
+msgid "Linear"
+msgstr "Linijinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:581
+#| msgid "Cubic"
+msgctxt "interpolation-type"
+msgid "Cubic"
+msgstr "Kubinė"
+
+#: ../libpicmanbase/picmanbaseenums.c:582
+#| msgid "Sinc (Lanczos3)"
+msgctxt "interpolation-type"
+msgid "Sinc (Lanczos3)"
+msgstr "Sinc (Lanczos3)"
+
+#: ../libpicmanbase/picmanbaseenums.c:611
+#| msgid "Constant"
+msgctxt "paint-application-mode"
+msgid "Constant"
+msgstr "Konstanta"
+
+#: ../libpicmanbase/picmanbaseenums.c:612
+#| msgid "Incremental"
+msgctxt "paint-application-mode"
+msgid "Incremental"
+msgstr "Didėjantis"
+
+#: ../libpicmanbase/picmanbaseenums.c:642
+#| msgid "None"
+msgctxt "repeat-mode"
+msgid "None"
+msgstr "Nėra"
+
+#: ../libpicmanbase/picmanbaseenums.c:643
+#| msgid "Sawtooth wave"
+msgctxt "repeat-mode"
+msgid "Sawtooth wave"
+msgstr "Pjūklinė banga"
+
+#: ../libpicmanbase/picmanbaseenums.c:644
+#| msgid "Triangular wave"
+msgctxt "repeat-mode"
+msgid "Triangular wave"
+msgstr "Trikampė banga"
+
+#: ../libpicmanbase/picmanbaseenums.c:674
+#| msgid "Run interactively"
+msgctxt "run-mode"
+msgid "Run interactively"
+msgstr "Vykdyti interaktyviai"
+
+#: ../libpicmanbase/picmanbaseenums.c:675
+#| msgid "Run non-interactively"
+msgctxt "run-mode"
+msgid "Run non-interactively"
+msgstr "Vykdyti neinteraktyviai"
+
+#: ../libpicmanbase/picmanbaseenums.c:676
+#| msgid "Run with last used values"
+msgctxt "run-mode"
+msgid "Run with last used values"
+msgstr "Vykdyti naudojant vėliausiai naudotas reikšmes"
+
+#: ../libpicmanbase/picmanbaseenums.c:705
+#| msgid "Pixels"
+msgctxt "size-type"
+msgid "Pixels"
+msgstr "Taškeliai"
+
+#: ../libpicmanbase/picmanbaseenums.c:706
+#| msgid "Points"
+msgctxt "size-type"
+msgid "Points"
+msgstr "Taškai"
+
+#: ../libpicmanbase/picmanbaseenums.c:736
+#| msgid "Shadows"
+msgctxt "transfer-mode"
+msgid "Shadows"
+msgstr "Šešėliai"
+
+#: ../libpicmanbase/picmanbaseenums.c:737
+#| msgid "Midtones"
+msgctxt "transfer-mode"
+msgid "Midtones"
+msgstr "Pustoniai"
+
+#: ../libpicmanbase/picmanbaseenums.c:738
+#| msgid "Highlights"
+msgctxt "transfer-mode"
+msgid "Highlights"
+msgstr "Paryškinimai"
+
+#: ../libpicmanbase/picmanbaseenums.c:767
+#| msgid "Normal (Forward)"
+msgctxt "transform-direction"
+msgid "Normal (Forward)"
+msgstr "Normali (pirmyn)"
+
+#: ../libpicmanbase/picmanbaseenums.c:768
+#| msgid "Corrective (Backward)"
+msgctxt "transform-direction"
+msgid "Corrective (Backward)"
+msgstr "Korekcinė (atgal)"
+
+#: ../libpicmanbase/picmanbaseenums.c:799
+#| msgid "Adjust"
+msgctxt "transform-resize"
+msgid "Adjust"
+msgstr "Koreguoti"
+
+#: ../libpicmanbase/picmanbaseenums.c:800
+#| msgid "Clip"
+msgctxt "transform-resize"
+msgid "Clip"
+msgstr "Apkirpti"
+
+#: ../libpicmanbase/picmanbaseenums.c:801
+#| msgid "Crop to result"
+msgctxt "transform-resize"
+msgid "Crop to result"
+msgstr "Apkirpti iki rezultato"
+
+#: ../libpicmanbase/picmanbaseenums.c:802
+#| msgid "Crop with aspect"
+msgctxt "transform-resize"
+msgid "Crop with aspect"
+msgstr "Apkirpti išsaugant proporciją"
+
+#: ../libpicmanbase/picmanbaseenums.c:935
+#| msgid "Internal PICMAN procedure"
+msgctxt "pdb-proc-type"
+msgid "Internal PICMAN procedure"
+msgstr "Vidinė PICMAN procedūra"
+
+#: ../libpicmanbase/picmanbaseenums.c:936
+#| msgid "PICMAN Plug-In"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Plug-In"
+msgstr "PICMAN įskiepis"
+
+#: ../libpicmanbase/picmanbaseenums.c:937
+#| msgid "PICMAN Extension"
+msgctxt "pdb-proc-type"
+msgid "PICMAN Extension"
+msgstr "PICMAN plėtinys"
+
+#: ../libpicmanbase/picmanbaseenums.c:938
+#| msgid "Temporary Procedure"
+msgctxt "pdb-proc-type"
+msgid "Temporary Procedure"
+msgstr "Laikina procedūra"
+
+#: ../libpicmanbase/picmanbaseenums.c:1105
+#| msgid "From left to right"
+msgctxt "text-direction"
+msgid "From left to right"
+msgstr "Iš kairės į dešinę"
+
+#: ../libpicmanbase/picmanbaseenums.c:1106
+#| msgid "From right to left"
+msgctxt "text-direction"
+msgid "From right to left"
+msgstr "Iš dešinės į kairę"
+
+#: ../libpicmanbase/picmanbaseenums.c:1137
+#| msgid "None"
+msgctxt "text-hint-style"
+msgid "None"
+msgstr "Nėra"
+
+#: ../libpicmanbase/picmanbaseenums.c:1138
+#| msgid "Highlights"
+msgctxt "text-hint-style"
+msgid "Slight"
+msgstr "Nežymus"
+
+#: ../libpicmanbase/picmanbaseenums.c:1139
+#| msgid "Medium"
+msgctxt "text-hint-style"
+msgid "Medium"
+msgstr "Vidutinis"
+
+#: ../libpicmanbase/picmanbaseenums.c:1140
+#| msgid "Filled"
+msgctxt "text-hint-style"
+msgid "Full"
+msgstr "Visas"
+
+#: ../libpicmanbase/picmanbaseenums.c:1171
+#| msgid "Left justified"
+msgctxt "text-justification"
+msgid "Left justified"
+msgstr "Lygiuotas kairėje"
+
+#: ../libpicmanbase/picmanbaseenums.c:1172
+#| msgid "Right justified"
+msgctxt "text-justification"
+msgid "Right justified"
+msgstr "Lygiuotas dešinėje"
+
+#: ../libpicmanbase/picmanbaseenums.c:1173
+#| msgid "Centered"
+msgctxt "text-justification"
+msgid "Centered"
+msgstr "Centruotas"
+
+#: ../libpicmanbase/picmanbaseenums.c:1174
+#| msgid "Filled"
+msgctxt "text-justification"
+msgid "Filled"
+msgstr "Abipusė lygiuotė"
+
+#: ../libpicmanbase/picmanutils.c:178 ../libpicmanbase/picmanutils.c:183
+#: ../modules/color-selector-cmyk-lcms.c:424
+#: ../modules/color-selector-cmyk-lcms.c:430
+#: ../modules/display-filter-lcms.c:178
+msgid "(invalid UTF-8 string)"
+msgstr "(netinkama UTF-8 eilutė)"
+
+#. *
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
+#. * @short_description: Color management settings.
+#. *
+#. * Color management settings.
+#. *
+#: ../libpicmanconfig/picmancolorconfig.c:52
+msgid "Mode of operation for color management."
+msgstr "Spalvų valdymo operacijos veiksena."
+
+#: ../libpicmanconfig/picmancolorconfig.c:54
+msgid "The color profile of your (primary) monitor."
+msgstr "Jūsų (pirminio) monitoriaus spalvų profilis."
+
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid ""
+"When enabled, PICMAN will try to use the display color profile from the "
+"windowing system.  The configured monitor profile is then only used as a "
+"fallback."
+msgstr ""
+"Kai įjungta, PICMAN bandys naudoti ekrano spalvų profilį gautą iš langų "
+"sistemos. Tuo atveju sukonfigūruotas monitoriaus profilis bus naudojamas tik "
+"kaip atsarginis variantas."
+
+#: ../libpicmanconfig/picmancolorconfig.c:60
+msgid "The default RGB working space color profile."
+msgstr "Numatytasis RGB darbinės gamos spalvų profilis."
+
+#: ../libpicmanconfig/picmancolorconfig.c:62
+msgid "The CMYK color profile used to convert between RGB and CMYK."
+msgstr "CMYK spalvų profilis naudojamas konvertavimui tarp RGB ir CMYK."
+
+#: ../libpicmanconfig/picmancolorconfig.c:64
+msgid "The color profile used for simulating a printed version (softproof)."
+msgstr ""
+"Spalvų profilis naudojamas simuliuoti atspausdintą versiją (softproof)."
+
+#: ../libpicmanconfig/picmancolorconfig.c:66
+msgid "Sets how colors are mapped for your display."
+msgstr "Nurodo kiek spalvų yra skirta Jūsų ekranui."
+
+#: ../libpicmanconfig/picmancolorconfig.c:68
+msgid ""
+"Sets how colors are converted from RGB working space to the print simulation "
+"device."
+msgstr ""
+"Nurodo kaip spalvos konvertuojamos iš RGB darbinės gamos į spausdinimo "
+"simuliacijos įrenginį."
+
+#: ../libpicmanconfig/picmancolorconfig.c:71
+msgid ""
+"When enabled, the print simulation will mark colors which can not be "
+"represented in the target color space."
+msgstr ""
+"Kai įjungta, spausdinimo imitavimas pažymės spalvas, kurių negalima "
+"atvaizduoti paskirties spalvų gamoje."
+
+#: ../libpicmanconfig/picmancolorconfig.c:74
+msgid "The color to use for marking colors which are out of gamut."
+msgstr "Spalva, naudotina pažymėti už diapazono ribų esančias spalvas."
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
+#| msgid "No color management"
+msgctxt "color-management-mode"
+msgid "No color management"
+msgstr "Nėra spalvų valdymo"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
+#| msgid "Color managed display"
+msgctxt "color-management-mode"
+msgid "Color managed display"
+msgstr "Valdomų spalvų ekranas"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
+#| msgid "Print simulation"
+msgctxt "color-management-mode"
+msgid "Print simulation"
+msgstr "Spausdinimo imitavimas"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
+#| msgid "Perceptual"
+msgctxt "color-rendering-intent"
+msgid "Perceptual"
+msgstr "Suvokimo"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
+#| msgid "Relative colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Relative colorimetric"
+msgstr "Santykinis kolorimetrinis"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
+#| msgid "Saturation"
+msgctxt "color-rendering-intent"
+msgid "Saturation"
+msgstr "Sodrumas"
+
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
+#| msgid "Absolute colorimetric"
+msgctxt "color-rendering-intent"
+msgid "Absolute colorimetric"
+msgstr "Absoliutus kolorimetrinis"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
+#, c-format
+msgid "value for token %s is not a valid UTF-8 string"
+msgstr "žymės %s reikšmė nėra UTF-8 eilutė"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
+#, c-format
+msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgstr "tikėtasi „yes“ arba „no“ loginei žymei %s, gauta „%s“"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
+#, c-format
+msgid "invalid value '%s' for token %s"
+msgstr "nekorektiška „%s“ reikšmė %s žymei"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
+#, c-format
+msgid "invalid value '%ld' for token %s"
+msgstr "nekorektiška „%ld“ reikšmė %s žymei"
+
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
+#, c-format
+msgid "while parsing token '%s': %s"
+msgstr "apdorojant žymę „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495 ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
+msgid "fatal parse error"
+msgstr "kritinė skaitymo klaida"
+
+#: ../libpicmanconfig/picmanconfig-path.c:387
+#, c-format
+msgid "Cannot expand ${%s}"
+msgstr "Negalima išplėsti ${%s}"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
+#, c-format
+msgid "Error writing to '%s': %s"
+msgstr "Klaida rašant į „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:145
+#, c-format
+msgid "Could not create temporary file for '%s': %s"
+msgstr "Nepavyko sukurti laikino failo „%s“: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:158
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Nepavyko atverti „%s“ rašymui: %s"
+
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"The original file has not been touched."
+msgstr ""
+"Klaida rašant į laikinąjį failą „%s“: %s\n"
+"Originalus failas buvo nepaliestas."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:717
+#, c-format
+msgid ""
+"Error writing to temporary file for '%s': %s\n"
+"No file has been created."
+msgstr ""
+"Klaida rašant į laikinąjį failą „%s“: %s\n"
+"Nebuvo sukurta jokio failo."
+
+#: ../libpicmanconfig/picmanconfigwriter.c:741
+#, c-format
+msgid "Could not create '%s': %s"
+msgstr "Nepavyko sukurti „%s“: %s"
+
+#: ../libpicmanconfig/picmanscanner.c:268
+#, c-format
+msgid "invalid UTF-8 string"
+msgstr "nekorektiška UTF-8 eilutė"
+
+#. please don't translate 'yes' and 'no'
+#: ../libpicmanconfig/picmanscanner.c:431
+#, c-format
+#| msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
+msgid "expected 'yes' or 'no' for boolean token, got '%s'"
+msgstr "laukta „yes“ arba „no“ loginei žymei, gauta „%s“"
+
+#: ../libpicmanconfig/picmanscanner.c:668
+#, c-format
+msgid "Error while parsing '%s' in line %d: %s"
+msgstr "Klaida skaitant „%s“ eilutėje %d: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:163 ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290 ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Modulio „%s“ įkėlimo klaida: %s"
+
+#: ../libpicmanmodule/picmanmodule.c:385
+msgid "Module error"
+msgstr "Modulio klaida"
+
+#: ../libpicmanmodule/picmanmodule.c:386
+msgid "Loaded"
+msgstr "Įkeltas"
+
+#: ../libpicmanmodule/picmanmodule.c:387
+msgid "Load failed"
+msgstr "Įkėlimas nepavyko"
+
+#: ../libpicmanmodule/picmanmodule.c:388
+msgid "Not loaded"
+msgstr "Neįkelta"
+
+#: ../libpicmanthumb/picmanthumb-utils.c:131
+#, c-format
+msgid ""
+"Cannot determine a valid home directory.\n"
+"Thumbnails will be stored in the folder for temporary files (%s) instead."
+msgstr ""
+"Nepavyko aptikti tinkamo namų aplanko.\n"
+"Todėl miniatiūros bus išsaugotos laikinųjų failų aplanke (%s)."
+
+#: ../libpicmanthumb/picmanthumb-utils.c:255 ../libpicmanthumb/picmanthumb-utils.c:323
+#, c-format
+msgid "Failed to create thumbnail folder '%s'."
+msgstr "Nepavyko sukurti miniatiūrų aplanko „%s“."
+
+#: ../libpicmanthumb/picmanthumbnail.c:508
+#, c-format
+msgid "Thumbnail contains no Thumb::URI tag"
+msgstr "Miniatiūroje nėra Thumb::URI žymės"
+
+#: ../libpicmanthumb/picmanthumbnail.c:904
+#, c-format
+msgid "Could not create thumbnail for %s: %s"
+msgstr "Nepavyko sukurti %s miniatiūros: %s"
+
+#: ../libpicmanwidgets/picmanbrowser.c:112
+msgid "_Search:"
+msgstr "_Ieškoti:"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:135
+msgid "_Foreground Color"
+msgstr "_Priekinio plano spalva"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:139
+msgid "_Background Color"
+msgstr "_Fono spalva"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:143
+msgid "Blac_k"
+msgstr "_Juoda"
+
+#: ../libpicmanwidgets/picmancolorbutton.c:147
+msgid "_White"
+msgstr "_Balta"
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
+msgid "Select color profile from disk..."
+msgstr "Pasirinkti spalvų profilį iš disko..."
+
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
+msgctxt "profile"
+msgid "None"
+msgstr "Nėra"
+
+#: ../libpicmanwidgets/picmancolorscales.c:108
+msgid "Scales"
+msgstr "Gamos"
+
+#: ../libpicmanwidgets/picmancolorselection.c:220
+msgid "Current:"
+msgstr "Dabartinė:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:229
+msgid "Old:"
+msgstr "Sena:"
+
+#: ../libpicmanwidgets/picmancolorselection.c:314
+msgid ""
+"Hexadecimal color notation as used in HTML and CSS.  This entry also accepts "
+"CSS color names."
+msgstr ""
+"Šešioliktainė spalvos notacija kaip naudojama HTML ir CSS. Šiame įvesties "
+"laukelyje taip pat priimami CSS spalvų pavadinimai."
+
+#: ../libpicmanwidgets/picmancolorselection.c:320
+msgid "HTML _notation:"
+msgstr "HTML _notacija:"
+
+#: ../libpicmanwidgets/picmanfileentry.c:200
+msgid "Open a file selector to browse your folders"
+msgstr "Atverti failų parinkiklį aplankų naršymui"
+
+#: ../libpicmanwidgets/picmanfileentry.c:201
+msgid "Open a file selector to browse your files"
+msgstr "Atverti failų parinkiklį failų naršymui"
+
+#: ../libpicmanwidgets/picmanfileentry.c:361
+msgid "Select Folder"
+msgstr "Pasirinkite aplanką"
+
+#: ../libpicmanwidgets/picmanfileentry.c:363
+msgid "Select File"
+msgstr "Pasirinkite failą"
+
+#: ../libpicmanwidgets/picmanhelpui.c:432
+msgid "Press F1 for more help"
+msgstr "Daugiau informacijos rasite paspaudę F1"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
+msgid "Kilobytes"
+msgstr "Kilobaitai"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
+msgid "Megabytes"
+msgstr "Megabaitai"
+
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
+msgid "Gigabytes"
+msgstr "Gigabaitai"
+
+#. Count label
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
+msgid "Nothing selected"
+msgstr "Nieko nepasirinkta"
+
+#: ../libpicmanwidgets/picmanpageselector.c:300
+msgid "Select _All"
+msgstr "Pasirinkti _viską"
+
+#: ../libpicmanwidgets/picmanpageselector.c:320
+msgid "Select _range:"
+msgstr "Pasirinkti _diapazoną:"
+
+#: ../libpicmanwidgets/picmanpageselector.c:332
+msgid "Open _pages as"
+msgstr "Atverti _puslapius kaip"
+
+#: ../libpicmanwidgets/picmanpageselector.c:433
+msgid "Page 000"
+msgstr "Puslapis 000"
+
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
+#, c-format
+msgid "Page %d"
+msgstr "Puslapis %d"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1183
+msgid "One page selected"
+msgstr "Pasirinktas vienas puslapis"
+
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
+#, c-format
+msgid "%d page selected"
+msgid_plural "All %d pages selected"
+msgstr[0] "Pasirinktas %d puslapis"
+msgstr[1] "Pasirinkti %d puslapiai"
+msgstr[2] "Pasirinkta %d puslapių"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:239
+msgid "Writable"
+msgstr "Rašomas"
+
+#: ../libpicmanwidgets/picmanpatheditor.c:248
+msgid "Folder"
+msgstr "Aplankas"
+
+#: ../libpicmanwidgets/picmanpickbutton.c:127
+msgid ""
+"Click the eyedropper, then click a color anywhere on your screen to select "
+"that color."
+msgstr ""
+"Spustelėkite pipetę, tada ekrane spustelėkite norimą pasirinkti spalvą."
+
+#. toggle button to (de)activate the instant preview
+#: ../libpicmanwidgets/picmanpreview.c:290
+msgid "_Preview"
+msgstr "_Peržiūra"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
+msgid "Check Size"
+msgstr "Kvadratėlių dydis"
+
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
+msgid "Check Style"
+msgstr "Kvadratėlių stilius"
+
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
+#, c-format
+msgid "This text input field is limited to %d character."
+msgid_plural "This text input field is limited to %d characters."
+msgstr[0] "Šis įvesties laukelis yra apribotas iki %d simbolio."
+msgstr[1] "Šis įvesties laukelis yra apribotas iki %d simbolių."
+msgstr[2] "Šis įvesties laukelis yra apribotas iki %d simbolių."
+
+#: ../libpicmanwidgets/picmanstock.c:127
+msgid "Anchor"
+msgstr "Prieraišas"
+
+#: ../libpicmanwidgets/picmanstock.c:128
+msgid "C_enter"
+msgstr "C_entras"
+
+#: ../libpicmanwidgets/picmanstock.c:129
+msgid "_Duplicate"
+msgstr "_Dublikuoti"
+
+#: ../libpicmanwidgets/picmanstock.c:130
+msgid "_Edit"
+msgstr "K_eisti"
+
+#: ../libpicmanwidgets/picmanstock.c:131
+msgid "Linked"
+msgstr "Sujungtas"
+
+#: ../libpicmanwidgets/picmanstock.c:132
+msgid "Paste as New"
+msgstr "Įdėti kaip naują"
+
+#: ../libpicmanwidgets/picmanstock.c:133
+msgid "Paste Into"
+msgstr "Įdėti į"
+
+#: ../libpicmanwidgets/picmanstock.c:134
+msgid "_Reset"
+msgstr "_Atstatyti"
+
+#: ../libpicmanwidgets/picmanstock.c:135
+msgid "Visible"
+msgstr "Matomas"
+
+#: ../libpicmanwidgets/picmanstock.c:171 ../libpicmanwidgets/picmanstock.c:175
+msgid "_Stroke"
+msgstr "_Apvesti"
+
+#: ../libpicmanwidgets/picmanstock.c:187
+msgid "L_etter Spacing"
+msgstr "T_arpai tarp raidžių"
+
+#: ../libpicmanwidgets/picmanstock.c:188
+msgid "L_ine Spacing"
+msgstr "Tarpai tarp e_ilučių"
+
+#: ../libpicmanwidgets/picmanstock.c:204
+msgid "_Resize"
+msgstr "_Keisti dydį"
+
+#: ../libpicmanwidgets/picmanstock.c:205 ../libpicmanwidgets/picmanstock.c:340
+msgid "_Scale"
+msgstr "_Ištempti"
+
+#: ../libpicmanwidgets/picmanstock.c:315
+msgid "Cr_op"
+msgstr "Ap_karpyti"
+
+#: ../libpicmanwidgets/picmanstock.c:335
+msgid "_Transform"
+msgstr "_Transformuoti"
+
+#: ../libpicmanwidgets/picmanstock.c:339
+msgid "_Rotate"
+msgstr "_Pasukti"
+
+#: ../libpicmanwidgets/picmanstock.c:341
+msgid "_Shear"
+msgstr "Š_lytis"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:264
+msgid "More..."
+msgstr "Daugiau..."
+
+#: ../libpicmanwidgets/picmanunitmenu.c:490
+msgid "Unit Selection"
+msgstr "Matavimo vienetų pasirinkimas"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:539
+msgid "Unit"
+msgstr "Matavimo vienetai"
+
+#: ../libpicmanwidgets/picmanunitmenu.c:543
+msgid "Factor"
+msgstr "Koeficientas"
+
+#: ../libpicmanwidgets/picmanwidgets.c:516
+msgid ""
+"Use this value for random number generator seed - this allows you to repeat "
+"a given \"random\" operation"
+msgstr ""
+"Naudokite šią reikšmę atsitiktinių skaičių generatoriaus sėklai – tai "
+"leidžia pakartoti nurodytą „random“ operaciją"
+
+#: ../libpicmanwidgets/picmanwidgets.c:520
+msgid "_New Seed"
+msgstr "_Nauja sėkla"
+
+#: ../libpicmanwidgets/picmanwidgets.c:533
+msgid "Seed random number generator with a generated random number"
+msgstr ""
+"Nurodyti atsitiktinių skaičių generatoriui atsitiktinai sugeneruotą skaičių"
+
+#: ../libpicmanwidgets/picmanwidgets.c:537
+msgid "_Randomize"
+msgstr "_Atsitiktinai"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
+#| msgid "Visible"
+msgctxt "input-mode"
+msgid "Disabled"
+msgstr "Išjungta"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
+#| msgid "Green"
+msgctxt "input-mode"
+msgid "Screen"
+msgstr "Ekranas"
+
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
+msgctxt "input-mode"
+msgid "Window"
+msgstr "Langas"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
+#| msgid "Square"
+msgctxt "aspect-type"
+msgid "Square"
+msgstr "Kvadratinis"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
+#| msgid "Portrait"
+msgctxt "aspect-type"
+msgid "Portrait"
+msgstr "Stačias"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
+#| msgid "Landscape"
+msgctxt "aspect-type"
+msgid "Landscape"
+msgstr "Gulsčias"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+#| msgid "_H"
+msgctxt "color-selector-channel"
+msgid "_H"
+msgstr "_H"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
+msgid "Hue"
+msgstr "Atspalvis"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+#| msgid "_S"
+msgctxt "color-selector-channel"
+msgid "_S"
+msgstr "_S"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
+msgid "Saturation"
+msgstr "Sodrumas"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+#| msgid "_V"
+msgctxt "color-selector-channel"
+msgid "_V"
+msgstr "_V"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
+msgid "Value"
+msgstr "Reikšmė"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+#| msgid "_R"
+msgctxt "color-selector-channel"
+msgid "_R"
+msgstr "_R"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
+msgid "Red"
+msgstr "Raudona"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+#| msgid "_G"
+msgctxt "color-selector-channel"
+msgid "_G"
+msgstr "_G"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
+msgid "Green"
+msgstr "Žalia"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+#| msgid "_B"
+msgctxt "color-selector-channel"
+msgid "_B"
+msgstr "_B"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
+msgid "Blue"
+msgstr "Mėlyna"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+#| msgid "_A"
+msgctxt "color-selector-channel"
+msgid "_A"
+msgstr "_A"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
+#| msgid "Layers"
+msgctxt "page-selector-target"
+msgid "Layers"
+msgstr "Sluoksniai"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
+#| msgid "Images"
+msgctxt "page-selector-target"
+msgid "Images"
+msgstr "Paveikslėliai"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
+#| msgid "Zoom in"
+msgctxt "zoom-type"
+msgid "Zoom in"
+msgstr "Pritraukti"
+
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
+#| msgid "Zoom out"
+msgctxt "zoom-type"
+msgid "Zoom out"
+msgstr "Atitraukti"
+
+#: ../modules/color-selector-cmyk-lcms.c:86
+msgid "CMYK color selector (using color profile)"
+msgstr "CMYK spalvų parinkiklis (naudojant spalvų profilį)"
+
+#: ../modules/color-selector-cmyk-lcms.c:149
+#: ../modules/color-selector-cmyk.c:101
+msgid "CMYK"
+msgstr "CMYK"
+
+#. Cyan
+#: ../modules/color-selector-cmyk-lcms.c:168
+#: ../modules/color-selector-cmyk.c:124
+msgid "_C"
+msgstr "_C"
+
+#. Magenta
+#: ../modules/color-selector-cmyk-lcms.c:170
+#: ../modules/color-selector-cmyk.c:126
+msgid "_M"
+msgstr "_M"
+
+#. Yellow
+#: ../modules/color-selector-cmyk-lcms.c:172
+#: ../modules/color-selector-cmyk.c:128
+msgid "_Y"
+msgstr "_Y"
+
+#. Key (Black)
+#: ../modules/color-selector-cmyk-lcms.c:174
+#: ../modules/color-selector-cmyk.c:130
+msgid "_K"
+msgstr "_K"
+
+#: ../modules/color-selector-cmyk-lcms.c:178
+#: ../modules/color-selector-cmyk.c:134
+msgid "Cyan"
+msgstr "Žydra"
+
+#: ../modules/color-selector-cmyk-lcms.c:179
+#: ../modules/color-selector-cmyk.c:135
+msgid "Magenta"
+msgstr "Purpurinė"
+
+#: ../modules/color-selector-cmyk-lcms.c:180
+#: ../modules/color-selector-cmyk.c:136
+msgid "Yellow"
+msgstr "Geltona"
+
+#: ../modules/color-selector-cmyk-lcms.c:181
+#: ../modules/color-selector-cmyk.c:137
+msgid "Black"
+msgstr "Juoda"
+
+#: ../modules/color-selector-cmyk-lcms.c:412
+msgid "Profile: (none)"
+msgstr "Profilis: (nėra)"
+
+#: ../modules/color-selector-cmyk-lcms.c:433
+#, c-format
+msgid "Profile: %s"
+msgstr "Profilis: %s"
+
+#: ../modules/color-selector-cmyk.c:70
+msgid "CMYK color selector"
+msgstr "CMYK spalvų pasirinkimas"
+
+#: ../modules/color-selector-cmyk.c:171
+msgid "Black _pullout:"
+msgstr "Juodos _atėmimas:"
+
+#: ../modules/color-selector-cmyk.c:188
+msgid "The percentage of black to pull out of the colored inks."
+msgstr "Iš spalvotų dažų atimamas juodos spalvos kiekis procentais."
+
+#: ../modules/color-selector-water.c:81
+msgid "Watercolor style color selector"
+msgstr "Akvarelės stiliaus spalvų parinkiklis"
+
+#: ../modules/color-selector-water.c:117
+msgid "Watercolor"
+msgstr "Akvarelė"
+
+#: ../modules/color-selector-water.c:185
+msgid "Pressure"
+msgstr "Spaudimas"
+
+#: ../modules/color-selector-wheel.c:71
+msgid "HSV color wheel"
+msgstr "HSV spalvų ratas"
+
+#: ../modules/color-selector-wheel.c:102
+msgid "Wheel"
+msgstr "Ratas"
+
+#: ../modules/controller-dx-dinput.c:155
+msgid "DirectX DirectInput event controller"
+msgstr "DirectX DirectInput įvykių kontroleris"
+
+#: ../modules/controller-dx-dinput.c:195
+#: ../modules/controller-linux-input.c:217 ../modules/controller-midi.c:211
+msgid "Device:"
+msgstr "Įrenginys:"
+
+#: ../modules/controller-dx-dinput.c:196
+msgid "The device to read DirectInput events from."
+msgstr "Įrenginys, iš kurio skaityti DirectInput įvykius."
+
+#: ../modules/controller-dx-dinput.c:205
+msgid "DirectX DirectInput"
+msgstr "DirectX DirectInput"
+
+#: ../modules/controller-dx-dinput.c:418
+#, c-format
+msgid "Button %d"
+msgstr "Mygtukas %d"
+
+#: ../modules/controller-dx-dinput.c:421
+#, c-format
+msgid "Button %d Press"
+msgstr "Mygtuko %d paspaudimas"
+
+#: ../modules/controller-dx-dinput.c:424
+#, c-format
+msgid "Button %d Release"
+msgstr "Mygtuko %d atleidimas"
+
+#: ../modules/controller-dx-dinput.c:441
+#: ../modules/controller-linux-input.c:89
+msgid "X Move Left"
+msgstr "X judesys kairėn"
+
+#: ../modules/controller-dx-dinput.c:444
+#: ../modules/controller-linux-input.c:90
+msgid "X Move Right"
+msgstr "X judesys dešinėn"
+
+#: ../modules/controller-dx-dinput.c:450
+msgid "Y Move Away"
+msgstr "Y judesys tolyn"
+
+#: ../modules/controller-dx-dinput.c:453
+msgid "Y Move Near"
+msgstr "Y judesys artyn"
+
+#: ../modules/controller-dx-dinput.c:459
+#: ../modules/controller-linux-input.c:93
+msgid "Z Move Up"
+msgstr "Z judesys aukštyn"
+
+#: ../modules/controller-dx-dinput.c:462
+#: ../modules/controller-linux-input.c:94
+msgid "Z Move Down"
+msgstr "Z judesys žemyn"
+
+#: ../modules/controller-dx-dinput.c:468
+msgid "X Axis Tilt Away"
+msgstr "X ašies pasvirimas tolyn"
+
+#: ../modules/controller-dx-dinput.c:471
+msgid "X Axis Tilt Near"
+msgstr "X ašies pasvirimas artyn"
+
+#: ../modules/controller-dx-dinput.c:477
+#: ../modules/controller-linux-input.c:98
+msgid "Y Axis Tilt Right"
+msgstr "Y ašies pasvirinimas dešinėn"
+
+#: ../modules/controller-dx-dinput.c:480
+#: ../modules/controller-linux-input.c:99
+msgid "Y Axis Tilt Left"
+msgstr "Y ašies pasvirinimas kairėn"
+
+#: ../modules/controller-dx-dinput.c:486
+#: ../modules/controller-linux-input.c:100
+msgid "Z Axis Turn Left"
+msgstr "Z ašies pasukimas kairėn"
+
+#: ../modules/controller-dx-dinput.c:489
+#: ../modules/controller-linux-input.c:101
+msgid "Z Axis Turn Right"
+msgstr "Z ašies pasukimas dešinėn"
+
+#: ../modules/controller-dx-dinput.c:500
+#, c-format
+msgid "Slider %d Increase"
+msgstr "Slankiklio %d padidėjimas"
+
+#: ../modules/controller-dx-dinput.c:503
+#, c-format
+msgid "Slider %d Decrease"
+msgstr "Slankiklio %d sumažėjimas"
+
+#: ../modules/controller-dx-dinput.c:513
+#, c-format
+msgid "POV %d X View"
+msgstr "POV %d X rodinys"
+
+#: ../modules/controller-dx-dinput.c:516
+#, c-format
+msgid "POV %d Y View"
+msgstr "POV %d Y rodinys"
+
+#: ../modules/controller-dx-dinput.c:519
+#, c-format
+msgid "POV %d Return"
+msgstr "POV %d grįžtis"
+
+#: ../modules/controller-dx-dinput.c:1081
+msgid "DirectInput Events"
+msgstr "DirectInput įvykiai"
+
+#: ../modules/controller-dx-dinput.c:1092
+#: ../modules/controller-linux-input.c:524 ../modules/controller-midi.c:504
+msgid "No device configured"
+msgstr "Nėra sukonfigūruoto įrenginio"
+
+#: ../modules/controller-dx-dinput.c:1117
+#: ../modules/controller-linux-input.c:587
+msgid "Device not available"
+msgstr "Įrenginys neprieinamas"
+
+#: ../modules/controller-linux-input.c:57
+msgid "Button 0"
+msgstr "Mygtukas 0"
+
+#: ../modules/controller-linux-input.c:58
+msgid "Button 1"
+msgstr "Mygtukas 1"
+
+#: ../modules/controller-linux-input.c:59
+msgid "Button 2"
+msgstr "Mygtukas 2"
+
+#: ../modules/controller-linux-input.c:60
+msgid "Button 3"
+msgstr "Mygtukas 3"
+
+#: ../modules/controller-linux-input.c:61
+msgid "Button 4"
+msgstr "Mygtukas 4"
+
+#: ../modules/controller-linux-input.c:62
+msgid "Button 5"
+msgstr "Mygtukas 5"
+
+#: ../modules/controller-linux-input.c:63
+msgid "Button 6"
+msgstr "Mygtukas 6"
+
+#: ../modules/controller-linux-input.c:64
+msgid "Button 7"
+msgstr "Mygtukas 7"
+
+#: ../modules/controller-linux-input.c:65
+msgid "Button 8"
+msgstr "Mygtukas 8"
+
+#: ../modules/controller-linux-input.c:66
+msgid "Button 9"
+msgstr "Mygtukas 9"
+
+#: ../modules/controller-linux-input.c:67
+msgid "Button Mouse"
+msgstr "Mygtukas pelė"
+
+#: ../modules/controller-linux-input.c:68
+msgid "Button Left"
+msgstr "Mygtukas kairėn"
+
+#: ../modules/controller-linux-input.c:69
+msgid "Button Right"
+msgstr "Mygtukas dešinėn"
+
+#: ../modules/controller-linux-input.c:70
+msgid "Button Middle"
+msgstr "Mygtukas vidurinis"
+
+#: ../modules/controller-linux-input.c:71
+msgid "Button Side"
+msgstr "Mygtukas šoninis"
+
+#: ../modules/controller-linux-input.c:72
+msgid "Button Extra"
+msgstr "Mygtukas papildomas"
+
+#: ../modules/controller-linux-input.c:73
+msgid "Button Forward"
+msgstr "Mygtukas pirmyn"
+
+#: ../modules/controller-linux-input.c:74
+msgid "Button Back"
+msgstr "Mygtukas atgal"
+
+#: ../modules/controller-linux-input.c:75
+msgid "Button Task"
+msgstr "Mygtukas užduotis"
+
+#: ../modules/controller-linux-input.c:77
+msgid "Button Wheel"
+msgstr "Mygtukas ratukas"
+
+#: ../modules/controller-linux-input.c:80
+msgid "Button Gear Down"
+msgstr "Mygtukas sulėtinamas"
+
+#: ../modules/controller-linux-input.c:83
+msgid "Button Gear Up"
+msgstr "Mygtukas pagreitinamas"
+
+#: ../modules/controller-linux-input.c:91
+msgid "Y Move Forward"
+msgstr "Y judesys pirmyn"
+
+#: ../modules/controller-linux-input.c:92
+msgid "Y Move Back"
+msgstr "Y judesys atgal"
+
+#: ../modules/controller-linux-input.c:96
+msgid "X Axis Tilt Forward"
+msgstr "X ašies pasvirimas pirmyn"
+
+#: ../modules/controller-linux-input.c:97
+msgid "X Axis Tilt Back"
+msgstr "X ašies pasvirimas atgal"
+
+#: ../modules/controller-linux-input.c:103
+msgid "Horiz. Wheel Turn Back"
+msgstr "Horizontalaus ratuko pasukimas atgal"
+
+#: ../modules/controller-linux-input.c:104
+msgid "Horiz. Wheel Turn Forward"
+msgstr "Horizontalaus ratuko pasukimas pirmyn"
+
+#: ../modules/controller-linux-input.c:105
+msgid "Dial Turn Left"
+msgstr "Disko pasukimas kairėn"
+
+#: ../modules/controller-linux-input.c:106
+msgid "Dial Turn Right"
+msgstr "Disko pasukimas dešinėn"
+
+#: ../modules/controller-linux-input.c:107
+msgid "Wheel Turn Left"
+msgstr "Ratuko pasukimas kairėn"
+
+#: ../modules/controller-linux-input.c:108
+msgid "Wheel Turn Right"
+msgstr "Ratuko pasukimas dešinėn"
+
+#: ../modules/controller-linux-input.c:177
+msgid "Linux input event controller"
+msgstr "Linux įvesties įvykių kontroleris"
+
+#: ../modules/controller-linux-input.c:218
+msgid "The name of the device to read Linux Input events from."
+msgstr "Įrenginio iš kurio skaityti Linux įvesties įvykius pavadinimas:"
+
+#: ../modules/controller-linux-input.c:229
+msgid "Linux Input"
+msgstr "Linux įvestis"
+
+#: ../modules/controller-linux-input.c:512
+msgid "Linux Input Events"
+msgstr "Linux įvesties įvykiai"
+
+#: ../modules/controller-linux-input.c:550 ../modules/controller-midi.c:453
+#: ../modules/controller-midi.c:479
+#, c-format
+msgid "Reading from %s"
+msgstr "Skaitoma iš %s"
+
+#: ../modules/controller-linux-input.c:568
+#: ../modules/controller-linux-input.c:622 ../modules/controller-midi.c:435
+#: ../modules/controller-midi.c:496 ../modules/controller-midi.c:567
+#, c-format
+msgid "Device not available: %s"
+msgstr "Įrenginys neprieinamas: %s"
+
+#: ../modules/controller-linux-input.c:631 ../modules/controller-midi.c:576
+msgid "End of file"
+msgstr "Failo pabaiga"
+
+#: ../modules/controller-midi.c:163
+msgid "MIDI event controller"
+msgstr "MIDI įvykių kontroleris"
+
+#: ../modules/controller-midi.c:202
+msgid "The name of the device to read MIDI events from."
+msgstr "Įrenginio, iš kurio skaityti MIDI įvykius, pavadinimas."
+
+#: ../modules/controller-midi.c:205
+msgid "Enter 'alsa' to use the ALSA sequencer."
+msgstr "Norėdami naudoti ALSA seką, įveskite „alsa“."
+
+#: ../modules/controller-midi.c:220
+msgid "Channel:"
+msgstr "Kanalas:"
+
+#: ../modules/controller-midi.c:221
+msgid ""
+"The MIDI channel to read events from. Set to -1 for reading from all MIDI "
+"channels."
+msgstr ""
+"MIDI kanalas, iš kurio skaityti įvykius. Nurodykite -1, kad būtų skaitoma iš "
+"visų MIDI kanalų."
+
+#: ../modules/controller-midi.c:225
+msgid "MIDI"
+msgstr "MIDI"
+
+#: ../modules/controller-midi.c:354
+#, c-format
+msgid "Note %02x on"
+msgstr "Signalas %02x įjungtas"
+
+#: ../modules/controller-midi.c:357
+#, c-format
+msgid "Note %02x off"
+msgstr "Signalas %02x išjungtas"
+
+#: ../modules/controller-midi.c:360
+#, c-format
+msgid "Controller %03d"
+msgstr "Kontroleris %03d"
+
+#: ../modules/controller-midi.c:407
+msgid "MIDI Events"
+msgstr "MIDI įvykiai"
+
+#: ../modules/controller-midi.c:425
+msgid "PICMAN"
+msgstr "PICMAN"
+
+#: ../modules/controller-midi.c:427
+msgid "PICMAN MIDI Input Controller"
+msgstr "PICMAN MIDI įvesties kontroleris"
+
+#: ../modules/display-filter-color-blind.c:67
+msgid "Protanopia (insensitivity to red)"
+msgstr "Protanopija (nejautrumas raudonai)"
+
+#: ../modules/display-filter-color-blind.c:69
+msgid "Deuteranopia (insensitivity to green)"
+msgstr "Deuteranopija (nejautrumas žaliai)"
+
+#: ../modules/display-filter-color-blind.c:71
+msgid "Tritanopia (insensitivity to blue)"
+msgstr "Tritanopija (nejautrumas mėlynai)"
+
+#: ../modules/display-filter-color-blind.c:194
+msgid "Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"
+msgstr "Spalvų deficito simuliavimo filtras (Brettel-Vienot-Mollon algoritmas)"
+
+#: ../modules/display-filter-color-blind.c:257
+msgid "Color Deficient Vision"
+msgstr "Regėjimas su spalvų deficitu"
+
+#: ../modules/display-filter-color-blind.c:486
+msgid "Color _deficiency type:"
+msgstr "Spalvų _deficito tipas:"
+
+#: ../modules/display-filter-gamma.c:86
+msgid "Gamma color display filter"
+msgstr "Gamma spalvų ekrano filtras"
+
+#: ../modules/display-filter-gamma.c:125
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../modules/display-filter-gamma.c:237
+msgid "_Gamma:"
+msgstr "_Gamma:"
+
+#: ../modules/display-filter-high-contrast.c:86
+msgid "High Contrast color display filter"
+msgstr "Didelio kontrasto spalvų ekrano filtras"
+
+#: ../modules/display-filter-high-contrast.c:125
+msgid "Contrast"
+msgstr "Kontrastas"
+
+#: ../modules/display-filter-high-contrast.c:237
+msgid "Contrast c_ycles:"
+msgstr "Kontrasto c_iklai:"
+
+#: ../modules/display-filter-lcms.c:97
+msgid "Color management display filter using ICC color profiles"
+msgstr "Spalvų valdymo ekrano filtras, naudojantis ICC spalvų profilius"
+
+#: ../modules/display-filter-lcms.c:129
+msgid "Color Management"
+msgstr "Spalvų valdymas"
+
+#: ../modules/display-filter-lcms.c:186
+msgid "None"
+msgstr "Nėra"
+
+#: ../modules/display-filter-lcms.c:207
+msgid ""
+"This filter takes its configuration from the Color Management section in the "
+"Preferences dialog."
+msgstr ""
+"Šis filtras naudoja konfigūraciją, nurodytą Spalvų valdymo sekcijoje, "
+"esančioje Nustatymuose."
+
+#: ../modules/display-filter-lcms.c:221
+msgid "Mode of operation:"
+msgstr "Veikimo veiksena:"
+
+#: ../modules/display-filter-lcms.c:228
+msgid "Image profile:"
+msgstr "Paveikslėlio profilis:"
+
+#: ../modules/display-filter-lcms.c:236
+msgid "Monitor profile:"
+msgstr "Monitoriaus profilis:"
+
+#: ../modules/display-filter-lcms.c:244
+msgid "Print simulation profile:"
+msgstr "Spausdinimo simuliavimo profilis:"
+
+#: ../modules/display-filter-proof.c:93
+msgid "Color proof filter using ICC color profile"
+msgstr "Spalvų korekcijos filtras, naudojantis ICC spalvų profilį"
+
+#: ../modules/display-filter-proof.c:141
+msgid "Color Proof"
+msgstr "Spalvų korekcija"
+
+#: ../modules/display-filter-proof.c:338
+msgid "Choose an ICC Color Profile"
+msgstr "Pasirinkite ICC spalvų profilį"
+
+#: ../modules/display-filter-proof.c:365
+msgid "All files (*.*)"
+msgstr "Visi failai (*.*)"
+
+#: ../modules/display-filter-proof.c:370
+msgid "ICC color profile (*.icc, *.icm)"
+msgstr "ICC spalvų profilis (*.icc, *.icm)"
+
+#: ../modules/display-filter-proof.c:428
+msgid "_Profile:"
+msgstr "_Profilis:"
+
+#: ../modules/display-filter-proof.c:434
+msgid "_Intent:"
+msgstr "_Tikslas:"
+
+#: ../modules/display-filter-proof.c:439
+msgid "_Black Point Compensation"
+msgstr "_Juodo taško kompensavimas"
+
+#~ msgid "gradient|Linear"
+#~ msgstr "Linijinis"
+
+#~ msgid "interpolation|None"
+#~ msgstr "Jokios"
+
+#~ msgid "interpolation|Linear"
+#~ msgstr "Tiesinė"
+
+#~ msgid "intent|Saturation"
+#~ msgstr "Sodrumas"
+
+#~ msgid "Painter-style triangle color selector"
+#~ msgstr "Dailininko stiliaus trikampio spalvų parinkiklis"
+
+#~ msgid "Triangle"
+#~ msgstr "Trikampis"

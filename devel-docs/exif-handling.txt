@@ -1,4 +1,4 @@
-             How GIMP should handle EXIF data
+             How PICMAN should handle EXIF data
 
                      Bill Skaggs 1/2/05
 
@@ -15,7 +15,7 @@ are not going to enforce this.)
 
 
 
-Fields that should be used to set up the GIMP image when an EXIF file
+Fields that should be used to set up the PICMAN image when an EXIF file
 is loaded, either by using them to configure the image (e.g.,
 orientation), or by placing them in parasites that can be accessed by
 non-exif-aware functions.  
@@ -38,7 +38,7 @@ PixelYDimension
 
 
 
-Fields that should be modified by GIMP when an EXIF jpeg file is
+Fields that should be modified by PICMAN when an EXIF jpeg file is
 saved.  A letter "M" indicates fields whose presence is mandatory
 according to the spec. 
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 #define __CONVERT_TYPE_DIALOG_H__
 
 
-GtkWidget * convert_type_dialog_new (GimpImage    *image,
-                                     GimpContext  *context,
+GtkWidget * convert_type_dialog_new (PicmanImage    *image,
+                                     PicmanContext  *context,
                                      GtkWidget    *parent,
-                                     GimpProgress *progress);
+                                     PicmanProgress *progress);
 
 
 #endif  /*  __CONVERT_TYPE_DIALOG_H__  */

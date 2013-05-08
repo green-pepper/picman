@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * SUN raster reading and writing code Copyright (C) 1996 Peter Kirchgessner
  * (email: peter@kirchgessner.net, WWW: http://www.kirchgessner.net)
@@ -26,7 +26,7 @@
 
 /* Event history:
  * V 1.00, PK, 25-Jul-96: First try
- * V 1.90, PK, 15-Mar-97: Upgrade to work with GIMP V0.99
+ * V 1.90, PK, 15-Mar-97: Upgrade to work with PICMAN V0.99
  * V 1.91, PK, 05-Apr-97: Return all arguments, even in case of an error
  * V 1.92, PK, 18-May-97: Ignore EOF-error on reading image data
  * V 1.93, PK, 05-Oct-97: Parse rc file
@@ -43,16 +43,16 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-sunras-load"
 #define SAVE_PROC      "file-sunras-save"
 #define PLUG_IN_BINARY "file-sunras"
-#define PLUG_IN_ROLE   "gimp-file-sunras"
+#define PLUG_IN_ROLE   "picman-file-sunras"
 
 
 typedef int WRITE_FUN(void*,size_t,size_t,FILE*);
@@ -92,9 +92,9 @@ typedef struct
 static void   query      (void);
 static void   run        (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 
 static gint32    load_image    (const gchar  *filename,
                                 GError      **error);
@@ -107,10 +107,10 @@ static void   set_color_table  (gint32, L_SUNFILEHEADER *, const guchar *);
 static gint32 create_new_image (const gchar   *filename,
                                 guint          width,
                                 guint          height,
-                                GimpImageBaseType type,
+                                PicmanImageBaseType type,
                                 gint32        *layer_ID,
-                                GimpDrawable **drawable,
-                                GimpPixelRgn  *pixel_rgn);
+                                PicmanDrawable **drawable,
+                                PicmanPixelRgn  *pixel_rgn);
 
 static gint32 load_sun_d1   (const gchar *,
                              FILE *, L_SUNFILEHEADER *, unsigned char *);
@@ -156,7 +156,7 @@ static gboolean  save_dialog (void);
 /* Portability kludge */
 static int my_fwrite (void *ptr, int size, int nmemb, FILE *stream);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -179,36 +179,36 @@ static SUNRASSaveVals psvals =
 
 
 /* The run mode */
-static GimpRunMode l_run_mode;
+static PicmanRunMode l_run_mode;
 
 MAIN ()
 
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",      "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename",  "The name of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",      "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename",  "The name of the file to load" }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",         "Output image" }
+    { PICMAN_PDB_IMAGE,  "image",         "Output image" }
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_INT32,    "rle",          "Specify non-zero for rle output, zero for standard output" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "rle",          "Specify non-zero for rle output, zero for standard output" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "load file of the SunRaster file format",
                           "load file of the SunRaster file format",
                           "Peter Kirchgessner",
@@ -216,18 +216,18 @@ query (void)
                           "1996",
                           N_("SUN Rasterfile image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-sun-raster");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-sun-raster");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "im1,im8,im24,im32,rs,ras",
                                     "",
                                     "0,long,0x59a66a95");
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "save file in the SunRaster file format",
                           "SUNRAS saving handles all image types except "
                           "those with alpha channels.",
@@ -236,12 +236,12 @@ query (void)
                           "1996",
                           N_("SUN Rasterfile image"),
                           "RGB, GRAY, INDEXED",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-sun-raster");
-  gimp_register_save_handler (SAVE_PROC,
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-sun-raster");
+  picman_register_save_handler (SAVE_PROC,
                               "im1,im8,im24,im32,rs,ras", "");
 }
 
@@ -249,16 +249,16 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   l_run_mode = run_mode = param[0].data.d_int32;
@@ -267,8 +267,8 @@ run (const gchar      *name,
 
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -277,12 +277,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
@@ -293,16 +293,16 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      (GIMP_EXPORT_CAN_HANDLE_RGB |
-                                       GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                       GIMP_EXPORT_CAN_HANDLE_INDEXED));
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      (PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                       PICMAN_EXPORT_CAN_HANDLE_GRAY |
+                                       PICMAN_EXPORT_CAN_HANDLE_INDEXED));
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
           }
           break;
@@ -312,20 +312,20 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &psvals);
+          picman_get_data (SAVE_PROC, &psvals);
 
           /*  First acquire information with a dialog  */
           if (! save_dialog ())
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams != 6)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -333,41 +333,41 @@ run (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &psvals);
+          picman_get_data (SAVE_PROC, &psvals);
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string, image_ID, drawable_ID,
                           &error))
             {
               /*  Store psvals data  */
-              gimp_set_data (SAVE_PROC, &psvals, sizeof (SUNRASSaveVals));
+              picman_set_data (SAVE_PROC, &psvals, sizeof (SUNRASSaveVals));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -389,7 +389,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -400,7 +400,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Could not open '%s' as SUN-raster-file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (ifp);
       return (-1);
     }
@@ -416,8 +416,8 @@ load_image (const gchar  *filename,
 
   if ((sunhdr.l_ras_maplength < 0) || (sunhdr.l_ras_maplength > (256 * 3)))
     {
-      g_message ("Map lengths greater than 256 entries are unsupported by GIMP.");
-      gimp_quit ();
+      g_message ("Map lengths greater than 256 entries are unsupported by PICMAN.");
+      picman_quit ();
     }
 
   /* Is there a RGB colourmap ? */
@@ -439,7 +439,7 @@ load_image (const gchar  *filename,
       if (sunhdr.l_ras_magic != RAS_MAGIC)
         {
           g_message (_("Could not read color entries from '%s'"),
-                     gimp_filename_to_utf8 (filename));
+                     picman_filename_to_utf8 (filename));
           fclose (ifp);
           g_free (suncolmap);
           return (-1);
@@ -455,15 +455,15 @@ load_image (const gchar  *filename,
   if (sunhdr.l_ras_width <= 0)
     {
       g_message (_("'%s':\nNo image width specified"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       fclose (ifp);
       return (-1);
     }
 
-  if (sunhdr.l_ras_width > GIMP_MAX_IMAGE_SIZE)
+  if (sunhdr.l_ras_width > PICMAN_MAX_IMAGE_SIZE)
     {
-      g_message (_("'%s':\nImage width is larger than GIMP can handle"),
-                 gimp_filename_to_utf8 (filename));
+      g_message (_("'%s':\nImage width is larger than PICMAN can handle"),
+                 picman_filename_to_utf8 (filename));
       fclose (ifp);
       return (-1);
     }
@@ -471,21 +471,21 @@ load_image (const gchar  *filename,
   if (sunhdr.l_ras_height <= 0)
     {
       g_message (_("'%s':\nNo image height specified"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       fclose (ifp);
       return (-1);
     }
 
-  if (sunhdr.l_ras_height > GIMP_MAX_IMAGE_SIZE)
+  if (sunhdr.l_ras_height > PICMAN_MAX_IMAGE_SIZE)
     {
-      g_message (_("'%s':\nImage height is larger than GIMP can handle"),
-                 gimp_filename_to_utf8 (filename));
+      g_message (_("'%s':\nImage height is larger than PICMAN can handle"),
+                 picman_filename_to_utf8 (filename));
       fclose (ifp);
       return (-1);
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   switch (sunhdr.l_ras_depth)
     {
@@ -509,7 +509,7 @@ load_image (const gchar  *filename,
       image_ID = -1;
       break;
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   fclose (ifp);
 
@@ -532,13 +532,13 @@ save_image (const gchar  *filename,
             GError      **error)
 {
   FILE*         ofp;
-  GimpImageType drawable_type;
+  PicmanImageType drawable_type;
   gboolean      retval;
 
-  drawable_type = gimp_drawable_type (drawable_ID);
+  drawable_type = picman_drawable_type (drawable_ID);
 
   /*  Make sure we're not saving an image with an alpha channel  */
-  if (gimp_drawable_has_alpha (drawable_ID))
+  if (picman_drawable_has_alpha (drawable_ID))
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("SUNRAS save cannot handle images with alpha channels"));
@@ -547,9 +547,9 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_GRAY_IMAGE:
-    case GIMP_RGB_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
+    case PICMAN_GRAY_IMAGE:
+    case PICMAN_RGB_IMAGE:
       break;
     default:
       g_message (_("Can't operate on unknown image types"));
@@ -563,18 +563,18 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
-  if (drawable_type == GIMP_INDEXED_IMAGE)
+  if (drawable_type == PICMAN_INDEXED_IMAGE)
     retval = save_index (ofp,image_ID, drawable_ID, 0, (int)psvals.rle);
-  else if (drawable_type == GIMP_GRAY_IMAGE)
+  else if (drawable_type == PICMAN_GRAY_IMAGE)
     retval = save_index (ofp,image_ID, drawable_ID, 1, (int)psvals.rle);
-  else if (drawable_type == GIMP_RGB_IMAGE)
+  else if (drawable_type == PICMAN_RGB_IMAGE)
     retval = save_rgb (ofp,image_ID, drawable_ID, (int)psvals.rle);
   else
     retval = FALSE;
@@ -910,7 +910,7 @@ write_sun_cols (FILE            *ofp,
 }
 
 
-/* Set a GIMP colourtable using the sun colourmap */
+/* Set a PICMAN colourtable using the sun colourmap */
 
 static void
 set_color_table (gint32           image_ID,
@@ -932,13 +932,13 @@ set_color_table (gint32           image_ID,
     }
 
 #ifdef DEBUG
-  printf ("Set GIMP colortable:\n");
+  printf ("Set PICMAN colortable:\n");
   for (j = 0; j < ncols; j++)
     printf ("%3d: 0x%02x 0x%02x 0x%02x\n", j,
             ColorMap[j*3], ColorMap[j*3+1], ColorMap[j*3+2]);
 #endif
 
-  gimp_image_set_colormap (image_ID, ColorMap, ncols);
+  picman_image_set_colormap (image_ID, ColorMap, ncols);
 }
 
 
@@ -947,39 +947,39 @@ static gint32
 create_new_image (const gchar        *filename,
                   guint               width,
                   guint               height,
-                  GimpImageBaseType   type,
+                  PicmanImageBaseType   type,
                   gint32             *layer_ID,
-                  GimpDrawable      **drawable,
-                  GimpPixelRgn       *pixel_rgn)
+                  PicmanDrawable      **drawable,
+                  PicmanPixelRgn       *pixel_rgn)
 {
   gint32 image_ID;
-  GimpImageType gdtype;
+  PicmanImageType gdtype;
 
   switch (type)
     {
-    case GIMP_RGB:
-      gdtype = GIMP_RGB_IMAGE;
+    case PICMAN_RGB:
+      gdtype = PICMAN_RGB_IMAGE;
       break;
-    case GIMP_GRAY:
-      gdtype = GIMP_GRAY_IMAGE;
+    case PICMAN_GRAY:
+      gdtype = PICMAN_GRAY_IMAGE;
       break;
-    case GIMP_INDEXED:
-      gdtype = GIMP_INDEXED_IMAGE;
+    case PICMAN_INDEXED:
+      gdtype = PICMAN_INDEXED_IMAGE;
       break;
     default:
       g_warning ("Unsupported image type");
       return -1;
     }
 
-  image_ID = gimp_image_new (width, height, type);
-  gimp_image_set_filename (image_ID, filename);
+  image_ID = picman_image_new (width, height, type);
+  picman_image_set_filename (image_ID, filename);
 
-  *layer_ID = gimp_layer_new (image_ID, _("Background"), width, height,
-                            gdtype, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, *layer_ID, -1, 0);
+  *layer_ID = picman_layer_new (image_ID, _("Background"), width, height,
+                            gdtype, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, *layer_ID, -1, 0);
 
-  *drawable = gimp_drawable_get (*layer_ID);
-  gimp_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
+  *drawable = picman_drawable_get (*layer_ID);
+  picman_pixel_rgn_init (pixel_rgn, *drawable, 0, 0, (*drawable)->width,
                        (*drawable)->height, TRUE, FALSE);
 
   return (image_ID);
@@ -998,8 +998,8 @@ load_sun_d1 (const gchar     *filename,
   int i, j;
   guchar *dest, *data;
   gint32 layer_ID, image_ID;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   guchar bit2byte[256*8];
   L_SUNFILEHEADER sun_bwhdr;
   guchar sun_bwcolmap[6] = { 255,0,255,0,255,0 };
@@ -1008,10 +1008,10 @@ load_sun_d1 (const gchar     *filename,
   width = sunhdr->l_ras_width;
   height = sunhdr->l_ras_height;
 
-  image_ID = create_new_image (filename, width, height, GIMP_INDEXED,
+  image_ID = create_new_image (filename, width, height, PICMAN_INDEXED,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width);
 
   if (suncolmap != NULL)   /* Set up the specified colour map */
@@ -1067,11 +1067,11 @@ load_sun_d1 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1083,7 +1083,7 @@ load_sun_d1 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return (image_ID);
 }
@@ -1102,8 +1102,8 @@ load_sun_d8 (const gchar     *filename,
   int scan_lines, tile_height;
   guchar *dest, *data;
   gint32 layer_ID, image_ID;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   int err = 0, rle = (sunhdr->l_ras_type == RAS_TYPE_RLE);
 
   width = sunhdr->l_ras_width;
@@ -1129,10 +1129,10 @@ load_sun_d8 (const gchar     *filename,
     }
 
   image_ID = create_new_image (filename, width, height,
-                               greyscale ? GIMP_GRAY : GIMP_INDEXED,
+                               greyscale ? PICMAN_GRAY : PICMAN_INDEXED,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width);
 
   if (!greyscale)
@@ -1158,11 +1158,11 @@ load_sun_d8 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1174,7 +1174,7 @@ load_sun_d8 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return (image_ID);
 }
@@ -1192,17 +1192,17 @@ load_sun_d24 (const gchar      *filename,
   int width, height, linepad, tile_height, scan_lines;
   int i, j;
   gint32 layer_ID, image_ID;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   int err = 0, rle = (sunhdr->l_ras_type == RAS_TYPE_RLE);
 
   width = sunhdr->l_ras_width;
   height = sunhdr->l_ras_height;
 
-  image_ID = create_new_image (filename, width, height, GIMP_RGB,
+  image_ID = create_new_image (filename, width, height, PICMAN_RGB,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * 3);
 
   linepad = ((sunhdr->l_ras_width*3) % 2);
@@ -1221,7 +1221,7 @@ load_sun_d24 (const gchar      *filename,
       if (linepad)
         err |= ((rle ? rle_getc (ifp) : getc (ifp)) < 0);
 
-      if (sunhdr->l_ras_type == 3) /* RGB-format ? That is what GIMP wants */
+      if (sunhdr->l_ras_type == 3) /* RGB-format ? That is what PICMAN wants */
         {
           dest += width*3;
         }
@@ -1239,11 +1239,11 @@ load_sun_d24 (const gchar      *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1255,7 +1255,7 @@ load_sun_d24 (const gchar      *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return (image_ID);
 }
@@ -1274,8 +1274,8 @@ load_sun_d32 (const gchar     *filename,
   int width, height, tile_height, scan_lines;
   int i, j;
   gint32 layer_ID, image_ID;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   int err = 0, cerr, rle = (sunhdr->l_ras_type == RAS_TYPE_RLE);
   width = sunhdr->l_ras_width;
   height = sunhdr->l_ras_height;
@@ -1284,10 +1284,10 @@ load_sun_d32 (const gchar     *filename,
 
   cerr = 0;
 
-  image_ID = create_new_image (filename, width, height, GIMP_RGB,
+  image_ID = create_new_image (filename, width, height, PICMAN_RGB,
                                &layer_ID, &drawable, &pixel_rgn);
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   data = g_malloc (tile_height * width * 3);
 
   if (rle) rle_startread (ifp);  /* Initialize RLE-buffer */
@@ -1334,11 +1334,11 @@ load_sun_d32 (const gchar     *filename,
       scan_lines++;
 
       if ((i % 20) == 0)
-        gimp_progress_update ((double)(i+1) / (double)height);
+        picman_progress_update ((double)(i+1) / (double)height);
 
       if ((scan_lines == tile_height) || ((i+1) == height))
         {
-          gimp_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
+          picman_pixel_rgn_set_rect (&pixel_rgn, data, 0, i-scan_lines+1,
                                    width, scan_lines);
           scan_lines = 0;
           dest = data;
@@ -1350,7 +1350,7 @@ load_sun_d32 (const gchar     *filename,
   if (err)
     g_message (_("EOF encountered on reading"));
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   return (image_ID);
 }
@@ -1374,15 +1374,15 @@ save_index (FILE    *ofp,
   static guchar sun_bwmap[6] = { 0,255,0,255,0,255 };
   static guchar sun_wbmap[6] = { 255,0,255,0,255,0 };
   unsigned char *suncolmap = sun_colormap;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   WRITE_FUN *write_fun;
 
-  drawable = gimp_drawable_get (drawable_ID);
+  drawable = picman_drawable_get (drawable_ID);
   width = drawable->width;
   height = drawable->height;
-  tile_height = gimp_tile_height ();
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
+  tile_height = picman_tile_height ();
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
 
   /* allocate a buffer for retrieving information from the pixel region  */
   src = data = (unsigned char *)g_malloc (tile_height * width * drawable->bpp);
@@ -1401,7 +1401,7 @@ save_index (FILE    *ofp,
     }
   else
     {
-      cmap = gimp_image_get_colormap (image_ID, &ncols);
+      cmap = picman_image_get_colormap (image_ID, &ncols);
 
       for (j = 0; j < ncols; j++)
         {
@@ -1455,7 +1455,7 @@ save_index (FILE    *ofp,
 #define GET_INDEX_TILE(begin) \
   {int scan_lines; \
     scan_lines = (i+tile_height-1 < height) ? tile_height : (height-i); \
-    gimp_pixel_rgn_get_rect (&pixel_rgn, begin, 0, i, width, scan_lines); \
+    picman_pixel_rgn_get_rect (&pixel_rgn, begin, 0, i, width, scan_lines); \
     src = begin; }
 
   if (rle) { write_fun = (WRITE_FUN *)&rle_fwrite; rle_startwrite (ofp); }
@@ -1472,7 +1472,7 @@ save_index (FILE    *ofp,
           src += width;
 
           if ((i % 20) == 0)
-            gimp_progress_update ((double) i / (double) height);
+            picman_progress_update ((double) i / (double) height);
         }
     }
   else   /* Colour or grey-image */
@@ -1485,7 +1485,7 @@ save_index (FILE    *ofp,
           src += width;
 
           if ((i % 20) == 0)
-            gimp_progress_update ((double) i / (double) height);
+            picman_progress_update ((double) i / (double) height);
         }
     }
 
@@ -1497,7 +1497,7 @@ save_index (FILE    *ofp,
   if (bwline)
     g_free (bwline);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   if (ferror (ofp))
     {
@@ -1519,14 +1519,14 @@ save_rgb (FILE   *ofp,
   int i, j, bpp;
   guchar *data, *src;
   L_SUNFILEHEADER sunhdr;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_drawable_get (drawable_ID);
+  drawable = picman_drawable_get (drawable_ID);
   width = drawable->width;
   height = drawable->height;
-  tile_height = gimp_tile_height ();
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
+  tile_height = picman_tile_height ();
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0, width, height, FALSE, FALSE);
 
   /* allocate a buffer for retrieving information from the pixel region  */
   src = data = (guchar *) g_malloc (tile_height * width * drawable->bpp);
@@ -1554,7 +1554,7 @@ save_rgb (FILE   *ofp,
 #define GET_RGB_TILE(begin) \
   {int scan_lines; \
     scan_lines = (i+tile_height-1 < height) ? tile_height : (height-i); \
-    gimp_pixel_rgn_get_rect (&pixel_rgn, begin, 0, i, width, scan_lines); \
+    picman_pixel_rgn_get_rect (&pixel_rgn, begin, 0, i, width, scan_lines); \
     src = begin; }
 
   if (!rle)
@@ -1574,7 +1574,7 @@ save_rgb (FILE   *ofp,
             putc (0, ofp);
 
           if ((i % 20) == 0)
-            gimp_progress_update ((double) i / (double) height);
+            picman_progress_update ((double) i / (double) height);
         }
     }
   else  /* Write runlength encoded */
@@ -1596,14 +1596,14 @@ save_rgb (FILE   *ofp,
             rle_putc (0, ofp);
 
           if ((i % 20) == 0)
-            gimp_progress_update ((double) i / (double) height);
+            picman_progress_update ((double) i / (double) height);
         }
 
       rle_endwrite (ofp);
     }
   g_free (data);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   if (ferror (ofp))
     {
@@ -1624,11 +1624,11 @@ save_dialog (void)
   GtkWidget *frame;
   gboolean   run;
 
-  dialog = gimp_export_dialog_new (_("SUNRAS"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("SUNRAS"), PLUG_IN_BINARY, SAVE_PROC);
 
   /*  file save type  */
-  frame = gimp_int_radio_group_new (TRUE, _("Data Formatting"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Data Formatting"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &psvals.rle, psvals.rle,
 
                                     _("RunLength Encoded"), TRUE,  NULL,
@@ -1637,13 +1637,13 @@ save_dialog (void)
                                     NULL);
 
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

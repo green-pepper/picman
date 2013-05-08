@@ -1,0 +1,25 @@
+;; -*- scheme -*-
+
+(define-boxed PicmanRGB
+  (in-module "Picman")
+  (c-name "PicmanRGB")
+  (gtype-id "PICMAN_TYPE_RGB")
+)
+
+(define-boxed PicmanHSV
+  (in-module "Picman")
+  (c-name "PicmanHSV")
+  (gtype-id "PICMAN_TYPE_HSV")
+)
+
+(define-boxed PicmanHSL
+  (in-module "Picman")
+  (c-name "PicmanHSL")
+  (gtype-id "PICMAN_TYPE_HSL")
+)
+
+(define-boxed PicmanCMYK
+  (in-module "Picman")
+  (c-name "PicmanCMYK")
+  (gtype-id "PICMAN_TYPE_CMYK")
+)

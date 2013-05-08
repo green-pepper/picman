@@ -1,6 +1,6 @@
 /* interface.c - user interface for the metadata editor
  *
- * Copyright (C) 2004-2005, Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2004-2005, Raphaël Quinet <raphael@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,18 +43,18 @@
 #define _O_BINARY 0
 #endif
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "xmp-schemas.h"
 #include "xmp-model.h"
 #include "interface.h"
 #include "metadata.h"
 #include "xmp-encode.h"
-#include "gimpxmpmodelentry.h"
-#include "gimpxmpmodeltext.h"
+#include "picmanxmpmodelentry.h"
+#include "picmanxmpmodeltext.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define RESPONSE_IMPORT   1
@@ -202,7 +202,7 @@ add_description_tab (GtkWidget   *notebook,
   GtkWidget     *scrolled_window;
   GtkWidget     *text_view;
 
-  frame = gimp_frame_new (_("Description"));
+  frame = picman_frame_new (_("Description"));
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), frame,
                             gtk_label_new (_("Description")));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 10);
@@ -214,21 +214,21 @@ add_description_tab (GtkWidget   *notebook,
   gtk_container_add (GTK_CONTAINER (frame), table);
   /* gtk_widget_show (table); */
 
-  entry = g_object_new (GIMP_TYPE_XMP_MODEL_ENTRY,
+  entry = g_object_new (PICMAN_TYPE_XMP_MODEL_ENTRY,
                         "schema-uri",    XMP_SCHEMA_DUBLIN_CORE,
                         "property-name", "title",
                         "xmp-model",     mgui->xmp_model,
                         NULL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Image _title:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  entry = g_object_new (GIMP_TYPE_XMP_MODEL_ENTRY,
+  entry = g_object_new (PICMAN_TYPE_XMP_MODEL_ENTRY,
                         "schema-uri",    XMP_SCHEMA_DUBLIN_CORE,
                         "property-name", "creator",
                         "xmp-model",     mgui->xmp_model,
                         NULL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("_Author:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
@@ -238,22 +238,22 @@ add_description_tab (GtkWidget   *notebook,
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  text_view = g_object_new (GIMP_TYPE_XMP_MODEL_TEXT,
+  text_view = g_object_new (PICMAN_TYPE_XMP_MODEL_TEXT,
                             "schema-uri", XMP_SCHEMA_DUBLIN_CORE,
                             "property-name", "description",
                             "xmp-model", mgui->xmp_model,
                             NULL);
   gtk_container_add (GTK_CONTAINER (scrolled_window), text_view);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("_Description:"), 0.0, 0.5,
                              scrolled_window, 1, FALSE);
 
-  entry = g_object_new (GIMP_TYPE_XMP_MODEL_ENTRY,
+  entry = g_object_new (PICMAN_TYPE_XMP_MODEL_ENTRY,
                         "schema-uri",    XMP_SCHEMA_PHOTOSHOP,
                         "property-name", "CaptionWriter",
                         "xmp-model",     mgui->xmp_model,
                         NULL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("Description _writer:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
@@ -263,13 +263,13 @@ add_description_tab (GtkWidget   *notebook,
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  text_view = g_object_new (GIMP_TYPE_XMP_MODEL_TEXT,
+  text_view = g_object_new (PICMAN_TYPE_XMP_MODEL_TEXT,
                             "schema-uri", XMP_SCHEMA_PDF,
                             "property-name", "Keywords",
                             "xmp-model", mgui->xmp_model,
                             NULL);
   gtk_container_add (GTK_CONTAINER (scrolled_window), text_view);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 4,
                              _("_Keywords:"), 0.0, 0.5,
                              scrolled_window, 1, FALSE);
 
@@ -331,7 +331,7 @@ add_thumbnail_tab (GtkWidget *notebook)
   GtkWidget *image;
 
   /* FIXME: link thumbnail with XMP model */
-  default_thumb = gtk_widget_render_icon (notebook, GIMP_STOCK_QUESTION,
+  default_thumb = gtk_widget_render_icon (notebook, PICMAN_STOCK_QUESTION,
                                           (GtkIconSize) -1, "thumbnail");
   image = gtk_image_new_from_pixbuf (default_thumb);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), image,
@@ -604,11 +604,11 @@ metadata_dialog (gint32    image_ID,
   MetadataGui  mgui;
   GtkWidget   *notebook;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  mgui.dlg = gimp_dialog_new (_("Image Properties"), PLUG_IN_ROLE,
+  mgui.dlg = picman_dialog_new (_("Image Properties"), PLUG_IN_ROLE,
                               NULL, 0,
-                              gimp_standard_help_func, EDITOR_PROC,
+                              picman_standard_help_func, EDITOR_PROC,
 
                               _("_Import XMP..."), RESPONSE_IMPORT,
                               _("_Export XMP..."), RESPONSE_EXPORT,
@@ -624,7 +624,7 @@ metadata_dialog (gint32    image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (mgui.dlg));
+  picman_window_set_transient (GTK_WINDOW (mgui.dlg));
 
   g_signal_connect (mgui.dlg, "response",
                     G_CALLBACK (metadata_dialog_response),
@@ -643,7 +643,7 @@ metadata_dialog (gint32    image_ID,
   mgui.xmp_model = xmp_model;
   mgui.edit_icon = gtk_widget_render_icon (mgui.dlg, GTK_STOCK_EDIT,
                                            GTK_ICON_SIZE_MENU, NULL);
-  mgui.auto_icon = gtk_widget_render_icon (mgui.dlg, GIMP_STOCK_WILBER,
+  mgui.auto_icon = gtk_widget_render_icon (mgui.dlg, PICMAN_STOCK_WILBER,
                                            GTK_ICON_SIZE_MENU, NULL);
   update_icons (&mgui);
 

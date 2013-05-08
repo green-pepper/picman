@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,31 +20,31 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmantemplate.h"
 
-#include "widgets/gimptemplateeditor.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmantemplateeditor.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "template-options-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void  template_options_dialog_free (TemplateOptionsDialog *dialog);
 
 
 TemplateOptionsDialog *
-template_options_dialog_new (GimpTemplate *template,
-                             GimpContext  *context,
+template_options_dialog_new (PicmanTemplate *template,
+                             PicmanContext  *context,
                              GtkWidget    *parent,
                              const gchar  *title,
                              const gchar  *role,
@@ -53,11 +53,11 @@ template_options_dialog_new (GimpTemplate *template,
                              const gchar  *help_id)
 {
   TemplateOptionsDialog *options;
-  GimpViewable          *viewable = NULL;
+  PicmanViewable          *viewable = NULL;
   GtkWidget             *vbox;
 
-  g_return_val_if_fail (template == NULL || GIMP_IS_TEMPLATE (template), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (template == NULL || PICMAN_IS_TEMPLATE (template), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (role != NULL, NULL);
@@ -67,28 +67,28 @@ template_options_dialog_new (GimpTemplate *template,
 
   options = g_slice_new0 (TemplateOptionsDialog);
 
-  options->gimp     = context->gimp;
+  options->picman     = context->picman;
   options->template = template;
 
   if (template)
     {
-      viewable = GIMP_VIEWABLE (template);
-      template = gimp_config_duplicate (GIMP_CONFIG (template));
+      viewable = PICMAN_VIEWABLE (template);
+      template = picman_config_duplicate (PICMAN_CONFIG (template));
     }
   else
     {
       template =
-        gimp_config_duplicate (GIMP_CONFIG (options->gimp->config->default_image));
-      viewable = GIMP_VIEWABLE (template);
+        picman_config_duplicate (PICMAN_CONFIG (options->picman->config->default_image));
+      viewable = PICMAN_VIEWABLE (template);
 
-      gimp_object_set_static_name (GIMP_OBJECT (template), _("Unnamed"));
+      picman_object_set_static_name (PICMAN_OBJECT (template), _("Unnamed"));
     }
 
   options->dialog =
-    gimp_viewable_dialog_new (viewable, context,
+    picman_viewable_dialog_new (viewable, context,
                               title, role, stock_id, desc,
                               parent,
-                              gimp_standard_help_func, help_id,
+                              picman_standard_help_func, help_id,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -110,7 +110,7 @@ template_options_dialog_new (GimpTemplate *template,
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  options->editor = gimp_template_editor_new (template, options->gimp, TRUE);
+  options->editor = picman_template_editor_new (template, options->picman, TRUE);
   gtk_box_pack_start (GTK_BOX (vbox), options->editor, FALSE, FALSE, 0);
   gtk_widget_show (options->editor);
 

@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/environ
+## Makefile.am for picman/data/environ
 
-environdir = $(gimpplugindir)/environ
+environdir = $(picmanplugindir)/environ
 
 environ_DATA = default.env
 

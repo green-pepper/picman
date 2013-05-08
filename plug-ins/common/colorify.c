@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Colorify. Changes the pixel's luminosity to a specified color
@@ -20,15 +20,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-colorify"
 #define PLUG_IN_BINARY  "colorify"
-#define PLUG_IN_ROLE    "gimp-colorify"
+#define PLUG_IN_ROLE    "picman-colorify"
 #define PLUG_IN_VERSION "1.1"
 
 #define COLOR_SIZE 30
@@ -36,19 +36,19 @@
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
-static void      colorify                  (GimpDrawable *drawable,
-                                            GimpPreview  *preview);
-static gboolean  colorify_dialog           (GimpDrawable *drawable);
+static void      colorify                  (PicmanDrawable *drawable,
+                                            PicmanPreview  *preview);
+static gboolean  colorify_dialog           (PicmanDrawable *drawable);
 static void      predefined_color_callback (GtkWidget    *widget,
                                             gpointer      data);
 
 typedef struct
 {
-  GimpRGB  color;
+  PicmanRGB  color;
 } ColorifyVals;
 
 static ColorifyVals cvals =
@@ -56,7 +56,7 @@ static ColorifyVals cvals =
   { 1.0, 1.0, 1.0, 1.0 }
 };
 
-static GimpRGB button_color[] =
+static PicmanRGB button_color[] =
 {
   { 1.0, 0.0, 0.0, 1.0 },
   { 1.0, 1.0, 0.0, 1.0 },
@@ -67,7 +67,7 @@ static GimpRGB button_color[] =
   { 1.0, 1.0, 1.0, 1.0 },
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,
@@ -90,15 +90,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_COLOR,    "color",    "Color to apply" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_COLOR,    "color",    "Color to apply" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Replace all colors with shades of a specified color"),
                           "Makes an average of the RGB channels and uses it "
                           "to set the color",
@@ -107,7 +107,7 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("Colorif_y..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -115,67 +115,67 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpPDBStatusType  status;
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
+  PicmanPDBStatusType  status;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
 
   INIT_I18N ();
 
-  status = GIMP_PDB_SUCCESS;
+  status = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
   *return_vals = values;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &cvals);
       if (!colorify_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 4)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         cvals.color = param[3].data.d_color;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+      picman_get_data (PLUG_IN_PROC, &cvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Colorifying"));
+      picman_progress_init (_("Colorifying"));
 
       colorify (drawable, NULL);
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &cvals, sizeof (ColorifyVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &cvals, sizeof (ColorifyVals));
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   values[0].data.d_status = status;
 }
@@ -201,16 +201,16 @@ colorify_func (const guchar *src,
 }
 
 static void
-colorify (GimpDrawable *drawable,
-          GimpPreview  *preview)
+colorify (PicmanDrawable *drawable,
+          PicmanPreview  *preview)
 {
   gint  i;
 
   for (i = 0; i < 256; i ++)
     {
-      lum_red_lookup[i]     = i * GIMP_RGB_LUMINANCE_RED;
-      lum_green_lookup[i]   = i * GIMP_RGB_LUMINANCE_GREEN;
-      lum_blue_lookup[i]    = i * GIMP_RGB_LUMINANCE_BLUE;
+      lum_red_lookup[i]     = i * PICMAN_RGB_LUMINANCE_RED;
+      lum_green_lookup[i]   = i * PICMAN_RGB_LUMINANCE_GREEN;
+      lum_blue_lookup[i]    = i * PICMAN_RGB_LUMINANCE_BLUE;
       final_red_lookup[i]   = i * cvals.color.r;
       final_green_lookup[i] = i * cvals.color.g;
       final_blue_lookup[i]  = i * cvals.color.b;
@@ -221,22 +221,22 @@ colorify (GimpDrawable *drawable,
       gint    width, height, bytes;
       guchar *src;
 
-      src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+      src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                         &width, &height, &bytes);
       for (i = 0; i < width * height; i++)
         colorify_func (src + i * bytes, src + i * bytes, bytes, NULL);
 
-      gimp_preview_draw_buffer (preview, src, width * bytes);
+      picman_preview_draw_buffer (preview, src, width * bytes);
       g_free (src);
     }
   else
     {
-      gimp_rgn_iterate2 (drawable, 0 /* unused */, colorify_func, NULL);
+      picman_rgn_iterate2 (drawable, 0 /* unused */, colorify_func, NULL);
     }
 }
 
 static gboolean
-colorify_dialog (GimpDrawable *drawable)
+colorify_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -248,11 +248,11 @@ colorify_dialog (GimpDrawable *drawable)
   gint       i;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Colorify"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Colorify"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -264,7 +264,7 @@ colorify_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -272,7 +272,7 @@ colorify_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
@@ -290,15 +290,15 @@ colorify_dialog (GimpDrawable *drawable)
                     GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  custom_color_button = gimp_color_button_new (_("Colorify Custom Color"),
+  custom_color_button = picman_color_button_new (_("Colorify Custom Color"),
                                                COLOR_SIZE, COLOR_SIZE,
                                                &cvals.color,
-                                               GIMP_COLOR_AREA_FLAT);
+                                               PICMAN_COLOR_AREA_FLAT);
   g_signal_connect (custom_color_button, "color-changed",
-                    G_CALLBACK (gimp_color_button_get_color),
+                    G_CALLBACK (picman_color_button_get_color),
                     &cvals.color);
   g_signal_connect_swapped (custom_color_button, "color-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), custom_color_button, 6, 7, 0, 1,
@@ -308,8 +308,8 @@ colorify_dialog (GimpDrawable *drawable)
   for (i = 0; i < 7; i++)
     {
       button = gtk_button_new ();
-      color_area = gimp_color_area_new (&button_color[i],
-                                        GIMP_COLOR_AREA_FLAT,
+      color_area = picman_color_area_new (&button_color[i],
+                                        PICMAN_COLOR_AREA_FLAT,
                                         GDK_BUTTON2_MASK);
       gtk_widget_set_size_request (GTK_WIDGET (color_area),
                                    COLOR_SIZE, COLOR_SIZE);
@@ -326,7 +326,7 @@ colorify_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -337,6 +337,6 @@ static void
 predefined_color_callback (GtkWidget *widget,
                            gpointer   data)
 {
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (custom_color_button),
-                               (GimpRGB *) data);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (custom_color_button),
+                               (PicmanRGB *) data);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,23 +19,23 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpactioneditor.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanactioneditor.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanuimanager.h"
 
 #include "keyboard-shortcuts-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GtkWidget *
-keyboard_shortcuts_dialog_new (Gimp *gimp)
+keyboard_shortcuts_dialog_new (Picman *picman)
 {
   GtkWidget *dialog;
   GtkWidget *vbox;
@@ -43,13 +43,13 @@ keyboard_shortcuts_dialog_new (Gimp *gimp)
   GtkWidget *box;
   GtkWidget *button;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  dialog = gimp_dialog_new (_("Configure Keyboard Shortcuts"),
-                            "gimp-keyboard-shortcuts-dialog",
+  dialog = picman_dialog_new (_("Configure Keyboard Shortcuts"),
+                            "picman-keyboard-shortcuts-dialog",
                             NULL, 0,
-                            gimp_standard_help_func,
-                            GIMP_HELP_KEYBOARD_SHORTCUTS,
+                            picman_standard_help_func,
+                            PICMAN_HELP_KEYBOARD_SHORTCUTS,
 
                             GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
 
@@ -65,19 +65,19 @@ keyboard_shortcuts_dialog_new (Gimp *gimp)
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  editor = gimp_action_editor_new (gimp_ui_managers_from_name ("<Image>")->data,
+  editor = picman_action_editor_new (picman_ui_managers_from_name ("<Image>")->data,
                                    NULL, TRUE);
   gtk_box_pack_start (GTK_BOX (vbox), editor, TRUE, TRUE, 0);
   gtk_widget_show (editor);
 
-  box = gimp_hint_box_new (_("To edit a shortcut key, click on the "
+  box = picman_hint_box_new (_("To edit a shortcut key, click on the "
                              "corresponding row and type a new "
                              "accelerator, or press backspace to "
                              "clear."));
   gtk_box_pack_start (GTK_BOX (vbox), box, FALSE, FALSE, 0);
   gtk_widget_show (box);
 
-  button = gimp_prop_check_button_new (G_OBJECT (gimp->config), "save-accels",
+  button = picman_prop_check_button_new (G_OBJECT (picman->config), "save-accels",
                                        _("S_ave keyboard shortcuts on exit"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);

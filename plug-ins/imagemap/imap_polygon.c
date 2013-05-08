@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -27,7 +27,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimpwidgets/gimpwidgets.h>
+#include <libpicmanwidgets/picmanwidgets.h>
 
 #include "imap_commands.h"
 #include "imap_main.h"
@@ -38,7 +38,7 @@
 #include "imap_stock.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define MAX_POLYGON_POINTS 99
 
