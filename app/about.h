@@ -20,29 +20,29 @@
 
 
 #define GIMP_ACRONYM \
-  _("GIMP")
+  _("Picman")
 
 #define GIMP_NAME \
-  _("GNU Image Manipulation Program")
+  _("Picman - /g/'s fork of GIMP")
 
 /* The year of the last commit (UTC) will be inserted into this string. */
 #define GIMP_COPYRIGHT \
-  _("Copyright © 1995-%s\n" \
-    "Spencer Kimball, Peter Mattis and the GIMP Development Team")
+  _("Copyright © 2013-%s\n" \
+    "The Picman development team.")
 
 #define GIMP_LICENSE \
-  _("GIMP is free software: you can redistribute it and/or modify it "   \
+  _("Picman is free software: you can redistribute it and/or modify it " \
     "under the terms of the GNU General Public License as published by " \
     "the Free Software Foundation; either version 3 of the License, or " \
     "(at your option) any later version."                                \
     "\n\n"                                                               \
-    "GIMP is distributed in the hope that it will be useful, "           \
+    "PicMan is distributed in the hope that it will be useful, "         \
     "but WITHOUT ANY WARRANTY; without even the implied warranty of "    \
     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "     \
     "GNU General Public License for more details."                       \
     "\n\n"                                                               \
     "You should have received a copy of the GNU General Public License " \
-    "along with GIMP.  If not, see http://www.gnu.org/licenses/.")
+    "along with PicMan.  If not, see http://www.gnu.org/licenses/.")
 
 
 #endif /* __ABOUT_H__ */

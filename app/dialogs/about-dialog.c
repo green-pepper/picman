@@ -112,7 +112,7 @@ about_dialog_create (GimpContext *context)
       widget = g_object_new (GTK_TYPE_ABOUT_DIALOG,
                              "role",               "gimp-about",
                              "window-position",    GTK_WIN_POS_CENTER,
-                             "title",              _("About GIMP"),
+                             "title",              _("About Picman"),
                              "program-name",       GIMP_ACRONYM,
                              "version",            GIMP_VERSION,
                              "copyright",          copyright,
@@ -120,8 +120,8 @@ about_dialog_create (GimpContext *context)
                              "license",            GIMP_LICENSE,
                              "wrap-license",       TRUE,
                              "logo",               pixbuf,
-                             "website",            "http://www.gimp.org/",
-                             "website-label",      _("Visit the GIMP website"),
+                             "website",            "https://github.com/green-pepper/picman",
+                             "website-label",      _("Visit Picman at Github"),
                              "authors",            authors,
                              "artists",            artists,
                              "documenters",        documenters,
@@ -519,7 +519,7 @@ about_dialog_timer (gpointer data)
           return FALSE;
 
         case 1:
-          text = insert_spacers (_("GIMP is brought to you by"));
+          text = insert_spacers (_("Picman is brought to you by"));
           dialog->state += 1;
           break;
 
